@@ -484,6 +484,27 @@ dialog.stm .sheet{margin:16px;border-radius:6px;box-shadow:0 6px 30px rgba(0,0,0
 .news div{display:grid;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--soft)}
 .news b{color:var(--brand)}
 .news span{color:var(--mut);font-size:14px}
+
+/* ===== verrou + admin ===== */
+body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{display:none!important}
+.lockscreen{position:fixed;inset:0;z-index:3000;display:grid;place-items:center;padding:20px;background:rgba(5,6,15,.35);backdrop-filter:blur(6px)}
+:root[data-theme=light] .lockscreen{background:rgba(243,245,247,.85)}
+.lockcard{width:min(420px,100%);display:grid;gap:10px;padding:28px 28px 24px;border-radius:20px;background:color-mix(in srgb,var(--solid) 92%,transparent);border:1px solid color-mix(in srgb,var(--brand) 40%,transparent);box-shadow:0 20px 70px rgba(0,0,0,.5),0 0 50px -10px color-mix(in srgb,var(--brand) 45%,transparent);text-align:center;animation:rise .4s ease both}
+.lockcard h1{font-size:22px;margin:4px 0 0}
+.lockcard .lab{text-align:left;margin:6px 0 0}
+.lockcard input,.lockcard select,#dlgPw input{padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.05);color:inherit;height:44px;width:100%;font-size:15px}
+.lockcard input:focus,.lockcard select:focus,#dlgPw input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 28%,transparent)}
+.lk-logo svg{width:64px;height:64px;filter:drop-shadow(0 0 12px color-mix(in srgb,var(--lg2) 80%,transparent))}
+.lk-name{font-weight:800;letter-spacing:1.4px;text-transform:uppercase;font-size:15px;color:var(--brand)}
+.lk-err{color:var(--ko);font-size:13px;min-height:18px}
+.lk-hidden{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.lockcard .btn{height:44px;justify-content:center}
+.lockcard a{color:var(--mut)}
+#adminBody .lab{display:block}
+#adminBody input,#adminBody select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.05);color:inherit;height:40px;margin-top:6px}
+#adminBody .row2{margin-top:6px}
+.lockcard .lab,.lockcard #lockConfirmRow,.lockcard #lockRememberRow{text-align:left}
+.lockcard #lockConfirmRow .lab,.lockcard #lockRememberRow .lab{margin:6px 0 0}
 </style>
 </head>
 <body>
@@ -513,6 +534,7 @@ dialog.stm .sheet{margin:16px;border-radius:6px;box-shadow:0 6px 30px rgba(0,0,0
       </div>
     </div>
     <button class="btn" id="bTheme" title="Changer de thème">Thème clair</button>
+    <button class="btn" id="bAdmin" title="Sécurité, sauvegardes et accès">Admin</button>
     <button class="btn" id="bSettings">Réglages</button>
     <input type="file" id="fileIn" accept=".json,application/json" hidden>
   </div>
@@ -698,10 +720,43 @@ dialog.stm .sheet{margin:16px;border-radius:6px;box-shadow:0 6px 30px rgba(0,0,0
     <div><b>Machines</b><span>Vue par mois, année ou tout, vue Journal, fiche de chaque machine, et relevé du mois à imprimer ou enregistrer en PDF.</span></div>
     <div><b>Paye</b><span>Paiements reçus et reste à recevoir, cotisations et plafond de micro-entreprise (estimation), objectif sur le graphique.</span></div>
     <div><b>Activité</b><span>Nouvel onglet : calendrier de ton activité, séries de jours, valeur de ton heure, machines les plus refaites.</span></div>
+    <div><b>Verrou et Admin</b><span>Un mot de passe protège l'accès au site, et le bouton « Admin » regroupe la sécurité, les sauvegardes et le journal d'accès.</span></div>
     <div><b>Sauvegarde</b><span>Sauvegarde automatique dans un fichier de ton choix, et instantanés quotidiens. Appuie sur <kbd>?</kbd> pour les raccourcis clavier.</span></div>
   </div>
   <div class="btns"><button class="btn primary" id="newClose" type="button">C'est parti</button></div>
 </dialog>
+
+<dialog id="dlgAdmin" class="big wide">
+  <h2>Panneau admin</h2>
+  <div id="adminBody"></div>
+  <div class="btns"><button class="btn primary" id="admClose" type="button">Fermer</button></div>
+</dialog>
+
+<dialog id="dlgPw">
+  <h2 id="pwTitle">Confirme ton mot de passe</h2>
+  <input id="pwInput" type="password" autocomplete="current-password" style="width:100%">
+  <div id="pwErr" class="lk-err"></div>
+  <div class="btns"><button class="btn" id="pwCancel" type="button">Annuler</button><button class="btn primary" id="pwOk" type="button">Valider</button></div>
+</dialog>
+
+<div id="lockScreen" class="lockscreen" hidden>
+  <form id="lockForm" class="lockcard" autocomplete="on">
+    <div class="lk-logo" id="lockLogo"></div>
+    <div class="lk-name" id="lockName">Nova QA</div>
+    <h1 id="lockTitle">Site verrouillé</h1>
+    <p id="lockSub" class="muted sm"></p>
+    <input type="text" name="username" autocomplete="username" value="nova-qa" class="lk-hidden" tabindex="-1" aria-hidden="true">
+    <label class="lab" for="lockPw">Mot de passe</label>
+    <input id="lockPw" name="password" type="password" autocomplete="current-password" required>
+    <div id="lockConfirmRow" hidden><label class="lab" for="lockPw2">Confirme le mot de passe</label><input id="lockPw2" type="password" autocomplete="new-password"></div>
+    <div id="lockRememberRow" hidden><label class="lab" for="lockRemember">Rester déverrouillé sur cet appareil</label><select id="lockRemember"><option value="0">Redemander à chaque ouverture</option><option value="1">1 jour</option><option value="7" selected>7 jours</option><option value="30">30 jours</option></select></div>
+    <div id="lockErr" class="lk-err" role="alert"></div>
+    <button class="btn primary" type="submit" id="lockGo">Déverrouiller</button>
+    <button class="btn" type="button" id="lockSkip" hidden>Annuler</button>
+    <a href="#" id="lockForgotLink" class="sm">Mot de passe oublié ?</a>
+    <div id="lockReset" hidden><p class="muted sm">Sans ton mot de passe, la seule solution est de <b>réinitialiser ce navigateur</b> : ça efface les données de cet appareil (pas ta sauvegarde .json), puis tu restaures ta sauvegarde.</p><button class="btn danger" type="button" id="lockResetBtn">Réinitialiser ce navigateur</button></div>
+  </form>
+</div>
 
 <div id="printArea"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -845,7 +900,7 @@ const entryById=id=>db.entries.find(e=>e.id===id);
 
 /* ---------- raccourcis clavier ---------- */
 document.addEventListener('keydown',e=>{
-  if(e.defaultPrevented)return;
+  if(e.defaultPrevented||document.body.classList.contains('locked'))return;
   const tg=e.target,typing=tg&&(tg.matches('input,textarea,select')||tg.isContentEditable);
   if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key.toLowerCase()==='z'&&(!typing||(tg.matches('input,textarea')&&tg.value===''&&!document.querySelector('dialog[open]')))){e.preventDefault();undo();return}
   if(typing||e.ctrlKey||e.metaKey||e.altKey||document.querySelector('dialog[open]'))return;
@@ -857,6 +912,131 @@ document.addEventListener('keydown',e=>{
   else if(k==='c'||k==='C'){calcToggle();e.preventDefault()}
   else if(k==='?'){openDlg('#dlgKeys');e.preventDefault()}});
 $('#keysClose').addEventListener('click',()=>$('#dlgKeys').close());
+
+/* ---------- verrou par mot de passe + panneau admin ---------- */
+const LKEY='nova_lock_v1',ULKEY='nova_unlock_v1',SKEY='nova_sess_v1',LOGKEY='nova_access_log_v1',FAILKEY='nova_lock_fail_v1';
+const lsGet=(k,d=null)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const lockCfg=()=>lsGet(LKEY,null);
+const cryptoOK=()=>!!(window.crypto&&window.crypto.subtle);
+const b64e=u=>btoa(String.fromCharCode(...u)),b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function kdf(pw,salt,iter){
+  const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits']);
+  const bits=await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:b64d(salt),iterations:iter},key,256);
+  return b64e(new Uint8Array(bits))}
+async function setPassword(pw,o={}){
+  const old=lockCfg()||{},salt=b64e(crypto.getRandomValues(new Uint8Array(16))),iter=250000;
+  lsSet(LKEY,{salt,iter,hash:await kdf(pw,salt,iter),remember:o.remember??old.remember??7,idle:o.idle??old.idle??0,created:old.created||Date.now()})}
+async function checkPassword(pw){const c=lockCfg();return !!c&&(await kdf(pw,c.salt,c.iter))===c.hash}
+function logAccess(e){const L=lsGet(LOGKEY,[]);L.unshift({t:Date.now(),e});lsSet(LOGKEY,L.slice(0,50))}
+const lockoutLeft=()=>{const f=lsGet(FAILKEY,{n:0,until:0});return Math.max(0,Math.ceil((f.until-Date.now())/1000))};
+function registerFail(){const f=lsGet(FAILKEY,{n:0,until:0});f.n++;if(f.n>=5)f.until=Date.now()+Math.min(300,15*Math.pow(2,f.n-5))*1000;lsSet(FAILKEY,f)}
+function lockNeeded(){
+  const c=lockCfg();if(!c)return PUBLIC;
+  if(lsGet(ULKEY,0)>Date.now())return false;
+  try{if(sessionStorage.getItem(SKEY)==='1')return false}catch(e){}
+  return true}
+let lastActivity=Date.now(),lockOnCancel=null;
+['mousemove','keydown','click','touchstart','scroll'].forEach(ev=>addEventListener(ev,()=>{lastActivity=Date.now()},{passive:true}));
+setInterval(()=>{const c=lockCfg();if(c&&c.idle>0&&!document.body.classList.contains('locked')&&Date.now()-lastActivity>c.idle*60000)lockNow()},15000);
+
+/* écran de verrouillage */
+function showLock(){
+  const c=lockCfg(),setup=!c,b=brand();
+  document.body.classList.add('locked');
+  $('#lockLogo').innerHTML=logoSvg(b.logo);$('#lockName').textContent=b.name;
+  $('#lockTitle').textContent=setup?'Crée ton mot de passe':'Site verrouillé';
+  $('#lockSub').textContent=setup?'Il protège l\'accès à ce site sur cet appareil. Choisis-en un long (8 caractères minimum), que tu n\'utilises nulle part ailleurs.':'Entre ton mot de passe pour continuer.';
+  $('#lockConfirmRow').hidden=!setup;$('#lockRememberRow').hidden=!setup;$('#lockSkip').hidden=!(setup&&!PUBLIC);
+  $('#lockForgotLink').hidden=setup;$('#lockReset').hidden=true;$('#lockPw').autocomplete=setup?'new-password':'current-password';
+  $('#lockGo').textContent=setup?'Créer et entrer':'Déverrouiller';$('#lockErr').textContent='';
+  if(!cryptoOK())$('#lockErr').textContent='Ce navigateur ne permet pas le verrou sur cette adresse. Ouvre le site en https://.';
+  $('#lockScreen').hidden=false;setTimeout(()=>$('#lockPw').focus(),60)}
+function hideLock(){$('#lockScreen').hidden=true;document.body.classList.remove('locked');$('#lockPw').value='';$('#lockPw2').value=''}
+function finishUnlock(){
+  const c=lockCfg();if(c&&c.remember>0)lsSet(ULKEY,Date.now()+c.remember*864e5);
+  try{sessionStorage.setItem(SKEY,'1')}catch(e){}
+  lastActivity=Date.now();hideLock();boot();if(lockOnCancel){const f=lockOnCancel;lockOnCancel=null;f()}}
+function lockNow(){try{localStorage.removeItem(ULKEY);sessionStorage.removeItem(SKEY)}catch(e){}logAccess('lock');location.reload()}
+$('#lockForm').addEventListener('submit',async e=>{
+  e.preventDefault();const err=$('#lockErr');err.textContent='';
+  if(!cryptoOK()){err.textContent='Ce navigateur ne permet pas le verrou sur cette adresse. Ouvre le site en https://.';return}
+  const pw=$('#lockPw').value,c=lockCfg();
+  if(!c){
+    if(pw.length<8){err.textContent='8 caractères minimum.';return}
+    if(pw!==$('#lockPw2').value){err.textContent='Les deux mots de passe sont différents.';return}
+    await setPassword(pw,{remember:+$('#lockRemember').value,idle:0});logAccess('setup');finishUnlock();return}
+  const w=lockoutLeft();if(w>0){err.textContent=`Trop d'essais. Réessaie dans ${w} s.`;return}
+  if(await checkPassword(pw)){lsSet(FAILKEY,{n:0,until:0});logAccess('unlock');finishUnlock()}
+  else{registerFail();logAccess('fail');const w2=lockoutLeft();err.textContent=w2>0?`Mot de passe incorrect. Réessaie dans ${w2} s.`:'Mot de passe incorrect.';$('#lockPw').select()}});
+$('#lockSkip').addEventListener('click',()=>{hideLock();if(lockOnCancel)lockOnCancel();lockOnCancel=null});
+$('#lockForgotLink').addEventListener('click',e=>{e.preventDefault();$('#lockReset').hidden=!$('#lockReset').hidden});
+$('#lockResetBtn').addEventListener('click',async()=>{
+  if(!confirm('Réinitialiser efface TOUTES les données de ce navigateur (machines, paiements, copies automatiques). Ta sauvegarde .json n\'est pas touchée : tu pourras la restaurer ensuite.\n\nContinuer ?'))return;
+  try{await idbDel('handle')}catch(e){}
+  try{[KEY,SNAPKEY,TKEY,CKEY,LKEY,ULKEY,LOGKEY,FAILKEY,'nova_fs_last'].forEach(k=>localStorage.removeItem(k));sessionStorage.removeItem(SKEY)}catch(e){}
+  location.reload()});
+
+/* demander le mot de passe (actions sensibles) */
+function askPw(title){return new Promise(res=>{
+  const d=$('#dlgPw');$('#pwTitle').textContent=title;$('#pwInput').value='';$('#pwErr').textContent='';let done=false;
+  const fin=v=>{if(done)return;done=true;if(d.open)d.close();res(v)};
+  $('#pwOk').onclick=()=>fin($('#pwInput').value);$('#pwCancel').onclick=()=>fin(null);d.onclose=()=>fin(null);
+  $('#pwInput').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();fin($('#pwInput').value)}};
+  d.showModal();$('#pwInput').focus()})}
+
+/* panneau admin */
+const EVT={setup:'Mot de passe créé',unlock:'Déverrouillé',fail:'Mot de passe incorrect',lock:'Verrouillé',pwchange:'Mot de passe changé',off:'Verrou désactivé',on:'Verrou activé'};
+function renderAdmin(){
+  const c=lockCfg(),size=new Blob([JSON.stringify(db)]).size,log=lsGet(LOGKEY,[]),snaps=snapList(),lb=db.lastBackup?new Date(db.lastBackup):null;
+  const nT=db.entries.filter(e=>e.type==='test').length;
+  $('#adminBody').innerHTML=`
+  <div class="sect"><h3>Sécurité</h3>
+    <p class="sm">${c?'<b style="color:var(--ok)">Verrou actif</b> sur cet appareil.':'<b style="color:var(--corr)">Verrou désactivé</b> : n\'importe qui qui ouvre ce navigateur voit tes données.'}</p>
+    ${c?`<div class="btns left"><button class="btn" data-adm="lock" type="button">Verrouiller maintenant</button></div>
+    <form id="admPwForm" autocomplete="off"><label class="lab" for="admOld">Changer le mot de passe</label>
+      <input id="admOld" type="password" autocomplete="current-password" placeholder="Mot de passe actuel">
+      <div class="row2"><input id="admNew" type="password" autocomplete="new-password" placeholder="Nouveau (8 caractères min.)"><input id="admNew2" type="password" autocomplete="new-password" placeholder="Confirme le nouveau"></div>
+      <div class="lk-err" id="admPwErr"></div><div class="btns left"><button class="btn primary" type="submit">Changer</button></div></form>
+    <div class="row2"><div><label class="lab" for="admRemember">Rester déverrouillé</label><select id="admRemember">${[[0,'Redemander à chaque ouverture'],[1,'1 jour'],[7,'7 jours'],[30,'30 jours']].map(o=>`<option value="${o[0]}" ${c.remember===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
+    <div><label class="lab" for="admIdle">Verrouillage si inactif</label><select id="admIdle">${[[0,'Jamais'],[5,'5 minutes'],[15,'15 minutes'],[30,'30 minutes'],[60,'1 heure']].map(o=>`<option value="${o[0]}" ${c.idle===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div></div>
+    ${PUBLIC?'<p class="muted sm" style="margin-top:10px">Sur la version en ligne, le verrou est obligatoire.</p>':'<div class="btns left"><button class="btn danger" data-adm="disable" type="button">Désactiver le verrou</button></div>'}`
+    :`<div class="btns left"><button class="btn primary" data-adm="enable" type="button">Activer le verrou</button></div>`}
+  </div>
+  <div class="sect"><h3>Sauvegardes</h3>
+    <p class="sm">${lb?`Dernière sauvegarde manuelle : ${lb.toLocaleDateString('fr-FR')}.`:'Aucune sauvegarde manuelle.'} ${snaps.length?`${snaps.length} copie(s) automatique(s), la dernière le ${fmtDT(snaps[0].t)}.`:''} Sauvegarde automatique : <b>${FS.handle?(FS.ok?'active':'en pause'):'non activée'}</b>.</p>
+    <div class="btns left"><button class="btn" data-adm="export" type="button">Sauvegarder (.json)</button><button class="btn" data-adm="import" type="button">Restaurer…</button><button class="btn" data-adm="snaps" type="button">Copies automatiques</button><button class="btn" data-adm="auto" type="button">Sauvegarde auto</button><button class="btn" data-adm="csv" type="button">Excel (.csv)</button></div></div>
+  <div class="sect"><h3>Données sur cet appareil</h3>
+    <div class="chips"><span>${db.entries.length} machines (${nT} tests, ${db.entries.length-nT} corrections)</span><span>${db.payments.length} paiement(s)</span><span>${n1(size/1024)} Ko</span><span id="admStore"></span></div>
+    <p class="muted sm" style="margin:8px 0 0">Ces données sont uniquement dans ce navigateur (et dans tes sauvegardes) : rien n'est envoyé sur Internet.</p></div>
+  <div class="sect"><h3>Journal d'accès (cet appareil)</h3>
+    ${log.length?`<div>${log.slice(0,12).map(x=>`<div class="pay" style="grid-template-columns:150px 1fr"><span class="d">${fmtDT(new Date(x.t).toISOString())}</span><span style="${x.e==='fail'?'color:var(--ko)':''}">${EVT[x.e]||esc(x.e)}</span></div>`).join('')}</div>`:'<div class="muted sm">Rien pour l\'instant.</div>'}</div>
+  <div class="sect"><h3>Zone dangereuse</h3><div class="btns left"><button class="btn danger" data-adm="wipe" type="button">Tout effacer…</button></div></div>`;
+  if(navigator.storage&&navigator.storage.estimate)navigator.storage.estimate().then(s=>{const el=$('#admStore');if(el&&s.usage!=null)el.textContent=`espace utilisé par le site : ${n1(s.usage/1024)} Ko`})}
+function openAdmin(){renderAdmin();openDlg('#dlgAdmin')}
+$('#bAdmin').addEventListener('click',openAdmin);
+$('#admClose').addEventListener('click',()=>$('#dlgAdmin').close());
+$('#dlgAdmin').addEventListener('click',async e=>{
+  const b=e.target.closest('[data-adm]');if(!b)return;const a=b.dataset.adm;
+  if(a==='lock')lockNow();
+  if(a==='export')exportJSON();if(a==='csv')exportCSV();if(a==='import'){$('#dlgAdmin').close();$('#fileIn').click()}
+  if(a==='snaps'){$('#dlgAdmin').close();renderSnaps();openDlg('#dlgSnap')}
+  if(a==='auto'){$('#dlgAdmin').close();openSettings('auto')}
+  if(a==='wipe'){$('#dlgAdmin').close();$('#bSettings').click();setTimeout(()=>$('#sReset').scrollIntoView({block:'center'}),80)}
+  if(a==='enable'){$('#dlgAdmin').close();lockOnCancel=()=>openAdmin();showLock()}
+  if(a==='disable'){const pw=await askPw('Mot de passe pour désactiver le verrou');if(pw===null)return;
+    if(await checkPassword(pw)){try{localStorage.removeItem(LKEY);localStorage.removeItem(ULKEY)}catch(x){}logAccess('off');renderAdmin();toast('Verrou désactivé')}else toast('Mot de passe incorrect')}});
+$('#dlgAdmin').addEventListener('change',e=>{
+  const c=lockCfg();if(!c)return;
+  if(e.target.id==='admRemember'){c.remember=+e.target.value;lsSet(LKEY,c);if(!c.remember)localStorage.removeItem(ULKEY);else lsSet(ULKEY,Date.now()+c.remember*864e5);toast('Réglage enregistré')}
+  if(e.target.id==='admIdle'){c.idle=+e.target.value;lsSet(LKEY,c);toast('Réglage enregistré')}});
+$('#dlgAdmin').addEventListener('submit',async e=>{
+  if(e.target.id!=='admPwForm')return;e.preventDefault();const err=$('#admPwErr');err.textContent='';
+  const o=$('#admOld').value,n=$('#admNew').value,n2=$('#admNew2').value;
+  if(!(await checkPassword(o))){err.textContent='Le mot de passe actuel est incorrect.';logAccess('fail');return}
+  if(n.length<8){err.textContent='Le nouveau mot de passe doit faire 8 caractères minimum.';return}
+  if(n!==n2){err.textContent='Les deux nouveaux mots de passe sont différents.';return}
+  await setPassword(n);logAccess('pwchange');renderAdmin();toast('Mot de passe changé ✓')});
 
 /* ---------- chrono ---------- */
 const TKEY='scorux_timer_v1';
@@ -1542,10 +1722,13 @@ function renderAll(){renderLive();renderLists();renderMachines();renderPaye();re
 $('#f-date').value=isoToday();$('#f-price').value=db.settings.prices.test;
 appReady=true;save();snapMaybe();tmRender();
 {const h=(location.hash||'').slice(1);showTab(TABS.includes(h)?h:'scorux')}
-renderAll();calcInit();fsInit();
 $('#newClose').addEventListener('click',()=>$('#dlgNew').close());
 $('#bNew').addEventListener('click',()=>{$('#menuPop').classList.remove('on');openDlg('#dlgNew')});
-if(db.settings.seen!==2){db.settings.seen=2;save();setTimeout(()=>{if(!document.querySelector('dialog[open]'))openDlg('#dlgNew')},700)}
+let booted=false;
+function boot(){
+  if(booted)return;booted=true;renderAll();calcInit();fsInit();
+  if(db.settings.seen!==3){db.settings.seen=3;save();setTimeout(()=>{if(!document.querySelector('dialog[open]'))openDlg('#dlgNew')},700)}}
+if(lockNeeded())showLock();else boot();
 
 })();
 </script>
