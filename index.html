@@ -1294,10 +1294,10 @@ $('#bulkOk').addEventListener('click',()=>{
 let lastLive='';
 function renderLive(){
   const v=$('#f-date').value||isoToday();const [y,m]=v.split('-').map(Number);const mi=m-1,s=stats(y,mi);
-  const tdy=db.entries.filter(e=>e.year===t0.y&&e.month===t0.m&&e.day===t0.d),tdTot=tdy.reduce((a,e)=>a+e.price,0);
+  const tdy=db.entries.filter(e=>e.year===t0.y&&e.month===t0.m&&e.day===t0.d),tdT=tdy.filter(e=>e.type==='test'),tdC=tdy.filter(e=>e.type==='correction');
   $('#live').innerHTML=`<div><div class="lbl">Paye de ${MONTHS[mi].toLowerCase()} ${y}</div><div class="big" id="liveBig" data-key="live" data-num="${s.total}" data-k="eur">${eur(s.total)}</div></div>
    <span class="pill">${s.tests} test${s.tests>1?'s':''} · ${eur(s.pt)}</span><span class="pill">${s.corr} correction${s.corr>1?'s':''} · ${eur(s.pc)}</span>
-   <span class="pill">≈ ${usd(s.total*rateFor(y,mi))}</span>${tdy.length?`<span class="pill hot">Aujourd'hui : ${tdy.length} machine${tdy.length>1?'s':''} · ${eur(tdTot)}</span>`:''}`;
+   <span class="pill">≈ ${usd(s.total*rateFor(y,mi))}</span>${tdT.length?`<span class="pill hot">Aujourd'hui : ${tdT.length} machine${tdT.length>1?'s':''} · ${eur(tdT.reduce((a,e)=>a+e.price,0))}</span>`:''}${tdC.length?`<span class="pill hot">Aujourd'hui : ${tdC.length} correction${tdC.length>1?'s':''} · ${eur(tdC.reduce((a,e)=>a+e.price,0))}</span>`:''}`;
   if(lastLive&&lastLive!==String(s.total)+ymKey(y,mi)&&lastLive.endsWith(ymKey(y,mi)))$('#liveBig').parentElement.classList.add('flash');
   lastLive=String(s.total)+ymKey(y,mi);
   renderGoalBox('#goalBox',y,mi,s)}
