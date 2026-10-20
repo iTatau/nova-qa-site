@@ -651,6 +651,14 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 .jal .j.done{color:var(--ok,#37d67a);border-color:currentColor}
 .jal .j.streak{color:var(--warn);border-color:currentColor}
 .dtall{white-space:nowrap}.dtall input,.dtrow input[type=checkbox]{width:18px;height:18px;padding:0}
+
+.subbar{border-top:1px solid var(--line)}
+.subbar .wrap{height:44px;display:flex;align-items:center}
+.subnav{display:flex;gap:6px}
+.subnav button{background:none;border:1px solid transparent;border-radius:99px;padding:0 16px;height:32px;cursor:pointer;font-weight:600;font-size:14px;color:var(--mut)}
+.subnav button:hover{color:var(--ink)}
+.subnav button[aria-selected=true]{color:var(--brand);border-color:color-mix(in srgb,var(--brand) 45%,transparent);background:color-mix(in srgb,var(--brand) 12%,transparent)}
+@media (max-width:760px){.subnav{overflow:auto}}
 </style>
 </head>
 <body>
@@ -658,11 +666,8 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 <header class="top">
   <div class="wrap">
     <div class="brand"><span class="logo" id="brandLogo"></span><span id="brandName">Nova QA</span></div>
-    <nav class="tabs" role="tablist">
-      <button role="tab" data-tab="scorux" aria-selected="true">Scorux</button>
-      <button role="tab" data-tab="machines" aria-selected="false">Machines</button>
-      <button role="tab" data-tab="paye" aria-selected="false">Paye<span class="bdg warn" id="bdgPay" hidden></span></button>
-      <button role="tab" data-tab="activite" aria-selected="false">Activité</button>
+    <nav class="tabs" role="tablist" id="topTabs">
+      <button role="tab" data-grp="scorux" aria-selected="true">Scorux</button>
     </nav>
     <div class="sp"></div>
     <div class="menu">
@@ -686,6 +691,14 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
     <button class="btn" id="bSettings">Réglages</button>
     <input type="file" id="fileIn" accept=".json,application/json" hidden>
   </div>
+  <div class="subbar" id="subBar"><div class="wrap">
+    <nav class="subnav" role="tablist" aria-label="Scorux">
+      <button role="tab" data-tab="scorux" aria-selected="true">Noter</button>
+      <button role="tab" data-tab="machines" aria-selected="false">Machines</button>
+      <button role="tab" data-tab="paye" aria-selected="false">Paye<span class="bdg warn" id="bdgPay" hidden></span></button>
+      <button role="tab" data-tab="activite" aria-selected="false">Activité</button>
+    </nav>
+  </div></div>
 </header>
 
 <main class="wrap">
@@ -1051,10 +1064,12 @@ function snapMaybe(){
 const TABS=PUBLIC?['scorux','machines','paye','activite']:['roblox','scorux','machines','paye','activite'];
 function showTab(t){
   if(!TABS.includes(t))t='scorux';
-  ui.tab=t;$$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));$$('section.tab').forEach(s=>s.classList.toggle('on',s.id==='tab-'+t));
+  ui.tab=t;const grp=t==='roblox'?'roblox':'scorux';if(t!=='roblox')ui.lastSub=t;
+  $$('#topTabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.grp===grp));$$('#subBar button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));$('#subBar').hidden=grp==='roblox';$$('section.tab').forEach(s=>s.classList.toggle('on',s.id==='tab-'+t));
   try{history.replaceState(null,'','#'+t)}catch(e){}
   if(typeof animateNumbers==='function'){const sec=$('#tab-'+t);$$('[data-key]',sec).forEach(el=>delete lastNum[el.dataset.key]);animateNumbers(sec)}}
-$$('nav.tabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+$$('#subBar button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+$$('#topTabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.grp==='roblox'?'roblox':(ui.lastSub||'scorux'))));
 function renderBadges(){
   const open=(db.roblox&&db.roblox.tasks?db.roblox.tasks.filter(t=>!t.done).length:0);
   const b=$('#bdgRbx');if(b){b.hidden=!open;b.textContent=open;b.title=`${open} tâche(s) à faire`}
