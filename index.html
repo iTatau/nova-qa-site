@@ -560,6 +560,79 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
   .st-t tr{break-inside:avoid}
   .st-part h2{break-after:avoid}
 }
+
+/* ===== relevé façon fiche de paie (sans bandes foncées) ===== */
+.sthint{padding:8px 20px 0;font-size:13px;color:var(--mut)}
+.ps{font-family:"Segoe UI",Arial,Helvetica,sans-serif;color:#1b2430;font-size:12.5px}
+.ps-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:12px;border-bottom:2px solid #1f2a44;position:relative}
+.ps-top::after{content:"";position:absolute;left:0;bottom:-2px;width:30%;height:2px;background:linear-gradient(90deg,#38e1ff,#8b5cf6,#ff6ec7)}
+.ps-emit{display:flex;align-items:center;gap:14px}
+.ps-logo svg{width:64px;height:64px}
+.ps-name{font-size:27px;font-weight:800;letter-spacing:6px;color:#1f2a44;line-height:1.05}
+.ps-tag{margin-top:4px;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:#667085}
+.ps-title{text-align:right}
+.ps-h{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#667085}
+.ps-period{font-size:23px;font-weight:700;color:#1f2a44;margin-top:1px}
+.ps-sub,.ps-no{font-size:11px;color:#667085;margin-top:2px}
+.ps-parties{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:14px 0 14px;border:1px solid #9aa3b2}
+.ps-parties>div{padding:8px 12px;border-right:1px solid #9aa3b2}
+.ps-parties>div:last-child{border-right:0}
+.ps-parties span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:1.4px;color:#667085}
+.ps-parties b{display:block;font-size:13.5px;margin-top:2px}
+.ps-parties i{display:block;font-style:normal;font-size:11px;color:#667085}
+.ps-t{width:100%;border-collapse:collapse;font-size:12px}
+.ps-t th{background:#eef1f5;color:#1f2a44;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.8px;padding:6px 8px;font-weight:700;border:1px solid #9aa3b2}
+.ps-t th.r,.ps-t td.r{text-align:right;font-variant-numeric:tabular-nums}
+.ps-t th.c,.ps-t td.c{text-align:center}
+.ps-t td{padding:5px 8px;border:1px solid #c9d0db;color:#1b2430}
+.ps-t tbody tr:hover{background:transparent}
+.ps-t td.n{color:#667085;font-weight:600}
+.ps-t td.empty{text-align:center;color:#98a2b3;padding:14px}
+.ps-t .nt{color:#667085;font-size:11px}
+.ps-t .ok{color:#1b7f3b;font-weight:700}.ps-t .ko{color:#b42318;font-weight:700}
+.ps-t tfoot td{font-weight:700;border:1px solid #9aa3b2;border-top:2px solid #1f2a44;padding:6px 8px;background:#fff}
+.ps-lines tr.fill td{height:20px}
+.ps-part{margin-top:18px}
+.ps-part h2{display:flex;align-items:baseline;gap:10px;font-size:12px;margin:0 0 6px;color:#1f2a44;text-transform:uppercase;letter-spacing:1.2px}
+.ps-part h2 small{margin-left:auto;color:#667085;font-weight:400;text-transform:none;letter-spacing:0;font-size:11.5px}
+.ps-sum{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;margin-top:16px;align-items:stretch}
+.ps-mini td:first-child{width:68%}
+.ps-box{border:1px solid #9aa3b2;padding:10px 12px}
+.ps-box span,.ps-net span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:1.4px;color:#667085}
+.ps-box b{display:block;font-size:17px;margin-top:3px}
+.ps-box i,.ps-net i{display:block;font-style:normal;font-size:11px;color:#667085;margin-top:2px}
+.ps-net{border:3px double #1f2a44;padding:10px 14px;text-align:right;display:flex;flex-direction:column;justify-content:center}
+.ps-net b{display:block;font-size:26px;color:#1f2a44;margin-top:2px}
+.ps-foot{margin-top:22px;padding-top:8px;border-top:1px solid #c9d0db;color:#98a2b3;font-size:10px}
+.ps-none{text-align:center;color:#667085;padding:30px 0}
+@media print{
+  .ps-breaks .ps-test{break-before:page}
+  .ps-t thead{display:table-header-group}.ps-t tr{break-inside:avoid}
+  .ps-part h2{break-after:avoid}
+}
+
+.ps-note{margin:6px 0 0;font-size:10.5px;color:#667085;line-height:1.45}
+.ps-net em{display:block;font-style:normal;font-size:11px;color:#344054;margin-top:8px;padding-top:7px;border-top:1px solid #c9d0db}
+.ps-net em b{display:inline;font-size:13px;margin:0}
+.ps-dec td.r{white-space:nowrap}
+.ps-dec tr.ps-g td{font-weight:600}
+.ps-dec tr.ps-sub td{background:#f6f8fb;font-weight:600}
+.ps-dec tr.ps-fin td{background:#eef1f5;font-weight:700;border-top:2px solid #1f2a44;font-size:12.5px}
+.ps-t tr.ps-q td{background:#f6f8fb;font-weight:700}
+.ps-mini tr.b td{font-weight:700}
+.ps-pg{margin-top:0}
+@media print{.ps-pg{break-before:page}}
+.ps-sm{font-style:normal;font-size:10.5px;color:#667085}
+@media print{.ps-part:not(.ps-test):not(.ps-correction){break-inside:avoid}}
+.ps-test .ps-t td,.ps-correction .ps-t td{padding:2.5px 6px;font-size:10.5px;line-height:1.25}
+.ps-test .ps-t th,.ps-correction .ps-t th{padding:4px 6px;font-size:9px}
+.ps-test .ps-t tfoot td,.ps-correction .ps-t tfoot td{padding:4px 6px}
+.ps-correction{margin-top:16px}
+.ps-t td{padding-top:4px;padding-bottom:4px}
+.ps-test .ps-t td,.ps-correction .ps-t td{padding-top:1.5px;padding-bottom:1.5px}
+.ps-correction{margin-top:10px}
+.ps-sum{margin-top:12px}
+.ps-foot{margin-top:12px}
 </style>
 </head>
 <body>
@@ -711,6 +784,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
     <div class="row2"><div><label class="lab" for="s-owner">Mon nom (pour les relevés)</label><input id="s-owner" maxlength="60" placeholder="Prénom Nom"></div>
       <div><label class="lab" for="s-siret">SIRET (facultatif)</label><input id="s-siret" maxlength="20" inputmode="numeric" placeholder="14 chiffres"></div></div>
     <label class="lab" for="s-client" style="margin-top:12px">Client</label><input id="s-client" maxlength="60" placeholder="Scorux">
+    <label style="display:flex;gap:8px;align-items:center;margin:12px 0 0;font-size:14px"><input id="s-est" type="checkbox" style="width:auto;height:auto"> Montrer l'estimation des cotisations sur les relevés</label>
     <div class="row2"><div><label class="lab" for="s-doc">Nom affiché sur les relevés</label><input id="s-doc" maxlength="40" placeholder="NOVA-QA"></div><div><label class="lab" for="s-tag">Sous-titre des relevés</label><input id="s-tag" maxlength="60" placeholder="Tests &amp; contrôle qualité de jeux"></div></div>
   </div>
   <div class="sect"><h3>Paye</h3>
@@ -720,10 +794,19 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
     <div class="row"><label for="s-goal">Objectif mensuel (€)</label><input id="s-goal" inputmode="decimal"></div>
     <p class="muted sm">Les prix sont seulement proposés par défaut dans le formulaire : tu peux toujours en taper un autre.</p>
   </div>
-  <div class="sect"><h3>Micro-entreprise <small>(valeurs à vérifier)</small></h3>
-    <div class="row"><label for="s-mrate">Taux de cotisations (%)</label><input id="s-mrate" inputmode="decimal"></div>
+  <div class="sect"><h3>Cotisations &amp; impôts <small>(France · valeurs à vérifier)</small></h3>
+    <div class="row"><label for="s-act">Type d'activité</label><select id="s-act"><option value="bic">Prestations de services (BIC)</option><option value="bnc">Profession libérale (BNC)</option><option value="custom">Personnalisé</option></select></div>
+    <div class="row"><label for="s-mrate">Cotisations sociales (%)</label><input id="s-mrate" inputmode="decimal"></div>
+    <div class="row"><label for="s-cfp">Formation professionnelle, CFP (%)</label><input id="s-cfp" inputmode="decimal"></div>
+    <div class="row"><label for="s-acre">Réduction ACRE sur les cotisations (%)</label><input id="s-acre" inputmode="decimal" placeholder="0"></div>
     <div class="row"><label for="s-mceil">Plafond de chiffre d'affaires (€)</label><input id="s-mceil" inputmode="decimal"></div>
-    <p class="muted sm">Ces deux valeurs sont des ordres de grandeur que je ne peux pas garantir : elles changent selon ton activité et chaque année. Vérifie-les sur autoentrepreneur.urssaf.fr.</p>
+    <label style="display:flex;gap:8px;align-items:center;margin:10px 0 0;font-size:14px"><input id="s-vl" type="checkbox" style="width:auto;height:auto"> J'ai choisi le versement libératoire de l'impôt</label>
+    <div class="row"><label for="s-vlrate">Taux du versement libératoire (%)</label><input id="s-vlrate" inputmode="decimal"></div>
+    <div class="row"><label for="s-abat">Abattement forfaitaire (%) <small>(impôt au barème)</small></label><input id="s-abat" inputmode="decimal"></div>
+    <div class="row"><label for="s-parts">Parts de quotient familial</label><input id="s-parts" inputmode="decimal"></div>
+    <div class="row"><label for="s-other">Autres revenus imposables du foyer (€/an)</label><input id="s-other" inputmode="decimal" placeholder="0"></div>
+    <div class="row"><label for="s-cfe">CFE annuelle estimée (€)</label><input id="s-cfe" inputmode="decimal" placeholder="0"></div>
+    <p class="muted sm">Ce sont des ordres de grandeur que je ne peux pas garantir : ils changent selon ton activité et chaque année (BIC ou BNC : regarde ton avis de situation INSEE / ton espace autoentrepreneur.urssaf.fr). L'impôt est calculé avec le barème 2026, sans décote ni plafonnement du quotient familial. Pour un chiffre fiable, vérifie sur impots.gouv.fr ou demande à un comptable.</p>
   </div>
   <div class="sect"><h3>Sauvegarde automatique</h3><div id="s-auto"></div></div>
   <div class="btns"><button class="btn danger" id="sReset">Tout effacer</button><button class="btn" id="sCancel">Fermer</button><button class="btn primary" id="sSave">Enregistrer</button></div>
@@ -742,7 +825,8 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 </dialog>
 
 <dialog id="dlgSt" class="wide stm">
-  <div class="stbar"><b id="stTitle">Relevé d'activité</b><div class="seg" id="stTabs"><button data-v="all" aria-pressed="true" type="button">Document complet</button><button data-v="recap" aria-pressed="false" type="button">Récapitulatif</button><button data-v="machines" aria-pressed="false" type="button">Machines</button><button data-v="corrections" aria-pressed="false" type="button">Corrections</button></div><span class="sp"></span><button class="btn primary" id="stPrint" type="button">Imprimer / enregistrer en PDF</button><button class="btn" id="stClose" type="button">Fermer</button></div>
+  <div class="stbar"><b id="stTitle">Relevé d'activité</b><div class="seg" id="stTabs"><button data-v="all" aria-pressed="true" type="button">Document complet</button><button data-v="recap" aria-pressed="false" type="button">Récapitulatif</button><button data-v="machines" aria-pressed="false" type="button">Machines</button><button data-v="corrections" aria-pressed="false" type="button">Corrections</button></div><span class="sp"></span><button class="btn primary" id="stPrint" type="button" title="Dans la fenêtre qui s'ouvre, choisis « Enregistrer au format PDF » comme destination">Imprimer / enregistrer en PDF</button><button class="btn" id="stClose" type="button">Fermer</button></div>
+  <div class="sthint">Pour enregistrer en PDF : dans la fenêtre qui s'ouvre, choisis <b>« Enregistrer au format PDF »</b> dans <b>Destination</b>, puis clique sur <b>Enregistrer</b>.</div>
   <div class="sheet" id="stSheet"></div>
 </dialog>
 
@@ -871,8 +955,8 @@ function migrate(){
   s.prices=Object.assign({test:30,correction:13},s.prices);
   s.rates=s.rates||{};s.defaultRate=s.defaultRate||1.1252;
   s.goals=Object.assign({month:1500},s.goals);
-  s.micro=Object.assign({rate:21.2,ceiling:77700},s.micro);
-  s.profile=Object.assign({owner:'',siret:'',client:'Scorux',docName:'NOVA-QA',tagline:'Tests & contrôle qualité de jeux'},s.profile);
+  s.micro=Object.assign({rate:21.2,ceiling:77700,act:'bic',cfp:0.3,acre:0,vl:false,vlRate:1.7,abat:50,parts:1,other:0,cfe:0},s.micro);
+  s.profile=Object.assign({owner:'',siret:'',client:'Scorux',docName:'NOVA-QA',tagline:'Tests & contrôle qualité de jeux',showEstimate:true},s.profile);
   db.legacy=db.legacy||{};db.payments=Array.isArray(db.payments)?db.payments:[];db.settled=db.settled||{};db.celebrated=db.celebrated||{};
   db.entries.forEach(e=>{if(typeof e.price!=='number')e.price=parseFloat(e.price)||0;if(e.note!=null&&typeof e.note!=='string')e.note=String(e.note)});
   db.nextId=db.nextId||(Math.max(0,...db.entries.map(e=>e.id))+1);
@@ -1321,7 +1405,7 @@ function renderPaye(){
   const tot=stats(y,null),usdTot=months.reduce((s,r)=>s+r.total*r.rate,0);
   const active=months.filter(r=>r.total>0),best=active.slice().sort((a,b)=>b.total-a.total)[0];
   const trk=payTracking(),dueTot=months.reduce((a,r)=>a+(r.due>0.005?r.due:0),0),dueN=months.filter(r=>r.due>0.005).length;
-  const cot=tot.total*mc.rate/100,net=tot.total-cot;
+  const cot=charges(tot.total).urssaf,net=tot.total-cot;
   $('#pKpis').innerHTML=`
    <div class="kpi hero"><div class="l">Paye totale ${y}</div><div class="v" data-key="ph" data-num="${tot.total}" data-k="eur">${eur(tot.total)}</div><div class="s">${tot.tests} tests · ${tot.corr} corrections</div></div>
    <div class="kpi"><div class="l">Équivalent en $</div><div class="v" data-key="pu" data-num="${usdTot}" data-k="usd">${usd(usdTot)}</div><div class="s">avec les taux de chaque mois</div></div>
@@ -1378,15 +1462,15 @@ function renderPaye(){
   const tri=[0,1,2,3].map(q=>{const L=months.slice(q*3,q*3+3),ca=L.reduce((a,r)=>a+r.total,0);return{q:q+1,ca}});
   $('#pMicro').innerHTML=`<div class="micro">
      <div class="mk"><div class="l">Chiffre d'affaires ${y}</div><div class="v">${eur(tot.total)}</div></div>
-     <div class="mk"><div class="l">Cotisations (<input id="mcRate" value="${String(mc.rate).replace('.',',')}" inputmode="decimal" aria-label="Taux de cotisations"> %)</div><div class="v">${eur(cot)}</div></div>
+     <div class="mk"><div class="l">Cotisations + CFP (<input id="mcRate" value="${String(mc.rate).replace('.',',')}" inputmode="decimal" aria-label="Taux de cotisations"> %)</div><div class="v">${eur(cot)}</div></div>
      <div class="mk"><div class="l">Net estimé</div><div class="v">${eur(net)}</div></div>
      <div class="mk"><div class="l">Plafond (<input id="mcCeil" value="${nb(mc.ceiling)}" inputmode="numeric" aria-label="Plafond"> €)</div><div class="v">${n1(pctC)} %</div></div></div>
     <div class="gbar big ${pctC>=100?'over':pctC>=80?'near':''}"><i style="width:${Math.min(100,pctC)}%"></i></div>
     <p class="gtxt">${left>=0?`Il te reste ${eur(left)} avant le plafond.`:`Plafond dépassé de ${eur(-left)} : vérifie tes obligations.`}${proj?` À ce rythme, tu finirais ${y} vers ${eur(proj)}${proj>mc.ceiling?' (au-dessus du plafond)':''}.`:''}</p>
     <div style="overflow:auto"><table class="paytable"><thead><tr><th>Période</th><th class="r">Chiffre d'affaires</th><th class="r">Cotisations</th><th class="r">Net</th></tr></thead><tbody>`+
-    months.map((r,i)=>{let h=`<tr><td>${r.n}</td><td class="pr">${r.total?eur(r.total):'–'}</td><td class="pr">${r.total?eur(r.total*mc.rate/100):'–'}</td><td class="pr">${r.total?eur(r.total*(1-mc.rate/100)):'–'}</td></tr>`;
-      if(i%3===2){const q=tri[(i-2)/3];h+=`<tr class="qrow"><td><b>T${q.q}</b></td><td class="pr"><b>${eur(q.ca)}</b></td><td class="pr"><b>${eur(q.ca*mc.rate/100)}</b></td><td class="pr"><b>${eur(q.ca*(1-mc.rate/100))}</b></td></tr>`}return h}).join('')+
-    `</tbody></table></div><p class="muted sm" style="margin:12px 0 0">Estimation indicative pour t'aider à anticiper : le taux et le plafond sont à vérifier sur autoentrepreneur.urssaf.fr, et la façon de déclarer un chiffre d'affaires payé en dollars aussi.</p>`;
+    months.map((r,i)=>{let h=`<tr><td>${r.n}</td><td class="pr">${r.total?eur(r.total):'–'}</td><td class="pr">${r.total?eur(charges(r.total).urssaf):'–'}</td><td class="pr">${r.total?eur(r.total-charges(r.total).urssaf):'–'}</td></tr>`;
+      if(i%3===2){const q=tri[(i-2)/3];h+=`<tr class="qrow"><td><b>T${q.q}</b></td><td class="pr"><b>${eur(q.ca)}</b></td><td class="pr"><b>${eur(charges(q.ca).urssaf)}</b></td><td class="pr"><b>${eur(q.ca-charges(q.ca).urssaf)}</b></td></tr>`}return h}).join('')+
+    `</tbody></table></div><p class="muted sm" style="margin:12px 0 0">Impôt sur le revenu estimé pour ${y} : <b>${eur(taxYear(y).ir)}</b> (${mc.vl?'versement libératoire':'barème progressif'}) · le détail complet est dans le « Récapitulatif annuel ». Estimation indicative pour t'aider à anticiper : le taux et le plafond sont à vérifier sur autoentrepreneur.urssaf.fr, et la façon de déclarer un chiffre d'affaires payé en dollars aussi.</p>`;
 
   /* années */
   const yr=ys.map(Y=>{const s=stats(Y,null);return{Y,...s,u:usdYear(Y)}});
@@ -1410,6 +1494,37 @@ $('#pPay').addEventListener('click',e=>{
   if(e.target.id==='settlePast'){pushUndo('mois passés soldés');const y=ui.py;for(let m=0;m<12;m++){if(stats(y,m).total>0&&(y<t0.y||(y===t0.y&&m<t0.m)))db.settled[ymKey(y,m)]=true}save();renderAll();toast('Mois passés marqués comme reçus',{label:'Annuler',fn:undo});return}
   const b=e.target.closest('[data-delpay]');if(!b)return;pushUndo('suppression d\'un paiement');db.payments=db.payments.filter(p=>p.id!==+b.dataset.delpay);save();renderAll();toast('Paiement supprimé',{label:'Annuler',fn:undo})});
 $('#pPay').addEventListener('change',e=>{const k=e.target.dataset.settle;if(!k)return;pushUndo('mois soldé');if(e.target.checked)db.settled[k]=true;else delete db.settled[k];save();renderAll()});
+
+/* ---------- cotisations et impôts : estimation micro-entreprise (France) ---------- */
+const ACTS={
+  bic:{l:'Prestations de services (BIC)',rate:21.2,cfp:0.3,vl:1.7,abat:50},
+  bnc:{l:'Profession libérale (BNC)',rate:25.6,cfp:0.2,vl:2.2,abat:34}};
+/* barème de l'impôt sur le revenu (revenus 2025, imposés en 2026) : [haut de tranche, taux] */
+const IR_BAREME=[[11600,0],[29579,.11],[84577,.30],[181917,.41],[Infinity,.45]];
+const TVA_FRANCHISE=37500,ABAT_MIN=305;
+const taxCfg=()=>db.settings.micro;
+function irTranches(q){let prev=0;return IR_BAREME.map(([hi,t])=>{const part=Math.max(0,Math.min(q,hi)-prev),r={from:prev,to:hi,rate:t,part,tax:part*t};prev=hi;return r})}
+const irQuot=(rev,parts)=>irTranches(rev/parts).reduce((a,r)=>a+r.tax,0)*parts;
+/* impôt au barème attribuable à l'activité (le foyer est imposé avec ses éventuels autres revenus) */
+function irAct(ca){
+  const c=taxCfg(),ab=Math.min(ca,Math.max(ca*c.abat/100,ABAT_MIN)),base=ca-ab,foyer=base+c.other;
+  const brut=irQuot(foyer,c.parts),autres=irQuot(c.other,c.parts);
+  return{ca,ab,base,foyer,parts:c.parts,q:foyer/c.parts,tr:irTranches(foyer/c.parts),brut,autres,ir:Math.max(0,brut-autres)}}
+const irOf=ca=>{const c=taxCfg();return c.vl?ca*c.vlRate/100:irAct(ca).ir};
+function charges(ca){
+  const c=taxCfg(),soc=ca*c.rate/100,acre=soc*c.acre/100,cfp=ca*c.cfp/100;
+  return{soc,acre,cfp,urssaf:soc-acre+cfp}}
+/* taux de charges applicable à un slot (cotisations + CFP, + versement libératoire si choisi) */
+const slotRate=()=>{const c=taxCfg();return(c.rate*(1-c.acre/100)+c.cfp+(c.vl?c.vlRate:0))/100};
+const caUpTo=(y,m)=>{let s=0;for(let k=0;k<=m;k++)s+=stats(y,k).total;return s};
+function taxMonth(y,m){
+  const ca=stats(y,m).total,cum=caUpTo(y,m),prev=m>0?caUpTo(y,m-1):0,ch=charges(ca),ir=irOf(cum)-irOf(prev),netCot=ca-ch.urssaf;
+  return{ca,cum,...ch,ir,netCot,net:netCot-ir,base:irAct(cum).base}}
+function taxYear(y){
+  const c=taxCfg(),ca=stats(y,null).total,ch=charges(ca),a=irAct(ca),vlAmt=ca*c.vlRate/100,ir=c.vl?vlAmt:a.ir,netCot=ca-ch.urssaf;
+  return{ca,...ch,base:a.base,a,vlAmt,bar:a.ir,ir,cfe:c.cfe,netCot,net:netCot-ir-c.cfe}}
+/* cumul depuis janvier jusqu'au mois m (pour les relevés mensuels) */
+function taxYearTo(y,m){const ca=caUpTo(y,m),ch=charges(ca),ir=irOf(ca);return{ca,...ch,ir,net:ca-ch.urssaf-ir}}
 
 /* ---------- onglet Activité ---------- */
 $('#aYear').addEventListener('change',e=>{ui.ay=+e.target.value;renderActivite()});
@@ -1734,20 +1849,26 @@ $('#bannerBtn').addEventListener('click',()=>{if(bannerAct)bannerAct()});
 function openSettings(focus){
   const bb=brand(),s=db.settings,pf=s.profile;
   $('#s-brand').value=bb.name;pendingLogo=bb.logo;renderLogoPicker();
-  $('#s-owner').value=pf.owner||'';$('#s-doc').value=pf.docName||'';$('#s-tag').value=pf.tagline||'';$('#s-siret').value=pf.siret||'';$('#s-client').value=pf.client||'';
+  $('#s-owner').value=pf.owner||'';$('#s-doc').value=pf.docName||'';$('#s-est').checked=pf.showEstimate!==false;$('#s-tag').value=pf.tagline||'';$('#s-siret').value=pf.siret||'';$('#s-client').value=pf.client||'';
   $('#s-pt').value=s.prices.test;$('#s-pc').value=s.prices.correction;$('#s-rate').value=String(s.defaultRate).replace('.',',');$('#s-goal').value=s.goals.month||'';
-  $('#s-mrate').value=String(s.micro.rate).replace('.',',');$('#s-mceil').value=s.micro.ceiling;
+  const mi=s.micro,f=v=>String(v).replace('.',',');
+  $('#s-act').value=mi.act;$('#s-mrate').value=f(mi.rate);$('#s-cfp').value=f(mi.cfp);$('#s-acre').value=mi.acre?f(mi.acre):'';$('#s-mceil').value=mi.ceiling;
+  $('#s-vl').checked=!!mi.vl;$('#s-vlrate').value=f(mi.vlRate);$('#s-abat').value=f(mi.abat);$('#s-parts').value=f(mi.parts);$('#s-other').value=mi.other?f(mi.other):'';$('#s-cfe').value=mi.cfe?f(mi.cfe):'';
   renderBackupUi();openDlg('#dlg');
   if(focus==='auto')setTimeout(()=>$('#s-auto').scrollIntoView({block:'center'}),50)}
+$('#s-act').addEventListener('change',()=>{const a=ACTS[$('#s-act').value];if(!a)return;const f=v=>String(v).replace('.',',');$('#s-mrate').value=f(a.rate);$('#s-cfp').value=f(a.cfp);$('#s-vlrate').value=f(a.vl);$('#s-abat').value=f(a.abat)});
 $('#bSettings').addEventListener('click',()=>openSettings());
 $('#sCancel').addEventListener('click',()=>$('#dlg').close());
 $('#sSave').addEventListener('click',()=>{
   const s=db.settings,num=id=>parseNum($(id).value);
   s.brand={name:$('#s-brand').value.trim()||'Nova QA',logo:pendingLogo};
-  s.profile={owner:$('#s-owner').value.trim(),siret:$('#s-siret').value.trim(),client:$('#s-client').value.trim(),docName:$('#s-doc').value.trim()||'NOVA-QA',tagline:$('#s-tag').value.trim()||'Tests & contrôle qualité de jeux'};
+  s.profile={owner:$('#s-owner').value.trim(),siret:$('#s-siret').value.trim(),client:$('#s-client').value.trim(),docName:$('#s-doc').value.trim()||'NOVA-QA',tagline:$('#s-tag').value.trim()||'Tests & contrôle qualité de jeux',showEstimate:$('#s-est').checked};
   const a=num('#s-pt'),b=num('#s-pc'),c=num('#s-rate'),g=num('#s-goal'),mr=num('#s-mrate'),mc=num('#s-mceil');
   if(a>=0)s.prices.test=a;if(b>=0)s.prices.correction=b;if(c>0)s.defaultRate=c;
   s.goals.month=g>0?g:0;if(mr>=0&&mr<100)s.micro.rate=mr;if(mc>0)s.micro.ceiling=mc;
+  const m=s.micro,ok=(v,lo,hi)=>v>=lo&&v<=hi;s.micro.act=$('#s-act').value;
+  const cf=num('#s-cfp'),ac=num('#s-acre')||0,vr=num('#s-vlrate'),ab=num('#s-abat'),pa=num('#s-parts'),ot=num('#s-other')||0,ce=num('#s-cfe')||0;
+  if(ok(cf,0,20))m.cfp=cf;if(ok(ac,0,100))m.acre=ac;if(ok(vr,0,20))m.vlRate=vr;if(ok(ab,0,100))m.abat=ab;if(ok(pa,1,10))m.parts=pa;if(ot>=0)m.other=ot;if(ce>=0)m.cfe=ce;m.vl=$('#s-vl').checked;
   save();if(!ui.editing)$('#f-price').value=s.prices[ui.type];$('#dlg').close();renderAll();toast('Réglages enregistrés ✓')});
 $('#sReset').addEventListener('click',()=>{
   if(confirm('Effacer TOUTES les données (machines, paiements) ?\n(Un instantané est gardé : menu Sauvegarde → Instantanés automatiques.)')&&confirm('Vraiment tout effacer ?')){
@@ -1760,50 +1881,102 @@ const docBrand=()=>{const pf=db.settings.profile||{};return{name:pf.docName||'NO
 const stDate=e=>e.day?`${pad(e.day)}/${pad(e.month+1)}/${e.year}`:'—';
 const stDay=e=>e.day?JOURS[wd(e.year,e.month,e.day)]:'';
 const todayFr=()=>new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
-function stHeader(title,sub){
-  const b=brand(),d=docBrand();
-  return `<div class="st-band"><div class="st-logo">${logoSvg(b.logo,true)}</div><div class="st-co"><h1>${esc(d.name)}</h1><p>${esc(d.tag)}</p></div><div class="st-docinfo"><div class="t">${title}</div><div class="p">${sub}</div></div></div>`}
-function stMeta(period,sub){
-  const pf=db.settings.profile||{};
-  return `<div class="st-meta"><div><span>Prestataire</span><b>${esc(pf.owner||docBrand().name)}</b>${pf.siret?`<i>SIRET ${esc(pf.siret)}</i>`:''}</div><div><span>Client</span><b>${esc(pf.client||'—')}</b></div><div><span>Période</span><b>${period}</b>${sub?`<i>${sub}</i>`:''}</div><div><span>Édité le</span><b>${todayFr()}</b></div></div>`}
-const stKpis=(a,b,c,d)=>`<div class="st-kpis"><div><span>Machines</span><b>${a}</b></div><div><span>Corrections</span><b>${b}</b></div><div class="tot"><span>Total</span><b>${c}</b></div><div><span>Équivalent en $</span><b>${d}</b></div></div>`;
+const monthDays=(y,m)=>new Set(db.entries.filter(e=>e.year===y&&e.month<=m&&e.day).map(e=>e.month+'-'+e.day)).size;
 function stPrice(L){if(!L.length)return '—';const p=L.map(e=>e.price),mn=Math.min(...p),mx=Math.max(...p);return mn===mx?eur(mn):`${eur(mn)} – ${eur(mx)}`}
-function stTable(L,kind,nums){
-  const title=kind==='test'?'Machines':'Corrections',tot=L.reduce((a,e)=>a+e.price,0);
-  const rows=L.length?L.map(e=>`<tr><td class="n">${nums[e.id]}</td><td>${stDate(e)}</td><td>${stDay(e)}</td><td>${esc(e.name)}${e.note?` <i class="nt">— ${esc(e.note)}</i>`:''}</td><td class="c"><span class="${e.status==='KO'?'ko':'ok'}">${esc(e.status)}</span></td><td class="r">${eur(e.price)}</td></tr>`).join(''):'<tr><td colspan="6" class="empty">Aucune ligne ce mois-ci.</td></tr>';
-  return `<section class="st-part st-${kind}"><h2><span class="bar"></span>${title}<small>${L.length} ligne${L.length>1?'s':''} · ${eur(tot)}</small></h2>
-   <table class="st-t"><colgroup><col style="width:9%"><col style="width:16%"><col style="width:9%"><col><col style="width:10%"><col style="width:17%"></colgroup>
-   <thead><tr><th>N°</th><th>Date</th><th>Jour</th><th>${kind==='test'?'Machine':'Machine corrigée'}</th><th class="c">Statut</th><th class="r">Prix par slot</th></tr></thead><tbody>${rows}</tbody>
-   <tfoot><tr><td colspan="5">Total ${title.toLowerCase()} (${L.length})</td><td class="r">${eur(tot)}</td></tr></tfoot></table></section>`}
-function stDays(rows){
+function psTop(title,period,sub,no){
+  const b=brand(),d=docBrand();
+  return `<header class="ps-top"><div class="ps-emit"><div class="ps-logo">${logoSvg(b.logo,true)}</div><div><div class="ps-name">${esc(d.name)}</div><div class="ps-tag">${esc(d.tag)}</div></div></div>
+   <div class="ps-title"><div class="ps-h">${title}</div><div class="ps-period">${period}</div>${sub?`<div class="ps-sub">${sub}</div>`:''}${no?`<div class="ps-no">${no}</div>`:''}</div></header>`}
+function psParties(periodLabel){
+  const pf=db.settings.profile||{},d=docBrand();
+  return `<section class="ps-parties"><div><span>Prestataire</span><b>${esc(pf.owner||d.name)}</b>${pf.owner?`<i>${esc(d.name)}</i>`:''}${pf.siret?`<i>SIRET ${esc(pf.siret)}</i>`:''}</div>
+   <div><span>Client</span><b>${esc(pf.client||'—')}</b><i>Prestations de test de jeux</i></div>
+   <div><span>Période</span><b>${periodLabel}</b><i>Édité le ${todayFr()}</i></div></section>`}
+const mneg=v=>v>0.004?`− ${eur(v)}`:eur(0);
+function psTable(L,kind,nums,note=true){
+  const title=kind==='test'?'Détail des machines':'Détail des corrections',tot=L.reduce((a,e)=>a+e.price,0),est=(db.settings.profile||{}).showEstimate!==false,r=slotRate(),W=est?7:6,vl=taxCfg().vl;
+  const rows=L.length?L.map(e=>`<tr><td class="n">${nums[e.id]}</td><td>${stDate(e)}</td><td>${stDay(e)}</td><td>${esc(e.name)}${e.note?` <i class="nt">— ${esc(e.note)}</i>`:''}</td><td class="c"><span class="${e.status==='KO'?'ko':'ok'}">${esc(e.status)}</span></td><td class="r">${eur(e.price)}</td>${est?`<td class="r">${mneg(e.price*r)}</td><td class="r"><b>${eur(e.price*(1-r))}</b></td>`:''}</tr>`).join(''):`<tr><td colspan="${W+(est?1:0)}" class="empty">Aucune ligne ce mois-ci.</td></tr>`;
+  return `<section class="ps-part ps-${kind}"><h2>${title}<small>${L.length} ligne${L.length>1?'s':''}</small></h2>
+   <table class="ps-t"><colgroup><col style="width:7%"><col style="width:13%"><col style="width:7%"><col><col style="width:9%"><col style="width:${est?13:17}%">${est?'<col style="width:13%"><col style="width:13%">':''}</colgroup>
+   <thead><tr><th>N°</th><th>Date</th><th>Jour</th><th>${kind==='test'?'Machine':'Machine corrigée'}</th><th class="c">Statut</th><th class="r">${est?'Prix':'Prix par slot'}</th>${est?'<th class="r">Charges est.</th><th class="r">Net est.</th>':''}</tr></thead><tbody>${rows}</tbody>
+   <tfoot><tr><td colspan="5">Total (${L.length})</td><td class="r">${eur(tot)}</td>${est?`<td class="r">${mneg(tot*r)}</td><td class="r">${eur(tot*(1-r))}</td>`:''}</tr></tfoot></table>
+   ${est&&note?`<p class="ps-note">Charges estimées par ligne : cotisations sociales + CFP${vl?' + versement libératoire':''} (${n1(r*100)} %). L'impôt sur le revenu${vl?'':' au barème'} se calcule sur l'ensemble de l'année et n'est pas réparti par ligne.</p>`:''}</section>`}
+function psDays(rows){
   const g=new Map();rows.filter(e=>e.day).forEach(e=>{const k=isoOf(e.year,e.month,e.day);if(!g.has(k))g.set(k,{e:e,t:0,c:0,sum:0});const o=g.get(k);e.type==='test'?o.t++:o.c++;o.sum+=e.price});
   if(!g.size)return '';
-  return `<section class="st-part st-days"><h2><span class="bar"></span>Détail par jour<small>${g.size} jour${g.size>1?'s':''} travaillé${g.size>1?'s':''}</small></h2><table class="st-t"><thead><tr><th>Date</th><th>Jour</th><th class="r">Machines</th><th class="r">Corrections</th><th class="r">Montant</th></tr></thead><tbody>`+
+  return `<section class="ps-part"><h2>Détail par jour<small>${g.size} jour${g.size>1?'s':''} travaillé${g.size>1?'s':''}</small></h2><table class="ps-t"><thead><tr><th>Date</th><th>Jour</th><th class="r">Machines</th><th class="r">Corrections</th><th class="r">Montant</th></tr></thead><tbody>`+
    [...g.keys()].sort().map(k=>{const o=g.get(k);return `<tr><td>${stDate(o.e)}</td><td>${stDay(o.e)}</td><td class="r">${o.t||'—'}</td><td class="r">${o.c||'—'}</td><td class="r">${eur(o.sum)}</td></tr>`}).join('')+`</tbody></table></section>`}
+const SG=v=>v>0.004?eur(v):'';
+function psDecompte(t,o){
+  const c=taxCfg(),R=(l,b,tx,g,r,cls)=>`<tr class="${cls||''}"><td>${l}</td><td class="r">${b}</td><td class="r">${tx}</td><td class="r">${g}</td><td class="r">${r}</td></tr>`;
+  let h=R('Chiffre d\'affaires (prestations de test)','','',eur(t.ca),'','ps-g')+
+   R(`Cotisations sociales <i class="ps-sm">(${c.act==='bnc'?'BNC':'BIC services'})</i>`,eur(t.ca),`${n1(c.rate)} %`,'',SG(t.soc));
+  if(c.acre>0)h+=R('Réduction ACRE sur les cotisations',eur(t.soc),`${n1(c.acre)} %`,SG(t.acre),'');
+  h+=R('Formation professionnelle (CFP)',eur(t.ca),`${n1(c.cfp)} %`,'',SG(t.cfp))+
+   R('Total cotisations et contributions URSSAF','','','',SG(t.urssaf)||eur(0),'ps-sub')+
+   R('Net après cotisations','','',eur(t.netCot),'','ps-sub');
+  if(c.vl)h+=R('Versement libératoire de l\'impôt sur le revenu',eur(t.ca),`${n1(c.vlRate)} %`,'',eur(t.ir));
+  else h+=R(`Impôt sur le revenu <i class="ps-sm">(${o.year?'barème progressif':'provision sur cumul'})</i>`,eur(t.base),'barème','',eur(t.ir));
+  if(o.year&&c.cfe>0)h+=R('Cotisation foncière des entreprises (CFE)','','','',SG(c.cfe));
+  h+=R(`Net estimé après impôt${o.year&&c.cfe>0?' et CFE':''}`,'','',eur(t.net),'','ps-fin');
+  return `<section class="ps-part"><h2>Décompte des cotisations et de l'impôt<small>estimation</small></h2><table class="ps-t ps-dec"><colgroup><col><col style="width:13%"><col style="width:9%"><col style="width:13%"><col style="width:13%"></colgroup>
+   <thead><tr><th>Rubrique</th><th class="r">Base</th><th class="r">Taux</th><th class="r">Gain</th><th class="r">Retenue</th></tr></thead><tbody>${h}</tbody></table></section>`}
+function psIrDetail(y,t){
+  const c=taxCfg(),a=t.a,TR=a.tr.filter(r=>r.part>0||r.from===0);
+  const k=(l,v,cls)=>`<tr class="${cls||''}"><td>${l}</td><td class="r">${v}</td></tr>`;
+  const head=`<table class="ps-t ps-mini"><thead><tr><th colspan="2">Revenu imposable</th></tr></thead><tbody>${k('Chiffre d\'affaires de l\'année',eur(a.ca))}${k(`Abattement forfaitaire (${n1(c.abat)} %, minimum ${eur(ABAT_MIN)})`,`− ${eur(a.ab)}`)}${k('Revenu imposable de l\'activité',eur(a.base),'b')}${c.other>0?k('Autres revenus du foyer',eur(c.other)):''}${k('Revenu net imposable du foyer',eur(a.foyer),'b')}${k('Nombre de parts',n1(a.parts))}${k('Quotient familial (revenu ÷ parts)',eur(a.q))}</tbody></table>`;
+  const tr=`<table class="ps-t"><thead><tr><th>Tranche du quotient</th><th class="r">Taux</th><th class="r">Part du revenu</th><th class="r">Impôt</th></tr></thead><tbody>`+
+   TR.map(r=>`<tr><td>${r.to===Infinity?`au-delà de ${eur(r.from)}`:`${eur(r.from)} à ${eur(r.to)}`}</td><td class="r">${Math.round(r.rate*100)} %</td><td class="r">${eur(r.part)}</td><td class="r">${eur(r.tax)}</td></tr>`).join('')+
+   `</tbody><tfoot><tr><td colspan="3">Impôt brut du foyer (× ${n1(a.parts)} part${a.parts>1?'s':''})</td><td class="r">${eur(a.brut)}</td></tr></tfoot></table>`;
+  const alt=c.vl?`Avec le barème progressif, l'impôt serait de ${eur(t.bar)}.`:`Avec le versement libératoire (${n1(c.vlRate)} %), tu paierais ${eur(t.vlAmt)} — ${t.vlAmt<t.bar?'plus avantageux':'plus cher'} que le barème (${eur(t.bar)}).`;
+  return `<section class="ps-part"><h2>Impôt sur le revenu — détail du calcul<small>barème 2026</small></h2>${head}<div style="height:8px"></div>${tr}
+   <p class="ps-note"><b>${c.vl?'Option retenue : versement libératoire.':'Option retenue : barème progressif (déclaration de revenus).'}</b> ${alt} Estimation hors décote et plafonnement du quotient familial${c.other>0?'':', sans autres revenus dans le foyer'}.</p></section>`}
+function psUrssaf(y){
+  const rows=MONTHS.map((n,m)=>({n,m,ca:stats(y,m).total})).filter(r=>r.ca>0);if(!rows.length)return '';
+  const R=(l,ca,cls)=>{const ch=charges(ca);return `<tr class="${cls||''}"><td>${l}</td><td class="r">${eur(ca)}</td><td class="r">${eur(ch.soc-ch.acre)}</td><td class="r">${eur(ch.cfp)}</td><td class="r">${eur(ch.urssaf)}</td></tr>`};
+  let h='';for(let q=0;q<4;q++){const L=rows.filter(r=>r.m>=q*3&&r.m<q*3+3);if(!L.length)continue;h+=L.map(r=>R(r.n,r.ca)).join('')+R(`Total trimestre ${q+1}`,L.reduce((a,r)=>a+r.ca,0),'ps-q')}
+  return `<section class="ps-part"><h2>À déclarer à l'URSSAF<small>par mois et par trimestre</small></h2><table class="ps-t"><thead><tr><th>Période</th><th class="r">CA à déclarer</th><th class="r">Cotisations</th><th class="r">CFP</th><th class="r">À payer</th></tr></thead><tbody>${h}</tbody></table></section>`}
+function psRepere(y,t){
+  const c=taxCfg(),k=(l,v)=>`<tr><td>${l}</td><td class="r">${v}</td></tr>`,left=c.ceiling-t.ca,tv=TVA_FRANCHISE-t.ca;
+  return `<section class="ps-part"><h2>Repères<small>seuils à surveiller</small></h2><table class="ps-t ps-mini"><tbody>
+   ${k(`Plafond du régime micro (${eur(c.ceiling)})`,`${n1(pct(t.ca,c.ceiling))} % utilisé · ${left>=0?`reste ${eur(left)}`:`dépassé de ${eur(-left)}`}`)}
+   ${k(`Franchise de TVA, services (${eur(TVA_FRANCHISE)})`,tv>=0?`TVA non applicable · reste ${eur(tv)}`:`seuil dépassé de ${eur(-tv)} : TVA à vérifier`)}
+   ${k('Cotisation foncière des entreprises (CFE)',c.cfe>0?`${eur(c.cfe)} estimée`:'non renseignée (exonération la 1re année)')}</tbody></table></section>`}
+const psFoot=()=>`<p class="ps-foot">Relevé d'activité établi par ${esc(docBrand().name)} le ${todayFr()}. Montants en euros. Ce document n'est ni une facture ni un bulletin de paie. Les cotisations et impôts indiqués sont des estimations, sans valeur officielle.</p>`;
 function statementHtml(y,m,part='all'){
-  const s=stats(y,m),rate=rateFor(y,m),nums=numbering();
+  const s=stats(y,m),rate=rateFor(y,m),nums=numbering(),mc=db.settings.micro,pf=db.settings.profile||{};
   const rows=db.entries.filter(e=>e.year===y&&e.month===m).sort(cmpAsc),T=rows.filter(e=>e.type==='test'),C=rows.filter(e=>e.type==='correction');
-  const head=stHeader('Relevé d\'activité',`${MONTHS[m]} ${y}`)+stMeta(`${MONTHS[m]} ${y}`,`du 1er au ${dim(y,m)} ${MONTHS[m].toLowerCase()}`);
-  const recap=`<section class="st-part st-recap"><h2><span class="bar"></span>Récapitulatif</h2><table class="st-t"><thead><tr><th>Désignation</th><th class="r">Quantité</th><th class="r">Prix par slot</th><th class="r">Montant</th></tr></thead><tbody>
-    <tr><td>Machines (tests)</td><td class="r">${s.tests}</td><td class="r">${stPrice(T)}</td><td class="r">${eur(s.pt)}</td></tr>
-    <tr><td>Corrections</td><td class="r">${s.corr}</td><td class="r">${stPrice(C)}</td><td class="r">${eur(s.pc)}</td></tr></tbody>
-    <tfoot><tr><td colspan="3">Total du mois</td><td class="r">${eur(s.total)}</td></tr></tfoot></table>
-    <p class="st-conv">Équivalent en dollars (1 € = ${String(rate).replace('.',',')} $) : <b>${usd(s.total*rate)}</b></p></section>`;
-  const foot=`<p class="st-foot">Document généré le ${todayFr()} · Montants en euros · Ce relevé d'activité n'est pas une facture.</p>`;
+  const cu={tests:0,corr:0,pt:0,pc:0};for(let k=0;k<=m;k++){const q=stats(y,k);cu.tests+=q.tests;cu.corr+=q.corr;cu.pt+=q.pt;cu.pc+=q.pc}
+  const cuT=cu.pt+cu.pc,jd=monthDays(y,m);
+  const top=psTop('Relevé d\'activité',`${MONTHS[m]} ${y}`,`Du 01/${pad(m+1)}/${y} au ${pad(dim(y,m))}/${pad(m+1)}/${y}`,`Relevé n° ${y}-${pad(m+1)}`)+psParties(`${MONTHS[m]} ${y}`);
+  const lines=`<table class="ps-t ps-lines"><thead><tr><th>Désignation</th><th class="r">Quantité</th><th class="r">Prix par slot</th><th class="r">Montant</th></tr></thead><tbody>
+    <tr><td>Machines testées</td><td class="r">${s.tests}</td><td class="r">${stPrice(T)}</td><td class="r">${eur(s.pt)}</td></tr>
+    <tr><td>Corrections effectuées</td><td class="r">${s.corr}</td><td class="r">${stPrice(C)}</td><td class="r">${eur(s.pc)}</td></tr>
+    </tbody>
+    <tfoot><tr><td>Total des prestations</td><td class="r">${s.cnt}</td><td></td><td class="r">${eur(s.total)}</td></tr></tfoot></table>`;
+  const est=pf.showEstimate!==false,tx=taxMonth(y,m),txc=est?taxYearTo(y,m):null;
+  const sum=`<section class="ps-sum"><div class="ps-est"><div class="ps-box"><span>Équivalent en dollars</span><b>${usd(s.total*rate)}</b><i>1 € = ${String(rate).replace('.',',')} $</i></div></div>
+    <div class="ps-net"><span>Total à percevoir</span><b>${eur(s.total)}</b><i>${s.cnt} ligne${s.cnt>1?'s':''} · ${MONTHS[m].toLowerCase()} ${y}</i>${est?`<em>Net estimé après cotisations et impôt : <b>${eur(tx.net)}</b></em>`:''}</div></section>`;
+  const cumul=`<section class="ps-part"><h2>Cumuls depuis le 1er janvier ${y}</h2><table class="ps-t"><thead><tr><th>Cumul</th><th class="r">Quantité</th><th class="r">Montant</th></tr></thead><tbody>
+    <tr><td>Machines testées</td><td class="r">${cu.tests}</td><td class="r">${eur(cu.pt)}</td></tr><tr><td>Corrections effectuées</td><td class="r">${cu.corr}</td><td class="r">${eur(cu.pc)}</td></tr>
+    ${jd?`<tr><td>Jours travaillés (dates précises)</td><td class="r">${jd}</td><td></td></tr>`:''}${est?`<tr><td>Cotisations et contributions estimées</td><td></td><td class="r">${mneg(txc.urssaf)}</td></tr><tr><td>Impôt sur le revenu estimé (cumul)</td><td></td><td class="r">${mneg(txc.ir)}</td></tr>`:''}</tbody><tfoot><tr><td>Total cumulé${est?' (brut)':''}</td><td class="r">${cu.tests+cu.corr}</td><td class="r">${eur(cuT)}</td></tr>${est?`<tr><td>Net cumulé estimé</td><td></td><td class="r">${eur(txc.net)}</td></tr>`:''}</tfoot></table></section>`;
   let body='';
-  if(!rows.length)body='<p class="st-none">Aucune machine enregistrée pour ce mois.</p>';
-  else if(part==='recap')body=stKpis(s.tests,s.corr,eur(s.total),usd(s.total*rate))+recap+stDays(rows);
-  else if(part==='machines')body=stTable(T,'test',nums);
-  else if(part==='corrections')body=stTable(C,'correction',nums);
-  else body=stKpis(s.tests,s.corr,eur(s.total),usd(s.total*rate))+recap+stDays(rows)+stTable(T,'test',nums)+(C.length?stTable(C,'correction',nums):'');
-  return `<div class="st-doc ${part==='all'?'st-breaks':''}">${head}${body}${foot}</div>`}
+  if(!rows.length)body='<p class="ps-none">Aucune machine enregistrée pour ce mois.</p>';
+  else if(part==='recap')body=lines+(est?psDecompte(tx,{}):'')+sum+cumul+psDays(rows);
+  else if(part==='machines')body=psTable(T,'test',nums);
+  else if(part==='corrections')body=psTable(C,'correction',nums);
+  else body=lines+(est?psDecompte(tx,{}):'')+sum+cumul+psDays(rows)+psFoot()+psTable(T,'test',nums,!C.length)+(C.length?psTable(C,'correction',nums):'');
+  return `<div class="ps ${part==='all'?'ps-breaks':''}">${top}${body}${part==='all'&&rows.length?'':psFoot()}</div>`}
 function yearStatementHtml(y){
-  const tot=stats(y,null),u=usdYear(y);
+  const tot=stats(y,null),u=usdYear(y),mc=db.settings.micro,pf=db.settings.profile||{};
   const rows=MONTHS.map((n,m)=>({n,m,...stats(y,m),rate:rateFor(y,m)})).filter(r=>r.cnt>0);
-  const tbl=`<section class="st-part"><h2><span class="bar"></span>Mois par mois<small>${rows.length} mois d'activité</small></h2><table class="st-t"><thead><tr><th>Mois</th><th class="r">Machines</th><th class="r">Corrections</th><th class="r">Montant machines</th><th class="r">Montant corrections</th><th class="r">Total</th><th class="r">Équivalent $</th></tr></thead><tbody>`+
+  const tbl=`<table class="ps-t"><thead><tr><th>Mois</th><th class="r">Machines</th><th class="r">Corrections</th><th class="r">Montant machines</th><th class="r">Montant corrections</th><th class="r">Total</th><th class="r">Équivalent $</th></tr></thead><tbody>`+
    rows.map(r=>`<tr><td>${r.n}</td><td class="r">${r.tests||'—'}</td><td class="r">${r.corr||'—'}</td><td class="r">${r.pt?eur(r.pt):'—'}</td><td class="r">${r.pc?eur(r.pc):'—'}</td><td class="r"><b>${eur(r.total)}</b></td><td class="r">${usd(r.total*r.rate)}</td></tr>`).join('')+
-   `</tbody><tfoot><tr><td>Total ${y}</td><td class="r">${tot.tests}</td><td class="r">${tot.corr}</td><td class="r">${eur(tot.pt)}</td><td class="r">${eur(tot.pc)}</td><td class="r">${eur(tot.total)}</td><td class="r">${usd(u)}</td></tr></tfoot></table></section>`;
-  return `<div class="st-doc">${stHeader('Récapitulatif annuel',String(y))}${stMeta(`Année ${y}`,'')}${stKpis(tot.tests,tot.corr,eur(tot.total),usd(u))}${tbl}<p class="st-foot">Document généré le ${todayFr()} · Montants en euros, équivalents en dollars calculés avec le taux de chaque mois. Ce document n'est pas une facture.</p></div>`}
+   `</tbody><tfoot><tr><td>Total ${y}</td><td class="r">${tot.tests}</td><td class="r">${tot.corr}</td><td class="r">${eur(tot.pt)}</td><td class="r">${eur(tot.pc)}</td><td class="r">${eur(tot.total)}</td><td class="r">${usd(u)}</td></tr></tfoot></table>`;
+  const est=pf.showEstimate!==false,tx=taxYear(y);
+  const sum=`<section class="ps-sum"><div class="ps-est"><div class="ps-box"><span>Équivalent en dollars</span><b>${usd(u)}</b><i>total ${y}</i></div></div>
+    <div class="ps-net"><span>Total ${y}</span><b>${eur(tot.total)}</b><i>${tot.cnt} lignes · ${rows.length} mois d'activité</i>${est?`<em>Net estimé après cotisations, impôt${tx.cfe>0?' et CFE':''} : <b>${eur(tx.net)}</b></em>`:''}</div></section>`;
+  return `<div class="ps">${psTop('Récapitulatif annuel',String(y),`Du 01/01/${y} au 31/12/${y}`,'')}${psParties(`Année ${y}`)}<section class="ps-part"><h2>Mois par mois<small>${rows.length} mois d'activité</small></h2>${tbl}</section>${est?psDecompte(tx,{year:true}):''}${sum}${est?`<div class="ps-pg">${psUrssaf(y)}${psIrDetail(y,tx)}${psRepere(y,tx)}</div>`:''}${psFoot()}</div>`}
 function renderStatement(){
   $('#stSheet').innerHTML=ST.year?yearStatementHtml(ST.y):statementHtml(ST.y,ST.m,ST.part);
   $('#stTabs').hidden=ST.year;setSeg('stTabs',ST.part);
