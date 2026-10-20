@@ -1041,6 +1041,8 @@ function dueFor(y,m){return stats(y,m).total-receivedFor(y,m)}
 const dateLabel=e=>e.day?`${e.day} ${MABR[e.month]} ${e.year}`:`${MONTHS[e.month]} ${e.year}`;
 const dateShort=e=>e.day?`${pad(e.day)}/${pad(e.month+1)}/${e.year}`:`${MABR[e.month]} ${e.year}`;
 const years=()=>{const s=new Set(db.entries.map(e=>e.year));s.add(nowD().y);db.payments.forEach(p=>s.add(+p.month.slice(0,4)));return [...s].sort((a,b)=>a-b)};
+/* « il faut encore X » exprimé en tests ou en corrections (les deux n'ont pas le même prix) */
+const needTxt=rem=>{const pt=db.settings.prices.test||30,pc=db.settings.prices.correction||13,a=Math.max(1,Math.ceil(rem/pt)),b=Math.max(1,Math.ceil(rem/pc));return `${a} test${a>1?'s':''} (à ${eur(pt)}) ou ${b} correction${b>1?'s':''} (à ${eur(pc)})`};
 const goalMonth=()=>db.settings.goals.month||0;
 const payTracking=()=>db.payments.length>0||Object.keys(db.settled).length>0;
 
@@ -1318,8 +1320,8 @@ function renderLive(){
 function goalText(y,mi,s){
   const g=goalMonth(),p=pct(s.total,g),cur=(y===t0.y&&mi===t0.m),past=(y*12+mi)<(t0.y*12+t0.m);
   if(s.total>=g)return `Objectif atteint : ${eur(s.total-g)} au-dessus. Bravo !`;
-  if(cur){const rem=g-s.total,avg=s.cnt?s.total/s.cnt:db.settings.prices.test,need=Math.ceil(rem/avg),left=dim(y,mi)-t0.d+1,proj=t0.d>=3&&s.total>0?s.total/t0.d*dim(y,mi):0;
-    return `Il reste ${eur(rem)} : environ ${need} machine${need>1?'s':''} (à ${eur(avg)} en moyenne), soit ≈ ${n1(need/left)} par jour jusqu'au ${dim(y,mi)}.`+(proj?` À ce rythme, tu finis le mois vers ${eur(proj)}.`:'')}
+  if(cur){const rem=g-s.total,left=dim(y,mi)-t0.d+1,proj=t0.d>=3&&s.total>0?s.total/t0.d*dim(y,mi):0;
+    return `Il reste ${eur(rem)} : environ ${needTxt(rem)}, soit ${eur(rem/left)} par jour jusqu'au ${dim(y,mi)}.`+(proj?` À ce rythme, tu finis le mois vers ${eur(proj)}.`:'')}
   if(past)return `Mois terminé : ${n1(p)} % de l'objectif.`;
   return ''}
 function renderGoalBox(sel,y,mi,s){
@@ -1398,9 +1400,9 @@ function renderMachines(){
   const sub=ui.scope==='month'?(cur?'mois en cours — se met à jour à chaque ajout':future?'à venir':'mois terminé'):ui.scope==='year'?'toute l\'année':'tous les mois enregistrés';
   $('#mKpis').innerHTML=`
    <div class="kpi hero"><div class="l">${title}</div><div class="v" data-key="mh" data-num="${s.total}" data-k="eur">${eur(s.total)}</div><div class="s">${sub}</div></div>
-   <div class="kpi"><div class="l">Tests</div><div class="v">${s.tests}</div><div class="s">${eur(s.pt)}</div></div>
-   <div class="kpi"><div class="l">Corrections</div><div class="v">${s.corr}</div><div class="s">${eur(s.pc)}</div></div>
-   <div class="kpi"><div class="l">Moyenne par machine</div><div class="v">${s.n?eur(s.total/s.n):'–'}</div><div class="s">${s.n} machine${s.n>1?'s':''}</div></div>`;
+   <div class="kpi"><div class="l">Tests</div><div class="v">${s.tests}</div><div class="s">${eur(s.pt)}${s.tests?` · ${eur(s.pt/s.tests)} par test`:''}</div></div>
+   <div class="kpi"><div class="l">Corrections</div><div class="v">${s.corr}</div><div class="s">${eur(s.pc)}${s.corr?` · ${eur(s.pc/s.corr)} par correction`:''}</div></div>
+   <div class="kpi"><div class="l">Lignes notées</div><div class="v">${s.n}</div><div class="s">${s.tests} test${s.tests>1?'s':''} + ${s.corr} correction${s.corr>1?'s':''}</div></div>`;
   if(ui.scope==='month'){
     $('#mBilan').innerHTML=`<div><span class="tag ${cur?'cur':''}">${cur?'Bilan provisoire':'Bilan de fin de mois'}</span></div>
      <div><div class="muted sm">Total ${MONTHS[ui.mm].toLowerCase()} ${ui.my}</div><div class="bigv">${eur(s.total)}</div></div>
@@ -1429,7 +1431,7 @@ function journalHtml(rows,nums){
   return `<div class="stack">`+keys.map(k=>{const L=groups.get(k),tot=L.reduce((a,e)=>a+e.price,0);let head;
     if(k.startsWith('u-')){const [y,m]=k.slice(2).split('-').map(Number);head=`${MONTHS[m-1]} ${y} <span class="muted">· jour non précisé</span>`}
     else{const [y,m,d]=k.split('-').map(Number);head=`${DAYS[wd(y,m-1,d)]} ${d} ${MONTHS[m-1].toLowerCase()}${y!==ui.my||ui.scope==='all'?' '+y:''}`}
-    return `<div class="card jd"><div class="head"><h2>${head}</h2><span class="sub">${L.length} machine${L.length>1?'s':''}</span><span class="tot">${eur(tot)}</span></div><table><tbody>`+
+    return `<div class="card jd"><div class="head"><h2>${head}</h2><span class="sub">${(n=>`${n} test${n>1?'s':''}`)(L.filter(e=>e.type==='test').length)} · ${(n=>`${n} correction${n>1?'s':''}`)(L.filter(e=>e.type==='correction').length)}</span><span class="tot">${eur(tot)}</span></div><table><tbody>`+
       L.map(e=>`<tr data-id="${e.id}"><td class="tgc"><span class="tg2 ${e.type}">${e.type==='test'?'Test':'Corr.'} #${nums[e.id]}</span></td><td><span class="nm" data-open>${esc(e.name)}</span>${e.note?` <span class="nt" title="${esc(e.note)}">note</span>`:''}${e.dur?` <span class="du">${fmtDur(e.dur)}</span>`:''}</td><td><span class="chip ${e.status==='OK'?'ok':'ko'}" style="cursor:default">${esc(e.status)}</span></td><td class="pr">${eur(e.price)}</td></tr>`).join('')+`</tbody></table></div>`}).join('')+`</div>`}
 $('#mBody').addEventListener('click',e=>{
   if(e.target.id==='mMore'){ui.mLimit=1e9;renderMachines();return}
@@ -2088,9 +2090,9 @@ function goalExtras(y,mi,s){
   let streak=0;{let yy=y,mm=mi;if(!(all.get(thisK)>=g)){mm--;if(mm<0){mm=11;yy--}}for(let i=0;i<48;i++){if((all.get(ymKey(yy,mm))||0)>=g){streak++;mm--;if(mm<0){mm=11;yy--}}else break}}
   let h=`<div class="jal">${marks.map(k=>`<span class="j ${p>=k?'done':''}">${p>=k?'✓ ':''}${k} %</span>`).join('')}${streak>1?`<span class="j streak">${streak} mois d'affilée</span>`:''}</div>`;
   const lines=[];
-  if(next){const need=g*next/100-s.total;lines.push(`Prochain jalon <b>${next} %</b> (${eur(g*next/100)}) : encore ${eur(need)}, soit ≈ ${Math.max(1,Math.ceil(need/avg))} machine${Math.ceil(need/avg)>1?'s':''}.`)}
+  if(next){const need=g*next/100-s.total;lines.push(`Prochain jalon <b>${next} %</b> (${eur(g*next/100)}) : encore ${eur(need)} : ${needTxt(need)}.`)}
   if(best&&best.v>0){const k=best.k.split('-').map(Number),nm=`${MONTHS[k[1]-1].toLowerCase()} ${k[0]}`;
-    lines.push(s.total>best.v?`🏆 Nouveau record : tu dépasses ton meilleur mois (${nm}, ${eur(best.v)}) de ${eur(s.total-best.v)}.`:`Meilleur mois : ${nm} (${eur(best.v)}). Il manque ${eur(best.v-s.total)} (≈ ${Math.max(1,Math.ceil((best.v-s.total)/avg))} machine${Math.ceil((best.v-s.total)/avg)>1?'s':''}) pour le battre.`)}
+    lines.push(s.total>best.v?`🏆 Nouveau record : tu dépasses ton meilleur mois (${nm}, ${eur(best.v)}) de ${eur(s.total-best.v)}.`:`Meilleur mois : ${nm} (${eur(best.v)}). Il manque ${eur(best.v-s.total)} pour le battre : ${needTxt(best.v-s.total)}.`)}
   return {ticks:marks.slice(0,3).map(k=>`<b class="tick" style="left:${k}%"></b>`).join(''),html:h+lines.map(l=>`<div class="gtxt">${l}</div>`).join('')}}
 
 /* ---------- relevés d'activité (à imprimer ou enregistrer en PDF) ---------- */
