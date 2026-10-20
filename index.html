@@ -633,6 +633,24 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 .ps-correction{margin-top:10px}
 .ps-sum{margin-top:12px}
 .ps-foot{margin-top:12px}
+
+.bkdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;background:var(--mut);vertical-align:1px}
+.bkdot.ok{background:#37d67a;box-shadow:0 0 8px #37d67a}.bkdot.warn{background:#ffb02e}.bkdot.bad{background:#ff5d73;box-shadow:0 0 8px #ff5d73}
+.urbar{background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--ink)}.urbar.late{background:var(--ko-bg,rgba(255,93,115,.15))}
+.urbar .btn+.btn{margin-left:0}
+.dttools{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:10px 0}
+.dtgrp{display:inline-flex;gap:6px;align-items:center}.dtgrp input,.dtday{width:64px;height:34px;padding:0 8px}
+.dtall{display:flex;gap:6px;align-items:center;font-size:14px}
+.dtlist{max-height:46vh;overflow:auto;border:1px solid var(--line);border-radius:10px}
+.dtrow{display:grid;grid-template-columns:22px 70px 1fr auto 70px;gap:10px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);font-size:14px}
+.dtrow:last-child{border-bottom:0}
+.gbar{position:relative}.gbar .tick{position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.55);mix-blend-mode:overlay}
+:root[data-theme=light] .gbar .tick{background:rgba(0,0,0,.25)}
+.jal{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.jal .j{font-size:12px;padding:3px 10px;border-radius:99px;border:1px solid var(--line);color:var(--mut)}
+.jal .j.done{color:var(--ok,#37d67a);border-color:currentColor}
+.jal .j.streak{color:var(--warn);border-color:currentColor}
+.dtall{white-space:nowrap}.dtall input,.dtrow input[type=checkbox]{width:18px;height:18px;padding:0}
 </style>
 </head>
 <body>
@@ -648,7 +666,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
     </nav>
     <div class="sp"></div>
     <div class="menu">
-      <button class="btn" id="menuBtn">Sauvegarde ▾</button>
+      <button class="btn" id="menuBtn"><span class="bkdot" id="bkDot"></span>Sauvegarde ▾</button>
       <div class="pop" id="menuPop">
         <small id="lastBackup"></small>
         <small id="autoState"></small>
@@ -656,6 +674,8 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
         <button id="bImport">Restaurer une sauvegarde…</button>
         <button id="bAuto">Sauvegarde automatique…</button>
         <button id="bSnaps">Instantanés automatiques…</button>
+        <button id="bCopy">Copie de secours ailleurs…</button>
+        <button id="bXlsx">Excel de l'année (.xlsx)</button>
         <button id="bCsv">Exporter pour Excel (.csv)</button>
         <button id="bKeys">Raccourcis clavier (?)</button>
         <button id="bNew">Nouveautés</button>
@@ -669,6 +689,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 </header>
 
 <main class="wrap">
+  <div class="banner urbar" id="urssafBar"></div>
   <div class="banner" id="banner"><span id="bannerTxt"></span><button class="btn sm" id="bannerBtn">Sauvegarder maintenant</button></div>
 
   <!-- ===== SCORUX ===== -->
@@ -728,6 +749,8 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
       <div class="seg" id="mStat"><button data-v="all" aria-pressed="true">Tous statuts</button><button data-v="OK" aria-pressed="false">OK</button><button data-v="KO" aria-pressed="false">KO</button></div>
       <input type="search" id="mSearch" placeholder="Rechercher une machine…" class="srch">
       <span class="sp"></span>
+      <button class="btn" id="mDate" type="button" hidden>Dater les lignes…</button>
+      <button class="btn" id="mExcel" type="button">Excel de l'année</button>
       <button class="btn" id="mStatement">Relevé du mois (PDF)</button>
     </div>
     <div class="kpis" id="mKpis"></div>
@@ -737,7 +760,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 
   <!-- ===== PAYE ===== -->
   <section class="tab" id="tab-paye">
-    <div class="monthnav"><label class="muted" for="pYear">Année :</label><select id="pYear"></select><span class="sp"></span><button class="btn" id="pYearStatement" type="button">Récapitulatif annuel (PDF)</button></div>
+    <div class="monthnav"><label class="muted" for="pYear">Année :</label><select id="pYear"></select><span class="sp"></span><button class="btn" id="pExcel" type="button">Excel de l'année</button><button class="btn" id="pYearStatement" type="button">Récapitulatif annuel (PDF)</button></div>
     <div class="kpis kpis6" id="pKpis"></div>
     <div class="stack">
       <div class="card"><div class="head"><h2>Objectif & rythme</h2><span class="sub" id="pGoalSub"></span></div><div id="pGoal"></div></div>
@@ -753,6 +776,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
           <div class="fld"><label>&nbsp;</label><button class="btn primary" type="submit" style="height:40px">Enregistrer</button></div>
         </form>
         <div id="pPay"></div></div>
+      <div class="card"><div class="head"><h2>Déclarations URSSAF</h2><span class="sub">à faire</span></div><div id="pUrssaf"></div></div>
       <div class="card"><div class="head"><h2>Ma micro-entreprise</h2><span class="sub">estimation indicative</span></div><div id="pMicro"></div></div>
       <div class="two">
         <div class="card"><h2>Année par année</h2><div class="chartbox" id="chYears"></div></div>
@@ -805,6 +829,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
     <div class="row"><label for="s-abat">Abattement forfaitaire (%) <small>(impôt au barème)</small></label><input id="s-abat" inputmode="decimal"></div>
     <div class="row"><label for="s-parts">Parts de quotient familial</label><input id="s-parts" inputmode="decimal"></div>
     <div class="row"><label for="s-other">Autres revenus imposables du foyer (€/an)</label><input id="s-other" inputmode="decimal" placeholder="0"></div>
+    <div class="row"><label for="s-freq">Déclaration URSSAF</label><select id="s-freq"><option value="m">Tous les mois</option><option value="q">Tous les trimestres</option></select></div>
     <div class="row"><label for="s-cfe">CFE annuelle estimée (€)</label><input id="s-cfe" inputmode="decimal" placeholder="0"></div>
     <p class="muted sm">Ce sont des ordres de grandeur que je ne peux pas garantir : ils changent selon ton activité et chaque année (BIC ou BNC : regarde ton avis de situation INSEE / ton espace autoentrepreneur.urssaf.fr). L'impôt est calculé avec le barème 2026, sans décote ni plafonnement du quotient familial. Pour un chiffre fiable, vérifie sur impots.gouv.fr ou demande à un comptable.</p>
   </div>
@@ -844,6 +869,18 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
   <div class="btns"><button class="btn primary" id="keysClose" type="button">OK</button></div>
 </dialog>
 
+<dialog id="dlgDate" class="big">
+  <h2>Dater les lignes</h2>
+  <p class="muted sm">Ces lignes n'ont pas de jour précis. Mets un jour sur chacune, ou utilise les outils du haut : tout appliquer à la sélection, ou répartir sur les jours ouvrés d'une période. Rien n'est changé avant « Enregistrer ».</p>
+  <div class="dttools">
+    <label class="dtall"><input type="checkbox" id="dtAll"> Tout cocher</label><span class="muted sm" id="dtCount"></span>
+    <span class="dtgrp"><input id="dtDay" type="number" min="1" max="31" placeholder="jour" aria-label="Jour"><button class="btn sm" id="dtApply" type="button">Appliquer aux cochées</button></span>
+    <span class="dtgrp">du <input id="dtFrom" type="number" min="1" max="31" aria-label="Du jour"> au <input id="dtTo" type="number" min="1" max="31" aria-label="Au jour"><button class="btn sm" id="dtSpread" type="button">Répartir (jours ouvrés)</button></span>
+  </div>
+  <div id="dtList" class="dtlist"></div>
+  <div class="btns"><button class="btn" id="dtClose" type="button">Annuler</button><button class="btn primary" id="dtSave" type="button">Enregistrer</button></div>
+</dialog>
+
 <dialog id="dlgSnap">
   <h2>Instantanés automatiques</h2>
   <p class="muted sm">Le site garde tout seul une copie de tes données (au plus une par jour, les 6 dernières) dans Chrome. C'est un filet de sécurité en plus de tes sauvegardes.</p>
@@ -860,6 +897,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
     <div><b>Machines</b><span>Vue par mois, année ou tout, vue Journal, fiche de chaque machine, et relevé du mois à imprimer ou enregistrer en PDF.</span></div>
     <div><b>Paye</b><span>Paiements reçus et reste à recevoir, cotisations et plafond de micro-entreprise (estimation), objectif sur le graphique.</span></div>
     <div><b>Activité</b><span>Nouvel onglet : calendrier de ton activité, séries de jours, valeur de ton heure, machines les plus refaites.</span></div>
+    <div><b>Nouveau : dater, déclarer, exporter</b><span>Outil « Dater les lignes » (Machines), rappel de déclaration URSSAF (Paye), Excel de l'année, jalons d'objectif et copie de secours.</span></div>
     <div><b>Verrou et Admin</b><span>Un mot de passe protège l'accès au site, et le bouton « Admin » regroupe la sécurité, les sauvegardes et le journal d'accès.</span></div>
     <div><b>Sauvegarde</b><span>Sauvegarde automatique dans un fichier de ton choix, et instantanés quotidiens. Appuie sur <kbd>?</kbd> pour les raccourcis clavier.</span></div>
   </div>
@@ -955,7 +993,7 @@ function migrate(){
   s.prices=Object.assign({test:30,correction:13},s.prices);
   s.rates=s.rates||{};s.defaultRate=s.defaultRate||1.1252;
   s.goals=Object.assign({month:1500},s.goals);
-  s.micro=Object.assign({rate:21.2,ceiling:77700,act:'bic',cfp:0.3,acre:0,vl:false,vlRate:1.7,abat:50,parts:1,other:0,cfe:0},s.micro);
+  s.micro=Object.assign({rate:21.2,ceiling:77700,act:'bic',cfp:0.3,acre:0,vl:false,vlRate:1.7,abat:50,parts:1,other:0,cfe:0,freq:'m'},s.micro);
   s.profile=Object.assign({owner:'',siret:'',client:'Scorux',docName:'NOVA-QA',tagline:'Tests & contrôle qualité de jeux',showEstimate:true},s.profile);
   db.legacy=db.legacy||{};db.payments=Array.isArray(db.payments)?db.payments:[];db.settled=db.settled||{};db.celebrated=db.celebrated||{};
   db.entries.forEach(e=>{if(typeof e.price!=='number')e.price=parseFloat(e.price)||0;if(e.note!=null&&typeof e.note!=='string')e.note=String(e.note)});
@@ -1211,6 +1249,8 @@ function prefillForm(o){
 $('#fCancel').addEventListener('click',()=>{resetForm();$('#f-name').focus()});
 function goalCelebrate(y,m,before){
   const g=goalMonth();if(!g)return;const after=stats(y,m).total,k=ymKey(y,m);
+  const jb=pct(before,g),ja=pct(after,g),jm=[25,50,75].filter(j=>jb<j&&ja>=j).pop();
+  if(jm&&after<g)setTimeout(()=>toast(`Jalon ${jm} % atteint (${eur(g*jm/100)}) !`),600);
   if(before<g&&after>=g&&!db.celebrated[k]){db.celebrated[k]=true;save();setTimeout(()=>{toast(`Objectif de ${eur(g)} atteint pour ${MONTHS[m].toLowerCase()} !`);sky.burst()},600)}}
 $('#form').addEventListener('submit',ev=>{
   ev.preventDefault();
@@ -1271,7 +1311,8 @@ function goalText(y,mi,s){
 function renderGoalBox(sel,y,mi,s){
   const g=goalMonth(),box=$(sel);if(!g){box.innerHTML='';return}
   const p=pct(s.total,g),t=goalText(y,mi,s);
-  box.innerHTML=`<div class="goal ${s.total>=g?'ok':''}"><div class="gtop"><span>Objectif ${MONTHS[mi].toLowerCase()} : <b>${eur(g)}</b></span><b>${n1(p)} %</b></div><div class="gbar"><i style="width:${Math.min(100,p)}%"></i></div>${t?`<div class="gtxt">${esc(t)}</div>`:''}</div>`}
+  const x=goalExtras(y,mi,s);
+  box.innerHTML=`<div class="goal ${s.total>=g?'ok':''}"><div class="gtop"><span>Objectif ${MONTHS[mi].toLowerCase()} : <b>${eur(g)}</b></span><b>${n1(p)} %</b></div><div class="gbar"><i style="width:${Math.min(100,p)}%"></i>${x.ticks}</div>${t?`<div class="gtxt">${esc(t)}</div>`:''}${x.html}</div>`}
 
 /* ---------- listes ---------- */
 const sorters={new:(a,b)=>cmpAsc(b,a),old:cmpAsc,name:(a,b)=>a.name.localeCompare(b.name,'fr',{sensitivity:'base'})||cmpAsc(b,a),price:(a,b)=>b.price-a.price||cmpAsc(b,a)};
@@ -1336,7 +1377,7 @@ function renderMachines(){
   fillMonthSelects();setSeg('mScope',ui.scope);
   $('#mMonth').hidden=ui.scope!=='month';$('#mYear').hidden=ui.scope==='all';$('#mNavGrp').classList.toggle('off',ui.scope==='all');
   $('#mPrev').hidden=$('#mNext').hidden=ui.scope==='all';$('#mToday').hidden=ui.scope==='all';
-  $('#mStatement').hidden=ui.scope!=='month';$('#mStatement').textContent=`Relevé de ${MONTHS[ui.mm].toLowerCase()} (PDF)`;
+  const nUnd=undatedRows().length;$('#mDate').hidden=!nUnd;$('#mDate').textContent=`Dater les lignes (${nUnd})…`;$('#mStatement').hidden=ui.scope!=='month';$('#mStatement').textContent=`Relevé de ${MONTHS[ui.mm].toLowerCase()} (PDF)`;
   const s=scopeAgg(),rate=rateFor(ui.my,ui.mm);
   const cur=(ui.my===t0.y&&ui.mm===t0.m),future=(ui.my*12+ui.mm)>(t0.y*12+t0.m);
   const title=ui.scope==='month'?`Paye de ${MONTHS[ui.mm].toLowerCase()}`:ui.scope==='year'?`Paye ${ui.my}`:'Paye totale';
@@ -1835,14 +1876,25 @@ function renderBackupUi(){
   renderBanner()}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-fs]');if(!b)return;if(b.dataset.fs==='choose')fsChoose();if(b.dataset.fs==='reauth')fsReauth();if(b.dataset.fs==='stop')fsStop()});
 let bannerAct=null;
+function setBkDot(days){
+  const fs=!!(FS.handle&&FS.ok),fresh=days!==null&&days<=7,lvl=(fresh&&(fs||days<=3))?'ok':(fs||(days!==null&&days<=14))?'warn':'bad';
+  const d=$('#bkDot');d.className='bkdot '+lvl;d.parentElement.title=`${fs?'Fichier automatique actif · ':''}${days===null?'aucune copie de secours manuelle':days===0?'copie de secours faite aujourd\'hui':`dernière copie de secours il y a ${days} jour${days>1?'s':''}`}`}
+async function backupCopy(){
+  if(!FS.supported){exportJSON();return}
+  try{const h=await window.showSaveFilePicker({suggestedName:`nova-qa-copie-${isoToday()}.json`,types:[{description:'Sauvegarde Nova QA',accept:{'application/json':['.json']}}]});
+    const w=await h.createWritable();await w.write(JSON.stringify(db,null,1));await w.close();db.lastBackup=new Date().toISOString();save();renderBanner();renderBackupUi();toast('Copie de secours enregistrée ✓')}
+  catch(e){if(!e||e.name!=='AbortError'){exportJSON()}}}
+$('#bCopy').addEventListener('click',()=>{$('#menuPop').classList.remove('on');backupCopy()});
 function renderBanner(){
   const lb=db.lastBackup?new Date(db.lastBackup):null,days=lb?Math.floor((Date.now()-lb)/864e5):null;
   let msg='',btn='',act=null;
   if(!storageOK){msg='⚠ Ton navigateur bloque l\'enregistrement : tes données ne seront pas conservées. Fais une sauvegarde maintenant.';btn='Sauvegarder';act=exportJSON}
   else if(FS.handle&&!FS.ok){msg='La sauvegarde automatique est en pause : Chrome demande de confirmer l\'autorisation.';btn='Réactiver';act=fsReauth}
-  else if(FS.handle&&FS.ok){msg=''}
-  else if(days===null||days>14){msg=FS.supported?'Tes données sont enregistrées dans Chrome uniquement. Active la sauvegarde automatique pour ne rien risquer.':(days===null?'Pense à faire une sauvegarde (menu « Sauvegarde ») : tes données sont dans Chrome uniquement.':`Dernière sauvegarde il y a ${days} jours : pense à en refaire une.`);btn=FS.supported?'Activer':'Sauvegarder maintenant';act=FS.supported?fsChoose:exportJSON}
-  bannerAct=act;$('#bannerTxt').textContent=msg;$('#bannerBtn').textContent=btn;$('#banner').classList.toggle('on',!!msg)}
+  else if(days===null||days>7){
+    if(FS.handle&&FS.ok){msg=days===null?'Ton fichier de sauvegarde automatique est actif. Fais aussi une copie de secours ailleurs (clé USB, cloud) : c\'est le rappel de la semaine.':`Rappel de la semaine : ta dernière copie de secours date d'il y a ${days} jours. Refais-en une ailleurs (clé USB, cloud).`;btn='Copie de secours…';act=backupCopy}
+    else if(days===null||days>14){msg=FS.supported?'Tes données sont enregistrées dans Chrome uniquement. Active la sauvegarde automatique pour ne rien risquer.':(days===null?'Pense à faire une sauvegarde (menu « Sauvegarde ») : tes données sont dans Chrome uniquement.':`Dernière sauvegarde il y a ${days} jours : pense à en refaire une.`);btn=FS.supported?'Activer':'Sauvegarder maintenant';act=FS.supported?fsChoose:exportJSON}
+    else{msg=`Rappel de la semaine : dernière sauvegarde il y a ${days} jours. Fais-en une nouvelle.`;btn='Copie de secours…';act=backupCopy}}
+  setBkDot(days);bannerAct=act;$('#bannerTxt').textContent=msg;$('#bannerBtn').textContent=btn;$('#banner').classList.toggle('on',!!msg)}
 $('#bannerBtn').addEventListener('click',()=>{if(bannerAct)bannerAct()});
 
 /* ---------- réglages ---------- */
@@ -1853,7 +1905,7 @@ function openSettings(focus){
   $('#s-pt').value=s.prices.test;$('#s-pc').value=s.prices.correction;$('#s-rate').value=String(s.defaultRate).replace('.',',');$('#s-goal').value=s.goals.month||'';
   const mi=s.micro,f=v=>String(v).replace('.',',');
   $('#s-act').value=mi.act;$('#s-mrate').value=f(mi.rate);$('#s-cfp').value=f(mi.cfp);$('#s-acre').value=mi.acre?f(mi.acre):'';$('#s-mceil').value=mi.ceiling;
-  $('#s-vl').checked=!!mi.vl;$('#s-vlrate').value=f(mi.vlRate);$('#s-abat').value=f(mi.abat);$('#s-parts').value=f(mi.parts);$('#s-other').value=mi.other?f(mi.other):'';$('#s-cfe').value=mi.cfe?f(mi.cfe):'';
+  $('#s-freq').value=mi.freq||'m';$('#s-vl').checked=!!mi.vl;$('#s-vlrate').value=f(mi.vlRate);$('#s-abat').value=f(mi.abat);$('#s-parts').value=f(mi.parts);$('#s-other').value=mi.other?f(mi.other):'';$('#s-cfe').value=mi.cfe?f(mi.cfe):'';
   renderBackupUi();openDlg('#dlg');
   if(focus==='auto')setTimeout(()=>$('#s-auto').scrollIntoView({block:'center'}),50)}
 $('#s-act').addEventListener('change',()=>{const a=ACTS[$('#s-act').value];if(!a)return;const f=v=>String(v).replace('.',',');$('#s-mrate').value=f(a.rate);$('#s-cfp').value=f(a.cfp);$('#s-vlrate').value=f(a.vl);$('#s-abat').value=f(a.abat)});
@@ -1868,11 +1920,164 @@ $('#sSave').addEventListener('click',()=>{
   s.goals.month=g>0?g:0;if(mr>=0&&mr<100)s.micro.rate=mr;if(mc>0)s.micro.ceiling=mc;
   const m=s.micro,ok=(v,lo,hi)=>v>=lo&&v<=hi;s.micro.act=$('#s-act').value;
   const cf=num('#s-cfp'),ac=num('#s-acre')||0,vr=num('#s-vlrate'),ab=num('#s-abat'),pa=num('#s-parts'),ot=num('#s-other')||0,ce=num('#s-cfe')||0;
-  if(ok(cf,0,20))m.cfp=cf;if(ok(ac,0,100))m.acre=ac;if(ok(vr,0,20))m.vlRate=vr;if(ok(ab,0,100))m.abat=ab;if(ok(pa,1,10))m.parts=pa;if(ot>=0)m.other=ot;if(ce>=0)m.cfe=ce;m.vl=$('#s-vl').checked;
+  if(ok(cf,0,20))m.cfp=cf;if(ok(ac,0,100))m.acre=ac;if(ok(vr,0,20))m.vlRate=vr;if(ok(ab,0,100))m.abat=ab;if(ok(pa,1,10))m.parts=pa;if(ot>=0)m.other=ot;if(ce>=0)m.cfe=ce;m.vl=$('#s-vl').checked;m.freq=$('#s-freq').value==='q'?'q':'m';
   save();if(!ui.editing)$('#f-price').value=s.prices[ui.type];$('#dlg').close();renderAll();toast('Réglages enregistrés ✓')});
 $('#sReset').addEventListener('click',()=>{
   if(confirm('Effacer TOUTES les données (machines, paiements) ?\n(Un instantané est gardé : menu Sauvegarde → Instantanés automatiques.)')&&confirm('Vraiment tout effacer ?')){
     keepSnapshotOfCurrent();db.entries=[];db.payments=[];db.settled={};db.celebrated={};db.legacy={};db.settings.rates={};db.nextId=1;db.nextPay=1;undoStack.length=0;save();$('#dlg').close();renderAll();toast('Données effacées')}});
+
+/* ---------- 1. dater les lignes sans jour ---------- */
+const DT={rows:[]};
+const undatedRows=()=>db.entries.filter(e=>!e.day&&inScope(e)).sort(cmpAsc);
+function openDate(){
+  const L=undatedRows();if(!L.length){toast('Toutes les lignes affichées ont déjà une date');return}
+  DT.rows=L.map(e=>({id:e.id,sel:true,day:''}));
+  const cur=ui.my===t0.y&&ui.mm===t0.m;$('#dtFrom').value=1;$('#dtTo').value=cur?t0.d:dim(ui.my,ui.mm);$('#dtDay').value='';
+  renderDate();openDlg('#dlgDate')}
+function renderDate(){
+  const nums=numbering(),n=DT.rows.filter(r=>r.sel).length;
+  $('#dtAll').checked=n===DT.rows.length;
+  $('#dtList').innerHTML=DT.rows.map(r=>{const e=entryById(r.id);return `<label class="dtrow"><input type="checkbox" data-c="${r.id}"${r.sel?' checked':''}><span class="tg2 ${e.type}">${e.type==='test'?'Test':'Corr.'} #${nums[e.id]}</span><span class="nm">${esc(e.name)}</span><span class="muted sm">${MONTHS[e.month].toLowerCase()} ${e.year}</span><input class="dtday" type="number" min="1" max="${dim(e.year,e.month)}" data-d="${r.id}" value="${r.day}" placeholder="jour" aria-label="Jour"></label>`}).join('');
+  $('#dtCount').textContent=`${n} ligne${n>1?'s':''} cochée${n>1?'s':''} sur ${DT.rows.length}`}
+function dtSetDay(r,v){const e=entryById(r.id),d=Math.round(+v);r.day=d>=1&&d<=dim(e.year,e.month)?d:''}
+$('#dtList').addEventListener('change',e=>{
+  const c=e.target.closest('[data-c]'),d=e.target.closest('[data-d]');
+  if(c){DT.rows.find(r=>r.id===+c.dataset.c).sel=c.checked;renderDate()}
+  if(d){const r=DT.rows.find(r=>r.id===+d.dataset.d);dtSetDay(r,d.value);d.value=r.day}});
+$('#dtAll').addEventListener('change',e=>{DT.rows.forEach(r=>r.sel=e.target.checked);renderDate()});
+$('#dtApply').addEventListener('click',()=>{
+  const v=+$('#dtDay').value;if(!(v>=1&&v<=31)){toast('Écris un jour entre 1 et 31');return}
+  DT.rows.filter(r=>r.sel).forEach(r=>dtSetDay(r,v));renderDate()});
+$('#dtSpread').addEventListener('click',()=>{
+  const a=Math.round(+$('#dtFrom').value),b=Math.round(+$('#dtTo').value);if(!(a>=1&&b>=a)){toast('Indique un début et une fin de période');return}
+  const groups=new Map();DT.rows.filter(r=>r.sel).forEach(r=>{const e=entryById(r.id),k=ymKey(e.year,e.month);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(r)});
+  groups.forEach(L=>{const e0=entryById(L[0].id),last=Math.min(b,dim(e0.year,e0.month));let days=[];
+    for(let d=a;d<=last;d++)if(wd(e0.year,e0.month,d)<5)days.push(d);
+    if(!days.length)for(let d=a;d<=last;d++)days.push(d);
+    if(!days.length)return;L.forEach((r,i)=>dtSetDay(r,days[Math.min(days.length-1,Math.floor(i*days.length/L.length))]))});
+  renderDate()});
+$('#dtSave').addEventListener('click',()=>{
+  const L=DT.rows.filter(r=>r.day);if(!L.length){toast('Aucun jour renseigné');return}
+  pushUndo('dater des lignes');L.forEach(r=>{entryById(r.id).day=r.day});save();$('#dlgDate').close();renderAll();
+  toast(`${L.length} ligne${L.length>1?'s':''} datée${L.length>1?'s':''} ✓`,{label:'Annuler',fn:undo})});
+$('#dtClose').addEventListener('click',()=>$('#dlgDate').close());
+$('#mDate').addEventListener('click',openDate);
+
+/* ---------- 2. rappel de déclaration URSSAF ---------- */
+const MOIS_COURT=MONTHS;
+function urssafPeriods(){
+  const c=taxCfg(),q=c.freq==='q',s=db.settings,now=t0.y*12+t0.m,idx=q?Math.floor(now/3):now;
+  if(s.urssafFrom==null){s.urssafFrom=idx-1;save()}          // les périodes plus anciennes sont considérées comme déjà déclarées
+  const out=[];
+  for(let i=Math.max(s.urssafFrom,idx-24);i<=idx;i++){
+    const end=q?i*3+2:i,endY=Math.floor(end/12),endM=end%12,dl=new Date(endY,endM+2,0);   // dernier jour du mois suivant la fin de période
+    const first=q?i*3:i;let ca=0;for(let k=first;k<=end;k++)ca+=stats(Math.floor(k/12),k%12).total;
+    const key=q?`${Math.floor(first/12)}-T${first%12/3+1}`:`${Math.floor(first/12)}-${pad(first%12+1)}`;
+    const label=q?`${first%12/3+1}ᵉ trimestre ${Math.floor(first/12)}`:`${MONTHS[first%12].toLowerCase()} ${Math.floor(first/12)}`;
+    out.push({i,key,label,ended:end<now,ca,dl,days:Math.ceil((dl-new Date(t0.y,t0.m,t0.d))/864e5),done:!!(s.declared||{})[key],cot:charges(ca).urssaf,vl:taxCfg().vl?ca*taxCfg().vlRate/100:0})}
+  return out}
+const urssafPending=()=>urssafPeriods().filter(p=>p.ended&&!p.done);
+let urssafHide=false;
+const frDate=d=>`${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+const dueTxt=p=>p.days<0?`en retard de ${-p.days} jour${p.days<-1?'s':''}`:p.days===0?"c'est aujourd'hui":`dans ${p.days} jour${p.days>1?'s':''}`;
+function renderUrssaf(){
+  const L=urssafPending(),bar=$('#urssafBar'),p=L[0];
+  if(p&&!urssafHide&&p.days<=14){
+    bar.innerHTML=`<span><b>Déclaration URSSAF · ${esc(p.label)}</b> : ${p.ca>0?`${eur(p.ca)} de chiffre d'affaires à déclarer, cotisations ≈ ${eur(p.cot)}`:'déclaration à zéro à faire'}, avant le <b>${frDate(p.dl)}</b> (${dueTxt(p)}).</span><button class="btn sm" id="urDone" type="button">C'est fait</button><button class="btn sm" id="urLater" type="button">Plus tard</button>`;
+    bar.classList.add('on');bar.classList.toggle('late',p.days<0)}
+  else bar.classList.remove('on');
+  const box=$('#pUrssaf');if(!box)return;
+  box.innerHTML=(L.length?`<table class="paytable"><thead><tr><th>Période</th><th class="r">À déclarer</th><th class="r">Cotisations</th>${taxCfg().vl?'<th class="r">Impôt (VL)</th>':''}<th>Avant le</th><th></th></tr></thead><tbody>`+
+    L.slice(0,4).map(r=>`<tr><td>${esc(r.label)}</td><td class="pr">${eur(r.ca)}</td><td class="pr">${eur(r.cot)}</td>${taxCfg().vl?`<td class="pr">${eur(r.vl)}</td>`:''}<td>${frDate(r.dl)} <span class="chip ${r.days<0?'ko':r.days<=14?'warn':'ok'}" style="cursor:default">${dueTxt(r)}</span></td><td><button class="btn sm" data-ur="${r.key}" type="button">Marquer déclaré</button></td></tr>`).join('')+`</tbody></table>`:`<p class="muted" style="margin:0">Tout est à jour : aucune déclaration en attente.</p>`)+
+    `<p class="muted sm" style="margin:12px 0 0">Rythme de déclaration : ${taxCfg().freq==='q'?'trimestriel':'mensuel'} (à changer dans Réglages). Déclare même si tu n'as rien gagné (déclaration à zéro). Les montants sont des estimations : le vrai calcul est fait sur autoentrepreneur.urssaf.fr.</p>`}
+function markDeclared(key){const s=db.settings;s.declared=s.declared||{};s.declared[key]=true;save();urssafHide=false;renderAll();toast('Déclaration marquée comme faite ✓')}
+document.addEventListener('click',e=>{
+  if(e.target.id==='urDone'){const p=urssafPending()[0];if(p)markDeclared(p.key)}
+  if(e.target.id==='urLater'){urssafHide=true;renderUrssaf()}
+  const b=e.target.closest('[data-ur]');if(b)markDeclared(b.dataset.ur)});
+
+/* ---------- 5. export Excel (.xlsx) fait maison ---------- */
+const CRC=(()=>{const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+const crc32=b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
+function zipStore(files){
+  const enc=new TextEncoder(),parts=[],cd=[];let off=0;const d=new Date(),dt=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate(),tm=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1);
+  const u16=v=>[v&255,(v>>8)&255],u32=v=>[v&255,(v>>8)&255,(v>>16)&255,(v>>>24)&255];
+  for(const f of files){const name=enc.encode(f.name),data=enc.encode(f.data),crc=crc32(data);
+    const lh=new Uint8Array([...u32(0x04034b50),...u16(20),...u16(0x0800),...u16(0),...u16(tm),...u16(dt),...u32(crc),...u32(data.length),...u32(data.length),...u16(name.length),...u16(0),...name]);
+    parts.push(lh,data);
+    cd.push(new Uint8Array([...u32(0x02014b50),...u16(20),...u16(20),...u16(0x0800),...u16(0),...u16(tm),...u16(dt),...u32(crc),...u32(data.length),...u32(data.length),...u16(name.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(off),...name]));
+    off+=lh.length+data.length}
+  const cdLen=cd.reduce((a,b)=>a+b.length,0);
+  const end=new Uint8Array([...u32(0x06054b50),...u16(0),...u16(0),...u16(files.length),...u16(files.length),...u32(cdLen),...u32(off),...u16(0)]);
+  return new Blob([...parts,...cd,end],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})}
+const xe=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'');
+const colL=i=>{let s='';i++;while(i>0){const m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=Math.floor((i-1)/26)}return s};
+/* cellule : {v, f?, s?}  (s = index de style) */
+function sheetXml(rows,widths,o={}){
+  const body=rows.map((r,ri)=>`<row r="${ri+1}"${r.h?` ht="${r.h}" customHeight="1"`:''}>`+r.c.map((c,ci)=>{
+    if(c==null||c.v==null&&!c.f)return c&&c.s!=null?`<c r="${colL(ci)}${ri+1}" s="${c.s}"/>`:'';
+    const ref=`${colL(ci)}${ri+1}`,s=c.s!=null?` s="${c.s}"`:'';
+    if(typeof c.v==='number'||c.f)return `<c r="${ref}"${s}>${c.f?`<f>${xe(c.f)}</f>`:''}<v>${+c.v||0}</v></c>`;
+    return `<c r="${ref}"${s} t="inlineStr"><is><t xml:space="preserve">${xe(c.v)}</t></is></c>`}).join('')+`</row>`).join('');
+  const last=colL(Math.max(...rows.map(r=>r.c.length))-1);
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0" showGridLines="0">${o.freeze?`<pane ySplit="${o.freeze}" topLeftCell="A${o.freeze+1}" activePane="bottomLeft" state="frozen"/>`:''}</sheetView></sheetViews><cols>${widths.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('')}</cols><sheetData>${body}</sheetData>${o.filter?`<autoFilter ref="A${o.filter}:${last}${rows.length-(o.footer||0)}"/>`:''}<pageMargins left="0.5" right="0.5" top="0.6" bottom="0.6" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="${o.land?'landscape':'portrait'}" fitToWidth="1" fitToHeight="0"/></worksheet>`}
+const XSTYLES=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="2"><numFmt numFmtId="164" formatCode="#,##0.00&quot; €&quot;"/><numFmt numFmtId="165" formatCode="#,##0.00&quot; $&quot;"/></numFmts>
+<fonts count="4"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font><font><b/><sz val="16"/><color rgb="FF1F2A44"/><name val="Calibri"/></font></fonts>
+<fills count="4"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF1F2A44"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFEEF1F5"/></patternFill></fill></fills>
+<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFC9D0DB"/></left><right style="thin"><color rgb="FFC9D0DB"/></right><top style="thin"><color rgb="FFC9D0DB"/></top><bottom style="thin"><color rgb="FFC9D0DB"/></bottom><diagonal/></border></borders>
+<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
+<cellXfs count="10"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
+<xf numFmtId="0" fontId="2" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf>
+<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"/>
+<xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/>
+<xf numFmtId="164" fontId="1" fillId="3" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"/>
+<xf numFmtId="0" fontId="1" fillId="3" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1"/>
+<xf numFmtId="0" fontId="3" fillId="0" borderId="0" xfId="0" applyFont="1"/>
+<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="center"/></xf>
+<xf numFmtId="165" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/>
+<xf numFmtId="165" fontId="1" fillId="3" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
+function exportXlsx(y){
+  const H=(...a)=>({h:30,c:a.map(v=>({v,s:1}))}),T=(v,s=2)=>({v,s}),N=(v,s=3,f)=>({v,s,f});
+  const rate=slotRate(),rows1=[{h:26,c:[{v:`${docBrand().name} — récapitulatif ${y}`,s:6}]},{c:[]},
+    H('Mois','Machines','Corrections','Montant machines','Montant corrections','Total (€)','Cotisations + CFP','Net après cotisations','Impôt estimé','Net estimé','Équivalent $')];
+  const first=rows1.length+1;let any=0;
+  MONTHS.forEach((n,m)=>{const s=stats(y,m),tx=taxMonth(y,m),r=first+m;any+=s.cnt;
+    rows1.push({c:[T(n),T(s.tests,7),T(s.corr,7),N(s.pt),N(s.pc),N(s.total,3,`D${r}+E${r}`),N(tx.urssaf),N(tx.netCot,3,`F${r}-G${r}`),N(tx.ir),N(tx.net,3,`H${r}-I${r}`),N(s.total*rateFor(y,m),8)]})});
+  const last=first+11,sm=c=>`SUM(${c}${first}:${c}${last})`,ty=taxYear(y);
+  rows1.push({c:[T('Total '+y,5),{v:stats(y,null).tests,f:sm('B'),s:5},{v:stats(y,null).corr,f:sm('C'),s:5},N(stats(y,null).pt,4,sm('D')),N(stats(y,null).pc,4,sm('E')),N(ty.ca,4,sm('F')),N(ty.urssaf,4,sm('G')),N(ty.netCot,4,sm('H')),N(ty.ir,4,sm('I')),N(ty.ir!==undefined?ty.netCot-ty.ir:0,4,sm('J')),N(usdYear(y),9,sm('K'))]});
+  rows1.push({c:[]},{c:[{v:`Estimation indicative (cotisations ${n1(taxCfg().rate)} %, CFP ${n1(taxCfg().cfp)} %). L'impôt d'un mois est la part de l'impôt de l'année qui correspond à ce mois. Sans valeur officielle.`}]});
+  const nums=numbering(),detail=type=>{
+    const L=db.entries.filter(e=>e.year===y&&e.type===type).sort(cmpAsc),rr=[{h:26,c:[{v:`${type==='test'?'Machines testées':'Corrections effectuées'} — ${y}`,s:6}]},{c:[]},H('Mois','N°','Date','Jour','Machine','Statut','Prix','Charges est.','Net est.','Note')];
+    L.forEach((e,i)=>{const r=4+i;rr.push({c:[T(MONTHS[e.month]),T(nums[e.id],7),T(e.day?`${pad(e.day)}/${pad(e.month+1)}/${e.year}`:'—',7),T(e.day?JOURS[wd(e.year,e.month,e.day)]:'',7),T(e.name),T(e.status,7),N(e.price),N(e.price*rate,3,`G${r}*${rate}`),N(e.price*(1-rate),3,`G${r}-H${r}`),T(e.note||'')]})});
+    const a=4,b=3+L.length;rr.push({c:[T(`Total (${L.length})`,5),T('',5),T('',5),T('',5),T('',5),T('',5),N(L.reduce((s,e)=>s+e.price,0),4,L.length?`SUM(G${a}:G${b})`:null),N(L.reduce((s,e)=>s+e.price*rate,0),4,L.length?`SUM(H${a}:H${b})`:null),N(L.reduce((s,e)=>s+e.price*(1-rate),0),4,L.length?`SUM(I${a}:I${b})`:null),T('',5)]});
+    return rr};
+  const sheets=[{n:`Récap ${y}`,x:sheetXml(rows1,[16,11,12,17,19,14,17,19,14,14,15],{freeze:3,land:true})},
+    {n:'Machines',x:sheetXml(detail('test'),[13,6,12,7,38,8,12,13,12,34],{freeze:3,filter:3,footer:1,land:true})},
+    {n:'Corrections',x:sheetXml(detail('correction'),[13,6,12,7,38,8,12,13,12,34],{freeze:3,filter:3,footer:1,land:true})}];
+  const files=[{name:'[Content_Types].xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>${sheets.map((s,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>`},
+   {name:'_rels/.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`},
+   {name:'xl/workbook.xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sheets.map((s,i)=>`<sheet name="${xe(s.n)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')}</sheets><calcPr fullCalcOnLoad="1"/></workbook>`},
+   {name:'xl/_rels/workbook.xml.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((s,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`},
+   {name:'xl/styles.xml',data:XSTYLES},...sheets.map((s,i)=>({name:`xl/worksheets/sheet${i+1}.xml`,data:s.x}))];
+  const blob=zipStore(files),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${docBrand().name}-releves-${y}.xlsx`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  toast(`Excel ${y} téléchargé ✓`)}
+$('#mExcel').addEventListener('click',()=>exportXlsx(ui.my));
+$('#pExcel').addEventListener('click',()=>exportXlsx(ui.py));
+$('#bXlsx').addEventListener('click',()=>{$('#menuPop').classList.remove('on');exportXlsx(ui.scope==='all'||!ui.my?t0.y:ui.my)});
+
+/* ---------- 8. jalons de l'objectif ---------- */
+function monthTotals(){const m=new Map();for(const e of db.entries){const k=ymKey(e.year,e.month);m.set(k,(m.get(k)||0)+e.price)}return m}
+function goalExtras(y,mi,s){
+  const g=goalMonth(),p=pct(s.total,g),cur=(y===t0.y&&mi===t0.m),avg=s.cnt?s.total/s.cnt:db.settings.prices.test||30;
+  const marks=[25,50,75,100],next=marks.find(k=>p<k),all=monthTotals(),thisK=ymKey(y,mi);
+  let best=null;all.forEach((v,k)=>{if(k!==thisK&&k<=thisK&&(!best||v>best.v))best={k,v}});
+  let streak=0;{let yy=y,mm=mi;if(!(all.get(thisK)>=g)){mm--;if(mm<0){mm=11;yy--}}for(let i=0;i<48;i++){if((all.get(ymKey(yy,mm))||0)>=g){streak++;mm--;if(mm<0){mm=11;yy--}}else break}}
+  let h=`<div class="jal">${marks.map(k=>`<span class="j ${p>=k?'done':''}">${p>=k?'✓ ':''}${k} %</span>`).join('')}${streak>1?`<span class="j streak">${streak} mois d'affilée</span>`:''}</div>`;
+  const lines=[];
+  if(next){const need=g*next/100-s.total;lines.push(`Prochain jalon <b>${next} %</b> (${eur(g*next/100)}) : encore ${eur(need)}, soit ≈ ${Math.max(1,Math.ceil(need/avg))} machine${Math.ceil(need/avg)>1?'s':''}.`)}
+  if(best&&best.v>0){const k=best.k.split('-').map(Number),nm=`${MONTHS[k[1]-1].toLowerCase()} ${k[0]}`;
+    lines.push(s.total>best.v?`🏆 Nouveau record : tu dépasses ton meilleur mois (${nm}, ${eur(best.v)}) de ${eur(s.total-best.v)}.`:`Meilleur mois : ${nm} (${eur(best.v)}). Il manque ${eur(best.v-s.total)} (≈ ${Math.max(1,Math.ceil((best.v-s.total)/avg))} machine${Math.ceil((best.v-s.total)/avg)>1?'s':''}) pour le battre.`)}
+  return {ticks:marks.slice(0,3).map(k=>`<b class="tick" style="left:${k}%"></b>`).join(''),html:h+lines.map(l=>`<div class="gtxt">${l}</div>`).join('')}}
 
 /* ---------- relevés d'activité (à imprimer ou enregistrer en PDF) ---------- */
 const JOURS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
@@ -1992,7 +2197,7 @@ $('#stPrint').addEventListener('click',()=>{
   setTimeout(()=>{window.print();setTimeout(()=>{if(document.body.classList.contains('pst'))done()},500)},50)});
 
 /* ---------- init ---------- */
-function renderAll(){renderLive();renderLists();renderMachines();renderPaye();renderActivite();renderBanner();renderBrand();renderRoblox();renderBadges();animateNumbers()}
+function renderAll(){renderLive();renderLists();renderMachines();renderPaye();renderActivite();renderBanner();renderUrssaf();renderBrand();renderRoblox();renderBadges();animateNumbers()}
 $('#f-date').value=isoToday();$('#f-price').value=db.settings.prices.test;
 appReady=true;save();snapMaybe();tmRender();
 {const h=(location.hash||'').slice(1);showTab(TABS.includes(h)?h:'scorux')}
@@ -2001,7 +2206,7 @@ $('#bNew').addEventListener('click',()=>{$('#menuPop').classList.remove('on');op
 let booted=false;
 function boot(){
   if(booted)return;booted=true;renderAll();calcInit();fsInit();
-  if(db.settings.seen!==3){db.settings.seen=3;save();setTimeout(()=>{if(!document.querySelector('dialog[open]'))openDlg('#dlgNew')},700)}}
+  if(db.settings.seen!==4){db.settings.seen=4;save();setTimeout(()=>{if(!document.querySelector('dialog[open]'))openDlg('#dlgNew')},700)}}
 if(lockNeeded())showLock();else boot();
 
 })();
