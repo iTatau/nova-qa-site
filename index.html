@@ -735,7 +735,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
       <select id="fMonth"></select>
       <div class="seg" id="fStatus"><button data-v="all" aria-pressed="true">Tous</button><button data-v="OK" aria-pressed="false">OK</button><button data-v="KO" aria-pressed="false">KO</button></div>
       <select id="fSort" aria-label="Tri"><option value="new">Plus récents</option><option value="old">Plus anciens</option><option value="name">Nom A → Z</option><option value="price">Paye décroissante</option></select>
-      <input type="search" name="rech-fSearch" autocomplete="off" id="fSearch" placeholder="Rechercher une machine…" style="min-width:220px">
+      <input type="search" name="rech-fSearch" autocomplete="off" id="fSearch" readonly data-lpignore="true" data-1p-ignore data-form-type="other" placeholder="Rechercher une machine…" style="min-width:220px">
     </div>
 
     <div class="two">
@@ -760,7 +760,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
     <div class="monthnav" style="margin-top:-6px">
       <div class="seg" id="mType"><button data-v="all" aria-pressed="true">Tout</button><button data-v="test" aria-pressed="false">Tests</button><button data-v="correction" aria-pressed="false">Corrections</button></div>
       <div class="seg" id="mStat"><button data-v="all" aria-pressed="true">Tous statuts</button><button data-v="OK" aria-pressed="false">OK</button><button data-v="KO" aria-pressed="false">KO</button></div>
-      <input type="search" name="rech-mSearch" autocomplete="off" id="mSearch" placeholder="Rechercher une machine…" class="srch">
+      <input type="search" name="rech-mSearch" autocomplete="off" id="mSearch" readonly data-lpignore="true" data-1p-ignore data-form-type="other" placeholder="Rechercher une machine…" class="srch">
       <span class="sp"></span>
       <button class="btn" id="mDate" type="button" hidden>Dater les lignes…</button>
       <button class="btn" id="mExcel" type="button">Excel de l'année</button>
@@ -936,7 +936,6 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
     <div class="lk-name" id="lockName">Nova QA</div>
     <h1 id="lockTitle">Site verrouillé</h1>
     <p id="lockSub" class="muted sm"></p>
-    <input type="text" name="username" autocomplete="username" value="nova-qa" class="lk-hidden" tabindex="-1" aria-hidden="true">
     <label class="lab" for="lockPw">Mot de passe</label>
     <input id="lockPw" name="password" type="password" autocomplete="current-password" required>
     <div id="lockConfirmRow" hidden><label class="lab" for="lockPw2">Confirme le mot de passe</label><input id="lockPw2" type="password" autocomplete="new-password"></div>
@@ -2218,12 +2217,14 @@ appReady=true;save();snapMaybe();tmRender();
 {const h=(location.hash||'').slice(1);showTab(TABS.includes(h)?h:'scorux')}
 $('#newClose').addEventListener('click',()=>$('#dlgNew').close());
 $('#bNew').addEventListener('click',()=>{$('#menuPop').classList.remove('on');openDlg('#dlgNew')});
-/* le gestionnaire de mots de passe de Chrome peut glisser « nova-qa » dans une barre de recherche : on la vide tant que tu ne l'as pas utilisée */
-function clearSearch(){['#fSearch','#mSearch'].forEach(q=>{const el=$(q);if(el&&el.value&&document.activeElement!==el&&!el.dataset.typed){el.value='';el.dispatchEvent(new Event('input'))}})}
-['#fSearch','#mSearch'].forEach(q=>{const el=$(q);if(el)el.addEventListener('keydown',()=>{el.dataset.typed='1'})});
+/* Chrome peut glisser « nova-qa » (identifiant mémorisé) dans une barre de recherche : champ en lecture seule jusqu'au clic, et nettoyage */
+const SRCH=['#fSearch','#mSearch'];
+function clearSearch(){SRCH.forEach(q=>{const el=$(q);if(el&&/^nova-?qa$/i.test(el.value.trim())&&document.activeElement!==el){el.value='';el.dispatchEvent(new Event('input'))}})}
+SRCH.forEach(q=>{const el=$(q);if(!el)return;const open=()=>el.removeAttribute('readonly');el.addEventListener('focus',open);el.addEventListener('pointerdown',open);el.addEventListener('touchstart',open)});
+setInterval(clearSearch,700);
 let booted=false;
 function boot(){
-  if(booted)return;booted=true;renderAll();clearSearch();for(let i=1;i<=10;i++)setTimeout(clearSearch,i*500);calcInit();fsInit();
+  if(booted)return;booted=true;renderAll();clearSearch();calcInit();fsInit();
   if(db.settings.seen!==4){db.settings.seen=4;save();setTimeout(()=>{if(!document.querySelector('dialog[open]'))openDlg('#dlgNew')},700)}}
 if(lockNeeded())showLock();else boot();
 
