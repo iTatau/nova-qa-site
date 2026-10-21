@@ -695,6 +695,10 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 .mt-audh{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;margin-bottom:6px}
 .mt-trk{display:grid;grid-template-columns:22px minmax(80px,200px) 1fr 52px;gap:12px;align-items:center;padding:5px 0;font-size:14px}
 .mt-trk input[type=checkbox]{width:18px;height:18px;padding:0}.mt-trk input[type=range]{width:100%;padding:0;height:auto}
+.mt-trk{grid-template-columns:22px minmax(110px,220px) 1fr 52px minmax(90px,150px)}
+.mt-trk .nm small{display:block;font-size:11px;color:var(--mut)}
+.mt-lv{font-size:12px;color:var(--mut);text-align:right}.mt-lv.low{color:var(--ko);font-weight:700}
+@media (max-width:760px){.mt-trk{grid-template-columns:22px 1fr 52px}.mt-trk input[type=range]{grid-column:2/4}.mt-lv{grid-column:2/4;text-align:left}}
 </style>
 </head>
 <body>
@@ -2066,7 +2070,7 @@ async function mtMount(ff,file,ext){
   try{await ff.createDir('/src')}catch(e){}
   try{await ff.unmount('/src')}catch(e){}
   await ff.mount('WORKERFS',{files:[new File([file],'in.'+ext)]},'/src');return '/src/in.'+ext}
-/* lit les pistes audio (jeu, Discord, voix…) d'une vidéo */
+/* lit les flux audio d'une vidéo, puis les « pistes » à régler : un flux = une piste, sauf un flux multicanal sans nom (6 canaux…), coupé en paires stéréo (jeu / Discord / voix) */
 async function mtProbe(ff,file){
   if(MT_INFO.has(file))return MT_INFO.get(file);
   const ext=mtExt(file.name),logs=[],h=({message})=>logs.push(message);ff.on('log',h);
@@ -2074,13 +2078,20 @@ async function mtProbe(ff,file){
   finally{ff.off('log',h);try{await ff.unmount('/src')}catch(e){}}
   const audio=[];let cur=null;
   for(const l of logs){
-    const m=l.match(/Stream #0:(\d+)(?:\(([^)]*)\))?.*?: (Audio|Video|Subtitle|Data)/);
-    if(m){cur=m[3]==='Audio'?{idx:+m[1],lang:m[2]||'',title:''}:null;if(cur)audio.push(cur);continue}
+    const m=l.match(/Stream #0:(\d+)(?:\[[^\]]*\])?(?:\(([^)]*)\))?.*?: (Audio|Video|Subtitle|Data)(?:: (.*))?/);
+    if(m){cur=null;if(m[3]==='Audio'){const r=m[4]||'',lay=(r.split(',')[2]||'').trim().toLowerCase(),nc=lay==='mono'?1:lay==='stereo'?2:lay==='quad'?4:(lay.match(/^(\d+) channels/)||[])[1]|0;
+        cur={idx:+m[1],lang:m[2]||'',title:'',codec:(r.match(/^[\w-]+/)||[''])[0],hz:(r.match(/(\d+) Hz/)||[])[1]|0,layout:lay,ch:nc};audio.push(cur)}continue}
     const t=l.match(/^\s+(?:title|handler_name)\s*:\s*(.+?)\s*$/i);if(t&&cur&&!cur.title&&!/SoundHandler|Sound Media Handler|Audio Handler/i.test(t[1]))cur.title=t[1]}
-  const info={audio};MT_INFO.set(file,info);return info}
-const mtTrackName=(t,k)=>t.title||`Piste ${k+1}`;
+  const tracks=[];
+  audio.forEach((st,k)=>{
+    if(st.ch>2&&st.ch%2===0&&/^\d+ channels$/.test(st.layout))for(let q=0;q<st.ch/2;q++)tracks.push({k,pair:q,title:st.title?`${st.title} ${q+1}`:'',st});
+    else tracks.push({k,pair:null,title:st.title,st})});
+  const info={audio,tracks};MT_INFO.set(file,info);return info}
+const mtTrackName=(t,i)=>t.title||`Piste ${i+1}`;
+const mtChain=(t,vol)=>`[0:a:${t.k}]${t.pair!=null?`pan=stereo|c0=c${t.pair*2}|c1=c${t.pair*2+1},`:''}volume=${(vol/100).toFixed(2)}`;
+const mtChLabel=st=>`${st.codec||'audio'}${st.layout?', '+(st.layout==='stereo'?'stéréo':st.layout):''}`;
 
-/* aperçu : on extrait chaque piste (petit fichier) pour pouvoir toutes les entendre et régler leur volume */
+/* aperçu : on extrait chaque piste (petit fichier) pour pouvoir toutes les entendre, régler leur volume et voir si elles contiennent du son */
 async function mtPrepAudio(i){
   const f=MT.files[i];MT.aud=null;mtAudView();
   try{
@@ -2089,58 +2100,69 @@ async function mtPrepAudio(i){
     if(!cached){
       MT.audMsg='Analyse des pistes audio…';mtAudView();
       cached=await mtSerial(async()=>{
-        const info=await mtProbe(ff,f);if(info.audio.length<2)return{info,urls:[]};
+        const info=await mtProbe(ff,f);if(info.tracks.length<2)return{info,urls:[],lv:[]};
         if(MT.i!==i)return null;
-        MT.audMsg=`Préparation de l'aperçu des ${info.audio.length} pistes audio…`;mtAudView();
-        const ext=mtExt(f.name),path=await mtMount(ff,f,ext),args=['-i',path],outs=info.audio.map((_,k)=>`t${k}.ogg`);
-        info.audio.forEach((_,k)=>args.push('-map','0:a:'+k,'-vn','-c:a','libopus','-b:a','64k','-y',outs[k]));
+        MT.audMsg=`Préparation de l'aperçu des ${info.tracks.length} pistes audio…`;mtAudView();
+        const ext=mtExt(f.name),path=await mtMount(ff,f,ext),args=['-i',path],outs=info.tracks.map((_,k)=>`t${k}.ogg`),logs=[],h=({message})=>logs.push(message);
+        info.tracks.forEach((t,k)=>args.push('-map','0:a:'+t.k,'-vn','-af',(t.pair!=null?`pan=stereo|c0=c${t.pair*2}|c1=c${t.pair*2+1},`:'')+'volumedetect','-c:a','libopus','-b:a','64k','-y',outs[k]));
+        ff.on('log',h);
         try{const code=await ff.exec(args);if(code!==0)throw new Error('ffmpeg '+code);
           const urls=[];for(const o of outs){const d=await ff.readFile(o);urls.push(URL.createObjectURL(new Blob([d],{type:'audio/ogg'})))}
-          return{info,urls}}
-        finally{for(const o of outs){try{await ff.deleteFile(o)}catch(e){}}try{await ff.unmount('/src')}catch(e){}}});
-      if(cached&&cached.urls.length)MT_AUD.set(f,cached);else if(cached)MT_INFO.set(f,cached.info)}
+          const mx=logs.map(l=>(l.match(/max_volume:\s*(-?[\d.]+|-inf) dB/)||[])[1]).filter(x=>x!==undefined).map(x=>x==='-inf'?-99:+x);
+          return{info,urls,lv:mx}}
+        finally{ff.off('log',h);for(const o of outs){try{await ff.deleteFile(o)}catch(e){}}try{await ff.unmount('/src')}catch(e){}}});
+      if(cached&&cached.urls.length)MT_AUD.set(f,cached)}
     MT.audMsg='';
     if(!cached||MT.i!==i)return;
-    if(cached.info.audio.length>=2&&!MT.audSel[i])MT.audSel[i]=cached.info.audio.map(()=>({on:true,vol:100}));
-    MT.aud={i,info:cached.info,urls:cached.urls};mtAudView()
+    if(cached.info.tracks.length>=2&&!MT.audSel[i])MT.audSel[i]=cached.info.tracks.map(()=>({on:true,vol:100}));
+    MT.aud={i,info:cached.info,urls:cached.urls,lv:cached.lv||[]};mtAudView()
   }catch(e){MT.audMsg='';console.warn('montage audio:',e);mtResetEngine(e);mtAudView()}}
 function mtAudView(){
   const box=$('#mtAud'),a=MT.aud,sel=MT.audSel[MT.i]||[];
   if(MT.audMsg){box.hidden=false;box.innerHTML=`<span class="muted sm">⏳ ${esc(MT.audMsg)}</span>`;return}
-  if(!a||a.i!==MT.i||a.info.audio.length<2){box.hidden=true;box.innerHTML='';mtV().muted=false;mtAudEls();return}
+  if(!a||a.i!==MT.i){box.hidden=true;box.innerHTML='';mtV().muted=false;mtAudEls();return}
+  const T=a.info.tracks,A=a.info.audio;
+  if(T.length<2){
+    box.hidden=!A.length;box.innerHTML=A.length?`<span class="muted sm">🔊 Cette vidéo contient ${A.length} piste${A.length>1?'s':''} audio (${A.map(mtChLabel).join(' ; ')}). Si ta voix ou Discord devraient y être mais ne s'entendent pas, ils n'ont pas été enregistrés dans ce fichier.</span>`:`<span class="muted sm">🔇 Aucune piste audio dans cette vidéo.</span>`;
+    if(!A.length)box.hidden=false;mtV().muted=false;mtAudEls();return}
   box.hidden=false;
-  box.innerHTML=`<div class="mt-audh"><b>Pistes audio</b><span class="muted sm">${a.info.audio.length} pistes dans cette vidéo : elles sont mélangées ensemble dans la vidéo coupée. Décoche ou baisse ce que tu ne veux pas.</span></div>`+
-   a.info.audio.map((t,k)=>{const o=sel[k]||{on:true,vol:100};return `<label class="mt-trk"><input type="checkbox" data-ak="${k}"${o.on?' checked':''}><span class="nm">${esc(mtTrackName(t,k))}</span><input type="range" min="0" max="100" step="5" value="${o.vol}" data-av="${k}" aria-label="Volume"><span class="muted sm" id="mtAv${k}">${o.vol} %</span></label>`}).join('');
+  box.innerHTML=`<div class="mt-audh"><b>Pistes audio</b><span class="muted sm">${T.length} pistes détectées : elles sont mélangées ensemble dans la vidéo coupée. Décoche ou règle le volume de chacune.</span></div>`+
+   T.map((t,k)=>{const o=sel[k]||{on:true,vol:100},mx=a.lv[k],low=mx!==undefined&&mx<-45;
+     return `<label class="mt-trk"><input type="checkbox" data-ak="${k}"${o.on?' checked':''}><span class="nm">${esc(mtTrackName(t,k))}<small>${esc(mtChLabel(t.st))}${t.pair!=null?` · canaux ${t.pair*2+1}-${t.pair*2+2}`:''}</small></span><input type="range" min="0" max="300" step="5" value="${o.vol}" data-av="${k}" aria-label="Volume"><span class="muted sm" id="mtAv${k}">${o.vol} %</span><span class="mt-lv ${low?'low':''}">${mx===undefined?'':mx<=-90?'silencieuse':low?`très faible (${Math.round(mx)} dB)`:`pic ${Math.round(mx)} dB`}</span></label>`}).join('');
   mtAudEls()}
-/* un élément <audio> par piste, synchronisé avec la vidéo (qui est alors muette) */
-let mtAEls=[];
+/* un élément <audio> par piste, synchronisé avec la vidéo (qui est alors muette) ; le volume passe par WebAudio pour pouvoir dépasser 100 % */
+let mtAEls=[],mtCtx=null;
 function mtAudEls(){
   const a=MT.aud,sel=MT.audSel[MT.i]||[],v=mtV();
-  mtAEls.forEach(e=>{e.pause();e.removeAttribute('src')});
-  if(!a||a.i!==MT.i||a.urls.length<2){mtAEls=[];return}
+  mtAEls.forEach(e=>{e.pause()});
+  if(!a||a.i!==MT.i||a.urls.length<2){mtAEls.forEach(e=>e.removeAttribute('src'));mtAEls=[];return}
   v.muted=true;
-  if(mtAEls.length!==a.urls.length||mtAEls[0].dataset.u!==a.urls[0]){mtAEls=a.urls.map(u=>{const e=new Audio(u);e.dataset.u=u;e.preload='auto';return e})}
-  mtAEls.forEach((e,k)=>{const o=sel[k]||{on:true,vol:100};e.volume=o.on?o.vol/100:0;e.currentTime=v.currentTime;if(!v.paused)e.play().catch(()=>{})})}
+  if(mtAEls.length!==a.urls.length||mtAEls[0].dataset.u!==a.urls[0]){
+    mtAEls=a.urls.map(u=>{const e=new Audio(u);e.dataset.u=u;e.preload='auto';
+      try{mtCtx=mtCtx||new (window.AudioContext||window.webkitAudioContext)();const src=mtCtx.createMediaElementSource(e),g=mtCtx.createGain();src.connect(g);g.connect(mtCtx.destination);e._g=g}catch(err){e._g=null}
+      return e})}
+  mtAEls.forEach((e,k)=>{mtAudGain(e,sel[k]);e.currentTime=v.currentTime;if(!v.paused)e.play().catch(()=>{})})}
+function mtAudGain(e,o){o=o||{on:true,vol:100};const g=o.on?o.vol/100:0;if(e._g)e._g.gain.value=g;else e.volume=Math.min(1,g)}
 function mtAudSync(force){const v=mtV();mtAEls.forEach(e=>{if(force||Math.abs(e.currentTime-v.currentTime)>0.2)e.currentTime=v.currentTime})}
-['play','playing'].forEach(ev=>mtV().addEventListener(ev,()=>{mtAudSync(true);mtAEls.forEach(e=>e.play().catch(()=>{}))}));
+['play','playing'].forEach(ev=>mtV().addEventListener(ev,()=>{if(mtCtx&&mtCtx.state==='suspended')mtCtx.resume();mtAudSync(true);mtAEls.forEach(e=>e.play().catch(()=>{}))}));
 ['pause','waiting'].forEach(ev=>mtV().addEventListener(ev,()=>mtAEls.forEach(e=>e.pause())));
 ['seeking','seeked'].forEach(ev=>mtV().addEventListener(ev,()=>mtAudSync(true)));
 mtV().addEventListener('timeupdate',()=>{if(!mtV().paused)mtAudSync(false)});
 mtV().addEventListener('ratechange',()=>mtAEls.forEach(e=>e.playbackRate=mtV().playbackRate));
 $('#mtAud').addEventListener('input',e=>{
-  const a=MT.aud;if(!a)return;const c={aud:MT.audSel[MT.i]=MT.audSel[MT.i]||a.info.audio.map(()=>({on:true,vol:100}))};
+  const a=MT.aud;if(!a)return;const sel=MT.audSel[MT.i]=MT.audSel[MT.i]||a.info.tracks.map(()=>({on:true,vol:100}));
   const ak=e.target.dataset.ak,av=e.target.dataset.av;
-  if(ak!==undefined)c.aud[+ak].on=e.target.checked;
-  if(av!==undefined){c.aud[+av].vol=+e.target.value;$('#mtAv'+av).textContent=e.target.value+' %'}
-  mtAEls.forEach((el,k)=>{const o=c.aud[k];el.volume=o.on?o.vol/100:0})});
+  if(ak!==undefined)sel[+ak].on=e.target.checked;
+  if(av!==undefined){sel[+av].vol=+e.target.value;$('#mtAv'+av).textContent=e.target.value+' %'}
+  mtAEls.forEach((el,k)=>mtAudGain(el,sel[k]))});
 
 async function mtRun(ff,j){
   const ext=mtExt(j.file.name),exact=j.mode==='exact',dur=j.b-j.a;
-  const info=await mtProbe(ff,j.file),n=info.audio.length;
-  const sel=info.audio.map((_,k)=>({on:true,vol:100,...((j.aud||[])[k]||{})})),on=sel.map((o,k)=>o.on&&o.vol>0?k:-1).filter(k=>k>=0);
-  const defaultOne=n===1&&sel[0].on&&sel[0].vol===100;      // une seule piste, inchangée : on la garde telle quelle
+  const info=await mtProbe(ff,j.file),T=info.tracks,n=T.length;
+  const sel=T.map((_,k)=>({on:true,vol:100,...((j.aud||[])[k]||{})})),on=sel.map((o,k)=>o.on&&o.vol>0?k:-1).filter(k=>k>=0);
+  const defaultOne=n===1&&T[0].pair==null&&sel[0].on&&sel[0].vol===100;      // une seule piste, inchangée : on la garde telle quelle
   const needMix=n>0&&!defaultOne;
-  let oExt=exact?'mp4':(MT_MIME[ext]?ext:'mp4');
+  const oExt=exact?'mp4':(MT_MIME[ext]?ext:'mp4');
   const ac=oExt==='webm'?['-c:a','libopus','-b:a','192k']:['-c:a','aac','-b:a','192k'];   // le webm n'accepte pas l'AAC
   const out='out.'+oExt;
   const path=await mtMount(ff,j.file,ext);
@@ -2150,12 +2172,10 @@ async function mtRun(ff,j){
     let aud=[];
     if(n===0||(needMix&&on.length===0))aud=['-an'];
     else if(defaultOne)aud=['-map','0:a:0',...(exact?['-c:a','aac','-b:a','160k']:['-c:a','copy'])];
-    else if(on.length===1&&sel[on[0]].vol===100)aud=['-map','0:a:'+on[0],...ac];
     else{
-      const fc=on.map((k,m)=>`[0:a:${k}]volume=${(sel[k].vol/100).toFixed(2)}[a${m}]`).join(';')+';'+on.map((_,m)=>`[a${m}]`).join('')+`amix=inputs=${on.length}:normalize=0:duration=longest,alimiter=limit=0.97[am]`;
+      const fc=on.map((k,m)=>`${mtChain(T[k],sel[k].vol)}[a${m}]`).join(';')+';'+on.map((_,m)=>`[a${m}]`).join('')+(on.length>1?`amix=inputs=${on.length}:normalize=0:duration=longest,`:'')+`alimiter=limit=0.97[am]`;
       aud=['-filter_complex',fc,'-map','[am]',...ac]}
-    const tail=exact||needMix?['-movflags','+faststart']:(oExt==='mp4'||oExt==='mov'?['-movflags','+faststart']:[]);
-    const args2=[...args,...vid,...aud,'-avoid_negative_ts','make_zero',...(oExt==='mp4'||oExt==='mov'?tail:[]),'-y',out];
+    const args2=[...args,...vid,...aud,'-avoid_negative_ts','make_zero',...(oExt==='mp4'||oExt==='mov'?['-movflags','+faststart']:[]),'-y',out];
     const code=await ff.exec(args2);if(code!==0)throw new Error('ffmpeg '+code);
     const data=await ff.readFile(out);
     j.blob=new Blob([data],{type:MT_MIME[oExt]||'video/mp4'});j.size=data.length;
