@@ -691,6 +691,10 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 @media (max-width:760px){.mt-row{grid-template-columns:1fr auto}}
 .mt-st{display:flex;align-items:center;gap:12px;justify-content:flex-end}.mt-st .mt-bar{flex:1;min-width:120px}
 .mt-row.skip{grid-template-columns:1fr minmax(120px,220px) auto}
+.mt-aud{margin-top:16px;padding:12px 14px;border:1px solid var(--line);border-radius:12px}
+.mt-audh{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;margin-bottom:6px}
+.mt-trk{display:grid;grid-template-columns:22px minmax(80px,200px) 1fr 52px;gap:12px;align-items:center;padding:5px 0;font-size:14px}
+.mt-trk input[type=checkbox]{width:18px;height:18px;padding:0}.mt-trk input[type=range]{width:100%;padding:0;height:auto}
 </style>
 </head>
 <body>
@@ -883,6 +887,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
         <div class="mt-keep"><span class="muted sm">Partie gardée</span><b id="mtKeep"></b><span class="muted sm" id="mtEst"></span></div>
         <button class="btn" id="mtPrev" type="button">▶ Voir la partie gardée</button>
       </div>
+      <div class="mt-aud" id="mtAud" hidden></div>
       <p class="muted sm" style="margin:10px 0 0">Raccourcis : <kbd>Espace</kbd> lecture · <kbd>←</kbd> <kbd>→</kbd> ±1 s (<kbd>Maj</kbd> = ±5 s) · <kbd>,</kbd> <kbd>.</kbd> ±0,1 s · <kbd>I</kbd> début ici · <kbd>O</kbd> fin ici. Tu peux aussi tirer les poignées bleues.</p>
       <div class="btns">
         <button class="btn" id="mtPrevVid" type="button">← Précédente</button>
@@ -1912,7 +1917,7 @@ function calcInit(){calcLoad();if(calc.open){calc.open=false;calcToggle(true)}}
 function renderRoblox(){}
 
 /* ---------- Montage : couper des vidéos dans le navigateur (ffmpeg.wasm, chargé à la demande) ---------- */
-const MT={files:[],i:0,cuts:[],jobs:[],mode:'fast',ff:null,loading:null,busy:false,url:null,dur:0,preview:false,cur:null,engMsg:'',engErr:'',t0:0};
+const MT={lock:Promise.resolve(),aud:null,audSel:[],files:[],i:0,cuts:[],jobs:[],mode:'fast',ff:null,loading:null,busy:false,url:null,dur:0,preview:false,cur:null,engMsg:'',engErr:'',t0:0};
 const MT_LIB='montage/ffmpeg.js',MT_CORE='@ffmpeg/core@0.12.10/dist/umd';   // la petite bibliothèque est hébergée avec le site (un worker doit venir du même site), le gros moteur vient d'un CDN
 const mtBase=()=>{let b='';try{b=localStorage.getItem('nova_mt_base')||''}catch(e){}return b||'https://cdn.jsdelivr.net/npm'};
 const mtFmt=(t,d=1)=>{t=Math.max(0,t||0);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60,ss=((s<10?'0':'')+s.toFixed(d)).replace(/\.0+$/,'');return h?`${h}:${pad(m)}:${ss}`:`${m}:${ss}`};
@@ -1945,7 +1950,7 @@ mtDrop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.prevent
 $('#mtList').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)return;MT.files.splice(+b.dataset.rm,1);mtRenderList()});
 $('#mtClear').addEventListener('click',()=>{MT.files=[];mtRenderList()});
 segBind('mtMode',v=>{MT.mode=v;mtRenderList()});
-$('#mtGo').addEventListener('click',()=>{if(!MT.files.length)return;MT.cuts=[];MT.jobs=[];mtEngine().catch(()=>{});mtOpen(0)});
+$('#mtGo').addEventListener('click',()=>{if(!MT.files.length)return;MT.cuts=[];MT.jobs=[];MT.audSel=[];mtEngine().catch(()=>{});mtOpen(0)});
 
 /* --- 2. l'éditeur de coupe --- */
 const mtV=()=>$('#mtVid');
@@ -1954,7 +1959,7 @@ function mtOpen(i){
   if(MT.url)URL.revokeObjectURL(MT.url);MT.url=URL.createObjectURL(f);
   $('#mtTitle').textContent=`Vidéo ${i+1} sur ${MT.files.length}`;$('#mtSub').textContent=`${f.name} · ${mtSize(f.size)}`;
   $('#mtErr').hidden=true;$('#mtNext').textContent=i===MT.files.length-1?'Terminer ✓':'Suivant →';$('#mtPrevVid').disabled=i===0;
-  const v=mtV();v.src=MT.url;v.load();mtEngView();mtDraw()}
+  const v=mtV();v.muted=false;mtAEls.forEach(e=>e.pause());v.src=MT.url;v.load();mtEngView();mtDraw();MT.aud=null;mtAudView();mtPrepAudio(i)}
 mtV().addEventListener('loadedmetadata',()=>{
   const v=mtV(),d=v.duration;if(!isFinite(d)||d<=0){mtVidErr();return}
   MT.dur=d;const c=MT.cuts[MT.i]||{a:0,b:d,skip:false};MT.cuts[MT.i]=c;c.b=Math.min(c.b,d);v.currentTime=c.a;mtDraw()});
@@ -2014,7 +2019,7 @@ $('#mtPrevVid').addEventListener('click',()=>{if(MT.i>0)mtOpen(MT.i-1)});
 $('#mtBack1').addEventListener('click',()=>{mtShow(1);mtRenderList()});
 $('#mtBack2').addEventListener('click',()=>{const k=MT.files.findIndex((f,i)=>MT.cuts[i]&&!MT.cuts[i].skip);mtOpen(Math.max(0,k))});
 $('#mtNew').addEventListener('click',()=>{if(MT.jobs.some(j=>j&&j.blob&&!j.saved)&&!confirm('Certaines vidéos coupées ne sont pas encore téléchargées. Les abandonner ?'))return;
-  MT.jobs.forEach(j=>{if(j)j.blob=null});MT.files=[];MT.cuts=[];MT.jobs=[];if(MT.url){URL.revokeObjectURL(MT.url);MT.url=null}mtV().removeAttribute('src');mtShow(1);mtRenderList()});
+  MT.jobs.forEach(j=>{if(j)j.blob=null});MT.files=[];MT.cuts=[];MT.jobs=[];MT.audSel=[];if(MT.url){URL.revokeObjectURL(MT.url);MT.url=null}mtV().removeAttribute('src');mtShow(1);mtRenderList()});
 
 /* --- moteur de coupe (ffmpeg.wasm) --- */
 function mtLoadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('script'));document.head.appendChild(s)})}
@@ -2045,27 +2050,116 @@ document.addEventListener('click',e=>{if(e.target.id==='mtRetry'){MT.engErr='';m
 function mtEnqueue(i){
   const c=MT.cuts[i],old=MT.jobs[i];
   if(!c||c.skip){MT.jobs[i]=null;return}
-  if(old&&old.a===c.a&&old.b===c.b&&old.mode===MT.mode&&old.state!=='err')return;
-  MT.jobs[i]={i,file:MT.files[i],a:c.a,b:c.b,mode:MT.mode,state:'wait',pct:0};mtPump()}
+  if(old&&old.a===c.a&&old.b===c.b&&old.mode===MT.mode&&JSON.stringify(old.aud)===JSON.stringify(MT.audSel[i]||null)&&old.state!=='err')return;
+  MT.jobs[i]={i,file:MT.files[i],a:c.a,b:c.b,aud:MT.audSel[i]?JSON.parse(JSON.stringify(MT.audSel[i])):null,mode:MT.mode,state:'wait',pct:0};mtPump()}
 async function mtPump(){
   if(MT.busy)return;const j=MT.jobs.find(x=>x&&x.state==='wait');if(!j)return;
   MT.busy=true;j.state='run';j.t0=Date.now();MT.cur=j;mtRenderRes();
-  try{const ff=await mtEngine();await mtRun(ff,j);if(MT.jobs[j.i]===j){j.state='ok';j.pct=1}}
-  catch(e){if(MT.jobs[j.i]===j){j.state='err';j.err=String((e&&e.message)||e)}if(!MT.ff){}else if(/memory|abort|terminated|OOM/i.test(String(e&&e.message||e))){try{MT.ff.terminate()}catch(_){}MT.ff=null;MT.loading=null}}
+  try{const ff=await mtEngine();await mtSerial(()=>mtRun(ff,j));if(MT.jobs[j.i]===j){j.state='ok';j.pct=1}}
+  catch(e){if(MT.jobs[j.i]===j){j.state='err';j.err=String((e&&e.message)||e)}if(!MT.ff){}else if(/memory|abort|terminated|OOM|out of bounds/i.test(String(e&&e.message||e))){try{MT.ff.terminate()}catch(_){}MT.ff=null;MT.loading=null}}
   MT.busy=false;MT.cur=null;mtRenderRes();mtPump()}
-async function mtRun(ff,j){
-  const ext=mtExt(j.file.name),exact=j.mode==='exact',inName='in.'+ext,oExt=exact?'mp4':(MT_MIME[ext]?ext:'mp4'),out='out.'+oExt,dur=j.b-j.a;
+function mtResetEngine(e){if(MT.ff&&/memory|abort|terminated|OOM|out of bounds|undefined/i.test(String((e&&e.message)||e))){try{MT.ff.terminate()}catch(_){}MT.ff=null;MT.loading=null}}
+/* un seul travail à la fois dans le moteur (coupe, analyse des pistes audio, aperçu audio) */
+const mtSerial=fn=>{const r=MT.lock.then(fn,fn);MT.lock=r.catch(()=>{});return r};
+const MT_INFO=new WeakMap(),MT_AUD=new WeakMap();
+async function mtMount(ff,file,ext){
   try{await ff.createDir('/src')}catch(e){}
   try{await ff.unmount('/src')}catch(e){}
-  await ff.mount('WORKERFS',{files:[new File([j.file],inName)]},'/src');
+  await ff.mount('WORKERFS',{files:[new File([file],'in.'+ext)]},'/src');return '/src/in.'+ext}
+/* lit les pistes audio (jeu, Discord, voix…) d'une vidéo */
+async function mtProbe(ff,file){
+  if(MT_INFO.has(file))return MT_INFO.get(file);
+  const ext=mtExt(file.name),logs=[],h=({message})=>logs.push(message);ff.on('log',h);
+  try{const path=await mtMount(ff,file,ext);try{await ff.exec(['-hide_banner','-i',path])}catch(e){}}
+  finally{ff.off('log',h);try{await ff.unmount('/src')}catch(e){}}
+  const audio=[];let cur=null;
+  for(const l of logs){
+    const m=l.match(/Stream #0:(\d+)(?:\(([^)]*)\))?.*?: (Audio|Video|Subtitle|Data)/);
+    if(m){cur=m[3]==='Audio'?{idx:+m[1],lang:m[2]||'',title:''}:null;if(cur)audio.push(cur);continue}
+    const t=l.match(/^\s+(?:title|handler_name)\s*:\s*(.+?)\s*$/i);if(t&&cur&&!cur.title&&!/SoundHandler|Sound Media Handler|Audio Handler/i.test(t[1]))cur.title=t[1]}
+  const info={audio};MT_INFO.set(file,info);return info}
+const mtTrackName=(t,k)=>t.title||`Piste ${k+1}`;
+
+/* aperçu : on extrait chaque piste (petit fichier) pour pouvoir toutes les entendre et régler leur volume */
+async function mtPrepAudio(i){
+  const f=MT.files[i];MT.aud=null;mtAudView();
   try{
-    const args=['-ss',j.a.toFixed(3),'-i','/src/'+inName,'-t',dur.toFixed(3),'-map','0:v:0','-map','0:a?','-sn','-dn'];
-    if(exact)args.push('-c:v','libx264','-preset','ultrafast','-crf','21','-pix_fmt','yuv420p','-c:a','aac','-b:a','160k','-movflags','+faststart');
-    else args.push('-c','copy','-avoid_negative_ts','make_zero',...(oExt==='mp4'||oExt==='mov'?['-movflags','+faststart']:[]));
-    args.push('-y',out);
-    const code=await ff.exec(args);if(code!==0)throw new Error('ffmpeg '+code);
+    const ff=await mtEngine();
+    let cached=MT_AUD.get(f);
+    if(!cached){
+      MT.audMsg='Analyse des pistes audio…';mtAudView();
+      cached=await mtSerial(async()=>{
+        const info=await mtProbe(ff,f);if(info.audio.length<2)return{info,urls:[]};
+        if(MT.i!==i)return null;
+        MT.audMsg=`Préparation de l'aperçu des ${info.audio.length} pistes audio…`;mtAudView();
+        const ext=mtExt(f.name),path=await mtMount(ff,f,ext),args=['-i',path],outs=info.audio.map((_,k)=>`t${k}.ogg`);
+        info.audio.forEach((_,k)=>args.push('-map','0:a:'+k,'-vn','-c:a','libopus','-b:a','64k','-y',outs[k]));
+        try{const code=await ff.exec(args);if(code!==0)throw new Error('ffmpeg '+code);
+          const urls=[];for(const o of outs){const d=await ff.readFile(o);urls.push(URL.createObjectURL(new Blob([d],{type:'audio/ogg'})))}
+          return{info,urls}}
+        finally{for(const o of outs){try{await ff.deleteFile(o)}catch(e){}}try{await ff.unmount('/src')}catch(e){}}});
+      if(cached&&cached.urls.length)MT_AUD.set(f,cached);else if(cached)MT_INFO.set(f,cached.info)}
+    MT.audMsg='';
+    if(!cached||MT.i!==i)return;
+    if(cached.info.audio.length>=2&&!MT.audSel[i])MT.audSel[i]=cached.info.audio.map(()=>({on:true,vol:100}));
+    MT.aud={i,info:cached.info,urls:cached.urls};mtAudView()
+  }catch(e){MT.audMsg='';console.warn('montage audio:',e);mtResetEngine(e);mtAudView()}}
+function mtAudView(){
+  const box=$('#mtAud'),a=MT.aud,sel=MT.audSel[MT.i]||[];
+  if(MT.audMsg){box.hidden=false;box.innerHTML=`<span class="muted sm">⏳ ${esc(MT.audMsg)}</span>`;return}
+  if(!a||a.i!==MT.i||a.info.audio.length<2){box.hidden=true;box.innerHTML='';mtV().muted=false;mtAudEls();return}
+  box.hidden=false;
+  box.innerHTML=`<div class="mt-audh"><b>Pistes audio</b><span class="muted sm">${a.info.audio.length} pistes dans cette vidéo : elles sont mélangées ensemble dans la vidéo coupée. Décoche ou baisse ce que tu ne veux pas.</span></div>`+
+   a.info.audio.map((t,k)=>{const o=sel[k]||{on:true,vol:100};return `<label class="mt-trk"><input type="checkbox" data-ak="${k}"${o.on?' checked':''}><span class="nm">${esc(mtTrackName(t,k))}</span><input type="range" min="0" max="100" step="5" value="${o.vol}" data-av="${k}" aria-label="Volume"><span class="muted sm" id="mtAv${k}">${o.vol} %</span></label>`}).join('');
+  mtAudEls()}
+/* un élément <audio> par piste, synchronisé avec la vidéo (qui est alors muette) */
+let mtAEls=[];
+function mtAudEls(){
+  const a=MT.aud,sel=MT.audSel[MT.i]||[],v=mtV();
+  mtAEls.forEach(e=>{e.pause();e.removeAttribute('src')});
+  if(!a||a.i!==MT.i||a.urls.length<2){mtAEls=[];return}
+  v.muted=true;
+  if(mtAEls.length!==a.urls.length||mtAEls[0].dataset.u!==a.urls[0]){mtAEls=a.urls.map(u=>{const e=new Audio(u);e.dataset.u=u;e.preload='auto';return e})}
+  mtAEls.forEach((e,k)=>{const o=sel[k]||{on:true,vol:100};e.volume=o.on?o.vol/100:0;e.currentTime=v.currentTime;if(!v.paused)e.play().catch(()=>{})})}
+function mtAudSync(force){const v=mtV();mtAEls.forEach(e=>{if(force||Math.abs(e.currentTime-v.currentTime)>0.2)e.currentTime=v.currentTime})}
+['play','playing'].forEach(ev=>mtV().addEventListener(ev,()=>{mtAudSync(true);mtAEls.forEach(e=>e.play().catch(()=>{}))}));
+['pause','waiting'].forEach(ev=>mtV().addEventListener(ev,()=>mtAEls.forEach(e=>e.pause())));
+['seeking','seeked'].forEach(ev=>mtV().addEventListener(ev,()=>mtAudSync(true)));
+mtV().addEventListener('timeupdate',()=>{if(!mtV().paused)mtAudSync(false)});
+mtV().addEventListener('ratechange',()=>mtAEls.forEach(e=>e.playbackRate=mtV().playbackRate));
+$('#mtAud').addEventListener('input',e=>{
+  const a=MT.aud;if(!a)return;const c={aud:MT.audSel[MT.i]=MT.audSel[MT.i]||a.info.audio.map(()=>({on:true,vol:100}))};
+  const ak=e.target.dataset.ak,av=e.target.dataset.av;
+  if(ak!==undefined)c.aud[+ak].on=e.target.checked;
+  if(av!==undefined){c.aud[+av].vol=+e.target.value;$('#mtAv'+av).textContent=e.target.value+' %'}
+  mtAEls.forEach((el,k)=>{const o=c.aud[k];el.volume=o.on?o.vol/100:0})});
+
+async function mtRun(ff,j){
+  const ext=mtExt(j.file.name),exact=j.mode==='exact',dur=j.b-j.a;
+  const info=await mtProbe(ff,j.file),n=info.audio.length;
+  const sel=info.audio.map((_,k)=>({on:true,vol:100,...((j.aud||[])[k]||{})})),on=sel.map((o,k)=>o.on&&o.vol>0?k:-1).filter(k=>k>=0);
+  const defaultOne=n===1&&sel[0].on&&sel[0].vol===100;      // une seule piste, inchangée : on la garde telle quelle
+  const needMix=n>0&&!defaultOne;
+  let oExt=exact?'mp4':(MT_MIME[ext]?ext:'mp4');
+  const ac=oExt==='webm'?['-c:a','libopus','-b:a','192k']:['-c:a','aac','-b:a','192k'];   // le webm n'accepte pas l'AAC
+  const out='out.'+oExt;
+  const path=await mtMount(ff,j.file,ext);
+  try{
+    const args=['-ss',j.a.toFixed(3),'-i',path,'-t',dur.toFixed(3),'-map','0:v:0','-sn','-dn'];
+    const vid=exact?['-c:v','libx264','-preset','ultrafast','-crf','21','-pix_fmt','yuv420p']:['-c:v','copy'];
+    let aud=[];
+    if(n===0||(needMix&&on.length===0))aud=['-an'];
+    else if(defaultOne)aud=['-map','0:a:0',...(exact?['-c:a','aac','-b:a','160k']:['-c:a','copy'])];
+    else if(on.length===1&&sel[on[0]].vol===100)aud=['-map','0:a:'+on[0],...ac];
+    else{
+      const fc=on.map((k,m)=>`[0:a:${k}]volume=${(sel[k].vol/100).toFixed(2)}[a${m}]`).join(';')+';'+on.map((_,m)=>`[a${m}]`).join('')+`amix=inputs=${on.length}:normalize=0:duration=longest,alimiter=limit=0.97[am]`;
+      aud=['-filter_complex',fc,'-map','[am]',...ac]}
+    const tail=exact||needMix?['-movflags','+faststart']:(oExt==='mp4'||oExt==='mov'?['-movflags','+faststart']:[]);
+    const args2=[...args,...vid,...aud,'-avoid_negative_ts','make_zero',...(oExt==='mp4'||oExt==='mov'?tail:[]),'-y',out];
+    const code=await ff.exec(args2);if(code!==0)throw new Error('ffmpeg '+code);
     const data=await ff.readFile(out);
     j.blob=new Blob([data],{type:MT_MIME[oExt]||'video/mp4'});j.size=data.length;
+    j.nAud=on.length;
     j.outName=`${mtStem(j.file.name)} (coupé ${mtFmt(j.a,0).replace(':','m')}-${mtFmt(j.b,0).replace(':','m')}).${oExt}`
   }finally{try{await ff.deleteFile(out)}catch(e){}try{await ff.unmount('/src')}catch(e){}}}
 
@@ -2096,6 +2190,8 @@ $('#mtAll').addEventListener('click',()=>{const L=MT.jobs.filter(j=>j&&j.state==
 setInterval(()=>{if(MT.busy&&!$('#mtStep3').hidden)mtRenderRes()},700);
 window.addEventListener('beforeunload',e=>{if(MT.jobs.some(j=>j&&j.state==='ok'&&!j.saved)){e.preventDefault();e.returnValue=''}});
 mtRenderList();
+
+if(window.__NOVA_TEST)window.__mt={MT,mtRun,mtProbe,mtEngine,mtSerial};
 
 /* ---------- export / import ---------- */
 function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
