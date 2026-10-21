@@ -659,6 +659,38 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 .subnav button:hover{color:var(--ink)}
 .subnav button[aria-selected=true]{color:var(--brand);border-color:color-mix(in srgb,var(--brand) 45%,transparent);background:color-mix(in srgb,var(--brand) 12%,transparent)}
 @media (max-width:760px){.subnav{overflow:auto}}
+
+/* ---------- Montage ---------- */
+.mt-drop{display:flex;flex-direction:column;align-items:center;gap:8px;padding:34px 20px;border:2px dashed var(--line);border-radius:16px;text-align:center;transition:.15s;cursor:default}
+.mt-drop.over,.mt-drop:focus-visible{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 9%,transparent);outline:0}
+.mt-ic{font-size:38px;line-height:1}
+.mt-files{margin:14px 0 4px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.mt-file{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);font-size:14px}.mt-file:last-child{border-bottom:0}
+.mt-file .nm,.mt-row .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mt-opts{margin:16px 0 0;display:flex;gap:18px;align-items:center;flex-wrap:wrap}.mt-opts p{margin:0;flex:1;min-width:260px}
+.mt-eng{margin:0 0 12px;padding:9px 14px;border-radius:10px;background:color-mix(in srgb,var(--brand) 12%,transparent);font-size:14px;display:flex;gap:12px;align-items:center}
+.mt-eng .bad,.mt-row .bad,.mt-err{color:var(--ko)}
+.mt-err{margin:0 0 12px;padding:10px 14px;border:1px solid currentColor;border-radius:10px;font-size:14px}
+.mt-vid{display:block;width:100%;max-height:52vh;background:#000;border-radius:12px}
+.mt-tl{position:relative;height:54px;margin:16px 7px 0;border-radius:10px;background:var(--soft);cursor:pointer;touch-action:none;user-select:none}
+.mt-range{position:absolute;top:0;bottom:0;background:color-mix(in srgb,var(--brand) 38%,transparent);border-top:3px solid var(--brand);border-bottom:3px solid var(--brand);pointer-events:none}
+.mt-h{position:absolute;top:-5px;bottom:-5px;width:14px;margin-left:-7px;border-radius:6px;background:var(--brand);cursor:ew-resize;box-shadow:0 0 12px color-mix(in srgb,var(--brand) 60%,transparent)}
+.mt-h::after{content:"";position:absolute;left:5px;right:5px;top:14px;bottom:14px;border-left:1px solid rgba(0,0,0,.45);border-right:1px solid rgba(0,0,0,.45)}
+.mt-h:focus-visible{outline:2px solid #fff}
+.mt-ph{position:absolute;top:-8px;bottom:-8px;width:2px;margin-left:-1px;background:#ff6ec7;pointer-events:none;box-shadow:0 0 8px #ff6ec7}
+.mt-times{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);margin:4px 7px 0}
+.mt-ctl{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;margin-top:16px}
+.mt-pt{display:flex;flex-direction:column;gap:5px}.mt-pt label{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--mut)}
+.mt-pt input{width:110px;height:38px;padding:0 10px;font-variant-numeric:tabular-nums}
+.mt-pt{display:grid;grid-template-columns:auto auto;gap:5px 8px;align-items:center}.mt-pt label{grid-column:1/3}
+.mt-keep{display:flex;flex-direction:column}.mt-keep b{font-size:24px;font-variant-numeric:tabular-nums}
+.mt-row{display:grid;grid-template-columns:1fr minmax(120px,220px) auto;gap:14px;align-items:center;padding:12px 4px;border-bottom:1px solid var(--line)}
+.mt-row .nm{display:flex;flex-direction:column;gap:2px}.mt-row .nm span{font-size:13px;color:var(--mut)}
+.mt-row.skip{opacity:.55;grid-template-columns:1fr auto auto}
+.mt-bar{height:10px;border-radius:99px;background:var(--soft);overflow:hidden}.mt-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--lg1),var(--lg2),var(--lg3));transition:width .4s}
+@media (max-width:760px){.mt-row{grid-template-columns:1fr auto}}
+.mt-st{display:flex;align-items:center;gap:12px;justify-content:flex-end}.mt-st .mt-bar{flex:1;min-width:120px}
+.mt-row.skip{grid-template-columns:1fr minmax(120px,220px) auto}
 </style>
 </head>
 <body>
@@ -668,6 +700,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
     <div class="brand"><span class="logo" id="brandLogo"></span><span id="brandName">Nova QA</span></div>
     <nav class="tabs" role="tablist" id="topTabs">
       <button role="tab" data-grp="scorux" aria-selected="true">Scorux</button>
+      <button role="tab" data-grp="montage" aria-selected="false">Montage</button>
     </nav>
     <div class="sp"></div>
     <div class="menu">
@@ -811,8 +844,62 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
       <div class="card"><h2>Rythme mois par mois</h2><div class="chartbox" id="aMonths"></div></div>
     </div>
   </section>
-</main>
+  <!-- ===== MONTAGE ===== -->
+  <section class="tab" id="tab-montage">
+    <div class="card" id="mtStep1">
+      <div class="head"><h2>Montage</h2><span class="sub">couper tes vidéos, directement dans ton navigateur</span></div>
+      <div class="mt-drop" id="mtDrop" tabindex="0">
+        <div class="mt-ic" aria-hidden="true">🎬</div>
+        <b>Dépose tes vidéos ici</b>
+        <span class="muted">une ou plusieurs à la fois (mp4, mkv, mov, webm…)</span>
+        <button class="btn primary" id="mtPick" type="button">Choisir des vidéos…</button>
+        <input type="file" id="mtFile" accept="video/*,.mkv,.mov,.mp4,.webm" multiple hidden>
+      </div>
+      <div id="mtList"></div>
+      <div class="mt-opts" id="mtOpts" hidden>
+        <div><span class="muted sm">Type de coupe</span>
+          <div class="seg" id="mtMode"><button data-v="fast" aria-pressed="true" type="button">Rapide</button><button data-v="exact" aria-pressed="false" type="button">Précise</button></div></div>
+        <p class="muted sm" id="mtModeTxt"></p>
+      </div>
+      <div class="btns"><button class="btn" id="mtClear" type="button" hidden>Tout retirer</button><button class="btn primary" id="mtGo" type="button" disabled>Valider</button></div>
+      <p class="muted sm" style="margin:12px 0 0">Tes vidéos ne quittent jamais ton ordinateur : tout est coupé dans le navigateur. La première fois, le site télécharge un petit moteur de montage (environ 30 Mo), ensuite Chrome le garde.</p>
+    </div>
 
+    <div class="card" id="mtStep2" hidden>
+      <div class="head"><h2 id="mtTitle">Vidéo 1 sur 1</h2><span class="sub" id="mtSub"></span><span class="sp"></span><button class="btn sm" id="mtBack1" type="button">← Retour à la liste</button></div>
+      <div class="mt-eng" id="mtEng"></div>
+      <div class="mt-err" id="mtErr" hidden></div>
+      <video id="mtVid" class="mt-vid" controls playsinline preload="metadata"></video>
+      <div class="mt-tl" id="mtTl" aria-label="Zone à garder">
+        <div class="mt-range" id="mtRange"></div>
+        <i class="mt-h a" id="mtHA" role="slider" tabindex="0" aria-label="Début de la coupe"></i>
+        <i class="mt-h b" id="mtHB" role="slider" tabindex="0" aria-label="Fin de la coupe"></i>
+        <b class="mt-ph" id="mtPh"></b>
+      </div>
+      <div class="mt-times"><span>0:00</span><span id="mtDur"></span></div>
+      <div class="mt-ctl">
+        <div class="mt-pt"><label for="mtAIn">Début (A)</label><input id="mtAIn" inputmode="decimal"><button class="btn sm" id="mtSetA" type="button" title="Raccourci : I">Début ici</button></div>
+        <div class="mt-pt"><label for="mtBIn">Fin (B)</label><input id="mtBIn" inputmode="decimal"><button class="btn sm" id="mtSetB" type="button" title="Raccourci : O">Fin ici</button></div>
+        <div class="mt-keep"><span class="muted sm">Partie gardée</span><b id="mtKeep"></b><span class="muted sm" id="mtEst"></span></div>
+        <button class="btn" id="mtPrev" type="button">▶ Voir la partie gardée</button>
+      </div>
+      <p class="muted sm" style="margin:10px 0 0">Raccourcis : <kbd>Espace</kbd> lecture · <kbd>←</kbd> <kbd>→</kbd> ±1 s (<kbd>Maj</kbd> = ±5 s) · <kbd>,</kbd> <kbd>.</kbd> ±0,1 s · <kbd>I</kbd> début ici · <kbd>O</kbd> fin ici. Tu peux aussi tirer les poignées bleues.</p>
+      <div class="btns">
+        <button class="btn" id="mtPrevVid" type="button">← Précédente</button>
+        <button class="btn" id="mtSkip" type="button">Passer cette vidéo</button>
+        <button class="btn primary" id="mtNext" type="button">Suivant →</button>
+      </div>
+    </div>
+
+    <div class="card" id="mtStep3" hidden>
+      <div class="head"><h2>Tes vidéos coupées</h2><span class="sub" id="mtResSub"></span><span class="sp"></span><button class="btn sm" id="mtNew" type="button">Nouveau montage</button></div>
+      <div class="mt-eng" id="mtEng3"></div>
+      <div id="mtRes"></div>
+      <div class="btns"><button class="btn" id="mtBack2" type="button">← Retoucher une coupe</button><button class="btn primary" id="mtAll" type="button" disabled>Tout télécharger</button></div>
+      <p class="muted sm" style="margin:12px 0 0">Les vidéos coupées sont gardées en mémoire dans cet onglet : télécharge-les avant de fermer ou de recharger la page.</p>
+    </div>
+  </section>
+</main>
 <dialog id="dlg" class="big">
   <h2>Réglages</h2>
   <div class="sect"><h3>Mon entreprise</h3>
@@ -1062,15 +1149,15 @@ function snapMaybe(){
   try{localStorage.setItem(SNAPKEY,JSON.stringify(L))}catch(e){L.length=Math.min(L.length,2);try{localStorage.setItem(SNAPKEY,JSON.stringify(L))}catch(_){}}}
 
 /* ---------- onglets ---------- */
-const TABS=PUBLIC?['scorux','machines','paye','activite']:['roblox','scorux','machines','paye','activite'];
+const TABS=PUBLIC?['scorux','machines','paye','activite','montage']:['roblox','scorux','machines','paye','activite','montage'];
 function showTab(t){
   if(!TABS.includes(t))t='scorux';
-  ui.tab=t;const grp=t==='roblox'?'roblox':'scorux';if(t!=='roblox')ui.lastSub=t;
-  $$('#topTabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.grp===grp));$$('#subBar button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));$('#subBar').hidden=grp==='roblox';$$('section.tab').forEach(s=>s.classList.toggle('on',s.id==='tab-'+t));
+  ui.tab=t;const grp=t==='roblox'?'roblox':t==='montage'?'montage':'scorux';if(grp==='scorux')ui.lastSub=t;
+  $$('#topTabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.grp===grp));$$('#subBar button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));$('#subBar').hidden=grp!=='scorux';$$('section.tab').forEach(s=>s.classList.toggle('on',s.id==='tab-'+t));
   try{history.replaceState(null,'','#'+t)}catch(e){}
   if(typeof animateNumbers==='function'){const sec=$('#tab-'+t);$$('[data-key]',sec).forEach(el=>delete lastNum[el.dataset.key]);animateNumbers(sec)}}
 $$('#subBar button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
-$$('#topTabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.grp==='roblox'?'roblox':(ui.lastSub||'scorux'))));
+$$('#topTabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.grp==='scorux'?(ui.lastSub||'scorux'):b.dataset.grp)));
 function renderBadges(){
   const open=(db.roblox&&db.roblox.tasks?db.roblox.tasks.filter(t=>!t.done).length:0);
   const b=$('#bdgRbx');if(b){b.hidden=!open;b.textContent=open;b.title=`${open} tâche(s) à faire`}
@@ -1100,7 +1187,7 @@ document.addEventListener('keydown',e=>{
   if(typing||e.ctrlKey||e.metaKey||e.altKey||document.querySelector('dialog[open]'))return;
   if(tg&&tg.closest&&tg.closest('#calc'))return;
   const k=e.key;
-  if(/^[1-5]$/.test(k)){if(TABS[+k-1])showTab(TABS[+k-1]);e.preventDefault()}
+  if(/^[1-6]$/.test(k)){if(TABS[+k-1])showTab(TABS[+k-1]);e.preventDefault()}
   else if(k==='n'||k==='N'){showTab('scorux');setTimeout(()=>$('#f-name').focus(),30);e.preventDefault()}
   else if(k==='/'){const t=ui.tab==='machines'?'#mSearch':'#fSearch';if(ui.tab==='machines'||ui.tab==='scorux'){$(t).focus();e.preventDefault()}}
   else if(k==='c'||k==='C'){calcToggle();e.preventDefault()}
@@ -1823,6 +1910,192 @@ function calcInit(){calcLoad();if(calc.open){calc.open=false;calcToggle(true)}}
 
 /* version en ligne : pas d'onglet Roblox */
 function renderRoblox(){}
+
+/* ---------- Montage : couper des vidéos dans le navigateur (ffmpeg.wasm, chargé à la demande) ---------- */
+const MT={files:[],i:0,cuts:[],jobs:[],mode:'fast',ff:null,loading:null,busy:false,url:null,dur:0,preview:false,cur:null,engMsg:'',engErr:'',t0:0};
+const MT_LIB='montage/ffmpeg.js',MT_CORE='@ffmpeg/core@0.12.10/dist/umd';   // la petite bibliothèque est hébergée avec le site (un worker doit venir du même site), le gros moteur vient d'un CDN
+const mtBase=()=>{let b='';try{b=localStorage.getItem('nova_mt_base')||''}catch(e){}return b||'https://cdn.jsdelivr.net/npm'};
+const mtFmt=(t,d=1)=>{t=Math.max(0,t||0);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60,ss=((s<10?'0':'')+s.toFixed(d)).replace(/\.0+$/,'');return h?`${h}:${pad(m)}:${ss}`:`${m}:${ss}`};
+const mtParse=str=>{str=String(str).trim().replace(',','.');if(!str)return NaN;const p=str.split(':').map(Number);if(p.length>3||p.some(x=>!isFinite(x)||x<0))return NaN;return p.reduce((a,x)=>a*60+x,0)};
+const mtSize=b=>b>=1e9?`${(b/1e9).toFixed(2).replace('.',',')} Go`:`${Math.max(1,Math.round(b/1e6))} Mo`;
+const mtExt=n=>((n.match(/\.([a-z0-9]+)$/i)||[])[1]||'mp4').toLowerCase();
+const mtStem=n=>n.replace(/\.[a-z0-9]+$/i,'');
+const MT_MIME={mp4:'video/mp4',mov:'video/quicktime',mkv:'video/x-matroska',webm:'video/webm'};
+const MT_TXT={fast:"Rapide : la coupe prend quelques secondes, sans perte de qualité. Le début peut tomber 1 à 4 secondes avant le point choisi (la vidéo ne peut être coupée qu'à certains repères).",
+  exact:"Précise : la coupe est exacte à l'image près, mais la vidéo est recompressée en mp4 : c'est plus lent (compte environ 1 à 3 minutes pour garder 1 min 30 en Full HD). Tu peux régler les vidéos suivantes pendant ce temps."};
+
+/* --- étapes --- */
+function mtShow(n){['mtStep1','mtStep2','mtStep3'].forEach((id,k)=>{$('#'+id).hidden=k!==n-1});if(n!==2){const v=$('#mtVid');v.pause()}}
+/* --- 1. choix des vidéos --- */
+const mtIsVideo=f=>/^video\//.test(f.type)||/\.(mp4|mkv|mov|webm|avi|m4v|flv|wmv)$/i.test(f.name);
+function mtAdd(list){const L=[...list].filter(mtIsVideo);if(!L.length){toast('Aucune vidéo reconnue dans ce que tu as déposé');return}
+  L.forEach(f=>{if(!MT.files.some(x=>x.name===f.name&&x.size===f.size&&x.lastModified===f.lastModified))MT.files.push(f)});mtRenderList()}
+function mtRenderList(){
+  $('#mtList').innerHTML=MT.files.length?`<div class="mt-files">`+MT.files.map((f,i)=>`<div class="mt-file"><span class="nm">🎞 ${esc(f.name)}</span><span class="muted sm">${mtSize(f.size)}</span><button class="btn sm" data-rm="${i}" type="button" aria-label="Retirer">✕</button></div>`).join('')+`</div>`:'';
+  $('#mtGo').disabled=!MT.files.length;$('#mtClear').hidden=!MT.files.length;$('#mtOpts').hidden=!MT.files.length;
+  $('#mtGo').textContent=MT.files.length>1?`Valider (${MT.files.length} vidéos)`:'Valider';
+  setSeg('mtMode',MT.mode);$('#mtModeTxt').textContent=MT_TXT[MT.mode]}
+$('#mtPick').addEventListener('click',()=>$('#mtFile').click());
+$('#mtFile').addEventListener('change',e=>{mtAdd(e.target.files);e.target.value=''});
+const mtDrop=$('#mtDrop');
+['dragenter','dragover'].forEach(ev=>mtDrop.addEventListener(ev,e=>{e.preventDefault();mtDrop.classList.add('over')}));
+['dragleave','drop'].forEach(ev=>mtDrop.addEventListener(ev,e=>{e.preventDefault();mtDrop.classList.remove('over')}));
+mtDrop.addEventListener('drop',e=>mtAdd(e.dataTransfer.files));
+mtDrop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('#mtFile').click()}});
+$('#mtList').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)return;MT.files.splice(+b.dataset.rm,1);mtRenderList()});
+$('#mtClear').addEventListener('click',()=>{MT.files=[];mtRenderList()});
+segBind('mtMode',v=>{MT.mode=v;mtRenderList()});
+$('#mtGo').addEventListener('click',()=>{if(!MT.files.length)return;MT.cuts=[];MT.jobs=[];mtEngine().catch(()=>{});mtOpen(0)});
+
+/* --- 2. l'éditeur de coupe --- */
+const mtV=()=>$('#mtVid');
+function mtOpen(i){
+  mtShow(2);MT.i=i;const f=MT.files[i];MT.dur=0;MT.preview=false;
+  if(MT.url)URL.revokeObjectURL(MT.url);MT.url=URL.createObjectURL(f);
+  $('#mtTitle').textContent=`Vidéo ${i+1} sur ${MT.files.length}`;$('#mtSub').textContent=`${f.name} · ${mtSize(f.size)}`;
+  $('#mtErr').hidden=true;$('#mtNext').textContent=i===MT.files.length-1?'Terminer ✓':'Suivant →';$('#mtPrevVid').disabled=i===0;
+  const v=mtV();v.src=MT.url;v.load();mtEngView();mtDraw()}
+mtV().addEventListener('loadedmetadata',()=>{
+  const v=mtV(),d=v.duration;if(!isFinite(d)||d<=0){mtVidErr();return}
+  MT.dur=d;const c=MT.cuts[MT.i]||{a:0,b:d,skip:false};MT.cuts[MT.i]=c;c.b=Math.min(c.b,d);v.currentTime=c.a;mtDraw()});
+mtV().addEventListener('error',mtVidErr);
+function mtVidErr(){$('#mtErr').hidden=false;$('#mtErr').textContent="Chrome n'arrive pas à lire cette vidéo (format ou codec non pris en charge), donc impossible de la prévisualiser. Essaie avec un fichier .mp4 (H.264) ou .webm.";MT.dur=0;mtDraw()}
+const mtCut=()=>MT.cuts[MT.i]||{a:0,b:MT.dur};
+function mtDraw(){
+  const c=mtCut(),d=MT.dur||1,pa=c.a/d*100,pb=c.b/d*100,v=mtV();
+  $('#mtHA').style.left=pa+'%';$('#mtHB').style.left=pb+'%';$('#mtRange').style.left=pa+'%';$('#mtRange').style.width=(pb-pa)+'%';
+  $('#mtPh').style.left=Math.min(100,(v.currentTime||0)/d*100)+'%';$('#mtDur').textContent=MT.dur?mtFmt(MT.dur):'';
+  if(document.activeElement!==$('#mtAIn'))$('#mtAIn').value=mtFmt(c.a);if(document.activeElement!==$('#mtBIn'))$('#mtBIn').value=mtFmt(c.b);
+  const keep=Math.max(0,c.b-c.a);$('#mtKeep').textContent=MT.dur?mtFmt(keep):'–';
+  $('#mtEst').textContent=MT.dur?`≈ ${mtSize(MT.files[MT.i].size*keep/MT.dur)}`:'';
+  $('#mtNext').disabled=!MT.dur||keep<0.2;$('#mtHA').setAttribute('aria-valuenow',c.a);$('#mtHB').setAttribute('aria-valuenow',c.b)}
+function mtSetA(t){const c=mtCut();c.a=Math.min(Math.max(0,t),c.b-0.2);mtDraw()}
+function mtSetB(t){const c=mtCut();c.b=Math.max(Math.min(MT.dur,t),c.a+0.2);mtDraw()}
+mtV().addEventListener('timeupdate',()=>{const v=mtV(),c=mtCut();
+  if(MT.preview&&v.currentTime>=c.b){v.pause();MT.preview=false;v.currentTime=c.b}mtDraw()});
+mtV().addEventListener('pause',()=>{MT.preview=false});
+$('#mtSetA').addEventListener('click',()=>mtSetA(mtV().currentTime));
+$('#mtSetB').addEventListener('click',()=>mtSetB(mtV().currentTime));
+['mtAIn','mtBIn'].forEach(id=>$('#'+id).addEventListener('change',e=>{const t=mtParse(e.target.value);if(isFinite(t)){id==='mtAIn'?mtSetA(t):mtSetB(t);mtV().currentTime=id==='mtAIn'?mtCut().a:mtCut().b}else mtDraw()}));
+$('#mtPrev').addEventListener('click',()=>{const v=mtV(),c=mtCut();v.currentTime=c.a;MT.preview=true;v.play().catch(()=>{})});
+/* glisser les poignées / cliquer sur la barre */
+let mtDragK=null;
+const mtT=e=>{const r=$('#mtTl').getBoundingClientRect();return Math.min(1,Math.max(0,(e.clientX-r.left)/r.width))*MT.dur};
+$('#mtTl').addEventListener('pointerdown',e=>{
+  if(!MT.dur)return;const t=mtT(e),c=mtCut(),px=MT.dur/$('#mtTl').getBoundingClientRect().width*14;
+  mtDragK=e.target.id==='mtHA'?'a':e.target.id==='mtHB'?'b':Math.abs(t-c.a)<px?'a':Math.abs(t-c.b)<px?'b':'p';
+  $('#mtTl').setPointerCapture(e.pointerId);mtMove(e);e.preventDefault()});
+function mtMove(e){const t=mtT(e),v=mtV();
+  if(mtDragK==='a'){mtSetA(t);v.currentTime=mtCut().a}else if(mtDragK==='b'){mtSetB(t);v.currentTime=mtCut().b}else if(mtDragK==='p'){v.currentTime=t}}
+$('#mtTl').addEventListener('pointermove',e=>{if(mtDragK)mtMove(e)});
+['pointerup','pointercancel'].forEach(ev=>$('#mtTl').addEventListener(ev,()=>{mtDragK=null}));
+['mtHA','mtHB'].forEach(id=>$('#'+id).addEventListener('keydown',e=>{
+  const st=e.shiftKey?5:e.key==='ArrowLeft'||e.key==='ArrowRight'?1:0;if(!st)return;const dir=e.key==='ArrowLeft'?-1:e.key==='ArrowRight'?1:0;if(!dir)return;
+  e.preventDefault();e.stopPropagation();const c=mtCut();id==='mtHA'?mtSetA(c.a+dir*st):mtSetB(c.b+dir*st);mtV().currentTime=id==='mtHA'?mtCut().a:mtCut().b}));
+/* raccourcis clavier de l'éditeur */
+document.addEventListener('keydown',e=>{
+  if(!$('#tab-montage').classList.contains('on')||$('#mtStep2').hidden||e.ctrlKey||e.metaKey||e.altKey)return;
+  const tg=e.target,typing=tg&&(/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName)||tg.isContentEditable);if(typing||document.querySelector('dialog[open]'))return;
+  const v=mtV();let h=true;
+  if(e.key===' '||e.key==='k')v.paused?v.play().catch(()=>{}):v.pause();
+  else if(e.key==='ArrowLeft')v.currentTime=Math.max(0,v.currentTime-(e.shiftKey?5:1));
+  else if(e.key==='ArrowRight')v.currentTime=Math.min(MT.dur,v.currentTime+(e.shiftKey?5:1));
+  else if(e.key===',')v.currentTime=Math.max(0,v.currentTime-0.1);
+  else if(e.key==='.')v.currentTime=Math.min(MT.dur,v.currentTime+0.1);
+  else if(e.key==='i'||e.key==='I')mtSetA(v.currentTime);
+  else if(e.key==='o'||e.key==='O')mtSetB(v.currentTime);
+  else h=false;
+  if(h){e.preventDefault();e.stopImmediatePropagation()}},true);
+function mtStore(skip){const c=mtCut();c.skip=!!skip;MT.cuts[MT.i]=c;mtEnqueue(MT.i)}
+$('#mtNext').addEventListener('click',()=>{mtStore(false);mtAdvance()});
+$('#mtSkip').addEventListener('click',()=>{mtStore(true);mtAdvance()});
+function mtAdvance(){if(MT.i<MT.files.length-1)mtOpen(MT.i+1);else mtResults()}
+$('#mtPrevVid').addEventListener('click',()=>{if(MT.i>0)mtOpen(MT.i-1)});
+$('#mtBack1').addEventListener('click',()=>{mtShow(1);mtRenderList()});
+$('#mtBack2').addEventListener('click',()=>{const k=MT.files.findIndex((f,i)=>MT.cuts[i]&&!MT.cuts[i].skip);mtOpen(Math.max(0,k))});
+$('#mtNew').addEventListener('click',()=>{if(MT.jobs.some(j=>j&&j.blob&&!j.saved)&&!confirm('Certaines vidéos coupées ne sont pas encore téléchargées. Les abandonner ?'))return;
+  MT.jobs.forEach(j=>{if(j)j.blob=null});MT.files=[];MT.cuts=[];MT.jobs=[];if(MT.url){URL.revokeObjectURL(MT.url);MT.url=null}mtV().removeAttribute('src');mtShow(1);mtRenderList()});
+
+/* --- moteur de coupe (ffmpeg.wasm) --- */
+function mtLoadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('script'));document.head.appendChild(s)})}
+async function mtFetchBlob(url,type,label){
+  const r=await fetch(url);if(!r.ok)throw new Error(String(r.status));const tot=+r.headers.get('content-length')||0,rd=r.body.getReader(),parts=[];let got=0;
+  for(;;){const {done,value}=await rd.read();if(done)break;parts.push(value);got+=value.length;if(tot){MT.engMsg=`${label} ${Math.round(got/tot*100)} %`;mtEngView()}}
+  return URL.createObjectURL(new Blob(parts,{type}))}
+function mtEngine(){
+  if(MT.ff)return Promise.resolve(MT.ff);if(MT.loading)return MT.loading;
+  MT.engErr='';MT.engMsg='Chargement du moteur de montage…';mtEngView();
+  MT.loading=(async()=>{
+    const base=mtBase();
+    if(location.protocol==='file:')throw new Error('file');
+    if(!window.FFmpegWASM)await mtLoadScript(MT_LIB);
+    const coreURL=await mtFetchBlob(`${base}/${MT_CORE}/ffmpeg-core.js`,'text/javascript','Chargement du moteur');
+    const wasmURL=await mtFetchBlob(`${base}/${MT_CORE}/ffmpeg-core.wasm`,'application/wasm','Chargement du moteur (une seule fois)');
+    const ff=new FFmpegWASM.FFmpeg();
+    ff.on('progress',({time})=>{const j=MT.cur;if(j&&time>0)j.pct=Math.min(0.99,time/1e6/(j.b-j.a))});
+    await ff.load({coreURL,wasmURL});
+    MT.ff=ff;MT.engMsg='';mtEngView();return ff})().catch(e=>{MT.loading=null;console.warn('montage moteur:',e);MT.engErr=location.protocol==='file:'?"Le montage fonctionne depuis le site (nova-qa.fr), pas depuis un fichier ouvert directement.":"Impossible de charger le moteur de montage. Vérifie ta connexion (un VPN ou un bloqueur peut empêcher le téléchargement depuis cdn.jsdelivr.net), puis réessaie.";MT.engMsg='';mtEngView();throw e});
+  return MT.loading}
+function mtEngView(){
+  const h=MT.engErr?`<span class="bad">${esc(MT.engErr)}</span> <button class="btn sm" id="mtRetry" type="button">Réessayer</button>`:MT.engMsg?`<span>⏳ ${esc(MT.engMsg)}</span>`:'';
+  ['#mtEng','#mtEng3'].forEach(s=>{$(s).innerHTML=h;$(s).hidden=!h})}
+document.addEventListener('click',e=>{if(e.target.id==='mtRetry'){MT.engErr='';mtEngine().then(()=>mtPump()).catch(()=>{})}});
+
+/* --- file d'attente des coupes (une à la fois, pendant que tu règles les suivantes) --- */
+function mtEnqueue(i){
+  const c=MT.cuts[i],old=MT.jobs[i];
+  if(!c||c.skip){MT.jobs[i]=null;return}
+  if(old&&old.a===c.a&&old.b===c.b&&old.mode===MT.mode&&old.state!=='err')return;
+  MT.jobs[i]={i,file:MT.files[i],a:c.a,b:c.b,mode:MT.mode,state:'wait',pct:0};mtPump()}
+async function mtPump(){
+  if(MT.busy)return;const j=MT.jobs.find(x=>x&&x.state==='wait');if(!j)return;
+  MT.busy=true;j.state='run';j.t0=Date.now();MT.cur=j;mtRenderRes();
+  try{const ff=await mtEngine();await mtRun(ff,j);if(MT.jobs[j.i]===j){j.state='ok';j.pct=1}}
+  catch(e){if(MT.jobs[j.i]===j){j.state='err';j.err=String((e&&e.message)||e)}if(!MT.ff){}else if(/memory|abort|terminated|OOM/i.test(String(e&&e.message||e))){try{MT.ff.terminate()}catch(_){}MT.ff=null;MT.loading=null}}
+  MT.busy=false;MT.cur=null;mtRenderRes();mtPump()}
+async function mtRun(ff,j){
+  const ext=mtExt(j.file.name),exact=j.mode==='exact',inName='in.'+ext,oExt=exact?'mp4':(MT_MIME[ext]?ext:'mp4'),out='out.'+oExt,dur=j.b-j.a;
+  try{await ff.createDir('/src')}catch(e){}
+  try{await ff.unmount('/src')}catch(e){}
+  await ff.mount('WORKERFS',{files:[new File([j.file],inName)]},'/src');
+  try{
+    const args=['-ss',j.a.toFixed(3),'-i','/src/'+inName,'-t',dur.toFixed(3),'-map','0:v:0','-map','0:a?','-sn','-dn'];
+    if(exact)args.push('-c:v','libx264','-preset','ultrafast','-crf','21','-pix_fmt','yuv420p','-c:a','aac','-b:a','160k','-movflags','+faststart');
+    else args.push('-c','copy','-avoid_negative_ts','make_zero',...(oExt==='mp4'||oExt==='mov'?['-movflags','+faststart']:[]));
+    args.push('-y',out);
+    const code=await ff.exec(args);if(code!==0)throw new Error('ffmpeg '+code);
+    const data=await ff.readFile(out);
+    j.blob=new Blob([data],{type:MT_MIME[oExt]||'video/mp4'});j.size=data.length;
+    j.outName=`${mtStem(j.file.name)} (coupé ${mtFmt(j.a,0).replace(':','m')}-${mtFmt(j.b,0).replace(':','m')}).${oExt}`
+  }finally{try{await ff.deleteFile(out)}catch(e){}try{await ff.unmount('/src')}catch(e){}}}
+
+/* --- 3. résultats --- */
+function mtResults(){mtShow(3);mtRenderRes()}
+function mtRenderRes(){
+  mtEngView();
+  const list=MT.files.map((f,i)=>({f,i,c:MT.cuts[i],j:MT.jobs[i]}));
+  const done=list.filter(x=>x.j&&x.j.state==='ok').length,todo=list.filter(x=>x.j).length;
+  $('#mtResSub').textContent=todo?`${done} sur ${todo} prête${done>1?'s':''}`:'aucune vidéo à couper';
+  $('#mtAll').disabled=!done;
+  $('#mtRes').innerHTML=list.map(({f,i,c,j})=>{
+    if(!c||c.skip||!j)return `<div class="mt-row skip"><span class="nm">🎞 ${esc(f.name)}</span><div class="mt-st"><span class="muted sm">ignorée</span></div><button class="btn sm" data-edit="${i}" type="button">Couper</button></div>`;
+    const keep=`${mtFmt(j.a)} → ${mtFmt(j.b)} <span class="muted">(${mtFmt(j.b-j.a)})</span>`;
+    let st='';
+    if(j.state==='ok')st=`<span class="muted sm">${mtSize(j.size)}</span><button class="btn primary sm" data-dl="${i}" type="button">${j.saved?'Télécharger encore':'Télécharger'}</button>`;
+    else if(j.state==='err')st=`<span class="bad sm">Échec${/memory|abort|OOM/i.test(j.err||'')?' (mémoire)':''}</span><button class="btn sm" data-retry="${i}" type="button">Réessayer</button>`;
+    else if(j.state==='run'){const p=Math.round((j.pct||0)*100),el=(Date.now()-j.t0)/1000,eta=j.pct>0.05?` · reste ≈ ${mtFmt(el/j.pct-el,0)}`:'';st=`<div class="mt-bar"><i style="width:${j.mode==='exact'?p:Math.max(8,p)}%"></i></div><span class="muted sm">${j.mode==='exact'?`${p} %${eta}`:'coupe en cours…'}</span>`}
+    else st=`<span class="muted sm">en attente…</span>`;
+    return `<div class="mt-row"><div class="nm"><b>${esc(f.name)}</b><span class="sm">${keep} · ${j.mode==='exact'?'précise':'rapide'}</span></div><div class="mt-st">${st}</div><button class="btn sm" data-edit="${i}" type="button">Modifier</button></div>`}).join('')}
+$('#mtRes').addEventListener('click',e=>{
+  const dl=e.target.closest('[data-dl]'),ed=e.target.closest('[data-edit]'),rt=e.target.closest('[data-retry]');
+  if(dl){mtDownload(MT.jobs[+dl.dataset.dl])}
+  if(ed){const i=+ed.dataset.edit;if(MT.cuts[i])MT.cuts[i].skip=false;mtOpen(i)}
+  if(rt){const j=MT.jobs[+rt.dataset.retry];if(j){j.state='wait';j.pct=0;mtPump()}}});
+function mtDownload(j){if(!j||!j.blob)return;const a=document.createElement('a');a.href=URL.createObjectURL(j.blob);a.download=j.outName;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);j.saved=true;mtRenderRes()}
+$('#mtAll').addEventListener('click',()=>{const L=MT.jobs.filter(j=>j&&j.state==='ok');L.forEach((j,k)=>setTimeout(()=>mtDownload(j),k*600));if(L.length>1)toast('Si Chrome demande, autorise les téléchargements multiples')});
+setInterval(()=>{if(MT.busy&&!$('#mtStep3').hidden)mtRenderRes()},700);
+window.addEventListener('beforeunload',e=>{if(MT.jobs.some(j=>j&&j.state==='ok'&&!j.saved)){e.preventDefault();e.returnValue=''}});
+mtRenderList();
 
 /* ---------- export / import ---------- */
 function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
