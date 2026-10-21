@@ -1922,7 +1922,7 @@ function renderRoblox(){}
 
 /* ---------- Montage : couper des vidéos dans le navigateur (ffmpeg.wasm, chargé à la demande) ---------- */
 const MT={audErr:'',audMsg:'',lock:Promise.resolve(),aud:null,audSel:[],files:[],i:0,cuts:[],jobs:[],mode:'fast',ff:null,loading:null,busy:false,url:null,dur:0,preview:false,cur:null,engMsg:'',engErr:'',t0:0};
-const MT_VER=5;
+const MT_VER=6;
 const MT_LIB='montage/ffmpeg.js',MT_CORE='@ffmpeg/core@0.12.10/dist/umd';   // la petite bibliothèque est hébergée avec le site (un worker doit venir du même site), le gros moteur vient d'un CDN
 const mtBase=()=>{let b='';try{b=localStorage.getItem('nova_mt_base')||''}catch(e){}return b||'https://cdn.jsdelivr.net/npm'};
 const mtFmt=(t,d=1)=>{t=Math.max(0,t||0);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60,ss=((s<10?'0':'')+s.toFixed(d)).replace(/\.0+$/,'');return h?`${h}:${pad(m)}:${ss}`:`${m}:${ss}`};
@@ -2105,19 +2105,20 @@ async function mtPrepAudio(i){
         const info=await mtProbe(ff,f);if(info.tracks.length<2)return{info,urls:[],lv:[]};
         if(MT.i!==i)return null;
         MT.audMsg=`Préparation de l'aperçu des ${info.tracks.length} pistes audio…`;mtAudView();
-        const ext=mtExt(f.name),path=await mtMount(ff,f,ext),args=['-i',path],outs=info.tracks.map((_,k)=>`t${k}.ogg`),logs=[],h=({message})=>logs.push(message);
-        info.tracks.forEach((t,k)=>args.push('-map','0:a:'+t.k,'-vn','-af',(t.pair!=null?`pan=stereo|c0=c${t.pair*2}|c1=c${t.pair*2+1},`:'')+'volumedetect','-c:a','libopus','-b:a','64k','-y',outs[k]));
+        const ext=mtExt(f.name),path=await mtMount(ff,f,ext),args=['-i',path],outs=info.tracks.map((_,k)=>`t${k}.mp3`),logs=[],h=({message})=>logs.push(message);
+        info.tracks.forEach((t,k)=>args.push('-map','0:a:'+t.k,'-vn','-af',(t.pair!=null?`pan=stereo|c0=c${t.pair*2}|c1=c${t.pair*2+1},`:'')+'volumedetect','-c:a','libmp3lame','-b:a','64k','-y',outs[k]));
         ff.on('log',h);
         try{const code=await ff.exec(args);if(code!==0)throw new Error('ffmpeg '+code);
-          const urls=[];for(const o of outs){const d=await ff.readFile(o);urls.push(URL.createObjectURL(new Blob([d],{type:'audio/ogg'})))}
+          const urls=[];for(const o of outs){const d=await ff.readFile(o);urls.push(URL.createObjectURL(new Blob([d],{type:'audio/mpeg'})))}
           const mx=logs.map(l=>(l.match(/max_volume:\s*(-?[\d.]+|-inf) dB/)||[])[1]).filter(x=>x!==undefined).map(x=>x==='-inf'?-99:+x);
           return{info,urls,lv:mx}}
+        catch(e){console.warn('montage aperçu audio:',e);mtResetEngine(e);return{info,urls:[],lv:[],nopreview:true}}
         finally{ff.off('log',h);for(const o of outs){try{await ff.deleteFile(o)}catch(e){}}try{await ff.unmount('/src')}catch(e){}}});
-      if(cached&&cached.urls.length)MT_AUD.set(f,cached)}
+      if(cached&&cached.urls.length)MT_AUD.set(f,cached);else if(cached&&cached.info)MT_INFO.set(f,cached.info)}
     MT.audMsg='';
     if(!cached||MT.i!==i)return;
     if(cached.info.tracks.length>=2&&!MT.audSel[i])MT.audSel[i]=cached.info.tracks.map(()=>({on:true,vol:100}));
-    MT.aud={i,info:cached.info,urls:cached.urls,lv:cached.lv||[]};mtAudView()
+    MT.aud={i,info:cached.info,urls:cached.urls,lv:cached.lv||[],nopreview:!!cached.nopreview};mtAudView()
   }catch(e){MT.audMsg='';MT.audErr=String((e&&e.message)||e||'erreur inconnue');console.warn('montage audio:',e);mtResetEngine(e);mtAudView()}}
 function mtAudView(){
   const box=$('#mtAud'),a=MT.aud,sel=MT.audSel[MT.i]||[];
@@ -2129,7 +2130,7 @@ function mtAudView(){
     box.hidden=!A.length;box.innerHTML=A.length?`<span class="muted sm">🔊 Cette vidéo contient ${A.length} piste${A.length>1?'s':''} audio (${A.map(mtChLabel).join(' ; ')}). Si ta voix ou Discord devraient y être mais ne s'entendent pas, ils n'ont pas été enregistrés dans ce fichier.</span>`:`<span class="muted sm">🔇 Aucune piste audio dans cette vidéo.</span>`;
     if(!A.length)box.hidden=false;mtV().muted=false;mtAudEls();return}
   box.hidden=false;
-  box.innerHTML=`<div class="mt-audh"><b>Pistes audio</b><span class="muted sm">${T.length} pistes détectées : elles sont mélangées ensemble dans la vidéo coupée. Décoche ou règle le volume de chacune.</span></div>`+
+  box.innerHTML=`<div class="mt-audh"><b>Pistes audio</b><span class="muted sm">${T.length} pistes détectées : elles sont mélangées ensemble dans la vidéo coupée. Décoche ou règle le volume de chacune.</span></div>${a.nopreview?`<div class="bad sm" style="margin:4px 0 8px">L'aperçu des pistes n'a pas pu être préparé : tu entendras seulement la première piste ici, mais la vidéo coupée contiendra bien toutes les pistes cochées.</div>`:''}`+
    T.map((t,k)=>{const o=sel[k]||{on:true,vol:100},mx=a.lv[k],low=mx!==undefined&&mx<-45;
      return `<label class="mt-trk"><input type="checkbox" data-ak="${k}"${o.on?' checked':''}><span class="nm">${esc(mtTrackName(t,k))}<small>${esc(mtChLabel(t.st))}${t.pair!=null?` · canaux ${t.pair*2+1}-${t.pair*2+2}`:''}</small></span><input type="range" min="0" max="300" step="5" value="${o.vol}" data-av="${k}" aria-label="Volume"><span class="muted sm" id="mtAv${k}">${o.vol} %</span><span class="mt-lv ${low?'low':''}">${mx===undefined?'':mx<=-90?'silencieuse':low?`très faible (${Math.round(mx)} dB)`:`pic ${Math.round(mx)} dB`}</span></label>`}).join('');
   mtAudEls()}
@@ -2166,7 +2167,7 @@ async function mtRun(ff,j){
   const defaultOne=n===1&&T[0].pair==null&&sel[0].on&&sel[0].vol===100;      // une seule piste, inchangée : on la garde telle quelle
   const needMix=n>0&&!defaultOne;
   const oExt=exact?'mp4':(MT_MIME[ext]?ext:'mp4');
-  const ac=oExt==='webm'?['-c:a','libopus','-b:a','192k']:['-c:a','aac','-b:a','192k'];   // le webm n'accepte pas l'AAC
+  const ac=oExt==='webm'?['-c:a','libvorbis','-q:a','6']:['-c:a','aac','-b:a','192k'];   // le webm n'accepte pas l'AAC
   const out='out.'+oExt;
   const path=await mtMount(ff,j.file,ext);
   try{
