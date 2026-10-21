@@ -716,6 +716,42 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 .mt-duck label{display:flex;gap:8px;align-items:center}.mt-duck input[type=checkbox]{width:18px;height:18px;padding:0}
 .mt-duckopt{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}.mt-duckopt .seg{height:32px}.mt-duckopt .seg button{padding:0 12px;font-size:13px}
 .ok{color:var(--ok,#37d67a)}
+.mt-fx{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.mt-fxr{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}.mt-fxr .lab{min-width:80px;font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--mut)}
+.mt-chk{display:flex;gap:8px;align-items:center;font-size:14px}.mt-chk input{width:18px;height:18px;padding:0}
+.mt-trk{grid-template-columns:22px minmax(110px,200px) 1fr 52px minmax(90px,140px) 84px}
+.mt-cl{font-size:12px;color:var(--mut);display:flex;gap:5px;align-items:center;justify-content:flex-end}.mt-cl input{width:16px;height:16px;padding:0}
+@media (max-width:760px){.mt-trk{grid-template-columns:22px 1fr 52px}.mt-cl{grid-column:2/4;justify-content:flex-start}}
+.mt-hub{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.mt-hub button{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:0 14px;height:36px;cursor:pointer;font-weight:600;font-size:14px;color:var(--mut)}
+.mt-hub button:hover{color:var(--ink)}
+.mt-hub button[aria-pressed=true]{color:var(--brand);border-color:color-mix(in srgb,var(--brand) 55%,transparent);background:color-mix(in srgb,var(--brand) 13%,transparent)}
+.mt-hint{margin:0 0 14px;padding:10px 14px;border-radius:10px;background:color-mix(in srgb,var(--brand) 11%,transparent);font-size:14px}
+.mt-drop-s{padding:20px 16px}
+.mt-file2{grid-template-columns:1fr auto auto auto}
+.mt-mv{display:flex;gap:6px}
+@media (max-width:760px){.mt-file2{grid-template-columns:1fr auto}}
+.mt-page .btns{margin-top:14px}
+.th-src{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.th-grab{margin:0 0 14px;padding:12px;border:1px solid var(--line);border-radius:12px}.th-grab video{width:100%;max-height:40vh;background:#000;border-radius:8px;display:block}
+.th-gbtn{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.th-wrap{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
+.th-cvw{border:2px dashed transparent;border-radius:12px;line-height:0}.th-cvw.over{border-color:var(--brand)}
+.th-cvw canvas{width:100%;height:auto;display:block;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.45);cursor:move;touch-action:none;outline:0;background:#0b1130}
+.th-tpl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}.th-tpl .lab{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--mut)}
+.th-right{max-height:none}.th-right .h3{margin:14px 0 6px}.th-right .h3:first-child{margin-top:0}
+.th-sl{display:grid;gap:6px}.th-sl label,.th-props label{display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;font-size:13px;color:var(--mut)}
+.th-sl input[type=range],.th-props input[type=range]{width:100%;padding:0;height:auto}
+.th-props{display:grid;gap:6px;margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:10px}
+.th-props textarea,.th-props select{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--card);font:inherit}
+.th-props input[type=color]{width:46px;height:30px;padding:0;border:1px solid var(--line);border-radius:6px;background:none}
+.th-props .mt-chk{display:flex;grid-template-columns:none}
+.th-add{display:flex;flex-wrap:wrap;gap:6px}
+.th-layers{margin-top:8px;display:grid;gap:4px}
+.th-ly{display:flex;gap:6px;align-items:center;padding:4px 6px;border:1px solid var(--line);border-radius:8px;cursor:pointer}.th-ly.on{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 11%,transparent)}
+.th-ly .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}.th-ly .btn{padding:0 8px;height:26px}
+.th-exp{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+@media (max-width:1000px){.th-wrap{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -871,8 +907,13 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
   </section>
   <!-- ===== MONTAGE ===== -->
   <section class="tab" id="tab-montage">
+    <div class="mt-hub" id="mtHub" role="tablist" aria-label="Outils vidéo">
+      <button type="button" data-t="cut" aria-pressed="true">✂️ Couper</button><button type="button" data-t="gif" aria-pressed="false">🎞 GIF</button><button type="button" data-t="speed" aria-pressed="false">⏩ Vitesse</button><button type="button" data-t="sound" aria-pressed="false">🔊 Son</button><button type="button" data-t="compress" aria-pressed="false">🗜 Compresser</button><button type="button" data-t="convert" aria-pressed="false">🔄 Convertir</button><button type="button" data-t="join" aria-pressed="false">🔗 Assembler</button><button type="button" data-t="thumb" aria-pressed="false">🖼 Miniature</button>
+    </div>
+    <div id="mtCutWrap">
     <div class="card" id="mtStep1">
-      <div class="head"><h2>Montage</h2><span class="sub">couper tes vidéos, directement dans ton navigateur</span></div>
+      <div class="head"><h2 id="mtH2">Montage</h2><span class="sub" id="mtH2s">couper tes vidéos, directement dans ton navigateur</span></div>
+      <p class="mt-hint" id="mtPresetHint" hidden></p>
       <div class="mt-drop" id="mtDrop" tabindex="0">
         <div class="mt-ic" aria-hidden="true">🎬</div>
         <b>Dépose tes vidéos ici</b>
@@ -922,6 +963,13 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
         <select id="mtSz" aria-label="Taille du vertical" hidden><option value="1080">1080 × 1920 (HD)</option><option value="720">720 × 1280 (plus rapide)</option></select>
       </div>
       <p class="muted sm" id="mtFmtNote" style="margin:6px 0 0" hidden></p>
+      <div class="mt-fx" id="mtFx"><h3 class="h3" style="margin:0">Effets</h3>
+        <div class="mt-fxr"><span class="lab">Sortie</span><div class="seg" id="mtOut"><button data-v="video" aria-pressed="true" type="button">Vidéo</button><button data-v="gif" aria-pressed="false" type="button">GIF animé</button></div>
+          <span id="mtGifOpt" hidden><select id="mtGw" aria-label="Largeur du GIF"><option value="320">320 px</option><option value="480">480 px</option><option value="640">640 px</option></select> <select id="mtGf" aria-label="Images par seconde"><option value="10">10 images/s</option><option value="15">15 images/s</option><option value="20">20 images/s</option></select></span></div>
+        <div class="mt-fxr"><span class="lab">Vitesse</span><select id="mtSpeed" aria-label="Vitesse"><option value="0.25">× 0,25 (très lent)</option><option value="0.5">× 0,5 (ralenti)</option><option value="0.75">× 0,75</option><option value="1" selected>× 1 (normale)</option><option value="1.5">× 1,5</option><option value="2">× 2 (accéléré)</option><option value="3">× 3</option><option value="4">× 4</option></select><span class="muted sm" id="mtSpeedNote"></span></div>
+        <div class="mt-fxr"><span class="lab">Son</span><label class="mt-chk"><input type="checkbox" id="mtClean"> Nettoyer le son (moins de bruit de fond, voix plus claire)</label><label class="mt-chk"><input type="checkbox" id="mtNorm"> Égaliser le volume</label></div>
+        <p class="muted sm" id="mtFxNote" style="margin:4px 0 0" hidden></p>
+      </div>
       <div class="mt-aud" id="mtAud" hidden></div>
       <p class="muted sm" style="margin:10px 0 0">Raccourcis : <kbd>Espace</kbd> / <kbd>K</kbd> lecture · <kbd>←</kbd> <kbd>→</kbd> ±1 s (<kbd>Maj</kbd> = ±5 s) · <kbd>J</kbd> <kbd>L</kbd> ±10 s · <kbd>,</kbd> <kbd>.</kbd> ±0,1 s · <kbd>I</kbd> début ici · <kbd>O</kbd> fin ici · <kbd>+</kbd> <kbd>-</kbd> <kbd>0</kbd> zoom · <kbd>Ctrl</kbd>+<kbd>Z</kbd> annuler. Molette sur la barre = zoom (<kbd>Maj</kbd> = défiler).</p>
       <div class="btns">
@@ -939,6 +987,8 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
       <div class="btns"><button class="btn" id="mtBack2" type="button">← Retoucher une coupe</button><button class="btn primary" id="mtAll" type="button" disabled>Tout télécharger</button></div>
       <p class="muted sm" style="margin:12px 0 0" id="mtResNote"></p>
     </div>
+    </div>
+    <div id="mtPages"></div>
   </section>
 </main>
 <dialog id="dlg" class="big">
@@ -1955,7 +2005,7 @@ function renderRoblox(){}
 /* ---------- Montage : couper des vidéos dans le navigateur (ffmpeg.wasm, chargé à la demande) ---------- */
 const MT={audErr:'',audMsg:'',lock:Promise.resolve(),aud:null,audSel:[],duck:[],files:[],i:0,cuts:[],jobs:[],mode:'fast',ff:null,loading:null,busy:false,url:null,dur:0,preview:false,cur:null,engMsg:'',engErr:'',
   view:{s:0,e:0},hist:[],wave:null,thumbs:null,dir:null,dirOk:false};
-const MT_VER=7;
+const MT_VER=8;
 const MT_LIB='montage/ffmpeg.js',MT_CORE='@ffmpeg/core@0.12.10/dist/umd';   // la petite bibliothèque est hébergée avec le site (un worker doit venir du même site), le gros moteur vient d'un CDN
 const mtBase=()=>{let b='';try{b=localStorage.getItem('nova_mt_base')||''}catch(e){}return b||'https://cdn.jsdelivr.net/npm'};
 const mtFmt=(t,d=1)=>{t=Math.max(0,t||0);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60,ss=((s<10?'0':'')+s.toFixed(d)).replace(/\.0+$/,'');return h?`${h}:${pad(m)}:${ss}`:`${m}:${ss}`};
@@ -1982,8 +2032,8 @@ async function mtDirInit(){if(!mtHasDir)return;try{const h=await idbGet('mtdir')
 async function mtDirPick(){
   try{const h=await window.showDirectoryPicker({id:'nova-montage',mode:'readwrite'});MT.dir=h;MT.dirOk=true;try{await idbSet('mtdir',h)}catch(e){}}
   catch(e){if(!e||e.name!=='AbortError')toast("Impossible d'utiliser ce dossier")}
-  mtRenderList();mtRenderRes()}
-async function mtDirClear(){MT.dir=null;MT.dirOk=false;try{await idbDel('mtdir')}catch(e){}mtRenderList();mtRenderRes()}
+  mtRenderList();mtRefreshAll()}
+async function mtDirClear(){MT.dir=null;MT.dirOk=false;try{await idbDel('mtdir')}catch(e){}mtRenderList();mtRefreshAll()}
 async function mtDirPerm(){if(!MT.dir)return false;try{MT.dirOk=(await MT.dir.queryPermission({mode:'readwrite'}))==='granted'||(await MT.dir.requestPermission({mode:'readwrite'}))==='granted'}catch(e){MT.dirOk=false}return MT.dirOk}
 const mtDirLine=()=>!mtHasDir?'<span class="muted sm">Ton navigateur ne peut pas écrire dans un dossier : les vidéos seront téléchargées.</span>':MT.dir?`<span class="nm">📁 <b>${esc(MT.dir.name)}</b>${MT.dirOk?'':' <span class="muted sm">(autorisation à confirmer)</span>'}</span>`:'<span class="muted sm">Aucun dossier : les vidéos seront téléchargées une par une.</span>';
 
@@ -2019,11 +2069,13 @@ function mtOpen(i){
   if(MT.url)URL.revokeObjectURL(MT.url);MT.url=URL.createObjectURL(f);
   $('#mtTitle').textContent=`Vidéo ${i+1} sur ${MT.files.length}`;$('#mtSub').textContent=`${f.name} · ${mtSize(f.size)} · module v${MT_VER}`;
   $('#mtErr').hidden=true;$('#mtNext').textContent=i===MT.files.length-1?'Terminer ✓':'Suivant →';$('#mtPrevVid').disabled=i===0;
-  const v=mtV();v.muted=false;mtAEls.forEach(e=>e.pause());v.src=MT.url;v.load();mtEngView();mtDraw();mtFmtView();MT.aud=null;mtAudView();mtPrepAudio(i)}
+  const v=mtV();v.muted=false;mtAEls.forEach(e=>e.pause());v.src=MT.url;v.load();mtEngView();mtDraw();mtFmtView();mtFxView();MT.aud=null;mtAudView();mtPrepAudio(i)}
 mtV().addEventListener('loadedmetadata',()=>{
   const v=mtV(),d=v.duration;if(!isFinite(d)||d<=0){mtVidErr();return}
-  MT.dur=d;const c=MT.cuts[MT.i]||{a:0,b:d,skip:false,fmt:mtPrefs.fmt,res:mtPrefs.res,pos:0.5};MT.cuts[MT.i]=c;c.b=Math.min(c.b,d);MT.view={s:0,e:d};v.currentTime=c.a;
-  mtFmtView();mtDraw();mtThumbs(MT.i)});
+  MT.dur=d;const c=MT.cuts[MT.i]||{a:0,b:d,skip:false,fmt:mtPrefs.fmt,res:mtPrefs.res,pos:0.5,norm:!!mtPrefs.norm};
+  if(!MT.cuts[MT.i]){const ps=MT.preset;if(ps==='gif')c.out='gif';if(ps==='speed')c.speed=2;if(ps==='sound'){c.clean=true;c.norm=true}}
+  MT.cuts[MT.i]=c;c.b=Math.min(c.b,d);MT.view={s:0,e:d};v.currentTime=c.a;
+  mtFmtView();mtFxView();mtDraw();mtThumbs(MT.i)});
 mtV().addEventListener('error',mtVidErr);
 function mtVidErr(){$('#mtErr').hidden=false;$('#mtErr').textContent="Chrome n'arrive pas à lire cette vidéo (format ou codec non pris en charge), donc impossible de la prévisualiser. Essaie avec un fichier .mp4 (H.264) ou .webm.";MT.dur=0;mtDraw()}
 const mtCut=()=>MT.cuts[MT.i]||{a:0,b:MT.dur,fmt:'orig',pos:0.5,res:1080};
@@ -2044,7 +2096,7 @@ function mtDraw(){
   if(document.activeElement!==$('#mtAIn'))$('#mtAIn').value=mtFmt(c.a);if(document.activeElement!==$('#mtBIn'))$('#mtBIn').value=mtFmt(c.b);
   const keep=Math.max(0,c.b-c.a);$('#mtKeep').textContent=MT.dur?mtFmt(keep):'–';
   $('#mtEst').textContent=MT.dur?`≈ ${mtSize(MT.files[MT.i].size*keep/MT.dur)}${c.fmt&&c.fmt!=='orig'?' (vertical : à peu près)':''}`:'';
-  $('#mtNext').disabled=!MT.dur||keep<0.2;$('#mtHA').setAttribute('aria-valuenow',c.a);$('#mtHB').setAttribute('aria-valuenow',c.b);
+  if($('#mtSpeed').value!=='1'||$('#mtFxNote').textContent)mtFxView();$('#mtNext').disabled=!MT.dur||keep<0.2;$('#mtHA').setAttribute('aria-valuenow',c.a);$('#mtHB').setAttribute('aria-valuenow',c.b);
   const zoomed=MT.dur&&mtSpan()<MT.dur-0.01;$('#mtZinfo').textContent=zoomed?`zoom : ${mtFmt(mtSpan())} affichées`:'';
   const pan=$('#mtPan');pan.hidden=!zoomed;if(zoomed&&document.activeElement!==pan)pan.value=Math.round(MT.view.s/(MT.dur-mtSpan())*1000);
   mtPaintSoon()}
@@ -2163,6 +2215,23 @@ function mtCropUpdate(){
   el.hidden=false;Object.assign(el.style,{left:ox+(cw-w)*(c.pos??0.5)+'px',top:oy+'px',width:w+'px',height:ch+'px'})}
 mtV().addEventListener('loadeddata',mtCropUpdate);
 
+/* --- effets : GIF, vitesse, nettoyage / égalisation du son --- */
+function mtFxView(){
+  const c=mtCut(),gif=c.out==='gif';setSeg('mtOut',c.out||'video');$('#mtGifOpt').hidden=!gif;$('#mtGw').value=String(c.gw||mtPrefs.gw||480);$('#mtGf').value=String(c.gfps||mtPrefs.gfps||15);
+  $('#mtSpeed').value=String(c.speed||1);$('#mtClean').checked=!!c.clean;$('#mtNorm').checked=!!c.norm;
+  const sp=+c.speed||1,notes=[];
+  if(gif)notes.push(`Le GIF n'a pas de son. Garde un extrait court (moins de 10 s) pour un fichier léger : Discord accepte environ 10 Mo.`);
+  if(sp!==1)notes.push(`Vitesse × ${sp} : la partie gardée durera ${mtFmt((c.b-c.a)/sp)} au lieu de ${mtFmt(c.b-c.a)}. Cet effet recompresse la vidéo (plus lent).`);
+  if(c.clean||c.norm)notes.push("Le nettoyage et l'égalisation du son s'entendent dans la vidéo coupée, pas dans l'aperçu.");
+  $('#mtFxNote').hidden=!notes.length;$('#mtFxNote').textContent=notes.join(' ');
+  $('#mtSpeedNote').textContent=sp!==1?`→ ${mtFmt((c.b-c.a)/sp)}`:''}
+segBind('mtOut',v=>{const c=mtCut();c.out=v;mtFxView();mtDraw()});
+$('#mtGw').addEventListener('change',e=>{mtCut().gw=+e.target.value;mtPrefs.gw=+e.target.value;mtSavePrefs()});
+$('#mtGf').addEventListener('change',e=>{mtCut().gfps=+e.target.value;mtPrefs.gfps=+e.target.value;mtSavePrefs()});
+$('#mtSpeed').addEventListener('change',e=>{mtCut().speed=+e.target.value;mtFxView()});
+$('#mtClean').addEventListener('change',e=>{mtCut().clean=e.target.checked;mtFxView()});
+$('#mtNorm').addEventListener('change',e=>{mtCut().norm=e.target.checked;mtPrefs.norm=e.target.checked;mtSavePrefs();mtFxView()});
+
 function mtStore(skip){const c=mtCut();c.skip=!!skip;MT.cuts[MT.i]=c;mtEnqueue(MT.i)}
 $('#mtNext').addEventListener('click',()=>{mtStore(false);mtAdvance()});
 $('#mtSkip').addEventListener('click',()=>{mtStore(true);mtAdvance()});
@@ -2172,6 +2241,172 @@ $('#mtBack1').addEventListener('click',()=>{mtShow(1);mtRenderList()});
 $('#mtBack2').addEventListener('click',()=>{const k=MT.files.findIndex((f,i)=>MT.cuts[i]&&!MT.cuts[i].skip);mtOpen(Math.max(0,k))});
 $('#mtNew').addEventListener('click',()=>{if(MT.jobs.some(j=>j&&j.blob&&!j.saved)&&!confirm('Certaines vidéos coupées ne sont pas encore enregistrées. Les abandonner ?'))return;
   MT.jobs.forEach(j=>{if(j)j.blob=null});MT.files=[];MT.cuts=[];MT.jobs=[];MT.audSel=[];MT.duck=[];if(MT.url){URL.revokeObjectURL(MT.url);MT.url=null}mtV().removeAttribute('src');mtShow(1);mtRenderList()});
+
+/* ---------- Montage : créateur de miniatures (canvas 1280 × 720) ---------- */
+const TH={bg:null,adj:{zoom:100,x:0,y:0,bri:100,con:100,sat:100,blur:0,dark:0,vig:0},layers:[],sel:null,hist:[],next:1,imgs:{},inited:false,drag:null,vurl:null};
+const TH_FONTS=[['Impact','Impact, "Arial Narrow Bold", sans-serif'],['Arial Black','"Arial Black", "Arial Bold", sans-serif'],['Segoe UI Black','"Segoe UI Black", "Segoe UI", sans-serif'],['Trebuchet','"Trebuchet MS", sans-serif'],['Comic Sans','"Comic Sans MS", cursive'],['Georgia','Georgia, serif'],['Courier','"Courier New", monospace'],['Système','system-ui, sans-serif']];
+function thumbPageHtml(){return `<div class="card mt-page" id="mtP-thumb" hidden>
+  <div class="head"><h2>Miniature</h2><span class="sub">une image 16:9 pour YouTube, prête en quelques clics</span></div>
+  <div class="th-src"><button class="btn" id="thPickImg" type="button">🖼 Choisir une image…</button><input type="file" id="thImgIn" accept="image/*" hidden>
+    <button class="btn" id="thPickVid" type="button">🎞 Prendre une image dans une vidéo…</button><input type="file" id="thVidIn" accept="${TL_ACC}" hidden>
+    <span class="muted sm">Tu peux aussi déposer une image sur la miniature.</span></div>
+  <div class="th-grab" id="thGrab" hidden><video id="thVid" controls playsinline preload="metadata"></video>
+    <div class="th-gbtn"><button class="btn sm" data-tstep="-1" type="button">−1 s</button><button class="btn sm" data-tstep="-0.1" type="button">−0,1 s</button><button class="btn sm" data-tstep="0.1" type="button">+0,1 s</button><button class="btn sm" data-tstep="1" type="button">+1 s</button><button class="btn primary" id="thTake" type="button">Prendre cette image</button><button class="btn sm" id="thGrabClose" type="button">Fermer la vidéo</button></div></div>
+  <div class="th-wrap">
+   <div class="th-left"><div class="th-cvw" id="thCvw"><canvas id="thCv" width="1280" height="720" tabindex="0" aria-label="Miniature"></canvas></div>
+    <div class="th-tpl"><span class="lab">Modèles</span><button class="btn sm" data-tpl="title" type="button">Gros titre</button><button class="btn sm" data-tpl="arrow" type="button">Titre + flèche</button><button class="btn sm" data-tpl="duo" type="button">Deux lignes</button><button class="btn sm" data-tpl="reset" type="button">Tout effacer</button></div></div>
+   <div class="th-right">
+    <h3 class="h3">Image de fond</h3>
+    <div class="th-sl"><label>Zoom<input type="range" data-adj="zoom" min="100" max="300"></label><label>Gauche ↔ droite<input type="range" data-adj="x" min="-100" max="100"></label><label>Haut ↔ bas<input type="range" data-adj="y" min="-100" max="100"></label>
+      <label>Luminosité<input type="range" data-adj="bri" min="40" max="180"></label><label>Contraste<input type="range" data-adj="con" min="40" max="200"></label><label>Couleurs<input type="range" data-adj="sat" min="0" max="250"></label>
+      <label>Flou<input type="range" data-adj="blur" min="0" max="30"></label><label>Assombrir<input type="range" data-adj="dark" min="0" max="80"></label><label>Bords sombres<input type="range" data-adj="vig" min="0" max="100"></label></div>
+    <h3 class="h3">Éléments</h3>
+    <div class="th-add"><button class="btn sm" data-add="text" type="button">+ Texte</button><button class="btn sm" data-add="emoji" type="button">+ Emoji</button><button class="btn sm" data-add="arrow" type="button">+ Flèche</button><button class="btn sm" data-add="ellipse" type="button">+ Cercle</button><button class="btn sm" data-add="rect" type="button">+ Cadre</button><button class="btn sm" data-add="image" type="button">+ Image / logo</button><input type="file" id="thLayerImg" accept="image/*" hidden></div>
+    <div id="thLayers" class="th-layers"></div>
+    <div id="thProps" class="th-props"></div>
+    <h3 class="h3">Exporter</h3>
+    <div class="th-exp"><div class="seg" id="thFmt"><button type="button" data-v="jpg" aria-pressed="true">JPG (léger)</button><button type="button" data-v="png" aria-pressed="false">PNG</button></div>
+      <select id="thSize" aria-label="Taille"><option value="1280">1280 × 720 (YouTube)</option><option value="1920">1920 × 1080</option></select></div>
+    <div class="btns left"><button class="btn primary" id="thDl" type="button">Télécharger</button><button class="btn" id="thSaveDir" type="button" hidden>Enregistrer dans le dossier</button></div>
+    <p class="muted sm" id="thInfo" style="margin:6px 0 0">YouTube demande une miniature de moins de 2 Mo : le JPG est réglé automatiquement pour ça.</p>
+   </div></div></div>`}
+
+const thFont=n=>(TH_FONTS.find(f=>f[0]===n)||TH_FONTS[0])[1];
+function thNew(type){
+  const id=TH.next++,base={id,type,x:640,y:360,rot:0};
+  if(type==='text')return {...base,y:600,text:'TON TITRE',font:'Impact',size:150,color:'#ffffff',stroke:'#000000',sw:14,shadow:true,bold:false};
+  if(type==='emoji')return {...base,type:'text',text:'🔥',font:'Système',size:200,color:'#ffffff',stroke:'#000000',sw:0,shadow:true,bold:false};
+  if(type==='arrow')return {...base,len:320,w:36,color:'#ff2d2d',stroke:'#000000',sw:6,rot:-30};
+  if(type==='ellipse')return {...base,w:380,h:260,color:'#ffe600',lw:14,fill:0};
+  if(type==='rect')return {...base,w:420,h:260,color:'#ffe600',lw:14,fill:0};
+  return base}
+const thSnap=()=>JSON.stringify({adj:TH.adj,layers:TH.layers,sel:TH.sel});
+function thPush(){const s=thSnap();if(TH.hist[TH.hist.length-1]!==s){TH.hist.push(s);if(TH.hist.length>60)TH.hist.shift()}}
+function thUndo(){TH.hist.pop();const s=TH.hist[TH.hist.length-1];if(!s){toast('Rien à annuler');return}const o=JSON.parse(s);TH.adj=o.adj;TH.layers=o.layers;TH.sel=o.sel;thRender();thUi()}
+/* mesure d'un élément (sans rotation) : {w,h} */
+function thMeasure(L,g){
+  if(L.type==='text'){g.font=`${L.bold?'900 ':''}${L.size}px ${thFont(L.font)}`;const lines=String(L.text).split('\n');return{w:Math.max(...lines.map(t=>g.measureText(t).width),10)+L.sw,h:lines.length*L.size*1.12+L.sw,lines}}
+  if(L.type==='arrow')return{w:L.len+L.w,h:Math.max(L.w*2.4,40)};
+  if(L.type==='image'){const im=TH.imgs[L.id];return{w:L.w||300,h:im?(L.w||300)*im.height/im.width:200}}
+  return{w:L.w,h:L.h}}
+function thDrawLayer(g,L,sel){
+  g.save();g.translate(L.x,L.y);g.rotate(L.rot*Math.PI/180);g.lineJoin='round';g.lineCap='round';
+  const m=thMeasure(L,g);
+  if(L.type==='text'){
+    g.font=`${L.bold?'900 ':''}${L.size}px ${thFont(L.font)}`;g.textAlign='center';g.textBaseline='middle';
+    m.lines.forEach((t,i)=>{const y=(i-(m.lines.length-1)/2)*L.size*1.12;
+      if(L.shadow){g.save();g.shadowColor='rgba(0,0,0,.65)';g.shadowBlur=L.size*0.12;g.shadowOffsetY=L.size*0.05;g.fillStyle=L.color;g.fillText(t,0,y);g.restore()}
+      if(L.sw>0){g.strokeStyle=L.stroke;g.lineWidth=L.sw;g.strokeText(t,0,y)}
+      g.fillStyle=L.color;g.fillText(t,0,y)})}
+  else if(L.type==='arrow'){
+    const h=L.len/2,hw=L.w,head=L.w*2.2;
+    g.beginPath();g.moveTo(-h,-hw/2);g.lineTo(h-head,-hw/2);g.lineTo(h-head,-hw*1.2);g.lineTo(h,0);g.lineTo(h-head,hw*1.2);g.lineTo(h-head,hw/2);g.lineTo(-h,hw/2);g.closePath();
+    g.shadowColor='rgba(0,0,0,.5)';g.shadowBlur=12;g.fillStyle=L.color;g.fill();g.shadowColor='transparent';if(L.sw>0){g.strokeStyle=L.stroke;g.lineWidth=L.sw;g.stroke()}}
+  else if(L.type==='ellipse'||L.type==='rect'){
+    g.beginPath();if(L.type==='ellipse')g.ellipse(0,0,L.w/2,L.h/2,0,0,Math.PI*2);else g.rect(-L.w/2,-L.h/2,L.w,L.h);
+    if(L.fill>0){g.globalAlpha=L.fill/100;g.fillStyle=L.color;g.fill();g.globalAlpha=1}
+    if(L.lw>0){g.shadowColor='rgba(0,0,0,.5)';g.shadowBlur=10;g.strokeStyle=L.color;g.lineWidth=L.lw;g.stroke()}}
+  else if(L.type==='image'){const im=TH.imgs[L.id];if(im)g.drawImage(im,-m.w/2,-m.h/2,m.w,m.h)}
+  if(sel){g.shadowColor='transparent';g.setLineDash([10,8]);g.lineWidth=3;g.strokeStyle='#38e1ff';g.strokeRect(-m.w/2-6,-m.h/2-6,m.w+12,m.h+12)}
+  g.restore()}
+function thDrawBg(g,W,H){
+  const a=TH.adj;g.save();g.fillStyle='#0b1130';g.fillRect(0,0,W,H);
+  if(TH.bg){const bw=TH.bg.width,bh=TH.bg.height,sc=Math.max(W/bw,H/bh)*a.zoom/100,dw=bw*sc,dh=bh*sc,ox=(W-dw)/2+a.x/100*(dw-W)/2,oy=(H-dh)/2+a.y/100*(dh-H)/2;
+    g.filter=`brightness(${a.bri}%) contrast(${a.con}%) saturate(${a.sat}%)${a.blur?` blur(${a.blur*W/1280}px)`:''}`;g.drawImage(TH.bg,ox,oy,dw,dh);g.filter='none'}
+  else{const gr=g.createLinearGradient(0,0,W,H);gr.addColorStop(0,'#1b2a6b');gr.addColorStop(1,'#7a2aa8');g.fillStyle=gr;g.fillRect(0,0,W,H)}
+  if(a.dark){g.fillStyle=`rgba(0,0,0,${a.dark/100})`;g.fillRect(0,0,W,H)}
+  if(a.vig){const r=g.createRadialGradient(W/2,H/2,H*0.35,W/2,H/2,W*0.7);r.addColorStop(0,'rgba(0,0,0,0)');r.addColorStop(1,`rgba(0,0,0,${a.vig/100*0.9})`);g.fillStyle=r;g.fillRect(0,0,W,H)}
+  g.restore()}
+function thRender(){
+  const cv=$('#thCv');if(!cv)return;const g=cv.getContext('2d');thDrawBg(g,1280,720);TH.layers.forEach(L=>thDrawLayer(g,L,L.id===TH.sel))}
+function thHit(x,y){
+  const cv=document.createElement('canvas').getContext('2d');
+  for(let i=TH.layers.length-1;i>=0;i--){const L=TH.layers[i],m=thMeasure(L,cv),c=Math.cos(-L.rot*Math.PI/180),s=Math.sin(-L.rot*Math.PI/180),dx=x-L.x,dy=y-L.y,lx=dx*c-dy*s,ly=dx*s+dy*c;
+    if(Math.abs(lx)<=m.w/2+8&&Math.abs(ly)<=m.h/2+8)return L}
+  return null}
+const thSel=()=>TH.layers.find(l=>l.id===TH.sel);
+const TH_NAMES={text:'Texte',arrow:'Flèche',ellipse:'Cercle',rect:'Cadre',image:'Image'};
+
+/* --- panneau de réglages de l'élément choisi --- */
+function thUi(){
+  $$('#mtP-thumb [data-adj]').forEach(i=>i.value=TH.adj[i.dataset.adj]);
+  $('#thLayers').innerHTML=TH.layers.length?[...TH.layers].reverse().map(L=>`<div class="th-ly${L.id===TH.sel?' on':''}" data-ly="${L.id}"><span class="nm">${L.type==='text'?esc(String(L.text).split('\n')[0].slice(0,24)||'Texte'):TH_NAMES[L.type]}</span><button class="btn sm" data-lyup="${L.id}" type="button" title="Mettre devant" aria-label="Mettre devant">↑</button><button class="btn sm" data-lydn="${L.id}" type="button" title="Mettre derrière" aria-label="Mettre derrière">↓</button><button class="btn sm" data-lydup="${L.id}" type="button" title="Dupliquer" aria-label="Dupliquer">⧉</button><button class="btn sm" data-lydel="${L.id}" type="button" title="Supprimer" aria-label="Supprimer">✕</button></div>`).join(''):'<p class="muted sm" style="margin:6px 0">Aucun élément. Ajoute un texte, une flèche, un cercle ou une image.</p>';
+  const L=thSel(),box=$('#thProps');if(!L){box.innerHTML='';return}
+  const num=(k,lab,min,max,step=1)=>`<label>${lab}<input type="range" data-p="${k}" min="${min}" max="${max}" step="${step}" value="${L[k]}"></label>`,col=(k,lab)=>`<label>${lab}<input type="color" data-p="${k}" value="${L[k]}"></label>`,chk=(k,lab)=>`<label class="mt-chk"><input type="checkbox" data-p="${k}"${L[k]?' checked':''}> ${lab}</label>`;
+  let h='';
+  if(L.type==='text')h=`<label>Texte<textarea data-p="text" rows="2" maxlength="120">${esc(L.text)}</textarea></label><label>Police<select data-p="font">${TH_FONTS.map(f=>`<option${f[0]===L.font?' selected':''}>${f[0]}</option>`).join('')}</select></label>${num('size','Taille',20,420)}${col('color','Couleur')}${col('stroke','Contour')}${num('sw','Épaisseur du contour',0,40)}${chk('shadow','Ombre')}${chk('bold','Gras')}`;
+  else if(L.type==='arrow')h=`${num('len','Longueur',80,900)}${num('w','Épaisseur',10,120)}${col('color','Couleur')}${col('stroke','Contour')}${num('sw','Épaisseur du contour',0,20)}`;
+  else if(L.type==='ellipse'||L.type==='rect')h=`${num('w','Largeur',40,1280)}${num('h','Hauteur',40,720)}${col('color','Couleur')}${num('lw','Épaisseur du trait',0,50)}${num('fill','Remplissage',0,100)}`;
+  else if(L.type==='image')h=`${num('w','Taille',40,1280)}`;
+  box.innerHTML=h+`${num('rot','Rotation',-180,180)}<p class="muted sm" style="margin:6px 0 0">Glisse l'élément sur la miniature pour le déplacer ; molette pour changer sa taille.</p>`}
+function thRefresh(){thRender();thUi()}
+function thAdd(type){
+  if(type==='image'){$('#thLayerImg').click();return}
+  const L=thNew(type);TH.layers.push(L);TH.sel=L.id;thPush();thRefresh()}
+function thLoadImg(file,cb){const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{cb(im);setTimeout(()=>URL.revokeObjectURL(u),2000)};im.onerror=()=>toast("Cette image n'a pas pu être lue");im.src=u}
+function thSetBg(src){TH.bg=src;TH.adj={...TH.adj,zoom:100,x:0,y:0};thPush();thRefresh()}
+const TH_TPL={
+  title:()=>{TH.layers=[Object.assign(thNew('text'),{text:'TON TITRE',y:360,size:200})]},
+  arrow:()=>{const t=Object.assign(thNew('text'),{text:'INCROYABLE !',x:640,y:130,size:150,color:'#ffe600'}),a=Object.assign(thNew('arrow'),{x:840,y:500,rot:-135,len:380});TH.layers=[t,a]},
+  duo:()=>{TH.layers=[Object.assign(thNew('text'),{text:'MA PLUS GROSSE',y:520,size:140,color:'#ffe600'}),Object.assign(thNew('text'),{text:'VICTOIRE !',y:650,size:170})]},
+  reset:()=>{TH.layers=[]}};
+
+/* --- initialisation (au premier affichage de la page) --- */
+function thumbShow(){
+  if(!TH.inited){TH.inited=true;thWire();TH.layers=[Object.assign(thNew('text'),{text:'TON TITRE',y:360,size:200})];TH.sel=TH.layers[0].id;thPush()}
+  setSeg('thFmt',mtPrefs.thFmt||'jpg');$('#thSize').value=String(mtPrefs.thSize||1280);$('#thSaveDir').hidden=!(MT.dir&&MT.dirOk);thRefresh()}
+function thWire(){
+  const cv=$('#thCv'),pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*1280/r.width,(e.clientY-r.top)*720/r.height]};
+  $('#thPickImg').addEventListener('click',()=>$('#thImgIn').click());
+  $('#thImgIn').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)thLoadImg(f,im=>thSetBg(im))});
+  $('#thLayerImg').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)thLoadImg(f,im=>{const L=thNew('image');L.w=Math.min(500,im.width);TH.imgs[L.id]=im;TH.layers.push(L);TH.sel=L.id;thPush();thRefresh()})});
+  const cvw=$('#thCvw');['dragenter','dragover'].forEach(ev=>cvw.addEventListener(ev,e=>{e.preventDefault();cvw.classList.add('over')}));
+  ['dragleave','drop'].forEach(ev=>cvw.addEventListener(ev,e=>{e.preventDefault();cvw.classList.remove('over')}));
+  cvw.addEventListener('drop',e=>{const f=[...e.dataTransfer.files].find(x=>/^image\//.test(x.type));if(f)thLoadImg(f,im=>thSetBg(im))});
+  /* image prise dans une vidéo */
+  $('#thPickVid').addEventListener('click',()=>$('#thVidIn').click());
+  $('#thVidIn').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(TH.vurl)URL.revokeObjectURL(TH.vurl);TH.vurl=URL.createObjectURL(f);const v=$('#thVid');v.src=TH.vurl;v.load();$('#thGrab').hidden=false});
+  $('#thGrab').addEventListener('click',e=>{const b=e.target.closest('[data-tstep]');if(b){const v=$('#thVid');v.pause();v.currentTime=Math.max(0,Math.min(v.duration||0,v.currentTime+ +b.dataset.tstep))}});
+  $('#thTake').addEventListener('click',()=>{const v=$('#thVid');if(!v.videoWidth){toast("Chrome n'arrive pas à lire cette vidéo");return}const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);thSetBg(c);toast('Image prise ✓')});
+  $('#thGrabClose').addEventListener('click',()=>{const v=$('#thVid');v.pause();v.removeAttribute('src');v.load();$('#thGrab').hidden=true;if(TH.vurl){URL.revokeObjectURL(TH.vurl);TH.vurl=null}});
+  /* réglages du fond */
+  $$('#mtP-thumb [data-adj]').forEach(i=>{i.addEventListener('input',()=>{TH.adj[i.dataset.adj]=+i.value;thRender()});i.addEventListener('change',thPush)});
+  /* éléments */
+  $('#mtP-thumb').addEventListener('click',e=>{
+    const add=e.target.closest('[data-add]');if(add)thAdd(add.dataset.add);
+    const tp=e.target.closest('[data-tpl]');if(tp){TH_TPL[tp.dataset.tpl]();TH.sel=TH.layers.length?TH.layers[0].id:null;thPush();thRefresh()}
+    const up=e.target.closest('[data-lyup]'),dn=e.target.closest('[data-lydn]'),dp=e.target.closest('[data-lydup]'),dl=e.target.closest('[data-lydel]'),ly=e.target.closest('[data-ly]');
+    const idx=id=>TH.layers.findIndex(l=>l.id===+id);
+    if(up){const i=idx(up.dataset.lyup);if(i<TH.layers.length-1){[TH.layers[i],TH.layers[i+1]]=[TH.layers[i+1],TH.layers[i]];thPush();thRefresh()}return}
+    if(dn){const i=idx(dn.dataset.lydn);if(i>0){[TH.layers[i],TH.layers[i-1]]=[TH.layers[i-1],TH.layers[i]];thPush();thRefresh()}return}
+    if(dp){const L=TH.layers[idx(dp.dataset.lydup)];if(L){const c={...L,id:TH.next++,x:L.x+30,y:L.y+30};if(L.type==='image')TH.imgs[c.id]=TH.imgs[L.id];TH.layers.push(c);TH.sel=c.id;thPush();thRefresh()}return}
+    if(dl){const i=idx(dl.dataset.lydel);TH.layers.splice(i,1);if(TH.sel===+dl.dataset.lydel)TH.sel=null;thPush();thRefresh();return}
+    if(ly){TH.sel=+ly.dataset.ly;thRefresh()}});
+  $('#thProps').addEventListener('input',e=>{const L=thSel(),k=e.target.dataset.p;if(!L||!k)return;L[k]=e.target.type==='checkbox'?(e.target.checked?1:0):e.target.type==='range'||e.target.type==='number'?+e.target.value:e.target.value;thRender();if(k==='text')$$('#thLayers .th-ly.on .nm').forEach(n=>n.textContent=String(L.text).split('\n')[0].slice(0,24)||'Texte')});
+  $('#thProps').addEventListener('change',thPush);
+  /* glisser / molette sur la miniature */
+  cv.addEventListener('pointerdown',e=>{const [x,y]=pos(e),L=thHit(x,y);TH.sel=L?L.id:null;if(L){TH.drag={id:L.id,dx:L.x-x,dy:L.y-y};cv.setPointerCapture(e.pointerId)}thRefresh();e.preventDefault()});
+  cv.addEventListener('pointermove',e=>{if(!TH.drag)return;const L=TH.layers.find(l=>l.id===TH.drag.id);if(!L)return;const [x,y]=pos(e);L.x=Math.round(x+TH.drag.dx);L.y=Math.round(y+TH.drag.dy);thRender()});
+  ['pointerup','pointercancel'].forEach(ev=>cv.addEventListener(ev,()=>{if(TH.drag){TH.drag=null;thPush()}}));
+  cv.addEventListener('wheel',e=>{const L=thSel();if(!L)return;e.preventDefault();const f=e.deltaY<0?1.06:1/1.06;
+    if(L.type==='text')L.size=Math.max(20,Math.min(420,Math.round(L.size*f)));else if(L.type==='arrow'){L.len=Math.round(L.len*f);L.w=Math.round(L.w*f)}else{L.w=Math.round(L.w*f);if(L.h)L.h=Math.round(L.h*f)}
+    thRender();clearTimeout(TH.wt);TH.wt=setTimeout(()=>{thPush();thUi()},300)},{passive:false});
+  cv.addEventListener('keydown',e=>{const L=thSel();if(!L)return;const st=e.shiftKey?20:4;
+    if(e.key==='Delete'||e.key==='Backspace'){TH.layers=TH.layers.filter(l=>l!==L);TH.sel=null;thPush();thRefresh()}
+    else if(e.key.startsWith('Arrow')){L.x+=e.key==='ArrowRight'?st:e.key==='ArrowLeft'?-st:0;L.y+=e.key==='ArrowDown'?st:e.key==='ArrowUp'?-st:0;thRender();e.preventDefault()}});
+  document.addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||e.key.toLowerCase()!=='z'||$('#mtP-thumb').hidden||!$('#tab-montage').classList.contains('on'))return;const tg=e.target;if(tg&&/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName)&&tg.type!=='range'&&tg.type!=='checkbox')return;e.preventDefault();e.stopImmediatePropagation();thUndo()},true);
+  /* export */
+  segBind('thFmt',v=>{mtPrefs.thFmt=v;mtSavePrefs()});$('#thSize').addEventListener('change',e=>{mtPrefs.thSize=+e.target.value;mtSavePrefs()});
+  $('#thDl').addEventListener('click',async()=>{const r=await thExport();if(!r)return;const a=document.createElement('a');a.href=URL.createObjectURL(r.blob);a.download=r.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);$('#thInfo').textContent=`${r.name} · ${mtSize(r.blob.size)}${r.blob.size>2e6?' (plus de 2 Mo : YouTube la refusera, passe en JPG ou baisse la taille)':''}`});
+  $('#thSaveDir').addEventListener('click',async()=>{const r=await thExport();if(!r)return;const it={blob:r.blob,outName:r.name};const ok=await mtSaveDir(it);if(ok){toast(`Enregistrée dans « ${MT.dir.name} » ✓`);$('#thInfo').textContent=`${it.savedName} · ${mtSize(r.blob.size)}`}else toast("Impossible d'écrire dans le dossier : utilise « Télécharger »")})}
+async function thExport(){
+  const W=+($('#thSize').value||1280),H=Math.round(W*9/16),c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+  thDrawBg(g,W,H);g.save();g.scale(W/1280,W/1280);TH.layers.forEach(L=>thDrawLayer(g,L,false));g.restore();
+  const png=(mtPrefs.thFmt||'jpg')==='png',blobOf=(t,q)=>new Promise(res=>c.toBlob(res,t,q));
+  if(png)return{blob:await blobOf('image/png'),name:'miniature.png'};
+  let q=0.95,b=await blobOf('image/jpeg',q);while(b.size>1.95e6&&q>0.45){q-=0.07;b=await blobOf('image/jpeg',q)}
+  return{blob:b,name:'miniature.jpg'}}
+if(window.__NOVA_TEST)window.__th={TH,thExport,thAdd,thRender};
 
 /* ---------- Montage : moteur, pistes audio, file d'attente, résultats ---------- */
 function mtLoadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('script'));document.head.appendChild(s)})}
@@ -2189,13 +2424,13 @@ function mtEngine(){
     const coreURL=await mtFetchBlob(`${base}/${MT_CORE}/ffmpeg-core.js`,'text/javascript','Chargement du moteur');
     const wasmURL=await mtFetchBlob(`${base}/${MT_CORE}/ffmpeg-core.wasm`,'application/wasm','Chargement du moteur (une seule fois)');
     const ff=new FFmpegWASM.FFmpeg();
-    ff.on('progress',({time})=>{const j=MT.cur;if(j&&time>0)j.pct=Math.min(0.99,time/1e6/(j.b-j.a))});
+    ff.on('progress',({time})=>{const j=MT.cur;if(j&&time>0)j.pct=Math.min(0.99,time/1e6/(j.tot||(j.b-j.a)||1))});
     await ff.load({coreURL,wasmURL});
     MT.ff=ff;MT.engMsg='';mtEngView();return ff})().catch(e=>{MT.loading=null;console.warn('montage moteur:',e);MT.engErr=location.protocol==='file:'?"Le montage fonctionne depuis le site (nova-qa.fr), pas depuis un fichier ouvert directement.":"Impossible de charger le moteur de montage. Vérifie ta connexion (un VPN ou un bloqueur peut empêcher le téléchargement depuis cdn.jsdelivr.net), puis réessaie.";MT.engMsg='';mtEngView();throw e});
   return MT.loading}
 function mtEngView(){
   const h=MT.engErr?`<span class="bad">${esc(MT.engErr)}</span> <button class="btn sm" id="mtRetry" type="button">Réessayer</button>`:MT.engMsg?`<span>⏳ ${esc(MT.engMsg)}</span>`:'';
-  ['#mtEng','#mtEng3'].forEach(s=>{$(s).innerHTML=h;$(s).hidden=!h})}
+  $$('.mt-eng').forEach(el=>{el.innerHTML=h;el.hidden=!h})}
 document.addEventListener('click',e=>{if(e.target.id==='mtAudRetry'){mtEngine().then(()=>mtPrepAudio(MT.i)).catch(()=>mtPrepAudio(MT.i))}
   if(e.target.id==='mtRetry'){MT.engErr='';mtEngine().then(()=>mtPump()).catch(()=>{})}});
 function mtResetEngine(e){if(MT.ff&&/memory|abort|terminated|OOM|out of bounds|undefined/i.test(String((e&&e.message)||e))){try{MT.ff.terminate()}catch(_){}MT.ff=null;MT.loading=null}}
@@ -2213,17 +2448,19 @@ async function mtProbe(ff,file){
   const ext=mtExt(file.name),logs=[],h=({message})=>logs.push(message);ff.on('log',h);
   try{const path=await mtMount(ff,file,ext);try{await ff.exec(['-hide_banner','-i',path])}catch(e){}}
   finally{ff.off('log',h);try{await ff.unmount('/src')}catch(e){}}
-  const audio=[];let cur=null;
+  const audio=[];let cur=null,video=null;
   for(const l of logs){
     const m=l.match(/Stream #0:(\d+)(?:\[[^\]]*\])?(?:\(([^)]*)\))?.*?: (Audio|Video|Subtitle|Data)(?:: (.*))?/);
-    if(m){cur=null;if(m[3]==='Audio'){const r=m[4]||'',lay=(r.split(',')[2]||'').trim().toLowerCase(),nc=lay==='mono'?1:lay==='stereo'?2:lay==='quad'?4:(lay.match(/^(\d+) channels/)||[])[1]|0;
+    if(m){cur=null;if(m[3]==='Video'&&!video){const r=m[4]||'',sz=r.match(/(\d{2,5})x(\d{2,5})/),fp=r.match(/([\d.]+) fps/);video={codec:(r.match(/^[\w-]+/)||[''])[0],w:sz?+sz[1]:0,h:sz?+sz[2]:0,fps:fp?+fp[1]:0}}
+      if(m[3]==='Audio'){const r=m[4]||'',lay=(r.split(',')[2]||'').trim().toLowerCase(),nc=lay==='mono'?1:lay==='stereo'?2:lay==='quad'?4:(lay.match(/^(\d+) channels/)||[])[1]|0;
         cur={idx:+m[1],lang:m[2]||'',title:'',codec:(r.match(/^[\w-]+/)||[''])[0],hz:(r.match(/(\d+) Hz/)||[])[1]|0,layout:lay,ch:nc};audio.push(cur)}continue}
     const t=l.match(/^\s+(?:title|handler_name)\s*:\s*(.+?)\s*$/i);if(t&&cur&&!cur.title&&!/SoundHandler|Sound Media Handler|Audio Handler/i.test(t[1]))cur.title=t[1]}
   const tracks=[];
   audio.forEach((st,k)=>{
     if(st.ch>2&&st.ch%2===0&&/^\d+ channels$/.test(st.layout))for(let q=0;q<st.ch/2;q++)tracks.push({k,pair:q,title:st.title?`${st.title} ${q+1}`:'',st});
     else tracks.push({k,pair:null,title:st.title,st})});
-  const info={audio,tracks};MT_INFO.set(file,info);return info}
+  const dm=logs.join('\n').match(/Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)/),dur=dm?(+dm[1])*3600+(+dm[2])*60+(+dm[3]):0;
+  const info={audio,tracks,dur,video};MT_INFO.set(file,info);return info}
 const mtTrackName=(t,i)=>t.title||`Piste ${i+1}`;
 const mtPan2=t=>t.pair!=null?`pan=stereo|c0=c${t.pair*2}|c1=c${t.pair*2+1}`:'';
 const mtChain=(t,vol)=>`[0:a:${t.k}]${t.pair!=null?mtPan2(t)+',':''}volume=${(vol/100).toFixed(2)}`;
@@ -2288,7 +2525,7 @@ function mtAudView(){
     `<span class="mt-duckopt"${dk&&dk.on?'':' hidden'}>Ma voix : <select id="mtDuckVoice" aria-label="Piste de ma voix">${T.map((t,k)=>`<option value="${k}"${dk&&dk.voice===k?' selected':''}>${esc(mtTrackName(t,k))}</option>`).join('')}</select> Force : <span class="seg" id="mtDuckLvl">${[1,2,3].map(n=>`<button type="button" data-v="${n}" aria-pressed="${dk&&dk.lvl===n}">${MT_DUCK[n].l}</button>`).join('')}</span> <span class="muted sm">(l'aperçu est approximatif ; la vidéo coupée utilise une vraie compression)</span></span></div>`;
   box.innerHTML=`<div class="mt-audh"><b>Pistes audio</b><span class="muted sm">${T.length} pistes détectées : elles sont mélangées ensemble dans la vidéo coupée. Décoche ou règle le volume de chacune.</span></div>${a.nopreview?`<div class="bad sm" style="margin:4px 0 8px">L'aperçu des pistes n'a pas pu être préparé : tu entendras seulement la première piste ici, mais la vidéo coupée contiendra bien toutes les pistes cochées.</div>`:''}`+
    T.map((t,k)=>{const o=sel[k]||{on:true,vol:100},mx=a.lv[k],low=mx!==undefined&&mx<-45;
-     return `<label class="mt-trk"><input type="checkbox" data-ak="${k}"${o.on?' checked':''}><span class="nm">${esc(mtTrackName(t,k))}<small>${esc(mtChLabel(t.st))}${t.pair!=null?` · canaux ${t.pair*2+1}-${t.pair*2+2}`:''}</small></span><input type="range" min="0" max="300" step="5" value="${o.vol}" data-av="${k}" aria-label="Volume"><span class="muted sm" id="mtAv${k}">${o.vol} %</span><span class="mt-lv ${low?'low':''}">${mx===undefined?'':mx<=-90?'silencieuse':low?`très faible (${Math.round(mx)} dB)`:`pic ${Math.round(mx)} dB`}</span></label>`}).join('')+duckHtml;
+     return `<label class="mt-trk"><input type="checkbox" data-ak="${k}"${o.on?' checked':''}><span class="nm">${esc(mtTrackName(t,k))}<small>${esc(mtChLabel(t.st))}${t.pair!=null?` · canaux ${t.pair*2+1}-${t.pair*2+2}`:''}</small></span><input type="range" min="0" max="300" step="5" value="${o.vol}" data-av="${k}" aria-label="Volume"><span class="muted sm" id="mtAv${k}">${o.vol} %</span><span class="mt-lv ${low?'low':''}">${mx===undefined?'':mx<=-90?'silencieuse':low?`très faible (${Math.round(mx)} dB)`:`pic ${Math.round(mx)} dB`}</span><span class="mt-cl" title="Réduit le bruit de fond et rend la voix plus claire dans la vidéo coupée"><input type="checkbox" data-ac="${k}"${o.clean?' checked':''} aria-label="Nettoyer cette piste"> nettoyer</span></label>`}).join('')+duckHtml;
   mtAudEls()}
 /* un élément <audio> par piste, synchronisé avec la vidéo (qui est alors muette) ; WebAudio pour dépasser 100 % et pour baisser le jeu quand la voix parle */
 let mtAEls=[],mtCtx=null,mtDuckRaf=0;
@@ -2323,6 +2560,7 @@ $('#mtAud').addEventListener('input',e=>{
   const a=MT.aud;if(!a)return;const T=a.info.tracks,sel=MT.audSel[MT.i]=MT.audSel[MT.i]||T.map(()=>({on:true,vol:100}));
   const ak=e.target.dataset.ak,av=e.target.dataset.av;
   if(ak!==undefined){sel[+ak].on=e.target.checked;mtRememberVol(+ak)}
+  if(e.target.dataset.ac!==undefined){sel[+e.target.dataset.ac].clean=e.target.checked}
   if(av!==undefined){sel[+av].vol=+e.target.value;$('#mtAv'+av).textContent=e.target.value+' %';mtRememberVol(+av)}
   if(ak!==undefined||av!==undefined){mtAEls.forEach((el,k)=>mtAudGain(el,sel[k]));mtPaintSoon()}
   if(e.target.id==='mtDuckOn'){const d=MT.duck[MT.i];if(d){d.on=e.target.checked;mtPrefs.duck=d.on;mtSavePrefs();$('#mtAud .mt-duckopt').hidden=!d.on;mtDuckStart()}}});
@@ -2334,54 +2572,76 @@ $('#mtAud').addEventListener('click',e=>{const b=e.target.closest('#mtDuckLvl bu
 function mtEnqueue(i){
   const c=MT.cuts[i],old=MT.jobs[i];
   if(!c||c.skip){MT.jobs[i]=null;return}
-  const spec={a:c.a,b:c.b,mode:MT.mode,fmt:c.fmt||'orig',pos:c.pos??0.5,res:c.res||1080,aud:MT.audSel[i]?JSON.parse(JSON.stringify(MT.audSel[i])):null,duck:MT.duck[i]?JSON.parse(JSON.stringify(MT.duck[i])):null,tpl:mtPrefs.tpl,n:i+1},key=JSON.stringify(spec);
+  const spec={a:c.a,b:c.b,mode:MT.mode,fmt:c.fmt||'orig',pos:c.pos??0.5,res:c.res||1080,out:c.out||'video',gw:c.gw||mtPrefs.gw||480,gfps:c.gfps||mtPrefs.gfps||15,speed:c.speed||1,norm:!!c.norm,clean:!!c.clean,aud:MT.audSel[i]?JSON.parse(JSON.stringify(MT.audSel[i])):null,duck:MT.duck[i]?JSON.parse(JSON.stringify(MT.duck[i])):null,tpl:mtPrefs.tpl,n:i+1},key=JSON.stringify(spec);
   if(old&&old.key===key&&old.state!=='err')return;
   MT.jobs[i]={i,file:MT.files[i],key,...spec,state:'wait',pct:0};mtPump()}
 async function mtPump(){
   if(MT.busy)return;const j=MT.jobs.find(x=>x&&x.state==='wait');if(!j)return;
-  MT.busy=true;j.state='run';j.t0=Date.now();MT.cur=j;mtRenderRes();
-  try{const ff=await mtEngine();await mtSerial(()=>mtRun(ff,j));if(MT.jobs[j.i]===j){j.state='ok';j.pct=1;if(MT.dir&&MT.dirOk)await mtSaveDir(j)}}
+  MT.busy=true;j.state='run';j.t0=Date.now();mtRenderRes();
+  try{const ff=await mtEngine();await mtSerial(()=>{MT.cur=j;return mtRun(ff,j)});if(MT.jobs[j.i]===j){j.state='ok';j.pct=1;if(MT.dir&&MT.dirOk)await mtSaveDir(j)}}
   catch(e){if(MT.jobs[j.i]===j){j.state='err';j.err=String((e&&e.message)||e)}mtResetEngine(e)}
   MT.busy=false;MT.cur=null;mtRenderRes();mtPump()}
 const mtClean=s=>s.replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-').replace(/\s*\(\s*\)/g,'').replace(/\s{2,}/g,' ').replace(/[\s_\-.]+$/,'').trim().slice(0,150)||'montage';
 function mtOutName(j,ext){
-  const t=x=>mtFmt(x,0).replace(':','m'),map={nom:mtStem(j.file.name),debut:t(j.a),fin:t(j.b),duree:t(j.b-j.a),n:String(j.n),date:isoToday(),format:j.fmt==='orig'?'':'vertical'};
+  const t=x=>mtFmt(x,0).replace(':','m'),map={nom:mtStem(j.file.name),debut:t(j.a),fin:t(j.b),duree:t(j.b-j.a),n:String(j.n),date:isoToday(),format:[j.out==='gif'?'gif':'',j.fmt==='orig'?'':'vertical',(+j.speed||1)!==1?'x'+j.speed:''].filter(Boolean).join(' ')};
   return mtClean((j.tpl||'{nom} (coupé {debut}-{fin})').replace(/\{(\w+)\}/g,(m,k)=>k in map?map[k]:m))+'.'+ext}
+/* plan du son d'une entrée : mélange des pistes cochées (volume, nettoyage), baisse du jeu, vitesse, volume égalisé.
+   o = {inp, pre, duck, norm, speed, clean, out} → {none} | {copy} | {fc:[…], label:'[out]'} */
+const MT_CLEAN='highpass=f=90,afftdn=nf=-28,acompressor=threshold=-18dB:ratio=3:attack=10:release=150,equalizer=f=3000:t=q:w=1:g=3';
+const mtTempo=s=>{const a=[];let x=s;while(x>2){a.push('atempo=2');x/=2}while(x<0.5){a.push('atempo=0.5');x*=2}a.push('atempo='+x.toFixed(4));return a.join(',')};
+function mtAudioPlan(info,selIn,o){
+  const T=info.tracks,n=T.length,inp=o.inp||0,pre=o.pre||'';
+  const sel=T.map((_,k)=>({on:true,vol:100,clean:false,...((selIn||[])[k]||{})}));
+  const on=sel.map((x,k)=>x.on&&x.vol>0?k:-1).filter(k=>k>=0),speed=o.speed&&o.speed!==1;
+  if(n===0||on.length===0)return{none:true};
+  const anyClean=!!o.clean||sel.some(x=>x.clean);
+  if(n===1&&T[0].pair==null&&sel[0].on&&sel[0].vol===100&&!anyClean&&!o.norm&&!speed)return{copy:true,map:`${inp}:a:0`};
+  const fc=[],voice=o.duck&&o.duck.on&&on.includes(o.duck.voice)&&on.length>1?o.duck.voice:-1,R=(MT_DUCK[o.duck&&o.duck.lvl]||MT_DUCK[2]).r;
+  on.forEach(k=>fc.push(`[${inp}:a:${T[k].k}]${T[k].pair!=null?mtPan2(T[k])+',':''}${(o.clean||sel[k].clean)?MT_CLEAN+',':''}volume=${(sel[k].vol/100).toFixed(2)}[${pre}a${k}]`));
+  let mix;
+  if(voice>=0){const others=on.filter(k=>k!==voice);
+    fc.push(others.length>1?`${others.map(k=>`[${pre}a${k}]`).join('')}amix=inputs=${others.length}:normalize=0:duration=longest[${pre}gm]`:`[${pre}a${others[0]}]anull[${pre}gm]`,
+      `[${pre}a${voice}]asplit=2[${pre}vs][${pre}vm]`,`[${pre}gm][${pre}vs]sidechaincompress=threshold=0.03:ratio=${R}:attack=15:release=400[${pre}gd]`,`[${pre}gd][${pre}vm]amix=inputs=2:normalize=0:duration=longest[${pre}mx]`);mix=`[${pre}mx]`}
+  else if(on.length>1){fc.push(`${on.map(k=>`[${pre}a${k}]`).join('')}amix=inputs=${on.length}:normalize=0:duration=longest[${pre}mx]`);mix=`[${pre}mx]`}
+  else mix=`[${pre}a${on[0]}]`;
+  const post=[...(speed?[mtTempo(o.speed)]:[]),...(o.norm?['loudnorm=I=-16:TP=-1.5:LRA=11']:[]),'alimiter=limit=0.97'];
+  fc.push(`${mix}${post.join(',')}[${o.out||'am'}]`);
+  return{fc,label:`[${o.out||'am'}]`,nOn:on.length}}
+
 async function mtRun(ff,j){
-  const ext=mtExt(j.file.name),vert=j.fmt!=='orig',exact=j.mode==='exact'||vert,dur=j.b-j.a;
-  const info=await mtProbe(ff,j.file),T=info.tracks,n=T.length;
-  const sel=T.map((_,k)=>({on:true,vol:100,...((j.aud||[])[k]||{})})),on=sel.map((o,k)=>o.on&&o.vol>0?k:-1).filter(k=>k>=0);
-  const defaultOne=n===1&&T[0].pair==null&&sel[0].on&&sel[0].vol===100;      // une seule piste, inchangée : on la garde telle quelle
-  const needMix=n>0&&!defaultOne;
-  const oExt=exact?'mp4':(MT_MIME[ext]?ext:'mp4');
+  const ext=mtExt(j.file.name),speed=+j.speed||1,gif=j.out==='gif',vert=j.fmt!=='orig',exact=j.mode==='exact'||vert||gif||speed!==1,dur=j.b-j.a;
+  j.tot=dur/speed;
+  const info=await mtProbe(ff,j.file);
+  const oExt=gif?'gif':exact?'mp4':(MT_MIME[ext]?ext:'mp4');
   const ac=oExt==='webm'?['-c:a','libvorbis','-q:a','6']:['-c:a','aac','-b:a','192k'];   // le webm n'accepte pas l'AAC
   const out='out.'+oExt,fc=[];
   const path=await mtMount(ff,j.file,ext);
   try{
-    const args=['-ss',j.a.toFixed(3),'-i',path,'-t',dur.toFixed(3),'-sn','-dn'];
+    const args=['-ss',j.a.toFixed(3),'-t',dur.toFixed(3),'-i',path,'-sn','-dn'];   // -t avant -i : on lit exactement la partie choisie, même si la vitesse change
     /* vidéo */
     let vmap=['-map','0:v:0'],vid=exact?['-c:v','libx264','-preset','ultrafast','-crf','21','-pix_fmt','yuv420p']:['-c:v','copy'];
-    if(vert){const W=j.res===720?720:1080,H=W/9*16;
-      fc.push(j.fmt==='crop'?`[0:v]crop=w='min(iw,trunc(ih*9/16/2)*2)':h=ih:x='(iw-ow)*${(+j.pos).toFixed(3)}':y=0,scale=${W}:${H},setsar=1[v]`
-        :`[0:v]split=2[va][vb];[va]scale=${W/10}:${H/10}:force_original_aspect_ratio=increase,crop=${W/10}:${H/10},boxblur=3:2,scale=${W}:${H},setsar=1[bg];[vb]scale=${W}:-2,setsar=1[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[v]`);
-      vmap=['-map','[v]']}
+    const spd=speed!==1?`setpts=PTS/${speed},`:'';
+    if(vert||gif||speed!==1){
+      let last='[v1]';
+      if(vert){const W=j.res===720?720:1080,H=W/9*16;
+        fc.push(j.fmt==='crop'?`[0:v]${spd}crop=w='min(iw,trunc(ih*9/16/2)*2)':h=ih:x='(iw-ow)*${(+j.pos).toFixed(3)}':y=0,scale=${W}:${H},setsar=1[v1]`
+          :`[0:v]${spd}split=2[va][vb];[va]scale=${W/10}:${H/10}:force_original_aspect_ratio=increase,crop=${W/10}:${H/10},boxblur=3:2,scale=${W}:${H},setsar=1[bg];[vb]scale=${W}:-2,setsar=1[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[v1]`)}
+      else fc.push(speed!==1?`[0:v]setpts=PTS/${speed}[v1]`:'[0:v]null[v1]');
+      if(gif){fc.push(`[v1]fps=${j.gfps||15},scale=${j.gw||480}:-1:flags=lanczos,split[s0][s1];[s0]palettegen=stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=5[v]`);last='[v]'}
+      vmap=['-map',last]}
+    if(gif)vid=['-loop','0'];
     /* audio */
     let aud=[];
-    if(n===0||(needMix&&on.length===0))aud=['-an'];
-    else if(defaultOne)aud=['-map','0:a:0',...(exact?['-c:a','aac','-b:a','160k']:['-c:a','copy'])];
-    else{
-      const dk=j.duck,voice=dk&&dk.on&&on.includes(dk.voice)&&on.length>1?dk.voice:-1,R=(MT_DUCK[dk&&dk.lvl]||MT_DUCK[2]).r;
-      on.forEach(k=>fc.push(`${mtChain(T[k],sel[k].vol)}[a${k}]`));
-      if(voice>=0){const others=on.filter(k=>k!==voice);
-        fc.push(others.length>1?`${others.map(k=>`[a${k}]`).join('')}amix=inputs=${others.length}:normalize=0:duration=longest[gm]`:`[a${others[0]}]anull[gm]`,
-          `[a${voice}]asplit=2[vs][vm]`,`[gm][vs]sidechaincompress=threshold=0.03:ratio=${R}:attack=15:release=400[gd]`,`[gd][vm]amix=inputs=2:normalize=0:duration=longest,alimiter=limit=0.97[am]`)}
-      else fc.push(`${on.map(k=>`[a${k}]`).join('')}${on.length>1?`amix=inputs=${on.length}:normalize=0:duration=longest,`:''}alimiter=limit=0.97[am]`);
-      aud=['-map','[am]',...ac]}
-    const args2=[...args,...(fc.length?['-filter_complex',fc.join(';')]:[]),...vmap,...vid,...aud,'-avoid_negative_ts','make_zero',...(oExt==='mp4'||oExt==='mov'?['-movflags','+faststart']:[]),'-y',out];
+    if(gif)aud=['-an'];
+    else{const plan=mtAudioPlan(info,j.aud,{inp:0,duck:j.duck,norm:j.norm,speed,clean:j.clean,out:'am'});
+      if(plan.none)aud=['-an'];
+      else if(plan.copy)aud=['-map',plan.map,...(exact?['-c:a','aac','-b:a','160k']:['-c:a','copy'])];
+      else{fc.push(...plan.fc);aud=['-map',plan.label,...ac]}}
+    const args2=[...args,...(fc.length?['-filter_complex',fc.join(';')]:[]),...vmap,...vid,...aud,...(gif?[]:['-avoid_negative_ts','make_zero']),...(oExt==='mp4'||oExt==='mov'?['-movflags','+faststart']:[]),'-y',out];
     const code=await ff.exec(args2);if(code!==0)throw new Error('ffmpeg '+code);
     const data=await ff.readFile(out);
-    j.blob=new Blob([data],{type:MT_MIME[oExt]||'video/mp4'});j.size=data.length;
-    j.nAud=on.length;j.outName=mtOutName(j,oExt)
+    j.blob=new Blob([data],{type:gif?'image/gif':(MT_MIME[oExt]||'video/mp4')});j.size=data.length;
+    j.outName=mtOutName(j,oExt)
   }finally{try{await ff.deleteFile(out)}catch(e){}try{await ff.unmount('/src')}catch(e){}}}
 
 /* --- enregistrement direct dans le dossier choisi --- */
@@ -2396,7 +2656,7 @@ async function mtSaveDir(j){
 
 /* --- 3. résultats --- */
 function mtResults(){mtShow(3);mtRenderRes()}
-const mtFmtTag=j=>j.fmt==='crop'?' · vertical recadré':j.fmt==='blur'?' · vertical fond flou':'';
+const mtFmtTag=j=>(j.out==='gif'?' · GIF':'')+(j.fmt==='crop'?' · vertical recadré':j.fmt==='blur'?' · vertical fond flou':'')+((+j.speed||1)!==1?` · vitesse ×${j.speed}`:'')+(j.norm?' · volume égalisé':'')+(j.clean?' · son nettoyé':'');
 function mtRenderRes(){
   mtEngView();
   const list=MT.files.map((f,i)=>({f,i,c:MT.cuts[i],j:MT.jobs[i]}));
@@ -2411,9 +2671,9 @@ function mtRenderRes(){
     let st='';
     if(j.state==='ok')st=j.saved&&!j.blob?`<span class="ok sm">✔ Enregistrée dans « ${esc(j.where)} »</span>`:`<span class="muted sm">${mtSize(j.size)}</span><button class="btn primary sm" data-dl="${i}" type="button">${j.saved?'Télécharger encore':'Télécharger'}</button>`;
     else if(j.state==='err')st=`<span class="bad sm">Échec${/memory|abort|OOM|out of bounds/i.test(j.err||'')?' (mémoire)':''}</span><button class="btn sm" data-retry="${i}" type="button">Réessayer</button>`;
-    else if(j.state==='run'){const p=Math.round((j.pct||0)*100),el=(Date.now()-j.t0)/1000,eta=j.pct>0.05?` · reste ≈ ${mtFmt(el/j.pct-el,0)}`:'';const slow=j.mode==='exact'||j.fmt!=='orig';st=`<div class="mt-bar"><i style="width:${slow?p:Math.max(8,p)}%"></i></div><span class="muted sm">${slow?`${p} %${eta}`:'coupe en cours…'}</span>`}
+    else if(j.state==='run'){const p=Math.round((j.pct||0)*100),el=(Date.now()-j.t0)/1000,eta=j.pct>0.05?` · reste ≈ ${mtFmt(el/j.pct-el,0)}`:'';const slow=j.mode==='exact'||j.fmt!=='orig'||j.out==='gif'||(+j.speed||1)!==1;st=`<div class="mt-bar"><i style="width:${slow?p:Math.max(8,p)}%"></i></div><span class="muted sm">${slow?`${p} %${eta}`:'coupe en cours…'}</span>`}
     else st=`<span class="muted sm">en attente…</span>`;
-    return `<div class="mt-row"><div class="nm"><b>${esc(j.saved&&j.savedName?j.savedName:(j.outName||f.name))}</b><span class="sm">${esc(f.name)} · ${keep} · ${j.mode==='exact'||j.fmt!=='orig'?'précise':'rapide'}${mtFmtTag(j)}</span></div><div class="mt-st">${st}</div><button class="btn sm" data-edit="${i}" type="button">Modifier</button></div>`}).join('')}
+    return `<div class="mt-row"><div class="nm"><b>${esc(j.saved&&j.savedName?j.savedName:(j.outName||f.name))}</b><span class="sm">${esc(f.name)} · ${keep} · ${j.mode==='exact'||j.fmt!=='orig'||j.out==='gif'||(+j.speed||1)!==1?'précise':'rapide'}${mtFmtTag(j)}</span></div><div class="mt-st">${st}</div><button class="btn sm" data-edit="${i}" type="button">Modifier</button></div>`}).join('')}
 $('#mtRes').addEventListener('click',e=>{
   const dl=e.target.closest('[data-dl]'),ed=e.target.closest('[data-edit]'),rt=e.target.closest('[data-retry]');
   if(dl){mtDownload(MT.jobs[+dl.dataset.dl])}
@@ -2424,13 +2684,257 @@ $('#mtDirRow3').addEventListener('click',async e=>{
   if(e.target.id==='mtDirAllow'){await mtDirPerm()}
   if(MT.dir&&MT.dirOk)for(const j of MT.jobs)if(j&&j.state==='ok'&&j.blob)await mtSaveDir(j);
   mtRenderRes()});
-function mtDownload(j){if(!j||!j.blob)return;const a=document.createElement('a');a.href=URL.createObjectURL(j.blob);a.download=j.outName;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);j.saved=true;mtRenderRes()}
+function mtRefreshAll(){mtRenderRes();toolsRender()}
+function mtDownload(j){if(!j||!j.blob)return;const a=document.createElement('a');a.href=URL.createObjectURL(j.blob);a.download=j.outName;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);j.saved=true;mtRefreshAll()}
 $('#mtAll').addEventListener('click',()=>{const L=MT.jobs.filter(j=>j&&j.state==='ok'&&j.blob);L.forEach((j,k)=>setTimeout(()=>mtDownload(j),k*600));if(L.length>1)toast('Si Chrome demande, autorise les téléchargements multiples')});
 setInterval(()=>{if(MT.busy&&!$('#mtStep3').hidden)mtRenderRes()},700);
 window.addEventListener('beforeunload',e=>{if(MT.jobs.some(j=>j&&j.state==='ok'&&!j.saved)){e.preventDefault();e.returnValue=''}});
 mtRenderList();mtDirInit();
 
 if(window.__NOVA_TEST)window.__mt={MT,mtRun,mtProbe,mtEngine,mtSerial,mtPrefs};
+
+/* ---------- Montage : boîte à outils (compresser, convertir, assembler) + menu des outils ---------- */
+mtPrefs.tools=Object.assign({compress:{},convert:{},join:{}},mtPrefs.tools);
+Object.assign(mtPrefs.tools.compress={mb:10,res:'orig',fps:'orig',q:'fast',...mtPrefs.tools.compress});
+Object.assign(mtPrefs.tools.convert={fmt:'mp4',mix:true,...mtPrefs.tools.convert});
+Object.assign(mtPrefs.tools.join={fade:0,size:'first',q:'fast',wm:'none',text:'Nova QA',pos:'br',sz:'m',op:70,...mtPrefs.tools.join});
+const TL={compress:{files:[]},convert:{files:[]},join:{files:[],wmFile:null}},TQ=[];let tlId=0,tlBusy=false;
+const TLN={compress:['Compresser une vidéo','la rendre assez légère pour Discord, un mail…'],convert:['Convertir','changer de format, ou en tirer le son'],join:['Assembler des vidéos','les coller bout à bout, avec un fondu et un filigrane si tu veux']};
+
+/* --- menu des outils --- */
+const MT_HINT={gif:"GIF : dépose ta vidéo, choisis l'extrait (A → B) dans l'éditeur, puis « Suivant » : tu obtiens un GIF animé. Choisis la largeur et le nombre d'images par seconde dans « Effets ».",
+  speed:"Vitesse : dépose ta vidéo, choisis la partie voulue, puis règle la vitesse dans « Effets » (ralenti ou accéléré).",
+  sound:"Son : dépose ta vidéo et choisis la partie voulue. Dans « Effets » et « Pistes audio », nettoie le son, égalise le volume et règle chaque piste."};
+function hubShow(t){
+  MT.tool=t;$$('#mtHub button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===t));
+  const cutLike=['cut','gif','speed','sound'].includes(t);$('#mtCutWrap').hidden=!cutLike;
+  MT.preset=cutLike&&t!=='cut'?t:'';const hint=$('#mtPresetHint');hint.hidden=!MT.preset;hint.textContent=MT_HINT[MT.preset]||'';
+  $$('#mtPages>.mt-page').forEach(p=>p.hidden=p.id!=='mtP-'+t);
+  if(t==='cut')try{localStorage.setItem('nova_mt_tool','')}catch(e){}
+  if(t==='thumb'&&typeof thumbShow==='function')thumbShow();
+  if(['compress','convert','join'].includes(t))toolsRender(t)}
+$('#mtHub').addEventListener('click',e=>{const b=e.target.closest('button');if(b)hubShow(b.dataset.t)});
+
+/* --- construction des pages --- */
+const TL_ACC='video/*,.mkv,.mov,.mp4,.webm';
+function toolPage(t,opts){
+  const [h,s]=TLN[t];
+  return `<div class="card mt-page" id="mtP-${t}" hidden>
+   <div class="head"><h2>${h}</h2><span class="sub">${s}</span></div>
+   <div class="mt-eng" hidden></div>
+   <div class="mt-drop mt-drop-s" data-drop="${t}" tabindex="0"><b>Dépose ${t==='join'?'tes vidéos (dans l\'ordre voulu)':'tes vidéos'} ici</b><span class="muted">ou</span><button class="btn primary" data-pick="${t}" type="button">Choisir des vidéos…</button><input type="file" data-in="${t}" accept="${TL_ACC}" multiple hidden></div>
+   <div id="tlList-${t}"></div>
+   <div class="mt-set" id="tlOpts-${t}">${opts}</div>
+   <p class="muted sm" id="tlInfo-${t}" style="margin:8px 0 0"></p>
+   <div class="btns"><button class="btn" data-clear="${t}" type="button" hidden>Tout retirer</button><button class="btn primary" data-go="${t}" type="button" disabled>${t==='compress'?'Compresser':t==='convert'?'Convertir':'Assembler'}</button></div>
+   <div class="mt-line" id="tlDir-${t}"></div>
+   <div id="tlRes-${t}"></div>
+  </div>`}
+const optCompress=`<div class="mt-fxr"><span class="lab">Taille max</span><div class="seg" id="cpMb">${[10,25,50,100].map(n=>`<button type="button" data-v="${n}" aria-pressed="false">${n} Mo</button>`).join('')}<button type="button" data-v="0" aria-pressed="false">Autre</button></div><input id="cpMbIn" type="number" min="1" max="5000" step="1" aria-label="Taille maximale en Mo" style="width:90px"><span class="muted sm">Mo (Discord gratuit : 10 Mo)</span></div>
+ <div class="mt-fxr"><span class="lab">Résolution</span><select id="cpRes" aria-label="Résolution maximale"><option value="orig">Garder la taille d'origine</option><option value="1080">1080p maximum</option><option value="720">720p maximum</option><option value="480">480p maximum</option></select><span class="lab" style="min-width:0">Images/s</span><select id="cpFps" aria-label="Images par seconde"><option value="orig">Garder</option><option value="30">30 maximum</option></select></div>
+ <div class="mt-fxr"><span class="lab">Qualité</span><div class="seg" id="cpQ"><button type="button" data-v="fast" aria-pressed="true">Rapide</button><button type="button" data-v="best" aria-pressed="false">Meilleure (plus lent)</button></div></div>`;
+const optConvert=`<div class="mt-fxr"><span class="lab">Format</span><select id="cvFmt" aria-label="Format de sortie"><optgroup label="Vidéo"><option value="mp4">MP4 (le plus compatible)</option><option value="mkv">MKV</option><option value="webm">WebM</option><option value="mov">MOV</option></optgroup><optgroup label="Son seulement"><option value="mp3">MP3</option><option value="m4a">M4A (AAC)</option><option value="wav">WAV (sans perte, gros)</option><option value="ogg">OGG</option></optgroup></select></div>
+ <div class="mt-fxr"><span class="lab">Pistes audio</span><label class="mt-chk"><input type="checkbox" id="cvMix"> Mélanger toutes les pistes en une seule (jeu, Discord, voix)</label></div>`;
+const optJoin=`<div class="mt-fxr"><span class="lab">Fondu</span><select id="jnFade" aria-label="Fondu entre les vidéos"><option value="0">Aucun (coupe franche)</option><option value="0.5">0,5 seconde</option><option value="1">1 seconde</option><option value="2">2 secondes</option></select><span class="lab" style="min-width:0">Taille</span><select id="jnSize" aria-label="Taille de sortie"><option value="first">Comme la première vidéo</option><option value="1080">1920 × 1080</option><option value="720">1280 × 720</option></select></div>
+ <div class="mt-fxr"><span class="lab">Filigrane</span><div class="seg" id="jnWm"><button type="button" data-v="none" aria-pressed="true">Aucun</button><button type="button" data-v="text" aria-pressed="false">Texte</button><button type="button" data-v="img" aria-pressed="false">Image (logo)</button></div></div>
+ <div class="mt-fxr" id="jnWmOpt" hidden><input id="jnText" maxlength="40" placeholder="Nova QA" aria-label="Texte du filigrane" style="width:180px"><button class="btn sm" id="jnImgBtn" type="button" hidden>Choisir une image…</button><input type="file" id="jnImg" accept="image/*" hidden><span class="muted sm" id="jnImgName"></span>
+   <select id="jnPos" aria-label="Position"><option value="tl">en haut à gauche</option><option value="tr">en haut à droite</option><option value="bl">en bas à gauche</option><option value="br">en bas à droite</option></select>
+   <select id="jnSz" aria-label="Taille"><option value="s">petit</option><option value="m">moyen</option><option value="l">grand</option></select> opacité <input type="range" id="jnOp" min="20" max="100" step="5" style="width:110px;padding:0;height:auto" aria-label="Opacité"></div>
+ <div class="mt-fxr"><span class="lab">Qualité</span><div class="seg" id="jnQ"><button type="button" data-v="fast" aria-pressed="true">Rapide</button><button type="button" data-v="best" aria-pressed="false">Meilleure (plus lent)</button></div></div>`;
+$('#mtPages').innerHTML=toolPage('compress',optCompress)+toolPage('convert',optConvert)+toolPage('join',optJoin)+(typeof thumbPageHtml==='function'?thumbPageHtml():'');
+
+/* --- fichiers : dépôt, liste, détails --- */
+const tlFmtInfo=f=>{const i=MT_INFO.get(f);if(!i)return'<span class="muted sm">analyse…</span>';
+  const v=i.video;return `<span class="muted sm">${i.dur?mtFmt(i.dur,0)+' · ':''}${v&&v.w?`${v.w}×${v.h}${v.fps?` · ${Math.round(v.fps)} i/s`:''} · `:''}${i.tracks.length?`${i.tracks.length} piste${i.tracks.length>1?'s':''} audio`:'sans son'}</span>`};
+function tlAdd(t,list){
+  const L=[...list].filter(mtIsVideo);if(!L.length){toast('Aucune vidéo reconnue dans ce que tu as déposé');return}
+  L.forEach(f=>{if(!TL[t].files.some(x=>x.name===f.name&&x.size===f.size&&x.lastModified===f.lastModified))TL[t].files.push(f)});
+  toolsRender(t);tlProbe(t)}
+async function tlProbe(t){
+  try{const ff=await mtEngine();for(const f of TL[t].files){if(!MT_INFO.has(f)){await mtSerial(()=>mtProbe(ff,f));toolsRender(t)}}}catch(e){toolsRender(t)}}
+document.addEventListener('click',e=>{
+  const pk=e.target.closest('[data-pick]');if(pk)$(`[data-in="${pk.dataset.pick}"]`).click();
+  const cl=e.target.closest('[data-clear]');if(cl){TL[cl.dataset.clear].files=[];toolsRender(cl.dataset.clear)}
+  const rm=e.target.closest('[data-trm]');if(rm){const [t,i]=rm.dataset.trm.split(':');TL[t].files.splice(+i,1);toolsRender(t)}
+  const mv=e.target.closest('[data-tmv]');if(mv){const [t,i,d]=mv.dataset.tmv.split(':'),L=TL[t].files,k=+i,n=k+ +d;if(n>=0&&n<L.length){[L[k],L[n]]=[L[n],L[k]];toolsRender(t)}}
+  const go=e.target.closest('[data-go]');if(go)toolGo(go.dataset.go)});
+document.addEventListener('change',e=>{const inp=e.target.closest('[data-in]');if(inp){tlAdd(inp.dataset.in,inp.files);inp.value=''}});
+$$('#mtPages [data-drop]').forEach(z=>{const t=z.dataset.drop;
+  ['dragenter','dragover'].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.add('over')}));
+  ['dragleave','drop'].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.remove('over')}));
+  z.addEventListener('drop',e=>tlAdd(t,e.dataTransfer.files));
+  z.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$(`[data-in="${t}"]`).click()}})});
+
+/* --- options : lecture / mémorisation --- */
+const tlPref=(t,k,v)=>{mtPrefs.tools[t][k]=v;mtSavePrefs();toolsRender(t)};
+segBind('cpMb',v=>{const n=+v;if(n)tlPref('compress','mb',n);else{$('#cpMbIn').focus()}});
+$('#cpMbIn').addEventListener('input',e=>{const n=+e.target.value;if(n>=1)tlPref('compress','mb',n)});
+$('#cpRes').addEventListener('change',e=>tlPref('compress','res',e.target.value));$('#cpFps').addEventListener('change',e=>tlPref('compress','fps',e.target.value));
+segBind('cpQ',v=>tlPref('compress','q',v));
+$('#cvFmt').addEventListener('change',e=>tlPref('convert','fmt',e.target.value));$('#cvMix').addEventListener('change',e=>tlPref('convert','mix',e.target.checked));
+$('#jnFade').addEventListener('change',e=>tlPref('join','fade',+e.target.value));$('#jnSize').addEventListener('change',e=>tlPref('join','size',e.target.value));
+segBind('jnQ',v=>tlPref('join','q',v));segBind('jnWm',v=>tlPref('join','wm',v));
+$('#jnText').addEventListener('input',e=>{mtPrefs.tools.join.text=e.target.value;mtSavePrefs()});
+$('#jnPos').addEventListener('change',e=>tlPref('join','pos',e.target.value));$('#jnSz').addEventListener('change',e=>tlPref('join','sz',e.target.value));
+$('#jnOp').addEventListener('input',e=>{mtPrefs.tools.join.op=+e.target.value;mtSavePrefs()});
+$('#jnImgBtn').addEventListener('click',()=>$('#jnImg').click());
+$('#jnImg').addEventListener('change',e=>{TL.join.wmFile=e.target.files[0]||null;toolsRender('join')});
+
+/* --- affichage --- */
+function toolsRender(only){
+  for(const t of ['compress','convert','join']){
+    if(only&&only!==t)continue;const S=TL[t],o=mtPrefs.tools[t],page=$('#mtP-'+t);if(!page)continue;
+    $('#tlList-'+t).innerHTML=S.files.length?`<div class="mt-files">`+S.files.map((f,i)=>`<div class="mt-file mt-file2"><span class="nm">${t==='join'?`<b>${i+1}.</b> `:'🎞 '}${esc(f.name)}</span>${tlFmtInfo(f)}<span class="muted sm">${mtSize(f.size)}</span><span class="mt-mv">${t==='join'?`<button class="btn sm" data-tmv="${t}:${i}:-1" type="button" aria-label="Monter"${i?'':' disabled'}>↑</button><button class="btn sm" data-tmv="${t}:${i}:1" type="button" aria-label="Descendre"${i<S.files.length-1?'':' disabled'}>↓</button>`:''}<button class="btn sm" data-trm="${t}:${i}" type="button" aria-label="Retirer">✕</button></span></div>`).join('')+`</div>`:'';
+    page.querySelector('[data-go]').disabled=!S.files.length||(t==='join'&&false);page.querySelector('[data-clear]').hidden=!S.files.length;
+    page.querySelector('[data-go]').textContent=t==='compress'?(S.files.length>1?`Compresser (${S.files.length})`:'Compresser'):t==='convert'?(S.files.length>1?`Convertir (${S.files.length})`:'Convertir'):(S.files.length>1?`Assembler (${S.files.length} vidéos)`:'Assembler');
+    $('#tlDir-'+t).innerHTML=mtHasDir?`${mtDirLine()}${MT.dir&&!MT.dirOk?' <button class="btn sm primary" data-dirallow type="button">Autoriser</button>':''} <button class="btn sm" data-dirpick type="button">${MT.dir?'Changer de dossier…':'Enregistrer dans un dossier…'}</button>`:'';
+    if(t==='compress'){setSeg('cpMb',[10,25,50,100].includes(o.mb)?String(o.mb):'0');$('#cpMbIn').value=o.mb;$('#cpRes').value=o.res;$('#cpFps').value=o.fps;setSeg('cpQ',o.q);
+      const L=S.files.map(f=>({f,i:MT_INFO.get(f)})),inf=[];
+      L.forEach(({f,i})=>{if(!i||!i.dur)return;const kb=o.mb*8000*0.92/i.dur-128;if(f.size<=o.mb*1e6)inf.push(`« ${f.name} » est déjà sous ${o.mb} Mo : elle sera ignorée.`);else if(kb<150)inf.push(`« ${f.name} » : ${o.mb} Mo pour ${mtFmt(i.dur,0)} laisse très peu de débit (${Math.max(0,Math.round(kb))} kb/s) : l'image sera floue. Baisse la résolution ou augmente la taille.`)});
+      $('#tlInfo-compress').textContent=inf.join(' ')||'La taille finale est approximative (à 10 % près). La compression recompresse la vidéo : compte plusieurs minutes pour une vidéo longue.'}
+    if(t==='convert'){$('#cvFmt').value=o.fmt;$('#cvMix').checked=!!o.mix;const aud=['mp3','m4a','wav','ogg'].includes(o.fmt);
+      $('#tlInfo-convert').textContent=aud?'Seul le son est gardé. Toutes les pistes audio sont mélangées en une seule.':S.files.some(f=>{const i=MT_INFO.get(f);return i&&cvCopyable(i,o)})?'Quand le format de départ le permet, la conversion est instantanée et sans perte de qualité (la vidéo n’est pas recompressée).':'La vidéo sera recompressée : compte quelques minutes.'}
+    if(t==='join'){$('#jnFade').value=String(o.fade);$('#jnSize').value=o.size;setSeg('jnQ',o.q);setSeg('jnWm',o.wm);$('#jnWmOpt').hidden=o.wm==='none';$('#jnText').hidden=o.wm!=='text';$('#jnImgBtn').hidden=o.wm!=='img';$('#jnImgName').textContent=o.wm==='img'?(S.wmFile?S.wmFile.name:'aucune image choisie'):'';
+      $('#jnText').value=o.text;$('#jnPos').value=o.pos;$('#jnSz').value=o.sz;$('#jnOp').value=o.op;
+      const fast=joinFast(S.files,o);$('#tlInfo-join').textContent=S.files.length?(fast?'Ces vidéos ont le même format : l’assemblage sera instantané et sans perte.':'Les vidéos seront recompressées (nécessaire pour le fondu, le filigrane ou des formats différents) : compte plusieurs minutes.'):''}
+    toolResHtml(t)}
+  mtEngView()}
+document.addEventListener('click',async e=>{
+  if(e.target.closest('[data-dirpick]')){await mtDirPick();toolsRender()}
+  if(e.target.closest('[data-dirallow]')){await mtDirPerm();if(MT.dir&&MT.dirOk)for(const it of TQ)if(it.state==='ok'&&it.blob)await mtSaveDir(it);toolsRender()}});
+
+/* --- résultats --- */
+function toolResHtml(t){
+  const its=TQ.filter(x=>x.tool===t);
+  $('#tlRes-'+t).innerHTML=its.length?`<h3 class="h3" style="margin:18px 0 6px">Résultats</h3>`+its.map(it=>{
+    let st='';
+    if(it.state==='ok'&&it.skip)st=`<span class="muted sm">${esc(it.note||'rien à faire')}</span>`;
+    else if(it.state==='ok')st=it.saved&&!it.blob?`<span class="ok sm">✔ Enregistrée dans « ${esc(it.where)} »</span>`:`<span class="muted sm">${mtSize(it.size)}</span><button class="btn primary sm" data-tdl="${it.id}" type="button">${it.saved?'Télécharger encore':'Télécharger'}</button>`;
+    else if(it.state==='err')st=`<span class="bad sm">Échec${/memory|abort|OOM|out of bounds/i.test(it.err||'')?' (mémoire)':''}</span><button class="btn sm" data-tretry="${it.id}" type="button">Réessayer</button>`;
+    else if(it.state==='run'){const p=Math.round((it.pct||0)*100),el=(Date.now()-it.t0)/1000,eta=it.pct>0.05?` · reste ≈ ${mtFmt(el/it.pct-el,0)}`:'';st=`<div class="mt-bar"><i style="width:${Math.max(6,p)}%"></i></div><span class="muted sm">${p} %${eta}</span>`}
+    else st='<span class="muted sm">en attente…</span>';
+    return `<div class="mt-row"><div class="nm"><b>${esc(it.saved&&it.savedName?it.savedName:(it.outName||it.label))}</b><span class="sm">${esc(it.label)}${it.note&&it.state==='ok'&&!it.skip?' · '+esc(it.note):''}</span></div><div class="mt-st">${st}</div><button class="btn sm" data-tdel="${it.id}" type="button" aria-label="Retirer de la liste">✕</button></div>`}).join('')
+   +`<div class="btns" style="margin-top:8px"><button class="btn primary" data-tall="${t}" type="button"${its.some(x=>x.state==='ok'&&x.blob)?'':' disabled'}>Tout télécharger</button></div>`:''}
+document.addEventListener('click',e=>{
+  const dl=e.target.closest('[data-tdl]');if(dl){const it=TQ.find(x=>x.id===+dl.dataset.tdl);if(it)mtDownload(it)}
+  const rt=e.target.closest('[data-tretry]');if(rt){const it=TQ.find(x=>x.id===+rt.dataset.tretry);if(it){it.state='wait';it.pct=0;toolPump()}}
+  const dd=e.target.closest('[data-tdel]');if(dd){const k=TQ.findIndex(x=>x.id===+dd.dataset.tdel);if(k>=0&&TQ[k].state!=='run'){if(TQ[k].blob&&!TQ[k].saved&&!confirm('Cette vidéo n’est pas encore enregistrée. La retirer ?'))return;const t=TQ[k].tool;TQ.splice(k,1);toolsRender(t)}}
+  const ta=e.target.closest('[data-tall]');if(ta){const L=TQ.filter(x=>x.tool===ta.dataset.tall&&x.state==='ok'&&x.blob);L.forEach((it,k)=>setTimeout(()=>mtDownload(it),k*600));if(L.length>1)toast('Si Chrome demande, autorise les téléchargements multiples')}});
+setInterval(()=>{if(tlBusy)toolsRender()},700);
+
+/* --- file d'attente --- */
+const tlWmPng=(text,h)=>new Promise(res=>{const c=document.createElement('canvas'),g=c.getContext('2d');g.font=`700 ${h}px system-ui,Arial,sans-serif`;const w=Math.ceil(g.measureText(text).width)+h*0.6;c.width=w;c.height=Math.ceil(h*1.5);
+  g.font=`700 ${h}px system-ui,Arial,sans-serif`;g.textBaseline='middle';g.lineJoin='round';g.lineWidth=h*0.16;g.strokeStyle='rgba(0,0,0,.75)';g.fillStyle='#fff';g.strokeText(text,h*0.3,c.height/2);g.fillText(text,h*0.3,c.height/2);
+  c.toBlob(async b=>res(new Uint8Array(await b.arrayBuffer())),'image/png')});
+function toolGo(t){
+  const S=TL[t],o={...mtPrefs.tools[t]};if(!S.files.length)return;
+  if(t==='join'){if(o.wm==='img'&&!S.wmFile){toast('Choisis une image pour le filigrane');return}
+    TQ.push({id:++tlId,tool:t,files:[...S.files],opts:o,wmFile:S.wmFile,state:'wait',pct:0,label:`${S.files.length} vidéo${S.files.length>1?'s':''} assemblée${S.files.length>1?'s':''}`})}
+  else S.files.forEach(f=>TQ.push({id:++tlId,tool:t,file:f,opts:o,state:'wait',pct:0,label:f.name}));
+  S.files=[];toolsRender(t);toolPump()}
+async function toolPump(){
+  if(tlBusy)return;const it=TQ.find(x=>x.state==='wait');if(!it)return;
+  tlBusy=true;it.state='run';it.t0=Date.now();toolsRender(it.tool);
+  try{const ff=await mtEngine();await mtSerial(()=>{MT.cur=it;return toolRun(ff,it)});it.state='ok';it.pct=1;if(it.blob&&MT.dir&&MT.dirOk)await mtSaveDir(it)}
+  catch(e){it.state='err';it.err=String((e&&e.message)||e);console.warn('montage outil:',e);mtResetEngine(e)}
+  tlBusy=false;MT.cur=null;toolsRender(it.tool);toolPump()}
+async function toolRun(ff,it){return it.tool==='compress'?runCompress(ff,it):it.tool==='convert'?runConvert(ff,it):runJoin(ff,it)}
+const tlSave=(it,data,ext,mime,name)=>{it.blob=new Blob([data],{type:mime});it.size=data.length;it.outName=mtClean(name)+'.'+ext};
+
+/* --- compresser --- */
+async function runCompress(ff,it){
+  const f=it.file,o=it.opts,info=await mtProbe(ff,f),dur=info.dur;
+  if(!dur)throw new Error('durée de la vidéo inconnue');
+  it.tot=dur;if(f.size<=o.mb*1e6){it.skip=true;it.note=`Déjà sous ${o.mb} Mo : rien à faire.`;return}
+  const vb=Math.max(80,Math.floor(o.mb*8000*0.92/dur-128)),fc=[],path=await mtMount(ff,f,mtExt(f.name));
+  try{
+    const vf=[];if(o.res!=='orig')vf.push(`scale=-2:'min(${o.res},ih)'`);if(o.fps==='30'&&info.video&&info.video.fps>31)vf.push('fps=30');
+    let vmap=['-map','0:v:0'];if(vf.length){fc.push(`[0:v]${vf.join(',')}[v]`);vmap=['-map','[v]']}
+    const plan=mtAudioPlan(info,null,{inp:0,out:'am'});let aud;
+    if(plan.none)aud=['-an'];else if(plan.copy)aud=['-map',plan.map,'-c:a','aac','-b:a','128k'];else{fc.push(...plan.fc);aud=['-map',plan.label,'-c:a','aac','-b:a','128k']}
+    const code=await ff.exec(['-i',path,...(fc.length?['-filter_complex',fc.join(';')]:[]),...vmap,'-c:v','libx264','-preset',o.q==='best'?'veryfast':'ultrafast','-b:v',vb+'k','-maxrate',Math.round(vb*1.35)+'k','-bufsize',Math.round(vb*2.5)+'k','-pix_fmt','yuv420p',...aud,'-movflags','+faststart','-y','out.mp4']);
+    if(code!==0)throw new Error('ffmpeg '+code);
+    const d=await ff.readFile('out.mp4');tlSave(it,d,'mp4','video/mp4',`${mtStem(f.name)} (compressée)`);
+    it.note=`${mtSize(f.size)} → ${mtSize(d.length)}`+(d.length>o.mb*1e6*1.12?' (un peu plus grande que demandé)':'')
+  }finally{try{await ff.deleteFile('out.mp4')}catch(e){}try{await ff.unmount('/src')}catch(e){}}}
+
+/* --- convertir --- */
+const CV={mp4:{ext:'mp4',v:['h264','hevc','av1','mpeg4'],a:['aac','mp3','ac3','alac']},mkv:{ext:'mkv',v:null,a:null},mov:{ext:'mov',v:['h264','hevc','mpeg4'],a:['aac','mp3','alac','pcm_s16le']},webm:{ext:'webm',v:['vp8','vp9','av1'],a:['opus','vorbis']},
+  mp3:{ext:'mp3',aud:['-c:a','libmp3lame','-b:a','192k']},m4a:{ext:'m4a',aud:['-c:a','aac','-b:a','192k']},wav:{ext:'wav',aud:['-c:a','pcm_s16le']},ogg:{ext:'ogg',aud:['-c:a','libvorbis','-q:a','5']}};
+function cvCopyable(info,o){const F=CV[o.fmt];if(!F||F.aud)return false;const v=info.video&&info.video.codec,a=info.audio[0]&&info.audio[0].codec;
+  const vok=F.v===null||(v&&F.v.includes(v)),aok=!info.audio.length||F.a===null||(a&&F.a.includes(a));return vok&&aok&&!(o.mix&&info.tracks.length>1)}
+async function runConvert(ff,it){
+  const f=it.file,o=it.opts,F=CV[o.fmt],info=await mtProbe(ff,f),ext=mtExt(f.name),fc=[];it.tot=info.dur||1;
+  const path=await mtMount(ff,f,ext),out='out.'+F.ext;
+  try{
+    let args=['-i',path],note='';
+    if(F.aud){
+      const plan=mtAudioPlan(info,null,{inp:0,out:'am'});if(plan.none)throw new Error('cette vidéo n\'a pas de son');
+      if(plan.copy)args.push('-map',plan.map,'-vn');else{args.push('-filter_complex',plan.fc.join(';'),'-map',plan.label)}
+      args.push(...F.aud)}
+    else{
+      const vcodec=info.video&&info.video.codec,vcopy=F.v===null||(vcodec&&F.v.includes(vcodec));
+      const mixed=o.mix&&info.tracks.length>1,acodec=info.audio[0]&&info.audio[0].codec,acopy=!info.audio.length||F.a===null||(acodec&&F.a.includes(acodec));
+      const ac=F.ext==='webm'?['-c:a','libvorbis','-q:a','6']:['-c:a','aac','-b:a','192k'];
+      args.push('-map','0:v:0');
+      let aud;
+      if(!info.audio.length)aud=['-an'];
+      else if(mixed){const plan=mtAudioPlan(info,null,{inp:0,out:'am'});fc.push(...plan.fc);aud=['-map',plan.label,...ac]}
+      else aud=['-map','0:a?',...(acopy?['-c:a','copy']:ac)];
+      const venc=F.ext==='webm'?['-c:v','libvpx','-b:v','4M','-crf','10','-deadline','realtime','-cpu-used','8']:['-c:v','libx264','-preset','veryfast','-crf','21','-pix_fmt','yuv420p'];
+      if(fc.length)args.push('-filter_complex',fc.join(';'));
+      args.push(...(vcopy?['-c:v','copy']:venc),...aud,...(F.ext==='mp4'||F.ext==='mov'?['-movflags','+faststart']:[]));
+      note=vcopy&&(acopy||mixed)?'sans recompression de la vidéo':'vidéo recompressée'}
+    args.push('-y',out);
+    const code=await ff.exec(args);if(code!==0)throw new Error('ffmpeg '+code);
+    const d=await ff.readFile(out),same=ext===F.ext;
+    tlSave(it,d,F.ext,F.aud?'audio/'+F.ext:(MT_MIME[F.ext]||'video/mp4'),mtStem(f.name)+(same?' (converti)':''));it.note=note
+  }finally{try{await ff.deleteFile(out)}catch(e){}try{await ff.unmount('/src')}catch(e){}}}
+
+/* --- assembler --- */
+async function mtMountMany(ff,files){
+  try{await ff.createDir('/src')}catch(e){}try{await ff.unmount('/src')}catch(e){}
+  await ff.mount('WORKERFS',{files:files.map((f,i)=>new File([f],`v${i}.${mtExt(f.name)}`))},'/src');return files.map((f,i)=>`/src/v${i}.${mtExt(f.name)}`)}
+function joinFast(files,o){
+  if(files.length<2||+o.fade>0||o.wm!=='none'||o.size!=='first')return false;const I=files.map(f=>MT_INFO.get(f));if(I.some(i=>!i))return false;
+  const sig=i=>[i.video&&i.video.codec,i.video&&i.video.w,i.video&&i.video.h,i.video&&Math.round(i.video.fps),i.audio[0]&&i.audio[0].codec,i.audio[0]&&i.audio[0].hz,i.audio.length].join('|');
+  return I.every(i=>i.tracks.length<=1&&i.audio.length<=1&&sig(i)===sig(I[0]))&&files.every(f=>mtExt(f.name)===mtExt(files[0].name))}
+async function runJoin(ff,it){
+  const files=it.files,o=it.opts,N=files.length,infos=[];for(const f of files)infos.push(await mtProbe(ff,f));
+  const tot=infos.reduce((a,i)=>a+(i.dur||0),0);it.tot=Math.max(1,tot-(N-1)*(+o.fade||0));
+  const paths=await mtMountMany(ff,files),ext0=mtExt(files[0].name),names=[];
+  try{
+    const stem=mtStem(files[0].name),nm=N>1?`${stem} + ${N-1} autre${N>2?'s':''}`:`${stem} (assemblée)`;
+    if(joinFast(files,o)){
+      await ff.writeFile('list.txt',new TextEncoder().encode(paths.map(p=>`file '${p}'`).join('\n')));names.push('list.txt');
+      const out='out.'+ext0;names.push(out);
+      const code=await ff.exec(['-f','concat','-safe','0','-i','list.txt','-c','copy','-y',out]);if(code!==0)throw new Error('ffmpeg '+code);
+      const d=await ff.readFile(out);tlSave(it,d,ext0,MT_MIME[ext0]||'video/mp4',nm);it.note='sans recompression';return}
+    const v0=infos[0].video||{w:1920,h:1080,fps:30},W=o.size==='1080'?1920:o.size==='720'?1280:(v0.w||1920)&~1,H=o.size==='1080'?1080:o.size==='720'?720:(v0.h||1080)&~1,F=Math.min(60,Math.round(v0.fps)||30),fade=Math.min(+o.fade||0,Math.max(0,Math.min(...infos.map(i=>i.dur||99))/2-0.1));
+    const fc=[],args=[];paths.forEach(p=>args.push('-i',p));
+    infos.forEach((info,i)=>{
+      fc.push(`[${i}:v]scale=${W}:${H}:force_original_aspect_ratio=decrease,pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2,setsar=1,fps=${F},format=yuv420p[v${i}]`);
+      const plan=mtAudioPlan(info,null,{inp:i,pre:`i${i}_`,out:`r${i}`});
+      if(plan.none)fc.push(`anullsrc=r=48000:cl=stereo,atrim=0:${(info.dur||1).toFixed(3)}[a${i}]`);
+      else if(plan.copy)fc.push(`[${i}:a:0]aresample=48000,aformat=channel_layouts=stereo[a${i}]`);
+      else{fc.push(...plan.fc);fc.push(`${plan.label}aresample=48000,aformat=channel_layouts=stereo[a${i}]`)}});
+    let vl='[v0]',al='[a0]';
+    if(N>1){
+      if(fade>0){let off=infos[0].dur-fade;for(let i=1;i<N;i++){fc.push(`${vl}[v${i}]xfade=transition=fade:duration=${fade}:offset=${off.toFixed(3)}[x${i}]`);vl=`[x${i}]`;fc.push(`${al}[a${i}]acrossfade=d=${fade}[y${i}]`);al=`[y${i}]`;off+=infos[i].dur-fade}}
+      else{fc.push(`${infos.map((_,i)=>`[v${i}][a${i}]`).join('')}concat=n=${N}:v=1:a=1[vc][ac]`);vl='[vc]';al='[ac]'}}
+    if(o.wm!=='none'){
+      const data=o.wm==='text'?await tlWmPng(o.text||'Nova QA',64):new Uint8Array(await it.wmFile.arrayBuffer());
+      await ff.writeFile('wm.png',data);names.push('wm.png');args.push('-i','wm.png');
+      const wpx=Math.round(W*({s:0.12,m:0.2,l:0.3}[o.sz]||0.2)),pos={tl:'20:20',tr:'W-w-20:20',bl:'20:H-h-20',br:'W-w-20:H-h-20'}[o.pos]||'W-w-20:H-h-20';
+      fc.push(`[${N}:v]scale=${wpx}:-1,format=rgba,colorchannelmixer=aa=${(o.op/100).toFixed(2)}[wm]`,`${vl}[wm]overlay=${pos}[vo]`);vl='[vo]'}
+    const out='out.mp4';names.push(out);
+    const code=await ff.exec([...args,'-filter_complex',fc.join(';'),'-map',vl,'-map',al,'-c:v','libx264','-preset',o.q==='best'?'veryfast':'ultrafast','-crf','21','-pix_fmt','yuv420p','-c:a','aac','-b:a','192k','-movflags','+faststart','-y',out]);
+    if(code!==0)throw new Error('ffmpeg '+code);
+    const d=await ff.readFile(out);tlSave(it,d,'mp4','video/mp4',nm);it.note=`${W}×${H}${fade?`, fondu ${fade} s`:''}${o.wm!=='none'?', filigrane':''}`
+  }finally{for(const n of names){try{await ff.deleteFile(n)}catch(e){}}try{await ff.unmount('/src')}catch(e){}}}
+
+if(window.__NOVA_TEST)Object.assign(window.__mt||(window.__mt={}),{TL,TQ,toolPump,toolGo,tlAdd,hubShow,mtAudioPlan});
+toolsRender();hubShow('cut');
 
 /* ---------- export / import ---------- */
 function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
