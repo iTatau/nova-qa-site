@@ -752,6 +752,8 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 .th-ly .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}.th-ly .btn{padding:0 8px;height:26px}
 .th-exp{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
 @media (max-width:1000px){.th-wrap{grid-template-columns:1fr}}
+.mt-nm{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px}.mt-nm label{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--mut)}
+.mt-nm input{flex:1;min-width:240px;max-width:620px;height:38px;padding:0 10px}
 </style>
 </head>
 <body>
@@ -937,6 +939,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 
     <div class="card" id="mtStep2" hidden>
       <div class="head"><h2 id="mtTitle">Vidéo 1 sur 1</h2><span class="sub" id="mtSub"></span><span class="sp"></span><button class="btn sm" id="mtBack1" type="button">← Retour à la liste</button></div>
+      <div class="mt-nm"><label for="mtName">Nom de la vidéo finale</label><input id="mtName" maxlength="150" autocomplete="off" disabled aria-label="Nom de la vidéo finale"><span class="muted sm" id="mtNameExt"></span></div>
       <div class="mt-eng" id="mtEng"></div>
       <div class="mt-err" id="mtErr" hidden></div>
       <div class="mt-vw" id="mtVw"><video id="mtVid" class="mt-vid" controls playsinline preload="metadata"></video><div class="mt-crop" id="mtCrop" hidden></div></div>
@@ -2005,7 +2008,7 @@ function renderRoblox(){}
 /* ---------- Montage : couper des vidéos dans le navigateur (ffmpeg.wasm, chargé à la demande) ---------- */
 const MT={audErr:'',audMsg:'',lock:Promise.resolve(),aud:null,audSel:[],duck:[],files:[],i:0,cuts:[],jobs:[],mode:'fast',ff:null,loading:null,busy:false,url:null,dur:0,preview:false,cur:null,engMsg:'',engErr:'',
   view:{s:0,e:0},hist:[],wave:null,thumbs:null,dir:null,dirOk:false};
-const MT_VER=9;
+const MT_VER=10;
 const MT_LIB='montage/ffmpeg.js',MT_CORE='@ffmpeg/core@0.12.10/dist/umd';   // la petite bibliothèque est hébergée avec le site (un worker doit venir du même site), le gros moteur vient d'un CDN
 const mtBase=()=>{let b='';try{b=localStorage.getItem('nova_mt_base')||''}catch(e){}return b||'https://cdn.jsdelivr.net/npm'};
 const mtFmt=(t,d=1)=>{t=Math.max(0,t||0);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60,ss=((s<10?'0':'')+s.toFixed(d)).replace(/\.0+$/,'');return h?`${h}:${pad(m)}:${ss}`:`${m}:${ss}`};
@@ -2070,13 +2073,13 @@ function mtOpen(i){
   if(MT.url)URL.revokeObjectURL(MT.url);MT.url=URL.createObjectURL(f);
   $('#mtTitle').textContent=`Vidéo ${i+1} sur ${MT.files.length}`;$('#mtSub').textContent=`${f.name} · ${mtSize(f.size)} · module v${MT_VER}`;
   $('#mtErr').hidden=true;$('#mtNext').textContent=i===MT.files.length-1?'Terminer ✓':'Suivant →';$('#mtPrevVid').disabled=i===0;
-  const v=mtV();v.muted=false;mtAEls.forEach(e=>e.pause());v.src=MT.url;v.load();mtEngView();mtDraw();mtFmtView();mtFxView();MT.aud=null;mtAudView();mtPrepAudio(i)}
+  const v=mtV();v.muted=false;mtAEls.forEach(e=>e.pause());v.src=MT.url;v.load();mtEngView();mtDraw();mtFmtView();mtFxView();$('#mtName').value='';mtNameView();MT.aud=null;mtAudView();mtPrepAudio(i)}
 mtV().addEventListener('loadedmetadata',()=>{
   const v=mtV(),d=v.duration;if(!isFinite(d)||d<=0){mtVidErr();return}
   MT.dur=d;const c=MT.cuts[MT.i]||{a:0,b:d,skip:false,fmt:mtPrefs.fmt,res:mtPrefs.res,pos:0.5,norm:!!mtPrefs.norm};
   if(!MT.cuts[MT.i]){const ps=MT.preset;if(ps==='gif')c.out='gif';if(ps==='speed')c.speed=2;if(ps==='sound'){c.clean=true;c.norm=true}}
   MT.cuts[MT.i]=c;c.b=Math.min(c.b,d);MT.view={s:0,e:d};v.currentTime=c.a;
-  mtFmtView();mtFxView();mtDraw();mtThumbs(MT.i)});
+  mtFmtView();mtFxView();mtDraw();mtNameView();mtThumbs(MT.i)});
 mtV().addEventListener('error',mtVidErr);
 function mtVidErr(){$('#mtErr').hidden=false;$('#mtErr').textContent="Chrome n'arrive pas à lire cette vidéo (format ou codec non pris en charge), donc impossible de la prévisualiser. Essaie avec un fichier .mp4 (H.264) ou .webm.";MT.dur=0;mtDraw()}
 const mtCut=()=>MT.cuts[MT.i]||{a:0,b:MT.dur,fmt:'orig',pos:0.5,res:1080};
@@ -2098,6 +2101,7 @@ function mtDraw(){
   const keep=Math.max(0,c.b-c.a);$('#mtKeep').textContent=MT.dur?mtFmt(keep):'–';
   $('#mtEst').textContent=MT.dur?`≈ ${mtSize(MT.files[MT.i].size*keep/MT.dur)}${c.fmt&&c.fmt!=='orig'?' (vertical : à peu près)':''}`:'';
   if($('#mtSpeed').value!=='1'||$('#mtFxNote').textContent)mtFxView();$('#mtNext').disabled=!MT.dur||keep<0.2;$('#mtHA').setAttribute('aria-valuenow',c.a);$('#mtHB').setAttribute('aria-valuenow',c.b);
+  mtNameView();
   const zoomed=MT.dur&&mtSpan()<MT.dur-0.01;$('#mtZinfo').textContent=zoomed?`zoom : ${mtFmt(mtSpan())} affichées`:'';
   const pan=$('#mtPan');pan.hidden=!zoomed;if(zoomed&&document.activeElement!==pan)pan.value=Math.round(MT.view.s/(MT.dur-mtSpan())*1000);
   mtPaintSoon()}
@@ -2233,6 +2237,13 @@ $('#mtSpeed').addEventListener('change',e=>{mtCut().speed=+e.target.value;mtFxVi
 $('#mtClean').addEventListener('change',e=>{mtCut().clean=e.target.checked;mtFxView()});
 $('#mtNorm').addEventListener('change',e=>{mtCut().norm=e.target.checked;mtPrefs.norm=e.target.checked;mtSavePrefs();mtFxView()});
 
+/* --- nom de la vidéo finale (modifiable pour chaque vidéo) --- */
+function mtExtGuess(c){const src=mtExt(MT.files[MT.i].name);return c.out==='gif'?'gif':(MT.mode==='exact'||(c.fmt&&c.fmt!=='orig')||(+c.speed||1)!==1)?'mp4':(MT_MIME[src]?src:'mp4')}
+function mtNameView(){
+  const inp=$('#mtName'),c=MT.cuts[MT.i];inp.disabled=!MT.dur||!c;if(!MT.dur||!c){$('#mtNameExt').textContent='';return}
+  const ext=mtExtGuess(c),def=mtOutName({file:MT.files[MT.i],a:c.a,b:c.b,n:MT.i+1,fmt:c.fmt||'orig',out:c.out,speed:c.speed||1,tpl:mtPrefs.tpl},ext);
+  inp.placeholder=def.slice(0,def.lastIndexOf('.'));$('#mtNameExt').textContent='.'+ext;if(document.activeElement!==inp)inp.value=c.name||''}
+$('#mtName').addEventListener('input',e=>{const c=MT.cuts[MT.i];if(c)c.name=e.target.value.trim()});
 function mtStore(skip){const c=mtCut();c.skip=!!skip;MT.cuts[MT.i]=c;mtEnqueue(MT.i)}
 $('#mtNext').addEventListener('click',()=>{mtStore(false);mtAdvance()});
 $('#mtSkip').addEventListener('click',()=>{mtStore(true);mtAdvance()});
@@ -2591,9 +2602,9 @@ $('#mtAud').addEventListener('click',e=>{const b=e.target.closest('#mtDuckLvl bu
 function mtEnqueue(i){
   const c=MT.cuts[i],old=MT.jobs[i];
   if(!c||c.skip){MT.jobs[i]=null;return}
-  const spec={a:c.a,b:c.b,mode:MT.mode,fmt:c.fmt||'orig',pos:c.pos??0.5,res:c.res||1080,out:c.out||'video',gw:c.gw||mtPrefs.gw||480,gfps:c.gfps||mtPrefs.gfps||15,speed:c.speed||1,norm:!!c.norm,clean:!!c.clean,aud:MT.audSel[i]?JSON.parse(JSON.stringify(MT.audSel[i])):null,duck:MT.duck[i]?JSON.parse(JSON.stringify(MT.duck[i])):null,tpl:mtPrefs.tpl,n:i+1},key=JSON.stringify(spec);
-  if(old&&old.key===key&&old.state!=='err')return;
-  MT.jobs[i]={i,file:MT.files[i],key,...spec,state:'wait',pct:0};mtPump()}
+  const nm=(c.name||'').trim(),spec={a:c.a,b:c.b,mode:MT.mode,fmt:c.fmt||'orig',pos:c.pos??0.5,res:c.res||1080,out:c.out||'video',gw:c.gw||mtPrefs.gw||480,gfps:c.gfps||mtPrefs.gfps||15,speed:c.speed||1,norm:!!c.norm,clean:!!c.clean,aud:MT.audSel[i]?JSON.parse(JSON.stringify(MT.audSel[i])):null,duck:MT.duck[i]?JSON.parse(JSON.stringify(MT.duck[i])):null,tpl:mtPrefs.tpl,n:i+1},key=JSON.stringify(spec);
+  if(old&&old.key===key&&old.state!=='err'){old.name=nm;if(old.state==='ok'&&!old.saved&&old.oext)old.outName=mtOutName(old,old.oext);return}
+  MT.jobs[i]={i,file:MT.files[i],key,...spec,name:nm,state:'wait',pct:0};mtPump()}
 async function mtPump(){
   if(MT.busy)return;const j=MT.jobs.find(x=>x&&x.state==='wait');if(!j)return;
   MT.busy=true;j.state='run';j.t0=Date.now();mtRenderRes();
@@ -2602,6 +2613,7 @@ async function mtPump(){
   MT.busy=false;MT.cur=null;mtRenderRes();mtPump()}
 const mtClean=s=>s.replace(/[\\/:*?"<>|\u0000-\u001f]/g,'-').replace(/\s*\(\s*\)/g,'').replace(/\s{2,}/g,' ').replace(/[\s_\-.]+$/,'').trim().slice(0,150)||'montage';
 function mtOutName(j,ext){
+  if(j.name)return mtClean(j.name.replace(/\{(\w+)\}/g,(m,k)=>({nom:mtStem(j.file.name),n:String(j.n),date:isoToday()})[k]??m))+'.'+ext;
   const t=x=>mtFmt(x,0).replace(':','m'),map={nom:mtStem(j.file.name),debut:t(j.a),fin:t(j.b),duree:t(j.b-j.a),n:String(j.n),date:isoToday(),format:[j.out==='gif'?'gif':'',j.fmt==='orig'?'':'vertical',(+j.speed||1)!==1?'x'+j.speed:''].filter(Boolean).join(' ')};
   return mtClean((j.tpl||'{nom} (coupé {debut}-{fin})').replace(/\{(\w+)\}/g,(m,k)=>k in map?map[k]:m))+'.'+ext}
 /* plan du son d'une entrée : mélange des pistes cochées (volume, nettoyage), baisse du jeu, vitesse, volume égalisé.
@@ -2660,7 +2672,7 @@ async function mtRun(ff,j){
     const code=await ff.exec(args2);if(code!==0)throw new Error('ffmpeg '+code);
     const data=await ff.readFile(out);
     j.blob=new Blob([data],{type:gif?'image/gif':(MT_MIME[oExt]||'video/mp4')});j.size=data.length;
-    j.outName=mtOutName(j,oExt)
+    j.oext=oExt;j.outName=mtOutName(j,oExt)
   }finally{try{await ff.deleteFile(out)}catch(e){}try{await ff.unmount('/src')}catch(e){}}}
 
 /* --- enregistrement direct dans le dossier choisi --- */
