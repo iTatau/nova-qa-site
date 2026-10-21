@@ -1921,7 +1921,8 @@ function calcInit(){calcLoad();if(calc.open){calc.open=false;calcToggle(true)}}
 function renderRoblox(){}
 
 /* ---------- Montage : couper des vidéos dans le navigateur (ffmpeg.wasm, chargé à la demande) ---------- */
-const MT={lock:Promise.resolve(),aud:null,audSel:[],files:[],i:0,cuts:[],jobs:[],mode:'fast',ff:null,loading:null,busy:false,url:null,dur:0,preview:false,cur:null,engMsg:'',engErr:'',t0:0};
+const MT={audErr:'',audMsg:'',lock:Promise.resolve(),aud:null,audSel:[],files:[],i:0,cuts:[],jobs:[],mode:'fast',ff:null,loading:null,busy:false,url:null,dur:0,preview:false,cur:null,engMsg:'',engErr:'',t0:0};
+const MT_VER=5;
 const MT_LIB='montage/ffmpeg.js',MT_CORE='@ffmpeg/core@0.12.10/dist/umd';   // la petite bibliothèque est hébergée avec le site (un worker doit venir du même site), le gros moteur vient d'un CDN
 const mtBase=()=>{let b='';try{b=localStorage.getItem('nova_mt_base')||''}catch(e){}return b||'https://cdn.jsdelivr.net/npm'};
 const mtFmt=(t,d=1)=>{t=Math.max(0,t||0);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60,ss=((s<10?'0':'')+s.toFixed(d)).replace(/\.0+$/,'');return h?`${h}:${pad(m)}:${ss}`:`${m}:${ss}`};
@@ -1961,7 +1962,7 @@ const mtV=()=>$('#mtVid');
 function mtOpen(i){
   mtShow(2);MT.i=i;const f=MT.files[i];MT.dur=0;MT.preview=false;
   if(MT.url)URL.revokeObjectURL(MT.url);MT.url=URL.createObjectURL(f);
-  $('#mtTitle').textContent=`Vidéo ${i+1} sur ${MT.files.length}`;$('#mtSub').textContent=`${f.name} · ${mtSize(f.size)}`;
+  $('#mtTitle').textContent=`Vidéo ${i+1} sur ${MT.files.length}`;$('#mtSub').textContent=`${f.name} · ${mtSize(f.size)} · module v${MT_VER}`;
   $('#mtErr').hidden=true;$('#mtNext').textContent=i===MT.files.length-1?'Terminer ✓':'Suivant →';$('#mtPrevVid').disabled=i===0;
   const v=mtV();v.muted=false;mtAEls.forEach(e=>e.pause());v.src=MT.url;v.load();mtEngView();mtDraw();MT.aud=null;mtAudView();mtPrepAudio(i)}
 mtV().addEventListener('loadedmetadata',()=>{
@@ -2048,7 +2049,8 @@ function mtEngine(){
 function mtEngView(){
   const h=MT.engErr?`<span class="bad">${esc(MT.engErr)}</span> <button class="btn sm" id="mtRetry" type="button">Réessayer</button>`:MT.engMsg?`<span>⏳ ${esc(MT.engMsg)}</span>`:'';
   ['#mtEng','#mtEng3'].forEach(s=>{$(s).innerHTML=h;$(s).hidden=!h})}
-document.addEventListener('click',e=>{if(e.target.id==='mtRetry'){MT.engErr='';mtEngine().then(()=>mtPump()).catch(()=>{})}});
+document.addEventListener('click',e=>{if(e.target.id==='mtAudRetry'){mtEngine().then(()=>mtPrepAudio(MT.i)).catch(()=>mtPrepAudio(MT.i))}
+  if(e.target.id==='mtRetry'){MT.engErr='';mtEngine().then(()=>mtPump()).catch(()=>{})}});
 
 /* --- file d'attente des coupes (une à la fois, pendant que tu règles les suivantes) --- */
 function mtEnqueue(i){
@@ -2093,9 +2095,9 @@ const mtChLabel=st=>`${st.codec||'audio'}${st.layout?', '+(st.layout==='stereo'?
 
 /* aperçu : on extrait chaque piste (petit fichier) pour pouvoir toutes les entendre, régler leur volume et voir si elles contiennent du son */
 async function mtPrepAudio(i){
-  const f=MT.files[i];MT.aud=null;mtAudView();
+  const f=MT.files[i];MT.aud=null;MT.audErr='';MT.audMsg='En attente du moteur de montage…';mtAudView();
   try{
-    const ff=await mtEngine();
+    const ff=await mtEngine();MT.audMsg='';
     let cached=MT_AUD.get(f);
     if(!cached){
       MT.audMsg='Analyse des pistes audio…';mtAudView();
@@ -2116,9 +2118,10 @@ async function mtPrepAudio(i){
     if(!cached||MT.i!==i)return;
     if(cached.info.tracks.length>=2&&!MT.audSel[i])MT.audSel[i]=cached.info.tracks.map(()=>({on:true,vol:100}));
     MT.aud={i,info:cached.info,urls:cached.urls,lv:cached.lv||[]};mtAudView()
-  }catch(e){MT.audMsg='';console.warn('montage audio:',e);mtResetEngine(e);mtAudView()}}
+  }catch(e){MT.audMsg='';MT.audErr=String((e&&e.message)||e||'erreur inconnue');console.warn('montage audio:',e);mtResetEngine(e);mtAudView()}}
 function mtAudView(){
   const box=$('#mtAud'),a=MT.aud,sel=MT.audSel[MT.i]||[];
+  if(MT.audErr&&(!a||a.i!==MT.i)){box.hidden=false;box.innerHTML=`<span class="bad sm">⚠ Impossible d'analyser les pistes audio de cette vidéo (${esc(MT.audErr)}).</span> <button class="btn sm" id="mtAudRetry" type="button">Réessayer</button>`;return}
   if(MT.audMsg){box.hidden=false;box.innerHTML=`<span class="muted sm">⏳ ${esc(MT.audMsg)}</span>`;return}
   if(!a||a.i!==MT.i){box.hidden=true;box.innerHTML='';mtV().muted=false;mtAudEls();return}
   const T=a.info.tracks,A=a.info.audio;
