@@ -2005,7 +2005,7 @@ function renderRoblox(){}
 /* ---------- Montage : couper des vidéos dans le navigateur (ffmpeg.wasm, chargé à la demande) ---------- */
 const MT={audErr:'',audMsg:'',lock:Promise.resolve(),aud:null,audSel:[],duck:[],files:[],i:0,cuts:[],jobs:[],mode:'fast',ff:null,loading:null,busy:false,url:null,dur:0,preview:false,cur:null,engMsg:'',engErr:'',
   view:{s:0,e:0},hist:[],wave:null,thumbs:null,dir:null,dirOk:false};
-const MT_VER=8;
+const MT_VER=9;
 const MT_LIB='montage/ffmpeg.js',MT_CORE='@ffmpeg/core@0.12.10/dist/umd';   // la petite bibliothèque est hébergée avec le site (un worker doit venir du même site), le gros moteur vient d'un CDN
 const mtBase=()=>{let b='';try{b=localStorage.getItem('nova_mt_base')||''}catch(e){}return b||'https://cdn.jsdelivr.net/npm'};
 const mtFmt=(t,d=1)=>{t=Math.max(0,t||0);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60,ss=((s<10?'0':'')+s.toFixed(d)).replace(/\.0+$/,'');return h?`${h}:${pad(m)}:${ss}`:`${m}:${ss}`};
@@ -2040,7 +2040,8 @@ const mtDirLine=()=>!mtHasDir?'<span class="muted sm">Ton navigateur ne peut pas
 /* --- 1. choix des vidéos --- */
 const mtIsVideo=f=>/^video\//.test(f.type)||/\.(mp4|mkv|mov|webm|avi|m4v|flv|wmv)$/i.test(f.name);
 function mtAdd(list){const L=[...list].filter(mtIsVideo);if(!L.length){toast('Aucune vidéo reconnue dans ce que tu as déposé');return}
-  L.forEach(f=>{if(!MT.files.some(x=>x.name===f.name&&x.size===f.size&&x.lastModified===f.lastModified))MT.files.push(f)});mtRenderList()}
+  L.forEach(f=>{if(!MT.files.some(x=>x.name===f.name&&x.size===f.size&&x.lastModified===f.lastModified))MT.files.push(f)});mtRenderList();
+  if(MT.files.length)mtEngine().then(()=>mtWarm(0)).catch(()=>{})}
 function mtRenderList(){
   $('#mtList').innerHTML=MT.files.length?`<div class="mt-files">`+MT.files.map((f,i)=>`<div class="mt-file"><span class="nm">🎞 ${esc(f.name)}</span><span class="muted sm">${mtSize(f.size)}</span><button class="btn sm" data-rm="${i}" type="button" aria-label="Retirer">✕</button></div>`).join('')+`</div>`:'';
   $('#mtGo').disabled=!MT.files.length;$('#mtClear').hidden=!MT.files.length;$('#mtOpts').hidden=!MT.files.length;$('#mtSet').hidden=!MT.files.length;
@@ -2414,6 +2415,16 @@ async function mtFetchBlob(url,type,label){
   const r=await fetch(url);if(!r.ok)throw new Error(String(r.status));const tot=+r.headers.get('content-length')||0,rd=r.body.getReader(),parts=[];let got=0;
   for(;;){const {done,value}=await rd.read();if(done)break;parts.push(value);got+=value.length;if(tot){MT.engMsg=`${label} ${Math.round(got/tot*100)} %`;mtEngView()}}
   return URL.createObjectURL(new Blob(parts,{type}))}
+/* Le moteur lit tes fichiers par petits morceaux de 32 Ko, ce qui est très lent avec un gros fichier (12 s pour 430 Mo).
+   On remplace sa fonction de lecture par une version qui lit par blocs de 2 Mo et les garde en mémoire (lecture ~15 fois plus rapide).
+   Si le texte du moteur ne ressemble pas à ce qu'on attend (autre version), on ne touche à rien. */
+const MT_READ_OLD='read:function(stream,buffer,offset,length,position){if(position>=stream.node.size)return 0;var chunk=stream.node.contents.slice(position,position+length);var ab=WORKERFS.reader.readAsArrayBuffer(chunk);buffer.set(new Uint8Array(ab),offset);return chunk.size}';
+const MT_READ_NEW='read:function(stream,buffer,offset,length,position){var n=stream.node;if(position>=n.size)return 0;var end=Math.min(position+length,n.size),len=end-position,C=n.__c||(n.__c=[]),b=null;for(var i=0;i<C.length;i++){if(position>=C[i].s&&end<=C[i].e){b=C[i];break}}if(!b){var s=position,e=Math.min(n.size,s+Math.max(length,2097152));b={s:s,e:e,b:new Uint8Array(WORKERFS.reader.readAsArrayBuffer(n.contents.slice(s,e)))};C.unshift(b);if(C.length>4)C.pop()}buffer.set(b.b.subarray(position-b.s,position-b.s+len),offset);return len}';
+async function mtFetchCore(url,label){
+  const r=await fetch(url);if(!r.ok)throw new Error(String(r.status));const tot=+r.headers.get('content-length')||0,rd=r.body.getReader(),parts=[];let got=0;
+  for(;;){const {done,value}=await rd.read();if(done)break;parts.push(value);got+=value.length;if(tot){MT.engMsg=`${label} ${Math.round(got/tot*100)} %`;mtEngView()}}
+  let txt=await new Blob(parts).text();if(txt.includes(MT_READ_OLD)){txt=txt.replace(MT_READ_OLD,MT_READ_NEW);MT.fastRead=true}
+  return URL.createObjectURL(new Blob([txt],{type:'text/javascript'}))}
 function mtEngine(){
   if(MT.ff)return Promise.resolve(MT.ff);if(MT.loading)return MT.loading;
   MT.engErr='';MT.engMsg='Chargement du moteur de montage…';mtEngView();
@@ -2421,7 +2432,7 @@ function mtEngine(){
     const base=mtBase();
     if(location.protocol==='file:')throw new Error('file');
     if(!window.FFmpegWASM)await mtLoadScript(MT_LIB);
-    const coreURL=await mtFetchBlob(`${base}/${MT_CORE}/ffmpeg-core.js`,'text/javascript','Chargement du moteur');
+    const coreURL=await mtFetchCore(`${base}/${MT_CORE}/ffmpeg-core.js`,'Chargement du moteur');
     const wasmURL=await mtFetchBlob(`${base}/${MT_CORE}/ffmpeg-core.wasm`,'application/wasm','Chargement du moteur (une seule fois)');
     const ff=new FFmpegWASM.FFmpeg();
     ff.on('progress',({time})=>{const j=MT.cur;if(j&&time>0)j.pct=Math.min(0.99,time/1e6/(j.tot||(j.b-j.a)||1))});
@@ -2436,7 +2447,7 @@ document.addEventListener('click',e=>{if(e.target.id==='mtAudRetry'){mtEngine().
 function mtResetEngine(e){if(MT.ff&&/memory|abort|terminated|OOM|out of bounds|undefined/i.test(String((e&&e.message)||e))){try{MT.ff.terminate()}catch(_){}MT.ff=null;MT.loading=null}}
 /* un seul travail à la fois dans le moteur (coupe, analyse des pistes audio, aperçu audio) */
 const mtSerial=fn=>{const r=MT.lock.then(fn,fn);MT.lock=r.catch(()=>{});return r};
-const MT_INFO=new WeakMap(),MT_AUD=new WeakMap();
+const MT_INFO=new WeakMap();
 async function mtMount(ff,file,ext){
   try{await ff.createDir('/src')}catch(e){}
   try{await ff.unmount('/src')}catch(e){}
@@ -2468,46 +2479,54 @@ const mtChLabel=st=>`${st.codec||'audio'}${st.layout?', '+(st.layout==='stereo'?
 const mtKey=(t,k)=>(t.title||`piste ${k+1}`).toLowerCase();
 const mtGuessVoice=T=>{const k=T.findIndex(t=>/voix|voice|micro|\bmic\b|moi|\bme\b/i.test(t.title||''));return k>=0?k:T.length-1};
 
-/* analyse en un seul passage : courbe du son de chaque piste + (si plusieurs pistes) petit fichier d'aperçu par piste */
+/* analyse en un seul passage, la plus légère possible : chaque piste est décodée une fois et écrite en son brut 16 kHz mono (pas d'encodage).
+   On en tire : la courbe du son, le niveau de chaque piste, et l'aperçu (fichiers .wav très simples). Le résultat est gardé : revenir sur une vidéo est instantané. */
+const MT_AUDP=new WeakMap(),MT_SR=16000;
+function mtWav(pcm){const n=pcm.length,h=new DataView(new ArrayBuffer(44));
+  const w=(o,t)=>{for(let k=0;k<t.length;k++)h.setUint8(o+k,t.charCodeAt(k))};
+  w(0,'RIFF');h.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');h.setUint32(16,16,true);h.setUint16(20,1,true);h.setUint16(22,1,true);h.setUint32(24,MT_SR,true);h.setUint32(28,MT_SR*2,true);h.setUint16(32,2,true);h.setUint16(34,16,true);w(36,'data');h.setUint32(40,n*2,true);
+  return new Blob([h,pcm],{type:'audio/wav'})}
+function mtAnalyze(f){
+  if(MT_AUDP.has(f))return MT_AUDP.get(f);
+  const pr=(async()=>{
+    const ff=await mtEngine();
+    return mtSerial(async()=>{
+      const info=await mtProbe(ff,f),T=info.tracks;
+      if(!T.length)return{info,urls:[],lv:[],env:[],dt:0.01};
+      MT.anaFile=f;MT.anaPct=0;
+      const ext=mtExt(f.name),path=await mtMount(ff,f,ext),args=['-i',path],raw=[],multi=T.length>=2;
+      T.forEach((t,k)=>{const w=`w${k}.raw`;raw.push(w);
+        args.push('-map','0:a:'+t.k,'-vn',...(t.pair!=null?['-af',`pan=mono|c0=0.5*c${t.pair*2}+0.5*c${t.pair*2+1}`]:['-ac','1']),'-ar',String(MT_SR),'-c:a','pcm_s16le','-f','s16le','-y',w)});
+      const prog=({time})=>{if(MT.anaFile===f&&info.dur)MT.anaPct=Math.min(0.99,time/1e6/info.dur)};ff.on('progress',prog);
+      try{
+        const code=await ff.exec(args);if(code!==0)throw new Error('ffmpeg '+code);
+        const env=[],urls=[],lv=[],B=MT_SR/100;
+        for(const w of raw){const d=await ff.readFile(w),pcm=new Int16Array(d.buffer.slice(d.byteOffset,d.byteOffset+(d.length&~1))),e=new Float32Array(Math.ceil(pcm.length/B));let pk=0;
+          for(let b=0;b<e.length;b++){let m=0;for(let q=b*B,z=Math.min(pcm.length,q+B);q<z;q++){const a=pcm[q]<0?-pcm[q]:pcm[q];if(a>m)m=a}e[b]=m/32768;if(m>pk)pk=m}
+          env.push(e);lv.push(pk>0?20*Math.log10(pk/32768):-99);if(multi)urls.push(URL.createObjectURL(mtWav(pcm)))}
+        return{info,urls,lv,env,dt:0.01}}
+      catch(e){console.warn('montage analyse audio:',e);mtResetEngine(e);return{info,urls:[],lv:[],env:[],dt:0.01,nopreview:multi,failed:true}}
+      finally{ff.off('progress',prog);MT.anaFile=null;for(const w of raw){try{await ff.deleteFile(w)}catch(e){}}try{await ff.unmount('/src')}catch(e){}}})})();
+  MT_AUDP.set(f,pr);pr.then(r=>{if(r&&r.failed)MT_AUDP.delete(f)},()=>MT_AUDP.delete(f));return pr}
+/* préchauffage : dès que les vidéos sont déposées, on prépare la première ; pendant qu'on règle une vidéo, on prépare la suivante */
+function mtWarm(k){const f=MT.files[k];if(f&&location.protocol!=='file:')mtAnalyze(f).catch(()=>{})}
 async function mtPrepAudio(i){
   const f=MT.files[i];MT.aud=null;MT.audErr='';MT.wave=null;MT.audMsg='En attente du moteur de montage…';mtAudView();
+  let iv=0;
   try{
-    const ff=await mtEngine();MT.audMsg='';
-    let cached=MT_AUD.get(f);
-    if(!cached){
-      MT.audMsg='Analyse des pistes audio…';mtAudView();
-      cached=await mtSerial(async()=>{
-        const info=await mtProbe(ff,f),T=info.tracks;
-        if(!T.length)return{info,urls:[],lv:[],env:[],dt:0.01};
-        if(MT.i!==i)return null;
-        MT.audMsg=T.length>=2?`Préparation de l'aperçu des ${T.length} pistes audio…`:'Analyse du son…';mtAudView();
-        const ext=mtExt(f.name),path=await mtMount(ff,f,ext),args=['-i',path],mp3=[],raw=[],logs=[],h=({message})=>logs.push(message),multi=T.length>=2;
-        T.forEach((t,k)=>{
-          if(multi){const o=`t${k}.mp3`;mp3.push(o);args.push('-map','0:a:'+t.k,'-vn','-af',(t.pair!=null?mtPan2(t)+',':'')+'volumedetect','-c:a','libmp3lame','-b:a','64k','-y',o)}
-          const w=`w${k}.raw`;raw.push(w);
-          args.push('-map','0:a:'+t.k,'-vn',...(t.pair!=null?['-af',`pan=mono|c0=0.5*c${t.pair*2}+0.5*c${t.pair*2+1}`]:['-ac','1']),'-ar','3000','-f','s16le','-y',w)});
-        ff.on('log',h);
-        try{
-          const code=await ff.exec(args);if(code!==0)throw new Error('ffmpeg '+code);
-          const env=[];for(const w of raw){const d=await ff.readFile(w),s=new Int16Array(d.buffer.slice(d.byteOffset,d.byteOffset+(d.length&~1))),B=30,e=new Float32Array(Math.ceil(s.length/B));
-            for(let b=0;b<e.length;b++){let m=0;for(let q=b*B,z=Math.min(s.length,q+B);q<z;q++){const a=s[q]<0?-s[q]:s[q];if(a>m)m=a}e[b]=m/32768}env.push(e)}
-          const urls=[];
-          try{for(const o of mp3){const d=await ff.readFile(o);urls.push(URL.createObjectURL(new Blob([d],{type:'audio/mpeg'})))}}catch(e){}
-          let lv=logs.map(l=>(l.match(/max_volume:\s*(-?[\d.]+|-inf) dB/)||[])[1]).filter(x=>x!==undefined).map(x=>x==='-inf'?-99:+x);
-          if(lv.length!==T.length)lv=env.map(e=>{let m=0;for(const v of e)if(v>m)m=v;return m>0?20*Math.log10(m):-99});
-          return{info,urls,lv,env,dt:0.01,nopreview:multi&&urls.length<2}}
-        catch(e){console.warn('montage analyse audio:',e);mtResetEngine(e);return{info,urls:[],lv:[],env:[],dt:0.01,nopreview:multi,failed:true}}
-        finally{ff.off('log',h);for(const o of[...mp3,...raw]){try{await ff.deleteFile(o)}catch(e){}}try{await ff.unmount('/src')}catch(e){}}});
-      if(cached&&!cached.failed)MT_AUD.set(f,cached);else if(cached)MT_INFO.set(f,cached.info)}
-    MT.audMsg='';
-    if(!cached||MT.i!==i)return;
+    await mtEngine();
+    const pr=mtAnalyze(f);
+    iv=setInterval(()=>{if(MT.i!==i)return;MT.audMsg=MT.anaFile===f?`Analyse du son… ${Math.round((MT.anaPct||0)*100)} %`:'Analyse du son… (en attente)';mtAudView()},300);
+    MT.audMsg='Analyse du son…';mtAudView();
+    const cached=await pr;clearInterval(iv);iv=0;MT.audMsg='';
+    if(!cached||MT.i!==i){mtWarm(i+1);return}
     const T=cached.info.tracks;
     if(T.length>=2&&!MT.audSel[i])MT.audSel[i]=T.map((t,k)=>Object.assign({on:true,vol:100},mtPrefs.vols[mtKey(t,k)]||{}));
     if(T.length>=2&&!MT.duck[i])MT.duck[i]={on:!!mtPrefs.duck,voice:mtGuessVoice(T),lvl:mtPrefs.duckLvl||2};
     MT.aud={i,info:cached.info,urls:cached.urls,lv:cached.lv||[],nopreview:!!cached.nopreview};
     if(cached.env&&cached.env.length)MT.wave={i,env:cached.env,dt:cached.dt};
-    mtAudView();mtDraw()
-  }catch(e){MT.audMsg='';MT.audErr=String((e&&e.message)||e||'erreur inconnue');console.warn('montage audio:',e);mtResetEngine(e);mtAudView()}}
+    mtAudView();mtDraw();mtWarm(i+1)
+  }catch(e){if(iv)clearInterval(iv);MT.audMsg='';MT.audErr=String((e&&e.message)||e||'erreur inconnue');console.warn('montage audio:',e);mtResetEngine(e);mtAudView()}}
 
 const MT_DUCK={1:{r:3,db:6,l:'Léger'},2:{r:6,db:10,l:'Moyen'},3:{r:12,db:16,l:'Fort'}};
 function mtAudView(){
