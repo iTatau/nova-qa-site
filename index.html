@@ -776,6 +776,38 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 .pc-tpl{display:flex;flex-wrap:wrap;gap:6px}.pc-tpl .btn{padding:4px 6px;height:auto;color:var(--mut)}.pc-tpl .btn[aria-pressed=true]{color:var(--brand);border-color:var(--brand)}
 .pbg-cvw canvas{cursor:default;touch-action:none}
 .pbg-cur{position:absolute;pointer-events:none;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #000}
+/* ---------- Sons ---------- */
+.snd-form{display:flex;gap:8px;margin-bottom:10px}.snd-form input{flex:1;height:42px;padding:0 12px}
+.snd-opts{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.snd-row{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line)}.snd-row.on{background:color-mix(in srgb,var(--brand) 8%,transparent)}
+.snd-row .nm{display:flex;flex-direction:column;gap:2px;min-width:0}.snd-row .nm b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.snd-row .nm span{font-size:13px;color:var(--mut)}
+.snd-play{width:38px;height:38px;padding:0;border-radius:50%}
+.snd-act{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.snd-act a.btn{text-decoration:none;display:inline-flex;align-items:center}
+.snd-lic{padding:1px 7px;border:1px solid var(--line);border-radius:99px;font-size:11px;color:var(--ink)}.snd-lic.cc0{border-color:var(--ok,#37d67a);color:var(--ok,#37d67a)}
+.snd-det{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:8px 12px}.snd-det summary{cursor:pointer;font-weight:700;font-size:14px}
+.snd-links{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;margin-top:10px}.snd-lk{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--ink)}.snd-lk:hover{border-color:var(--brand)}
+@media (max-width:760px){.snd-row{grid-template-columns:42px 1fr}.snd-act{grid-column:1/3;justify-content:flex-start}}
+/* ---------- Enregistreur ---------- */
+.rec-meter{display:inline-block;width:110px;height:8px;background:var(--soft);border-radius:99px;overflow:hidden}.rec-meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#37d67a,#ffd24a,#ff5d73);transition:width .08s}
+.rec-live{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:14px;border:1px solid var(--line);border-radius:12px}.rec-live b{font-size:26px;font-variant-numeric:tabular-nums}
+.rec-dot{width:14px;height:14px;border-radius:50%;background:#777}.rec-dot.on{background:#ff3b4e;animation:recb 1s infinite}@keyframes recb{50%{opacity:.25}}
+.rec-count{font-size:120px;font-weight:800;text-align:center;padding:40px 0;color:var(--brand)}
+/* ---------- Sous-titres ---------- */
+.su-prog{margin-top:12px;display:grid;gap:6px}
+.su-top{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start;margin-bottom:14px}
+.su-vw{position:relative;display:inline-block;max-width:100%;line-height:0;border-radius:12px;overflow:hidden;background:#000}
+.su-vid{display:block;max-width:100%;max-height:52vh;min-height:90px;margin:0 auto}
+.su-ov{position:absolute;left:0;right:0;padding:0 2.6%;display:flex;justify-content:center;pointer-events:none;z-index:2}.su-ov span{text-align:center;white-space:pre-wrap;line-height:1.15;border-radius:3px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.su-side{display:grid;gap:10px}
+.su-head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;margin:6px 0}
+.su-list{max-height:60vh;overflow:auto;border:1px solid var(--line);border-radius:12px}
+.su-row{display:grid;grid-template-columns:62px 104px 104px 1fr auto;gap:8px;align-items:start;padding:8px;border-bottom:1px solid var(--line)}.su-row:last-child{border-bottom:0}
+.su-row.on{background:color-mix(in srgb,var(--brand) 12%,transparent)}
+.su-n{height:34px;padding:0 6px;border-radius:8px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font-weight:700;cursor:pointer}
+.su-tm{height:34px;padding:0 6px;min-width:0;font-variant-numeric:tabular-nums;text-align:center}
+.su-tx{min-height:34px;padding:7px 9px;resize:vertical;line-height:1.35;font:inherit}
+.su-ac{display:flex;gap:4px}
+@media (max-width:900px){.su-top{grid-template-columns:1fr}.su-row{grid-template-columns:62px 1fr 1fr;}.su-tx{grid-column:1/4}.su-ac{grid-column:1/4}}
 </style>
 </head>
 <body>
@@ -933,7 +965,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
   <!-- ===== MONTAGE ===== -->
   <section class="tab" id="tab-montage">
     <div class="mt-hub" id="mtHub" role="tablist" aria-label="Outils vidéo">
-      <button type="button" data-t="cut" aria-pressed="true">✂️ Couper</button><button type="button" data-t="gif" aria-pressed="false">🎞 GIF</button><button type="button" data-t="speed" aria-pressed="false">⏩ Vitesse</button><button type="button" data-t="sound" aria-pressed="false">🔊 Son</button><button type="button" data-t="compress" aria-pressed="false">🗜 Compresser</button><button type="button" data-t="convert" aria-pressed="false">🔄 Convertir</button><button type="button" data-t="join" aria-pressed="false">🔗 Assembler</button><button type="button" data-t="thumb" aria-pressed="false">🖼 Miniature</button>
+      <button type="button" data-t="cut" aria-pressed="true">✂️ Couper</button><button type="button" data-t="gif" aria-pressed="false">🎞 GIF</button><button type="button" data-t="speed" aria-pressed="false">⏩ Vitesse</button><button type="button" data-t="sound" aria-pressed="false">🔊 Son</button><button type="button" data-t="compress" aria-pressed="false">🗜 Compresser</button><button type="button" data-t="convert" aria-pressed="false">🔄 Convertir</button><button type="button" data-t="join" aria-pressed="false">🔗 Assembler</button><button type="button" data-t="thumb" aria-pressed="false">🖼 Miniature</button><button type="button" data-t="subs" aria-pressed="false">💬 Sous-titres</button><button type="button" data-t="rec" aria-pressed="false">🎥 Enregistrer l'écran</button><button type="button" data-t="sounds" aria-pressed="false">🎵 Sons &amp; musiques</button>
     </div>
     <div id="mtCutWrap">
     <div class="card" id="mtStep1">
@@ -2039,7 +2071,7 @@ function renderRoblox(){}
 /* ---------- Montage : couper des vidéos dans le navigateur (ffmpeg.wasm, chargé à la demande) ---------- */
 const MT={audErr:'',audMsg:'',lock:Promise.resolve(),aud:null,audSel:[],duck:[],files:[],i:0,cuts:[],jobs:[],mode:'fast',ff:null,loading:null,busy:false,url:null,dur:0,preview:false,cur:null,engMsg:'',engErr:'',
   view:{s:0,e:0},hist:[],wave:null,thumbs:null,dir:null,dirOk:false};
-const MT_VER=11;
+const MT_VER=12;
 const MT_LIB='montage/ffmpeg.js',MT_CORE='@ffmpeg/core@0.12.10/dist/umd';   // la petite bibliothèque est hébergée avec le site (un worker doit venir du même site), le gros moteur vient d'un CDN
 const mtBase=()=>{let b='';try{b=localStorage.getItem('nova_mt_base')||''}catch(e){}return b||'https://cdn.jsdelivr.net/npm'};
 const mtFmt=(t,d=1)=>{t=Math.max(0,t||0);const h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=t%60,ss=((s<10?'0':'')+s.toFixed(d)).replace(/\.0+$/,'');return h?`${h}:${pad(m)}:${ss}`:`${m}:${ss}`};
@@ -2106,7 +2138,10 @@ function mtOpen(i){
   $('#mtErr').hidden=true;$('#mtNext').textContent=i===MT.files.length-1?'Terminer ✓':'Suivant →';$('#mtPrevVid').disabled=i===0;
   const v=mtV();v.muted=false;mtAEls.forEach(e=>e.pause());v.src=MT.url;v.load();mtEngView();mtDraw();mtFmtView();mtFxView();$('#mtName').value='';mtNameView();MT.aud=null;mtAudView();mtPrepAudio(i)}
 mtV().addEventListener('loadedmetadata',()=>{
-  const v=mtV(),d=v.duration;if(!isFinite(d)||d<=0){mtVidErr();return}
+  const v=mtV();let d=v.duration;
+  /* certains enregistrements (navigateur, OBS en direct) ne disent pas leur durée : on la fait calculer en allant à la fin */
+  if(d===Infinity&&!MT.durFix){MT.durFix=true;const back=()=>{v.removeEventListener('timeupdate',back);v.currentTime=0;MT.durFix=false;v.dispatchEvent(new Event('loadedmetadata'))};v.addEventListener('timeupdate',back);v.currentTime=1e101;return}
+  d=v.duration;if(!isFinite(d)||d<=0){mtVidErr();return}
   MT.dur=d;const c=MT.cuts[MT.i]||{a:0,b:d,skip:false,fmt:mtPrefs.fmt,res:mtPrefs.res,pos:0.5,norm:!!mtPrefs.norm};
   if(!MT.cuts[MT.i]){const ps=MT.preset;if(ps==='gif')c.out='gif';if(ps==='speed')c.speed=2;if(ps==='sound'){c.clean=true;c.norm=true}}
   MT.cuts[MT.i]=c;c.b=Math.min(c.b,d);MT.view={s:0,e:d};v.currentTime=c.a;
@@ -2774,6 +2809,7 @@ function hubShow(t){
   $$('#mtPages>.mt-page').forEach(p=>p.hidden=p.id!=='mtP-'+t);
   if(t==='cut')try{localStorage.setItem('nova_mt_tool','')}catch(e){}
   if(t==='thumb'&&typeof thumbShow==='function')thumbShow();
+  if(t==='subs'&&typeof subsShow==='function')subsShow();if(t==='rec'&&typeof recShow==='function')recShow();if(t==='sounds'&&typeof sndShow==='function')sndShow();
   if(['compress','convert','join'].includes(t))toolsRender(t)}
 $('#mtHub').addEventListener('click',e=>{const b=e.target.closest('button');if(b)hubShow(b.dataset.t)});
 
@@ -2860,6 +2896,7 @@ function toolsRender(only){
       $('#jnText').value=o.text;$('#jnPos').value=o.pos;$('#jnSz').value=o.sz;$('#jnOp').value=o.op;
       const fast=joinFast(S.files,o);$('#tlInfo-join').textContent=S.files.length?(fast?'Ces vidéos ont le même format : l’assemblage sera instantané et sans perte.':'Les vidéos seront recompressées (nécessaire pour le fondu, le filigrane ou des formats différents) : compte plusieurs minutes.'):''}
     toolResHtml(t)}
+  if((!only||only==='subs')&&$('#tlRes-subs')){$('#tlDir-subs').innerHTML=mtHasDir?`${mtDirLine()}${MT.dir&&!MT.dirOk?' <button class="btn sm primary" data-dirallow type="button">Autoriser</button>':''} <button class="btn sm" data-dirpick type="button">${MT.dir?'Changer de dossier…':'Enregistrer dans un dossier…'}</button>`:'';toolResHtml('subs')}
   mtEngView()}
 document.addEventListener('click',async e=>{
   if(e.target.closest('[data-dirpick]')){await mtDirPick();toolsRender()}
@@ -2867,7 +2904,7 @@ document.addEventListener('click',async e=>{
 
 /* --- résultats --- */
 function toolResHtml(t){
-  const its=TQ.filter(x=>x.tool===t);
+  if(!$('#tlRes-'+t))return;const its=TQ.filter(x=>x.tool===t);
   $('#tlRes-'+t).innerHTML=its.length?`<h3 class="h3" style="margin:18px 0 6px">Résultats</h3>`+its.map(it=>{
     let st='';
     if(it.state==='ok'&&it.skip)st=`<span class="muted sm">${esc(it.note||'rien à faire')}</span>`;
@@ -2900,7 +2937,7 @@ async function toolPump(){
   try{const ff=await mtEngine();await mtSerial(()=>{MT.cur=it;return toolRun(ff,it)});it.state='ok';it.pct=1;if(it.blob&&MT.dir&&MT.dirOk)await mtSaveDir(it)}
   catch(e){it.state='err';it.err=String((e&&e.message)||e);console.warn('montage outil:',e);mtResetEngine(e)}
   tlBusy=false;MT.cur=null;toolsRender(it.tool);toolPump()}
-async function toolRun(ff,it){return it.tool==='compress'?runCompress(ff,it):it.tool==='convert'?runConvert(ff,it):runJoin(ff,it)}
+async function toolRun(ff,it){return it.tool==='compress'?runCompress(ff,it):it.tool==='convert'?runConvert(ff,it):it.tool==='subs'?runSubs(ff,it):runJoin(ff,it)}
 const tlSave=(it,data,ext,mime,name)=>{it.blob=new Blob([data],{type:mime});it.size=data.length;it.outName=mtClean(name)+'.'+ext};
 
 /* --- compresser --- */
@@ -2997,6 +3034,521 @@ async function runJoin(ff,it){
 
 if(window.__NOVA_TEST)Object.assign(window.__mt||(window.__mt={}),{TL,TQ,toolPump,toolGo,tlAdd,hubShow,mtAudioPlan});
 toolsRender();hubShow('cut');
+
+/* ---------- Montage : enregistreur d'écran (écran + son de l'ordinateur + micro) ---------- */
+const RC={opts:{res:'1080',fps:'30',sys:true,mic:true,micDev:'',nr:true,cd:3,volSys:100,volMic:100},disp:null,micS:null,ctx:null,rec:null,chunks:[],state:'idle',t0:0,acc:0,tick:0,blob:null,url:null,mime:'',ext:'webm',nodes:{},raf:0,inited:false,cdTimer:0};
+try{Object.assign(RC.opts,JSON.parse(localStorage.getItem('nova_rec_opts')||'{}'))}catch(e){}
+const recSave=()=>{try{localStorage.setItem('nova_rec_opts',JSON.stringify(RC.opts))}catch(e){}};
+function recPageHtml(){return `<div class="card mt-page" id="mtP-rec" hidden>
+ <div class="head"><h2>Enregistrer l'écran</h2><span class="sub">ton jeu ou n'importe quelle fenêtre, avec le son et ton micro</span></div>
+ <div id="recSetup">
+  <div class="mt-set">
+   <div class="mt-fxr"><span class="lab">Qualité</span><div class="seg" id="recRes"><button type="button" data-v="720" aria-pressed="false">720p</button><button type="button" data-v="1080" aria-pressed="true">1080p</button><button type="button" data-v="native" aria-pressed="false">Taille de l'écran</button></div><div class="seg" id="recFps"><button type="button" data-v="30" aria-pressed="true">30 i/s</button><button type="button" data-v="60" aria-pressed="false">60 i/s</button></div></div>
+   <div class="mt-fxr"><span class="lab">Son du jeu</span><label class="mt-chk"><input type="checkbox" id="recSys"> Enregistrer le son de l'ordinateur</label><input type="range" id="recVolSys" min="0" max="200" aria-label="Volume du son de l'ordinateur" style="width:140px;padding:0;height:auto"><span class="rec-meter"><i id="recMetSys"></i></span></div>
+   <div class="mt-fxr"><span class="lab">Micro</span><label class="mt-chk"><input type="checkbox" id="recMic"> Enregistrer mon micro</label><select id="recMicDev" aria-label="Micro" style="max-width:260px"><option value="">Micro par défaut</option></select><input type="range" id="recVolMic" min="0" max="300" aria-label="Volume du micro" style="width:140px;padding:0;height:auto"><span class="rec-meter"><i id="recMetMic"></i></span></div>
+   <div class="mt-fxr"><span class="lab"></span><label class="mt-chk"><input type="checkbox" id="recNr"> Réduire le bruit du micro</label><span class="lab" style="min-width:0">Compte à rebours</span><select id="recCd" aria-label="Compte à rebours"><option value="0">aucun</option><option value="3">3 secondes</option><option value="5">5 secondes</option><option value="10">10 secondes</option></select></div>
+  </div>
+  <p class="muted sm" style="margin:8px 0 0">Quand tu cliques sur « Démarrer », le navigateur te demande quoi partager (écran entier, fenêtre ou onglet). Pour avoir le <b>son de l'ordinateur</b>, coche « Partager l'audio du système » (ou de l'onglet) dans cette fenêtre. Pense à régler les jeux en « fenêtré sans bordure » si l'écran reste noir.</p>
+  <div class="btns left"><button class="btn primary" id="recGo" type="button">● Démarrer l'enregistrement</button></div>
+ </div>
+ <div id="recLive" hidden><div class="rec-live"><span class="rec-dot" id="recDot"></span><b id="recTime">00:00</b><span class="muted sm" id="recSize"></span><span class="sp"></span><button class="btn" id="recPause" type="button">⏸ Pause</button><button class="btn primary" id="recStop" type="button">■ Arrêter</button></div>
+  <p class="muted sm" id="recLiveMsg" style="margin:8px 0 0"></p></div>
+ <div id="recCount" class="rec-count" hidden></div>
+ <p class="bad sm" id="recErr" hidden></p>
+ <div id="recDone" hidden><video id="recVid" class="mt-vid" controls playsinline></video><p class="muted sm" id="recInfo" style="margin:8px 0"></p>
+  <div class="btns left"><button class="btn primary" id="recDl" type="button">Télécharger</button><button class="btn" id="recDir" type="button" hidden>Enregistrer dans le dossier</button><button class="btn" id="recCut" type="button">✂️ Couper dans Montage</button><button class="btn" id="recNew" type="button">Recommencer</button></div></div>
+</div>`}
+$('#mtPages').insertAdjacentHTML('beforeend',recPageHtml());
+function recShow(){if(!RC.inited){RC.inited=true;recWire()}recUi();$('#recDir').hidden=!(MT.dir&&MT.dirOk)}
+function recUi(){
+  const o=RC.opts;setSeg('recRes',o.res);setSeg('recFps',o.fps);$('#recSys').checked=!!o.sys;$('#recMic').checked=!!o.mic;$('#recNr').checked=!!o.nr;$('#recCd').value=String(o.cd);$('#recVolSys').value=o.volSys;$('#recVolMic').value=o.volMic;
+  $('#recMicDev').disabled=!o.mic;$('#recVolMic').disabled=!o.mic;$('#recVolSys').disabled=!o.sys;$('#recGo').disabled=!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia){$('#recErr').hidden=false;$('#recErr').textContent="Ton navigateur ne permet pas d'enregistrer l'écran (utilise Chrome sur ordinateur)."}}
+async function recMics(){
+  try{const ds=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='audioinput');
+    $('#recMicDev').innerHTML='<option value="">Micro par défaut</option>'+ds.filter(d=>d.deviceId&&d.deviceId!=='default').map(d=>`<option value="${esc(d.deviceId)}">${esc(d.label||'Micro')}</option>`).join('');$('#recMicDev').value=RC.opts.micDev||''}catch(e){}}
+const recMime=()=>{const L=['video/mp4;codecs=avc1.640028,mp4a.40.2','video/mp4;codecs=avc1,mp4a.40.2','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];return L.find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported(t))||''};
+function recWire(){
+  segBind('recRes',v=>{RC.opts.res=v;recSave()});segBind('recFps',v=>{RC.opts.fps=v;recSave()});
+  [['recSys','sys'],['recMic','mic'],['recNr','nr']].forEach(([id,k])=>$('#'+id).addEventListener('change',e=>{RC.opts[k]=e.target.checked;recSave();recUi();if(k==='mic'&&e.target.checked)navigator.mediaDevices.getUserMedia({audio:true}).then(s=>{s.getTracks().forEach(t=>t.stop());recMics()}).catch(()=>{$('#recErr').hidden=false;$('#recErr').textContent="Le micro n'est pas autorisé : clique sur l'icône du cadenas à côté de l'adresse du site pour l'autoriser."})}));
+  $('#recCd').addEventListener('change',e=>{RC.opts.cd=+e.target.value;recSave()});$('#recMicDev').addEventListener('change',e=>{RC.opts.micDev=e.target.value;recSave()});
+  $('#recVolSys').addEventListener('input',e=>{RC.opts.volSys=+e.target.value;recSave();if(RC.nodes.gSys)RC.nodes.gSys.gain.value=RC.opts.volSys/100});
+  $('#recVolMic').addEventListener('input',e=>{RC.opts.volMic=+e.target.value;recSave();if(RC.nodes.gMic)RC.nodes.gMic.gain.value=RC.opts.volMic/100});
+  $('#recGo').addEventListener('click',recStart);$('#recPause').addEventListener('click',recPause);$('#recStop').addEventListener('click',()=>recStop());
+  $('#recNew').addEventListener('click',recReset);$('#recDl').addEventListener('click',()=>{if(RC.blob)phDownload(RC.blob,recName())});
+  $('#recDir').addEventListener('click',async()=>{if(!RC.blob)return;const it={blob:RC.blob,outName:recName()},ok=await mtSaveDir(it);toast(ok?`Enregistré dans « ${MT.dir.name} » ✓`:"Impossible d'écrire dans le dossier : utilise « Télécharger »")});
+  $('#recCut').addEventListener('click',()=>{if(!RC.blob)return;const f=new File([RC.blob],recName(),{type:RC.blob.type,lastModified:Date.now()});MT.files=[];mtAdd([f]);hubShow('cut');mtShow(1);toast('Enregistrement ajouté : clique sur « Valider » pour le couper')});
+  recMics()}
+const recName=()=>{const d=new Date();return `Enregistrement ${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}h${pad(d.getMinutes())}.${RC.ext}`};
+const recFmt=s=>`${pad(Math.floor(s/60))}:${pad(Math.floor(s%60))}`;
+const recErr=t=>{$('#recErr').hidden=!t;$('#recErr').textContent=t||''};
+function recMeter(an,el){const b=new Float32Array(an.fftSize);an.getFloatTimeDomainData(b);let s=0;for(const v of b)s+=v*v;const r=Math.sqrt(s/b.length);el.style.width=Math.min(100,Math.sqrt(r)*130)+'%'}
+function recLoop(){
+  if(RC.nodes.anSys)recMeter(RC.nodes.anSys,$('#recMetSys'));if(RC.nodes.anMic)recMeter(RC.nodes.anMic,$('#recMetMic'));
+  if(RC.state==='rec'||RC.state==='pause'){const el=RC.acc+(RC.state==='rec'?(Date.now()-RC.t0)/1000:0);$('#recTime').textContent=recFmt(el);const sz=RC.chunks.reduce((a,c)=>a+c.size,0);$('#recSize').textContent=`${(sz/1e6).toFixed(1).replace('.',',')} Mo`}
+  RC.raf=requestAnimationFrame(recLoop)}
+async function recStart(){
+  recErr('');const o=RC.opts;let disp=null,micS=null;
+  try{
+    const v={frameRate:{ideal:+o.fps,max:+o.fps}};if(o.res!=='native')v.height={ideal:+o.res,max:+o.res};
+    disp=await navigator.mediaDevices.getDisplayMedia({video:v,audio:o.sys?{echoCancellation:false,noiseSuppression:false,autoGainControl:false}:false});
+  }catch(e){recErr(e&&e.name==='NotAllowedError'?"Partage annulé : choisis un écran, une fenêtre ou un onglet pour commencer.":"Impossible de démarrer le partage d'écran ("+((e&&e.message)||e)+").");return}
+  if(o.mic){try{micS=await navigator.mediaDevices.getUserMedia({audio:{deviceId:o.micDev?{exact:o.micDev}:undefined,echoCancellation:!!o.nr,noiseSuppression:!!o.nr,autoGainControl:false}})}catch(e){recErr("Le micro n'a pas pu être utilisé : l'enregistrement se fait sans micro.")}}
+  RC.disp=disp;RC.micS=micS;
+  /* mélange du son (ordinateur + micro) en une seule piste */
+  const hasSys=disp.getAudioTracks().length>0;let audioTrack=null;
+  if(hasSys||micS){RC.ctx=new (window.AudioContext||window.webkitAudioContext)();const dest=RC.ctx.createMediaStreamDestination();RC.nodes={};
+    if(hasSys){const s=RC.ctx.createMediaStreamSource(new MediaStream(disp.getAudioTracks())),g=RC.ctx.createGain(),an=RC.ctx.createAnalyser();g.gain.value=o.volSys/100;an.fftSize=1024;s.connect(g);g.connect(dest);g.connect(an);RC.nodes.gSys=g;RC.nodes.anSys=an}
+    if(micS){const s=RC.ctx.createMediaStreamSource(micS),g=RC.ctx.createGain(),an=RC.ctx.createAnalyser();g.gain.value=o.volMic/100;an.fftSize=1024;s.connect(g);g.connect(dest);g.connect(an);RC.nodes.gMic=g;RC.nodes.anMic=an}
+    audioTrack=dest.stream.getAudioTracks()[0]}
+  if(o.sys&&!hasSys)recErr("Le son de l'ordinateur n'est pas partagé : à la prochaine fois, coche « Partager l'audio » dans la fenêtre de choix (écran entier ou onglet).");
+  const stream=new MediaStream([...disp.getVideoTracks(),...(audioTrack?[audioTrack]:[])]);
+  disp.getVideoTracks()[0].addEventListener('ended',()=>{if(RC.state==='rec'||RC.state==='pause')recStop()});
+  $('#recSetup').hidden=true;$('#recDone').hidden=true;RC.stream=stream;cancelAnimationFrame(RC.raf);recLoop();
+  /* compte à rebours */
+  if(o.cd>0){RC.state='count';const box=$('#recCount');box.hidden=false;let n=o.cd;const step=()=>{if(RC.state!=='count')return;if(n<=0){box.hidden=true;recBegin();return}box.textContent=n;n--;RC.cdTimer=setTimeout(step,1000)};step()}
+  else recBegin()}
+function recBegin(){
+  RC.mime=recMime();RC.ext=RC.mime.startsWith('video/mp4')?'mp4':'webm';RC.chunks=[];
+  try{RC.rec=new MediaRecorder(RC.stream,{mimeType:RC.mime||undefined,videoBitsPerSecond:RC.opts.res==='720'?6e6:12e6,audioBitsPerSecond:192e3})}catch(e){recErr("Ton navigateur n'arrive pas à enregistrer dans ce format.");recCleanup();$('#recSetup').hidden=false;RC.state='idle';return}
+  RC.rec.ondataavailable=e=>{if(e.data&&e.data.size)RC.chunks.push(e.data)};RC.rec.onstop=recFinish;
+  RC.rec.start(1000);RC.state='rec';RC.t0=Date.now();RC.acc=0;$('#recLive').hidden=false;$('#recPause').textContent='⏸ Pause';$('#recDot').classList.add('on');
+  $('#recLiveMsg').textContent='Tu peux changer de fenêtre : l\'enregistrement continue. Reviens ici (ou clique sur « Arrêter le partage » dans la barre du navigateur) pour terminer.'}
+function recPause(){
+  if(RC.state==='rec'){RC.rec.pause();RC.acc+=(Date.now()-RC.t0)/1000;RC.state='pause';$('#recPause').textContent='▶ Reprendre';$('#recDot').classList.remove('on')}
+  else if(RC.state==='pause'){RC.rec.resume();RC.t0=Date.now();RC.state='rec';$('#recPause').textContent='⏸ Pause';$('#recDot').classList.add('on')}}
+function recStop(){
+  if(RC.state==='count'){clearTimeout(RC.cdTimer);recCleanup();RC.state='idle';$('#recCount').hidden=true;$('#recSetup').hidden=false;return}
+  if(RC.state==='rec'||RC.state==='pause'){RC.acc+=RC.state==='rec'?(Date.now()-RC.t0)/1000:0;RC.state='stop';try{RC.rec.stop()}catch(e){}}}
+function recCleanup(){
+  try{RC.disp&&RC.disp.getTracks().forEach(t=>t.stop())}catch(e){}try{RC.micS&&RC.micS.getTracks().forEach(t=>t.stop())}catch(e){}
+  try{RC.ctx&&RC.ctx.close()}catch(e){}RC.disp=RC.micS=RC.ctx=null;RC.nodes={};cancelAnimationFrame(RC.raf);$('#recMetSys').style.width='0';$('#recMetMic').style.width='0'}
+function recFinish(){
+  const dur=RC.acc;recCleanup();$('#recLive').hidden=true;$('#recDot').classList.remove('on');
+  RC.blob=new Blob(RC.chunks,{type:RC.mime||'video/webm'});RC.state='idle';
+  if(!RC.blob.size){recErr("L'enregistrement est vide.");$('#recSetup').hidden=false;return}
+  if(RC.url)URL.revokeObjectURL(RC.url);RC.url=URL.createObjectURL(RC.blob);const v=$('#recVid');v.src=RC.url;v.addEventListener('loadedmetadata',()=>{if(v.duration===Infinity){const back=()=>{v.removeEventListener('timeupdate',back);v.currentTime=0};v.addEventListener('timeupdate',back);v.currentTime=1e101}},{once:true});
+  $('#recDone').hidden=false;$('#recInfo').textContent=`${recName()} · ${recFmt(dur)} · ${phFmtSize(RC.blob.size)}${RC.ext==='webm'?' · WebM (lisible partout, et accepté par le montage)':''}`;$('#recDir').hidden=!(MT.dir&&MT.dirOk)}
+function recReset(){if(RC.blob&&!confirm("Cet enregistrement n'est pas encore sauvegardé. Le jeter et recommencer ?"))return;RC.blob=null;if(RC.url){URL.revokeObjectURL(RC.url);RC.url=null}$('#recVid').removeAttribute('src');$('#recDone').hidden=true;$('#recSetup').hidden=false;recErr('')}
+window.addEventListener('beforeunload',e=>{if(RC.state==='rec'||RC.state==='pause'||(RC.blob&&!RC.saved)){e.preventDefault();e.returnValue=''}});
+if(window.__NOVA_TEST)window.__rc={RC,recStart,recStop};
+
+/* ---------- Montage : recherche de sons et de musiques libres de droits (Openverse, Freesound) ---------- */
+const SND={res:[],q:'',cat:'music',lic:'commercial',src:'',page:1,total:0,busy:false,fav:[],fkey:'',inited:false,audio:null,playing:''};
+try{SND.fav=JSON.parse(localStorage.getItem('nova_snd_fav')||'[]')}catch(e){}
+try{SND.fkey=localStorage.getItem('nova_freesound_key')||''}catch(e){}
+const sndBase=()=>{let b='';try{b=localStorage.getItem('nova_snd_base')||''}catch(e){}return b||'https://api.openverse.org/v1/audio/'};
+const SND_LINKS=[['Pixabay Musique','https://pixabay.com/music/search/{q}/','musique et effets, gratuits, usage commercial'],['Pixabay Effets sonores','https://pixabay.com/sound-effects/search/{q}/','bruitages'],['Freesound','https://freesound.org/search/?q={q}','le plus grand site de bruitages (licences variables)'],['Mixkit','https://mixkit.co/free-sound-effects/{q}/','effets sonores gratuits'],['Bibliothèque audio YouTube','https://studio.youtube.com/channel/UC/music','musiques et sons sans droits d’auteur (compte requis)'],['Uppbeat','https://uppbeat.io/browse/music?q={q}','musiques gratuites avec crédit']];
+function sndPageHtml(){return `<div class="card mt-page" id="mtP-sounds" hidden>
+ <div class="head"><h2>Sons &amp; musiques</h2><span class="sub">chercher des musiques et des bruitages libres de droits</span></div>
+ <form id="sndForm" class="snd-form" autocomplete="off"><input id="sndQ" type="search" name="snd-q" autocomplete="off" placeholder="Cherche : épique, minecraft, explosion, applaudissements, pas dans l'herbe…" aria-label="Recherche de sons"><button class="btn primary" type="submit">Rechercher</button></form>
+ <div class="snd-opts"><div class="seg" id="sndCat"><button type="button" data-v="music" aria-pressed="true">🎵 Musiques</button><button type="button" data-v="sound_effect" aria-pressed="false">🔊 Effets sonores</button><button type="button" data-v="" aria-pressed="false">Tout</button></div>
+  <select id="sndLic" aria-label="Licence"><option value="commercial">Usage commercial autorisé (monétisation)</option><option value="commercial,modification">Commercial + modifiable</option><option value="">Toutes les licences</option></select></div>
+ <div class="mt-eng" id="sndMsg" hidden></div>
+ <div id="sndRes"></div>
+ <div class="btns" id="sndMoreRow" hidden><button class="btn" id="sndMore" type="button">Voir plus de résultats</button></div>
+ <details class="snd-det" id="sndFavD"><summary>⭐ Mes favoris et crédits à copier (<span id="sndFavN">0</span>)</summary><div id="sndFav"></div></details>
+ <details class="snd-det"><summary>Autres banques de sons (recherche pré-remplie)</summary><div class="snd-links" id="sndLinks"></div>
+  <div class="ph-row" style="margin-top:10px"><span class="lab" style="min-width:150px">Clé Freesound (facultatif)</span><input id="sndKey" type="password" autocomplete="off" placeholder="colle ta clé gratuite ici" style="flex:1;max-width:340px"></div>
+  <p class="muted sm" style="margin:6px 0 0">Avec une clé gratuite (freesound.org/apiv2/apply), les résultats de Freesound apparaissent directement ici. La clé reste dans ton navigateur.</p></details>
+ <p class="muted sm" style="margin:12px 0 0">Vérifie toujours la licence affichée. « CC BY » demande de citer l'auteur : utilise le bouton « Copier le crédit » et colle-le dans la description de ta vidéo.</p>
+</div>`}
+$('#mtPages').insertAdjacentHTML('beforeend',sndPageHtml());
+const sndDur=ms=>{const s=Math.round((ms||0)/1000);return s>=3600?`${Math.floor(s/3600)}:${pad(Math.floor(s%3600/60))}:${pad(s%60)}`:`${Math.floor(s/60)}:${pad(s%60)}`};
+const sndLic=r=>`${(r.license||'').toUpperCase()}${r.license_version?' '+r.license_version:''}`;
+function sndShow(){
+  if(!SND.inited){SND.inited=true;sndWire()}sndRender()}
+function sndNorm(r){return{id:r.id||r.url,title:r.title||'Sans titre',by:r.creator||r.creator_name||'',lic:sndLic(r),url:r.url,page:r.foreign_landing_url||r.url,dur:r.duration||0,src:r.source||r.provider||'',attr:r.attribution||`« ${r.title||'Sans titre'} » par ${r.creator||'inconnu'}${r.license?`, licence ${sndLic(r)}`:''}${r.foreign_landing_url?` — ${r.foreign_landing_url}`:''}`,cc0:/^(cc0|pdm)$/i.test(r.license||'')}}
+async function sndSearch(more){
+  const q=$('#sndQ').value.trim();if(!q){$('#sndMsg').hidden=false;$('#sndMsg').textContent='Écris ce que tu cherches.';return}
+  if(!more){SND.res=[];SND.page=1;SND.q=q}else SND.page++;
+  SND.busy=true;const msg=$('#sndMsg');msg.hidden=false;msg.textContent='Recherche en cours…';sndRender();
+  try{
+    const u=new URL(sndBase(),location.href);u.searchParams.set('q',SND.q);u.searchParams.set('page',String(SND.page));u.searchParams.set('page_size','20');
+    if(SND.cat)u.searchParams.set('category',SND.cat);if(SND.lic)u.searchParams.set('license_type',SND.lic);u.searchParams.set('mature','false');
+    const r=await fetch(u);if(!r.ok)throw new Error(r.status===429?'trop de recherches, réessaie dans une minute':`réponse ${r.status}`);
+    const j=await r.json();SND.total=j.result_count||0;SND.res=SND.res.concat((j.results||[]).map(sndNorm));
+    if(SND.fkey&&SND.page===1){try{const f=await sndFreesound(SND.q);SND.res=SND.res.concat(f)}catch(e){}}
+    msg.hidden=!(SND.res.length===0);if(!SND.res.length)msg.textContent=`Aucun résultat pour « ${SND.q} ». Essaie un mot plus simple (en anglais, il y en a souvent plus).`
+  }catch(e){console.warn('sons:',e);msg.hidden=false;msg.textContent=`Impossible de lancer la recherche (${e.message||e}). Vérifie ta connexion : un VPN ou un bloqueur peut empêcher l'accès à api.openverse.org. Tu peux utiliser les liens « Autres banques de sons » en attendant.`}
+  SND.busy=false;sndRender()}
+async function sndFreesound(q){
+  const u=`https://freesound.org/apiv2/search/text/?query=${encodeURIComponent(q)}&token=${encodeURIComponent(SND.fkey)}&page_size=15&fields=id,name,username,license,duration,previews,url&filter=${encodeURIComponent('license:("Creative Commons 0" OR "Attribution")')}`;
+  const r=await fetch(u);if(!r.ok)throw new Error('freesound '+r.status);const j=await r.json();
+  return (j.results||[]).map(x=>({id:'fs'+x.id,title:x.name,by:x.username,lic:/zero|0/i.test(x.license||'')?'CC0':'CC BY',url:x.previews&&(x.previews['preview-hq-mp3']||x.previews['preview-lq-mp3']),page:x.url,dur:Math.round((x.duration||0)*1000),src:'freesound',attr:`« ${x.name} » par ${x.username} (Freesound), licence ${/zero|0/i.test(x.license||'')?'CC0':'CC BY'} — ${x.url}`,cc0:/zero|0/i.test(x.license||'')}))}
+const sndFavHas=id=>SND.fav.some(f=>f.id===id);
+function sndRow(r,fav){return `<div class="snd-row${SND.playing===r.id?' on':''}" data-sid="${esc(r.id)}"><button class="btn sm snd-play" data-splay="${esc(r.id)}" type="button" aria-label="Écouter">${SND.playing===r.id?'⏸':'▶'}</button>
+  <div class="nm"><b>${esc(r.title)}</b><span class="sm">${esc(r.by||'auteur inconnu')} · ${sndDur(r.dur)} · <span class="snd-lic${r.cc0?' cc0':''}">${esc(r.lic||'licence ?')}</span>${r.src?` · ${esc(r.src)}`:''}</span></div>
+  <div class="snd-act"><button class="btn sm" data-sfav="${esc(r.id)}" type="button" title="Garder dans mes favoris">${sndFavHas(r.id)?'★':'☆'}</button><button class="btn sm" data-scopy="${esc(r.id)}" type="button">Copier le crédit</button><button class="btn sm" data-sdl="${esc(r.id)}" type="button">Télécharger</button><a class="btn sm" href="${esc(r.page)}" target="_blank" rel="noopener noreferrer">Source ↗</a></div></div>`}
+function sndRender(){
+  $('#sndRes').innerHTML=SND.res.map(r=>sndRow(r)).join('');
+  $('#sndMoreRow').hidden=!(SND.res.length&&SND.res.length<SND.total&&!SND.busy);
+  setSeg('sndCat',SND.cat);$('#sndLic').value=SND.lic;
+  $('#sndFavN').textContent=SND.fav.length;
+  $('#sndFav').innerHTML=SND.fav.length?SND.fav.map(r=>sndRow(r,true)).join('')+`<div class="btns left"><button class="btn primary sm" id="sndCopyAll" type="button">Copier tous les crédits</button><button class="btn sm" id="sndFavClear" type="button">Vider les favoris</button></div>`:'<p class="muted sm" style="margin:6px 0">Clique sur ☆ pour garder un son ici. Tu pourras copier tous les crédits d’un coup pour ta description.</p>';
+  $('#sndLinks').innerHTML=SND_LINKS.map(l=>`<a class="snd-lk" href="${esc(l[1].replace('{q}',encodeURIComponent($('#sndQ').value.trim()||'musique')))}" target="_blank" rel="noopener noreferrer"><b>${esc(l[0])} ↗</b><span class="sm muted">${esc(l[2])}</span></a>`).join('');
+  if($('#sndKey')&&document.activeElement!==$('#sndKey'))$('#sndKey').value=SND.fkey}
+const sndFind=id=>SND.res.find(r=>r.id===id)||SND.fav.find(r=>r.id===id);
+function sndPlay(id){
+  const r=sndFind(id);if(!r)return;
+  if(!SND.audio){SND.audio=new Audio();SND.audio.addEventListener('ended',()=>{SND.playing='';sndRender()});SND.audio.addEventListener('error',()=>{if(SND.playing){toast("Impossible de lire cet extrait");SND.playing='';sndRender()}})}
+  if(SND.playing===id){SND.audio.pause();SND.playing='';sndRender();return}
+  SND.audio.src=r.url;SND.playing=id;SND.audio.play().catch(()=>{SND.playing='';sndRender()});sndRender()}
+async function sndDownload(id){
+  const r=sndFind(id);if(!r)return;
+  try{const x=await fetch(r.url);if(!x.ok)throw new Error(x.status);const b=await x.blob(),ext=(b.type.split('/')[1]||'mp3').replace('mpeg','mp3').replace(/[^a-z0-9]/gi,'')||'mp3';phDownload(b,mtClean(r.title)+'.'+ext);toast(`Téléchargé ✓ — pense à citer : ${r.by||r.src||'l’auteur'}`)}
+  catch(e){window.open(r.page||r.url,'_blank','noopener');toast('Téléchargement direct impossible : la page du son s’ouvre, télécharge-le depuis là')}}
+function sndFavSave(){try{localStorage.setItem('nova_snd_fav',JSON.stringify(SND.fav))}catch(e){}}
+function sndWire(){
+  $('#sndForm').addEventListener('submit',e=>{e.preventDefault();sndSearch(false)});
+  segBind('sndCat',v=>{SND.cat=v;if($('#sndQ').value.trim())sndSearch(false)});
+  $('#sndLic').addEventListener('change',e=>{SND.lic=e.target.value;if($('#sndQ').value.trim())sndSearch(false)});
+  $('#sndMore').addEventListener('click',()=>sndSearch(true));
+  $('#sndKey').addEventListener('change',e=>{SND.fkey=e.target.value.trim();try{localStorage.setItem('nova_freesound_key',SND.fkey)}catch(err){}toast(SND.fkey?'Clé enregistrée':'Clé retirée')});
+  $('#mtP-sounds').addEventListener('click',async e=>{
+    const pl=e.target.closest('[data-splay]'),fv=e.target.closest('[data-sfav]'),cp=e.target.closest('[data-scopy]'),dl=e.target.closest('[data-sdl]');
+    if(pl)sndPlay(pl.dataset.splay);
+    if(fv){const r=sndFind(fv.dataset.sfav);if(r){if(sndFavHas(r.id))SND.fav=SND.fav.filter(f=>f.id!==r.id);else SND.fav.push(r);sndFavSave();sndRender()}}
+    if(cp){const r=sndFind(cp.dataset.scopy);if(r){try{await navigator.clipboard.writeText(r.attr);toast('Crédit copié ✓')}catch(err){prompt('Copie ce crédit :',r.attr)}}}
+    if(dl)sndDownload(dl.dataset.sdl);
+    if(e.target.id==='sndCopyAll'){const t=SND.fav.map(r=>r.attr).join('\n');try{await navigator.clipboard.writeText(t);toast('Crédits copiés ✓')}catch(err){prompt('Copie ces crédits :',t)}}
+    if(e.target.id==='sndFavClear'&&confirm('Vider tous les favoris ?')){SND.fav=[];sndFavSave();sndRender()}})}
+if(window.__NOVA_TEST)window.__snd={SND,sndSearch};
+
+/* ---------- Montage : sous-titres automatiques (Whisper, dans le navigateur) + éditeur ligne par ligne ---------- */
+const SU_LIB='https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/dist/';
+const SU_MODELS={tiny:{n:'Rapide',mb:'≈ 45 Mo',hint:'brouillon : se trompe souvent'},base:{n:'Équilibrée',mb:'≈ 80 Mo',hint:'bon compromis'},small:{n:'Précise',mb:'≈ 260 Mo',hint:'la plus fiable, plus lente'}};
+/* taille du texte = part de la hauteur de l'image ; SU_K = rapport entre la « taille » du moteur de rendu et la vraie hauteur des lettres, mesuré pour chaque police ; positions = codes SSA (2 bas, 6 haut, 10 milieu) */
+const SU_EM={s:0.045,m:0.065,l:0.09},SU_K={anton:0.59,roboto:0.85},SU_POS={b:2,m:10,t:6};
+const suFs=(font,size)=>Math.round(SU_EM[size]*288/SU_K[font]);
+const SU_LANGS={fr:'français',en:'anglais',es:'espagnol',de:'allemand',it:'italien',pt:'portugais',nl:'néerlandais',ru:'russe',ja:'japonais',ko:'coréen',zh:'chinois',ar:'arabe',pl:'polonais',tr:'turc'};
+const SU_FONTS={anton:{name:'Anton',file:'Anton_400Regular.ttf',css:'NovaAnton'},roboto:{name:'Roboto',file:'Roboto_700Bold.ttf',css:'NovaRoboto'}};
+const SU_STYLES={gaming:{n:'Jeu vidéo',font:'anton',col:'#FFE600',ass:'&H0000E6FF&',out:3,sh:1},classic:{n:'Classique',font:'roboto',col:'#FFFFFF',ass:'&H00FFFFFF&',out:2,sh:1},box:{n:'Sur fond noir',font:'roboto',col:'#FFFFFF',ass:'&H00FFFFFF&',out:0,sh:0,box:1}};
+const SU={file:null,url:'',info:null,lines:[],hist:[],busy:false,msg:'',pct:0,worker:null,act:-1,stopAt:null,id:'',saveT:0,inited:false,job:null,segs:[],opts:{lang:'auto',tr:false,model:'base',gpu:false,max:42,track:'mix',style:'gaming',size:'m',pos:'b',mode:'burn',follow:true}};
+try{Object.assign(SU.opts,JSON.parse(localStorage.getItem('nova_su_opts')||'{}'))}catch(e){}
+const suSaveOpts=()=>{try{localStorage.setItem('nova_su_opts',JSON.stringify(SU.opts))}catch(e){}};
+/* adresses des modèles : en test, tout vient d'un dossier local */
+const suCfg=k=>{try{return localStorage.getItem(k)||''}catch(e){return''}};
+
+/* --- temps et fichiers .srt / .vtt --- */
+const suT=(t,c)=>{t=Math.max(0,t);let ms=Math.round(t*1000);const h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),s=Math.floor(ms%60000/1000);ms%=1000;return `${pad(h)}:${pad(m)}:${pad(s)}${c}${String(ms).padStart(3,'0')}`};
+const suView=t=>{const x=suT(t,'.');return x.startsWith('00:')?x.slice(3):x};
+function suParse(s){s=String(s).trim().replace(',','.');if(!s)return NaN;const p=s.split(':');if(p.length>3||p.some(x=>!/^\d+(\.\d+)?$/.test(x.trim())))return NaN;return p.reduce((a,x)=>a*60+parseFloat(x),0)}
+const suSrt=L=>L.filter(l=>l.t.trim()).map((l,i)=>`${i+1}\n${suT(l.s,',')} --> ${suT(Math.max(l.e,l.s+0.2),',')}\n${l.t.trim()}\n`).join('\n');
+const suVtt=L=>'WEBVTT\n\n'+L.filter(l=>l.t.trim()).map(l=>`${suT(l.s,'.')} --> ${suT(Math.max(l.e,l.s+0.2),'.')}\n${l.t.trim()}\n`).join('\n');
+const suTxt=L=>L.filter(l=>l.t.trim()).map(l=>l.t.trim().replace(/\s*\n\s*/g,' ')).join('\n');
+function suImport(txt){
+  const out=[],blocks=String(txt).replace(/\r/g,'').replace(/^﻿/,'').split(/\n{2,}/);
+  for(const b of blocks){const ls=b.split('\n'),k=ls.findIndex(l=>/-->/.test(l));if(k<0)continue;
+    const m=ls[k].match(/((?:\d+:)?\d+:\d+[.,]\d+)\s*-->\s*((?:\d+:)?\d+:\d+[.,]\d+)/);if(!m)continue;
+    const s=suParse(m[1]),e=suParse(m[2]),t=ls.slice(k+1).join('\n').replace(/<[^>]+>/g,'').replace(/\{\\[^}]*\}/g,'').trim();
+    if(isFinite(s)&&isFinite(e)&&t)out.push({s,e,t})}
+  return out}
+
+/* --- découper en lignes lisibles --- */
+function suSplit(l,max){
+  const t=l.t.replace(/\s+/g,' ').trim();if(t.length<=max||t.includes('\n'))return[l];
+  const n=Math.ceil(t.length/max),target=t.length/n,ws=t.split(' '),parts=[];let cur='';
+  for(const w of ws){if(cur&&(cur+' '+w).length>target*1.15&&parts.length<n-1){parts.push(cur);cur=w}else cur=cur?cur+' '+w:w}
+  if(cur)parts.push(cur);let acc=0;const tot=parts.reduce((a,p)=>a+p.length,0)||1;
+  return parts.map(p=>{const s=l.s+(l.e-l.s)*acc/tot;acc+=p.length;return{s,e:l.s+(l.e-l.s)*acc/tot,t:p}})}
+/* le modèle invente parfois des phrases quand il n'y a que du bruit ou de la musique : on les retire */
+const SU_HALLU=/amara\.org|sous-?titr(?:age|es?)\s+(?:réalis|fait|par|st)|merci d'avoir regard|thanks for watching|thank you for watching|subtitles? by|abonne-toi|n'oubliez pas de vous abonner/i;
+/* quand le modèle « bégaie » (la même phrase des dizaines de fois), on ne garde que deux répétitions */
+const suDeloop=t=>t.replace(/(.{2,60}?)(?:[\s,、。.!?¡¿-]*\1){3,}/g,'$1 $1');
+function suClean(L){const o=[];let rep=0;for(const l of L){const t=l.t.trim();if(!t||SU_HALLU.test(t))continue;const p=o[o.length-1];
+  if(p&&p.t.trim().toLowerCase()===t.toLowerCase()){if(l.s-p.e<1.5||++rep>=2)continue}else rep=0;o.push(l)}return o}
+
+/* --- le travail de reconnaissance tourne dans un « worker » pour ne pas figer la page --- */
+function suWorkerMain(){
+  let tr=null,asr=null,key='';const post=m=>self.postMessage(m),SR=16000;
+  self.onmessage=async e=>{const m=e.data;
+    try{
+      if(!tr)tr=await import(m.lib);
+      const env=tr.env;
+      if(m.local){env.allowRemoteModels=false;env.allowLocalModels=true;env.localModelPath=m.local}else{env.allowLocalModels=false;env.allowRemoteModels=true}
+      env.backends.onnx.wasm.wasmPaths=m.wasm;
+      const k=m.id+'|'+m.device;
+      if(k!==key){asr=null;key=k;const fl={};
+        asr=await tr.pipeline('automatic-speech-recognition',m.id,{device:m.device==='webgpu'?'webgpu':undefined,dtype:m.dtype,progress_callback:p=>{if(p.status==='progress'&&p.total){fl[p.file]=[p.loaded,p.total];let l=0,t=0;for(const f in fl){l+=fl[f][0];t+=fl[f][1]}post({t:'dl',loaded:l,total:t})}}})}
+      post({t:'ready'});
+      const A=m.audio,N=A.length,W=30*SR,FR=SR/10,en=(a,n)=>{let x=0;for(let i=a;i<a+n&&i<A.length;i++)x+=A[i]*A[i];return x/Math.max(1,Math.min(n,A.length-a))};
+      let pos=0,lang=m.lang||'';
+      /* la bibliothèque ne sait pas deviner la langue toute seule : on regarde quel code de langue le modèle choisit en premier */
+      const detect=async seg=>{const f=await asr.processor(seg),gc=asr.model.generation_config,g=await asr.model.generate({inputs:f.input_features,decoder_input_ids:[gc.decoder_start_token_id],max_new_tokens:1,bad_words_ids:Object.entries(gc.lang_to_id).filter(([k])=>k!=='<|fr|>'&&k!=='<|en|>').map(([k,v])=>[v])}),t=g.sequences||g,id=Number(t.tolist()[0].at(-1));
+        for(const k in gc.lang_to_id)if(gc.lang_to_id[k]===id)return k.replace(/[<|>]/g,'');return'en'};
+      while(pos<N){
+        let st=pos;while(st+FR<N&&en(st,FR)<1.6e-5)st+=FR;      /* on saute le silence du début */
+        if(st-pos<SR/2)st=pos;else st=Math.max(pos,st-Math.floor(0.3*SR));
+        if(N-st<SR/4)break;
+        let end=Math.min(N,st+W);
+        if(end<N){ /* on coupe au moment le plus calme des 5 dernières secondes, pour ne pas couper un mot */
+          let best=Infinity,bi=end;
+          for(let a=end-5*SR;a+FR<=end-SR/2;a+=FR){const x=en(a,FR);if(x<best){best=x;bi=a+(FR>>1)}}
+          end=bi}
+        const seg=A.subarray(st,end);let adv=end,ch=[];
+        if(en(st,end-st)>4e-6){
+          if(!lang){try{lang=await detect(seg)}catch(er){lang='en'}post({t:'lang',code:lang})}
+          const opt={task:m.task,return_timestamps:true,language:lang,max_new_tokens:220};
+          const r=await asr(seg,opt);let last=0;
+          ch=(r.chunks||[]).map(c=>{const e=c.timestamp[1]==null?(end-st)/SR:c.timestamp[1];last=Math.max(last,e);return{t:c.text,s:c.timestamp[0],e}});
+          /* si le modèle s'est arrêté avant la fin alors qu'il reste de la parole, on repart de là où il s'est arrêté */
+          const rest=(end-st)/SR-last;if(last>1&&rest>2&&en(st+Math.floor(last*SR),end-st-Math.floor(last*SR))>4e-5)adv=st+Math.floor(last*SR)}
+        post({t:'seg',off:st/SR,ch,pct:adv/N});pos=Math.max(adv,pos+SR)}
+      post({t:'done'});
+    }catch(er){post({t:'err',msg:String((er&&er.message)||er)})}}}
+
+/* --- page --- */
+function subsPageHtml(){return `<div class="card mt-page" id="mtP-subs" hidden>
+ <div class="head"><h2>Sous-titres automatiques</h2><span class="sub">en français ou en anglais, modifiables ligne par ligne</span></div>
+ <div class="mt-eng" id="suEng" hidden></div>
+ <div class="mt-drop mt-drop-s" id="suDrop" tabindex="0"><b>Dépose ta vidéo (ou un son) ici</b><span class="muted">ou</span><button class="btn primary" id="suPick" type="button">Choisir un fichier…</button><span class="muted sm">tu peux aussi déposer un fichier .srt pour retoucher des sous-titres existants</span><input type="file" id="suFile" accept="video/*,audio/*,.mkv,.mov,.mp4,.webm,.srt,.vtt" hidden></div>
+ <div id="suBody" hidden>
+  <div class="mt-set" id="suOpts">
+   <div class="mt-fxr"><span class="lab">Langue parlée</span><div class="seg" id="suLang"><button type="button" data-v="auto" aria-pressed="true" title="Choisit tout seul entre français et anglais">Auto (FR / EN)</button><button type="button" data-v="french" aria-pressed="false">Français</button><button type="button" data-v="english" aria-pressed="false">English</button></div><label class="mt-chk"><input type="checkbox" id="suTr"> Traduire en anglais</label></div>
+   <div class="mt-fxr" id="suTrackRow" hidden><span class="lab">Piste audio</span><select id="suTrack" aria-label="Piste audio à écouter"></select><span class="muted sm">choisis la piste avec ta voix pour de meilleurs résultats</span></div>
+   <div class="mt-fxr"><span class="lab">Précision</span><div class="seg" id="suModel">${Object.entries(SU_MODELS).map(([k,v])=>`<button type="button" data-v="${k}" aria-pressed="false">${v.n}</button>`).join('')}</div><span class="muted sm" id="suModelHint"></span></div>
+   <div class="mt-fxr"><span class="lab">Longueur d'une ligne</span><input id="suMax" type="number" min="20" max="80" step="1" style="width:80px" aria-label="Nombre maximum de caractères par ligne"><span class="muted sm">caractères au maximum (≈ 42 pour un écran de téléphone en travers)</span></div>
+   <div class="mt-fxr"><span class="lab"></span><label class="mt-chk"><input type="checkbox" id="suGpu"> Utiliser la carte graphique (expérimental, plus rapide si ça marche)</label></div>
+  </div>
+  <div class="btns left"><button class="btn primary" id="suGo" type="button">✨ Générer les sous-titres</button><button class="btn" id="suCancel" type="button" hidden>Arrêter</button><button class="btn" id="suEmpty" type="button" title="Commencer avec une liste vide et écrire tes propres sous-titres">Écrire à la main</button><button class="btn" id="suImp" type="button">Importer un .srt…</button><input type="file" id="suImpFile" accept=".srt,.vtt,text/plain" hidden></div>
+  <div id="suProg" class="su-prog" hidden><div class="mt-bar"><i id="suBar" style="width:6%"></i></div><span class="muted sm" id="suMsg"></span></div>
+  <p class="muted sm" id="suNote" style="margin:8px 0 0">Tout se passe dans ton navigateur : le son de ta vidéo n'est envoyé nulle part. La première fois, le site télécharge le modèle de reconnaissance (une seule fois, ensuite Chrome le garde). Compte plusieurs minutes pour une vidéo longue : plus la précision est haute, plus c'est lent. Si le texte est bizarre, choisis la langue à la main plutôt que « Auto », et monte la précision.</p>
+ </div>
+ <div id="suEd" hidden>
+  <div class="su-top">
+   <div class="su-vcol"><div class="su-vw" id="suVw"><video id="suVid" class="su-vid" controls playsinline></video><div class="su-ov" id="suOv" hidden><span id="suOvT"></span></div></div></div>
+   <div class="su-side">
+    <div class="mt-fxr"><span class="lab">Style</span><div class="seg" id="suStyle">${Object.entries(SU_STYLES).map(([k,v])=>`<button type="button" data-v="${k}" aria-pressed="false">${v.n}</button>`).join('')}</div></div>
+    <div class="mt-fxr"><span class="lab">Taille</span><div class="seg" id="suSize"><button type="button" data-v="s" aria-pressed="false">Petit</button><button type="button" data-v="m" aria-pressed="false">Moyen</button><button type="button" data-v="l" aria-pressed="false">Grand</button></div></div>
+    <div class="mt-fxr"><span class="lab">Position</span><div class="seg" id="suPos"><button type="button" data-v="t" aria-pressed="false">Haut</button><button type="button" data-v="m" aria-pressed="false">Milieu</button><button type="button" data-v="b" aria-pressed="false">Bas</button></div></div>
+    <div class="mt-fxr"><span class="lab">Décalage</span><input id="suOff" type="number" step="0.1" value="0" style="width:84px" aria-label="Décalage en secondes"><span class="muted sm">secondes</span><button class="btn sm" id="suOffGo" type="button">Appliquer à tout</button></div>
+    <div class="mt-fxr"><span class="lab">Remplacer</span><input id="suFind" placeholder="mot à chercher" style="width:130px" aria-label="Mot à chercher"><input id="suRepl" placeholder="remplacé par" style="width:130px" aria-label="Remplacé par"><button class="btn sm" id="suReplGo" type="button">Remplacer partout</button></div>
+    <div class="mt-fxr"><span class="lab"></span><button class="btn sm" id="suRewrap" type="button" title="Coupe les lignes plus longues que la longueur choisie">Redécouper les lignes longues</button><button class="btn sm" id="suUndo" type="button" disabled>↶ Annuler</button><label class="mt-chk"><input type="checkbox" id="suFollow"> Suivre la lecture</label></div>
+   </div>
+  </div>
+  <div class="su-head"><b id="suCount"></b><span class="muted sm">Clique sur un numéro pour écouter la ligne. ✂ coupe la ligne à l'endroit du curseur, ⤵ la fusionne avec la suivante.</span></div>
+  <div id="suList" class="su-list"></div>
+  <div class="btns left"><button class="btn" id="suAdd" type="button">+ Ajouter une ligne</button></div>
+  <h3 class="h3" style="margin:16px 0 6px">Enregistrer</h3>
+  <div class="btns left" style="margin-top:0"><button class="btn primary" data-suex="srt" type="button">Fichier .srt</button><button class="btn" data-suex="vtt" type="button">.vtt</button><button class="btn" data-suex="txt" type="button">Texte seul (.txt)</button></div>
+  <h3 class="h3" style="margin:16px 0 6px">Mettre les sous-titres dans la vidéo</h3>
+  <div class="mt-fxr"><span class="lab">Façon</span><div class="seg" id="suMode"><button type="button" data-v="burn" aria-pressed="true">Incrustés (toujours visibles)</button><button type="button" data-v="soft" aria-pressed="false">Piste à activer (rapide)</button></div></div>
+  <p class="muted sm" id="suModeHint" style="margin:6px 0 0"></p>
+  <div class="btns left"><button class="btn primary" id="suBurn" type="button">Créer la vidéo</button></div>
+  <div class="mt-line" id="tlDir-subs"></div>
+  <div id="tlRes-subs"></div>
+ </div>
+ <p class="bad sm" id="suErr" hidden></p>
+</div>`}
+$('#mtPages').insertAdjacentHTML('beforeend',subsPageHtml());
+const suV=()=>$('#suVid');
+function suShow(){if(!SU.inited){SU.inited=true;suWire()}suView_();if(typeof toolsRender==='function')toolsRender('subs')}
+const subsShow=suShow;
+const suErr=t=>{$('#suErr').hidden=!t;$('#suErr').textContent=t||''};
+const suProj=()=>{try{return JSON.parse(localStorage.getItem('nova_su_proj')||'{}')}catch(e){return{}}};
+function suSave(){clearTimeout(SU.saveT);SU.saveT=setTimeout(()=>{if(!SU.id)return;try{const P=suProj();P[SU.id]={t:Date.now(),lines:SU.lines};const ks=Object.keys(P).sort((a,b)=>P[b].t-P[a].t);ks.slice(10).forEach(k=>delete P[k]);localStorage.setItem('nova_su_proj',JSON.stringify(P))}catch(e){}},500)}
+function suSnap(){const j=JSON.stringify(SU.lines);if(SU.hist[SU.hist.length-1]!==j){SU.hist.push(j);if(SU.hist.length>40)SU.hist.shift()}$('#suUndo').disabled=!SU.hist.length}
+function suUndo(){const j=SU.hist.pop();if(j==null)return;SU.lines=JSON.parse(j);suList();suSave();$('#suUndo').disabled=!SU.hist.length}
+
+/* --- fichier de départ --- */
+async function suLoad(f){
+  if(!f)return;suErr('');
+  if(/\.(srt|vtt)$/i.test(f.name)){const L=suImport(await f.text());if(!L.length){suErr("Je n'ai trouvé aucun sous-titre dans ce fichier.");return}
+    SU.lines=L;SU.hist=[];if(!SU.file)SU.id='srt:'+f.name+':'+f.size;suView_();toast(`${L.length} lignes importées`);suSave();return}
+  if(!mtIsVideo(f)&&!/^audio\//.test(f.type)&&!/\.(mp3|wav|m4a|ogg|flac|aac)$/i.test(f.name)){suErr("Ce fichier n'est ni une vidéo ni un son.");return}
+  if(SU.busy)return;
+  SU.file=f;SU.info=null;SU.segs=[];SU.hist=[];SU.lines=[];SU.id=f.name+':'+f.size;
+  if(SU.url)URL.revokeObjectURL(SU.url);SU.url=URL.createObjectURL(f);suV().src=SU.url;
+  const old=suProj()[SU.id];if(old&&old.lines&&old.lines.length){SU.lines=old.lines;toast('Sous-titres retrouvés pour cette vidéo')}
+  suView_();
+  try{const ff=await mtEngine();SU.info=await mtSerial(()=>mtProbe(ff,f));suView_()}catch(e){}}
+function suTracks(){const I=SU.info;$('#suTrackRow').hidden=!(I&&I.tracks.length>1);if(!(I&&I.tracks.length>1))return;
+  $('#suTrack').innerHTML='<option value="mix">Toutes les pistes mélangées</option>'+I.tracks.map((t,i)=>`<option value="${i}">${esc(mtTrackName(t,i))}</option>`).join('');
+  $('#suTrack').value=I.tracks[+SU.opts.track]?SU.opts.track:'mix'}
+function suView_(){
+  const has=!!SU.file,ed=SU.lines.length>0||SU.manual;
+  $('#suBody').hidden=!(has||ed);$('#suEd').hidden=!ed;$('#suDrop').hidden=has||ed;
+  const o=SU.opts;setSeg('suLang',o.lang);$('#suTr').checked=!!o.tr;$('#suTr').disabled=o.lang==='english';setSeg('suModel',o.model);$('#suModelHint').textContent=`${SU_MODELS[o.model].mb} à télécharger la première fois · ${SU_MODELS[o.model].hint}`;
+  $('#suMax').value=o.max;$('#suGpu').checked=!!o.gpu;$('#suGo').hidden=!has;$('#suGo').disabled=SU.busy;$('#suCancel').hidden=!SU.busy;$('#suOpts').hidden=!has;$('#suEmpty').hidden=has;$('#suNote').hidden=!has;
+  setSeg('suStyle',o.style);setSeg('suSize',o.size);setSeg('suPos',o.pos);setSeg('suMode',o.mode);$('#suFollow').checked=!!o.follow;suTracks();
+  $('#suModeHint').textContent=o.mode==='burn'?'Le texte est dessiné sur l\'image (idéal pour YouTube, TikTok, Discord). Il faut recoder la vidéo : compte plusieurs minutes pour une vidéo longue.':'Les sous-titres sont ajoutés comme une piste séparée : instantané, sans perte, mais ils ne s\'affichent que dans un lecteur qui le permet (VLC, par exemple) et sans le style choisi.';
+  $('#suBurn').disabled=!has||!SU.lines.some(l=>l.t.trim())||SU.busy||!(SU.info?SU.info.video:true);
+  $('#suBurn').title=has&&SU.info&&!SU.info.video?'Ce fichier est un son : il n\'y a pas d\'image':'';
+  suList();suOvStyle()}
+
+/* --- reconnaissance --- */
+function suProg(msg,pct){SU.msg=msg;SU.pct=pct;const box=$('#suProg');box.hidden=!msg;$('#suMsg').textContent=msg||'';$('#suBar').style.width=Math.max(6,Math.round((pct||0)*100))+'%'}
+async function suAudio(){
+  const ff=await mtEngine(),f=SU.file,o=SU.opts;
+  return mtSerial(async()=>{
+    const info=SU.info||await mtProbe(ff,f);SU.info=info;if(!info.tracks.length)throw new Error("Ce fichier n'a pas de son.");
+    const sel=o.track!=='mix'&&info.tracks[+o.track]?info.tracks.map((_,k)=>({on:k===+o.track,vol:100})):null;
+    const plan=mtAudioPlan(info,sel,{inp:0,out:'am'}),job=SU.job={tot:Math.max(1,info.dur||1),pct:0};MT.cur=job;
+    const t=setInterval(()=>suProg(`Préparation du son… ${Math.round(job.pct*100)} %`,job.pct*0.15),300);
+    const path=await mtMount(ff,f,mtExt(f.name));
+    try{
+      const a=plan.copy?['-map',plan.map]:['-filter_complex',plan.fc.join(';'),'-map',plan.label];
+      const code=await ff.exec(['-i',path,'-vn',...a,'-ac','1','-ar','16000','-f','f32le','-y','a.raw']);if(code!==0)throw new Error('ffmpeg '+code);
+      const u=await ff.readFile('a.raw');return new Float32Array(u.buffer.slice(u.byteOffset,u.byteOffset+u.byteLength))
+    }finally{clearInterval(t);MT.cur=null;try{await ff.deleteFile('a.raw')}catch(e){}try{await ff.unmount('/src')}catch(e){}}})}
+async function suGenerate(){
+  if(!SU.file||SU.busy)return;
+  if(SU.lines.length&&!confirm('Les sous-titres actuels seront remplacés. Continuer ?'))return;
+  suErr('');SU.busy=true;SU.segs=[];suSnap();SU.lines=[];SU.cancel=false;suView_();suProg('Préparation du son…',0.02);
+  try{
+    const audio=await suAudio(),dur=audio.length/16000;if(SU.cancel)return;
+    if(dur<0.5)throw new Error('Le son est trop court.');
+    const o=SU.opts,local=suCfg('nova_su_local'),base=suCfg('nova_su_base'),gpu=!!o.gpu&&!!navigator.gpu&&!local,
+      lib=(base?base+'/':SU_LIB)+'transformers.min.js',wasm=base?base+'/':SU_LIB;
+    const run=(dev,aud)=>{
+      const w=new Worker(URL.createObjectURL(new Blob(['('+suWorkerMain.toString()+')()'],{type:'text/javascript'})));SU.worker=w;
+      return new Promise((res,rej)=>{
+        w.onmessage=e=>{const m=e.data;
+          if(m.t==='dl'){const p=m.total?m.loaded/m.total:0;suProg(`Téléchargement du modèle (une seule fois)… ${(m.loaded/1e6).toFixed(0)} / ${(m.total/1e6).toFixed(0)} Mo`,0.15+p*0.15)}
+          else if(m.t==='ready')suProg('Écoute en cours…',0.3);
+          else if(m.t==='lang'){SU.detected=m.code;if(!o.lang||o.lang==='auto')toast('Langue reconnue : '+(SU_LANGS[m.code]||m.code))}
+          else if(m.t==='seg'){suSeg(m,o.max);suProg(`Écoute en cours… ${Math.round(m.pct*100)} %${suEta(m.pct)}`,0.3+m.pct*0.7)}
+          else if(m.t==='done'){w.terminate();SU.worker=null;res()}
+          else if(m.t==='err'){w.terminate();SU.worker=null;rej(new Error(m.msg))}};
+        w.onerror=e=>{w.terminate();SU.worker=null;rej(new Error(e.message||'worker'))};
+        SU.t0=Date.now();
+        w.postMessage({lib,wasm,local:local?new URL(local,location.href).href:'',id:(dev==='webgpu'?'onnx-community/':'Xenova/')+'whisper-'+o.model,device:dev,
+          dtype:dev==='webgpu'?{encoder_model:'fp32',decoder_model_merged:'q4'}:{encoder_model:'q8',decoder_model_merged:'q8'},audio:aud,lang:o.lang==='auto'?'':o.lang,task:o.tr&&o.lang!=='english'?'translate':'transcribe'},[aud.buffer])})};
+    if(gpu){try{await run('webgpu',audio)}catch(e){if(SU.cancel)throw e;console.warn('sous-titres GPU:',e);suProg('La carte graphique ne convient pas : on continue avec le processeur…',0.3);SU.segs=[];SU.lines=[];suList();await run('wasm',await suAudio())}}
+    else await run('wasm',audio);
+    if(SU.cancel)return;
+    SU.lines=suClean(SU.lines);
+    if(!SU.lines.length){suErr("Aucune parole détectée dans ce fichier. Vérifie la piste audio choisie (la voix est peut-être sur une autre piste) ou essaie une précision plus haute.")}
+    else toast(`${SU.lines.length} lignes de sous-titres prêtes : relis-les et corrige si besoin`);
+    suSave()
+  }catch(e){if(!SU.cancel){console.warn('sous-titres:',e);const m=String((e&&e.message)||e);suErr(/Failed to fetch|import|NetworkError|Load failed|script|dynamically/i.test(m)?"Impossible de télécharger le modèle de reconnaissance. Vérifie ta connexion (un VPN ou un bloqueur peut empêcher l'accès à cdn.jsdelivr.net et huggingface.co), puis réessaie.":/memory|abort|OOM|allocation/i.test(m)?"Le navigateur n'a pas assez de mémoire pour cette vidéo. Essaie une vidéo plus courte ou la précision « Rapide ».":'La reconnaissance a échoué : '+m)}mtResetEngine(e)}
+  finally{SU.busy=false;SU.worker=null;suProg('');suView_()}}
+const suEta=p=>{if(p<0.08||!SU.t0)return'';const el=(Date.now()-SU.t0)/1000,r=el/p-el;return r>5?` · reste ≈ ${mtFmt(r,0)}`:''};
+function suSeg(m,max){
+  for(const c of m.ch){const t=suDeloop((c.t||'').replace(/\s+/g,' ').trim());if(t)SU.segs.push({s:c.s+m.off,e:c.e+m.off,t})}
+  SU.lines=suClean(SU.segs.flatMap(l=>suSplit(l,max)));suList()}
+function suCancel(){SU.cancel=true;if(SU.worker){try{SU.worker.terminate()}catch(e){}SU.worker=null}SU.busy=false;suProg('');suView_();toast('Arrêté')}
+
+/* --- éditeur : liste des lignes --- */
+function suRow(l,i){return `<div class="su-row" data-i="${i}"><button class="su-n" data-su="play" type="button" title="Écouter cette ligne" aria-label="Écouter la ligne ${i+1}">▶ ${i+1}</button><input class="su-tm" data-f="s" value="${suView(l.s)}" aria-label="Début de la ligne ${i+1}" inputmode="decimal"><input class="su-tm" data-f="e" value="${suView(l.e)}" aria-label="Fin de la ligne ${i+1}" inputmode="decimal"><textarea class="su-tx" data-f="t" rows="${Math.min(4,l.t.split('\n').length+(l.t.length>60?1:0))}" aria-label="Texte de la ligne ${i+1}" spellcheck="true">${esc(l.t)}</textarea><span class="su-ac"><button class="btn sm" data-su="split" type="button" title="Couper ici" aria-label="Couper la ligne">✂</button><button class="btn sm" data-su="merge" type="button" title="Fusionner avec la suivante" aria-label="Fusionner avec la suivante"${i<SU.lines.length-1?'':' disabled'}>⤵</button><button class="btn sm" data-su="add" type="button" title="Ajouter une ligne après" aria-label="Ajouter une ligne après">＋</button><button class="btn sm" data-su="del" type="button" title="Supprimer" aria-label="Supprimer la ligne">✕</button></span></div>`}
+function suList(){
+  const box=$('#suList');if(!box)return;const keep=document.activeElement&&box.contains(document.activeElement)?[document.activeElement.closest('.su-row').dataset.i,document.activeElement.dataset.f]:null;
+  box.innerHTML=SU.lines.map(suRow).join('')||'<p class="muted" style="padding:14px 4px">Aucune ligne pour le moment : clique sur « Ajouter une ligne ».</p>';
+  $('#suCount').textContent=`${SU.lines.length} ligne${SU.lines.length>1?'s':''}`;SU.act=-1;SU.caret=null;
+  $$('#suList textarea').forEach(t=>t.disabled=SU.busy);$$('#suList input,#suList .su-ac button,#suList .su-n').forEach(t=>t.disabled=SU.busy||t.disabled);
+  if(keep){const el=box.querySelector(`.su-row[data-i="${keep[0]}"] [data-f="${keep[1]}"]`);if(el)el.focus()}
+  $('#suBurn').disabled=!SU.file||!SU.lines.some(l=>l.t.trim())||SU.busy||!!(SU.info&&!SU.info.video);suTick(true)}
+function suSet(i,f,v){const l=SU.lines[i];if(!l)return;l[f]=v;suSave()}
+function suPlayLine(i){const l=SU.lines[i],v=suV();if(!l||!SU.file)return;v.currentTime=Math.max(0,l.s);SU.stopAt=l.e;v.play().catch(()=>{})}
+function suAct(a,i){
+  const L=SU.lines,l=L[i];if(!l)return;
+  if(a==='play'){suPlayLine(i);return}
+  suSnap();
+  if(a==='del')L.splice(i,1);
+  else if(a==='add'){const e=l.e,n=L[i+1],end=Math.min(e+2,n?Math.max(e+0.3,n.s):e+2);L.splice(i+1,0,{s:e,e:end,t:''})}
+  else if(a==='merge'){const n=L[i+1];if(n){l.t=(l.t.trim()+' '+n.t.trim()).trim();l.e=Math.max(l.e,n.e);L.splice(i+1,1)}}
+  else if(a==='split'){const ta=$(`.su-row[data-i="${i}"] textarea`),t=l.t;let p=SU.caret&&SU.caret.i===i?SU.caret.p:ta&&document.activeElement===ta?ta.selectionStart:Math.round(t.length/2);
+    if(p<=0||p>=t.length){const m=t.lastIndexOf(' ',Math.round(t.length/2));p=m>0?m:Math.round(t.length/2)}
+    const a1=t.slice(0,p).trim(),b1=t.slice(p).trim();if(!a1||!b1){toast('Rien à couper ici');return}
+    const mid=l.s+(l.e-l.s)*p/t.length;L.splice(i,1,{s:l.s,e:mid,t:a1},{s:mid,e:l.e,t:b1})}
+  suList();suSave();
+  if(a==='add'){const ta=$(`.su-row[data-i="${i+1}"] textarea`);if(ta)ta.focus()}}
+
+/* --- aperçu : le texte suit la vidéo --- */
+function suOvStyle(){
+  const ov=$('#suOv'),tx=$('#suOvT'),o=SU.opts,st=SU_STYLES[o.style],ft=SU_FONTS[st.font],v=suV(),h=v.clientHeight||240,k=h/288,fs=SU_EM[o.size]*h;
+  tx.style.fontFamily=`'${ft.css}','${ft.name}',${st.font==='anton'?'Impact,':''}Arial,sans-serif`;tx.style.fontWeight=st.font==='roboto'?'700':'400';tx.style.fontSize=fs+'px';tx.style.color=st.col;
+  tx.style.webkitTextStroke=st.out?`${st.out*2*k}px #000`:'0';tx.style.paintOrder='stroke fill';tx.style.textShadow=st.sh?`${k*1.2}px ${k*1.2}px 0 rgba(0,0,0,.6)`:'none';
+  tx.style.background=st.box?'rgba(0,0,0,.6)':'none';tx.style.padding=st.box?`${k*2}px ${k*5}px`:'0';
+  ov.style.top=o.pos==='t'?(14*k)+'px':o.pos==='m'?'50%':'auto';ov.style.bottom=o.pos==='b'?(16*k)+'px':'auto';ov.style.transform=o.pos==='m'?'translateY(-50%)':'none'}
+function suTick(force){
+  const v=suV(),t=v.currentTime;let a=-1;
+  if(SU.file)for(let i=0;i<SU.lines.length;i++){const l=SU.lines[i];if(t>=l.s&&t<l.e&&l.t.trim()){a=i;break}}
+  if(SU.stopAt!=null&&t>=SU.stopAt){v.pause();SU.stopAt=null}
+  if(a!==SU.act||force){
+    SU.act=a;const ov=$('#suOv');ov.hidden=a<0||!(SU.info?SU.info.video:true);if(a>=0)$('#suOvT').textContent=SU.lines[a].t;
+    $$('#suList .su-row.on').forEach(r=>r.classList.remove('on'));
+    if(a>=0){const r=$(`#suList .su-row[data-i="${a}"]`);if(r){r.classList.add('on');if(SU.opts.follow&&!v.paused&&!force)r.scrollIntoView({block:'nearest'})}}}
+  if(!v.paused&&!v.ended)requestAnimationFrame(()=>suTick())}
+
+/* --- câblage --- */
+function suWire(){
+  suFonts();
+  const z=$('#suDrop');
+  ['dragenter','dragover'].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.add('over')}));['dragleave','drop'].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.remove('over')}));
+  z.addEventListener('drop',e=>suLoad(e.dataTransfer.files[0]));z.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('#suFile').click()}});
+  $('#suPick').addEventListener('click',()=>$('#suFile').click());$('#suFile').addEventListener('change',e=>{suLoad(e.target.files[0]);e.target.value=''});
+  $('#suImp').addEventListener('click',()=>$('#suImpFile').click());$('#suImpFile').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(SU.lines.length&&!confirm('Les lignes actuelles seront remplacées. Continuer ?'))return;suSnap();await suLoad(f)});
+  $('#suEmpty').addEventListener('click',()=>{SU.manual=true;SU.id='manuel';SU.lines=[{s:0,e:2,t:''}];suView_()});
+  segBind('suLang',v=>{SU.opts.lang=v;if(v==='english')SU.opts.tr=false;suSaveOpts();suView_()});$('#suTr').addEventListener('change',e=>{SU.opts.tr=e.target.checked;suSaveOpts()});
+  $('#suTrack').addEventListener('change',e=>{SU.opts.track=e.target.value;suSaveOpts()});
+  segBind('suModel',v=>{SU.opts.model=v;suSaveOpts();suView_()});
+  $('#suMax').addEventListener('change',e=>{SU.opts.max=Math.min(80,Math.max(20,+e.target.value||42));suSaveOpts();suView_()});
+  $('#suGpu').addEventListener('change',e=>{SU.opts.gpu=e.target.checked;suSaveOpts()});
+  $('#suGo').addEventListener('click',suGenerate);$('#suCancel').addEventListener('click',suCancel);
+  segBind('suStyle',v=>{SU.opts.style=v;suSaveOpts();suOvStyle()});segBind('suSize',v=>{SU.opts.size=v;suSaveOpts();suOvStyle()});segBind('suPos',v=>{SU.opts.pos=v;suSaveOpts();suOvStyle()});segBind('suMode',v=>{SU.opts.mode=v;suSaveOpts();suView_()});
+  $('#suFollow').addEventListener('change',e=>{SU.opts.follow=e.target.checked;suSaveOpts()});
+  suV().addEventListener('play',()=>suTick());suV().addEventListener('timeupdate',()=>{if(suV().paused)suTick()});suV().addEventListener('seeked',()=>suTick());suV().addEventListener('loadedmetadata',()=>{suOvStyle();suTick(true)});window.addEventListener('resize',()=>{if(!$('#mtP-subs').hidden)suOvStyle()});
+  /* la durée d'un enregistrement d'écran est parfois inconnue : on la force */
+  suV().addEventListener('loadedmetadata',()=>{const v=suV();if(v.duration===Infinity){const back=()=>{v.removeEventListener('timeupdate',back);v.currentTime=0};v.addEventListener('timeupdate',back);v.currentTime=1e101}});
+  const list=$('#suList');
+  list.addEventListener('click',e=>{const b=e.target.closest('[data-su]');if(!b)return;suAct(b.dataset.su,+b.closest('.su-row').dataset.i)});
+  list.addEventListener('focusin',e=>{const r=e.target.closest('.su-row');if(!r)return;suSnap();const l=SU.lines[+r.dataset.i];if(l&&e.target.dataset.f==='t'&&SU.file&&suV().paused)suV().currentTime=Math.max(0,l.s+0.01)});
+  list.addEventListener('focusout',e=>{const t=e.target;if(t.dataset.f==='t')SU.caret={i:+t.closest('.su-row').dataset.i,p:t.selectionStart}});
+  list.addEventListener('input',e=>{const t=e.target;if(t.dataset.f!=='t')return;const i=+t.closest('.su-row').dataset.i;suSet(i,'t',t.value);if(SU.act===i)$('#suOvT').textContent=t.value;else if(SU.act<0)suTick(true)});
+  list.addEventListener('change',e=>{const t=e.target;if(t.dataset.f!=='s'&&t.dataset.f!=='e')return;const i=+t.closest('.su-row').dataset.i,l=SU.lines[i],v=suParse(t.value);
+    if(!isFinite(v)){t.value=suView(l[t.dataset.f]);toast('Écris un temps comme 1:23.5 ou 83.5');return}
+    suSnap();l[t.dataset.f]=v;if(l.e<=l.s)l.e=l.s+0.5;SU.lines.sort((a,b)=>a.s-b.s);suList();suSave()});
+  $('#suAdd').addEventListener('click',()=>{suSnap();const v=SU.file?suV().currentTime:(SU.lines.length?SU.lines[SU.lines.length-1].e:0);SU.lines.push({s:v,e:v+2,t:''});SU.lines.sort((a,b)=>a.s-b.s);suList();suSave();const k=SU.lines.findIndex(l=>l.t===''&&l.s===v),ta=$(`.su-row[data-i="${k}"] textarea`);if(ta){ta.focus();ta.scrollIntoView({block:'nearest'})}});
+  $('#suUndo').addEventListener('click',suUndo);
+  $('#suOffGo').addEventListener('click',()=>{const d=parseFloat($('#suOff').value);if(!d||!isFinite(d)){toast('Écris un décalage en secondes (négatif pour avancer)');return}suSnap();SU.lines.forEach(l=>{l.s=Math.max(0,l.s+d);l.e=Math.max(l.s+0.2,l.e+d)});$('#suOff').value='0';suList();suSave();toast(`Toutes les lignes décalées de ${d>0?'+':''}${d} s`)});
+  $('#suReplGo').addEventListener('click',()=>{const a=$('#suFind').value,b=$('#suRepl').value;if(!a){toast('Écris le mot à chercher');return}suSnap();let n=0;const re=new RegExp(a.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');SU.lines.forEach(l=>{l.t=l.t.replace(re,()=>{n++;return b})});suList();suSave();toast(n?`${n} remplacement${n>1?'s':''}`:'Rien trouvé')});
+  $('#suRewrap').addEventListener('click',()=>{suSnap();const n0=SU.lines.length;SU.lines=SU.lines.flatMap(l=>suSplit(l,SU.opts.max));suList();suSave();toast(SU.lines.length>n0?`${SU.lines.length-n0} ligne(s) coupée(s)`:'Aucune ligne trop longue')});
+  document.addEventListener('keydown',e=>{if($('#mtP-subs').hidden||!(e.ctrlKey||e.metaKey)||e.key.toLowerCase()!=='z'||e.shiftKey)return;if(document.activeElement&&document.activeElement.tagName==='TEXTAREA')return;e.preventDefault();suUndo()});
+  $$('[data-suex]').forEach(b=>b.addEventListener('click',()=>suExport(b.dataset.suex)));
+  $('#suBurn').addEventListener('click',suBurn);
+  window.addEventListener('beforeunload',e=>{if(SU.busy){e.preventDefault();e.returnValue=''}})}
+
+/* --- enregistrer en fichier --- */
+const suStem=()=>SU.file?mtStem(SU.file.name):'sous-titres';
+const suTag=()=>SU.opts.tr||SU.opts.lang==='english'?'.en':SU.opts.lang==='french'?'.fr':'';
+function suExport(k){
+  const L=[...SU.lines].sort((a,b)=>a.s-b.s);if(!L.some(l=>l.t.trim())){toast("Il n'y a aucun texte à enregistrer");return}
+  const txt=k==='srt'?suSrt(L):k==='vtt'?suVtt(L):suTxt(L),mime=k==='vtt'?'text/vtt':'text/plain';
+  phDownload(new Blob([k==='txt'?txt+'\n':txt],{type:mime+';charset=utf-8'}),suStem()+(k==='txt'?'':suTag())+'.'+k)}
+
+/* --- vidéo avec sous-titres (file d'attente des outils) --- */
+const suFontCache={};
+async function suFontBytes(k){
+  if(suFontCache[k])return suFontCache[k];const r=await fetch('fonts/'+SU_FONTS[k].file);if(!r.ok)throw new Error('police introuvable ('+r.status+')');return suFontCache[k]=new Uint8Array(await r.arrayBuffer())}
+function suBurn(){
+  const L=[...SU.lines].sort((a,b)=>a.s-b.s).filter(l=>l.t.trim());if(!SU.file||!L.length)return;
+  const o={...SU.opts};
+  TQ.push({id:++tlId,tool:'subs',file:SU.file,srt:suSrt(L),opts:o,state:'wait',pct:0,label:o.mode==='burn'?`${SU.file.name} · sous-titres incrustés`:`${SU.file.name} · avec piste de sous-titres`});
+  toolsRender('subs');toolPump();toast('Ajouté : la création se fait ci-dessous')}
+async function runSubs(ff,it){
+  const f=it.file,o=it.opts,info=await mtProbe(ff,f),ext=mtExt(f.name),names=['s.srt'];it.tot=info.dur||1;
+  const path=await mtMount(ff,f,ext);
+  try{
+    await ff.writeFile('s.srt',new TextEncoder().encode(it.srt));
+    if(o.mode==='soft'){
+      const mp4=['mp4','mov','m4v'].includes(ext),out='out.'+(mp4?ext==='mov'?'mov':'mp4':'mkv');names.push(out);
+      const code=await ff.exec(['-i',path,'-i','s.srt','-map','0:v:0','-map','0:a?','-map','1:0','-c:v','copy','-c:a','copy','-c:s',mp4?'mov_text':'srt','-metadata:s:s:0','language='+(o.lang==='english'||o.tr?'eng':o.lang==='french'?'fra':'und'),'-y',out]);
+      if(code!==0)throw new Error('ffmpeg '+code);
+      const d=await ff.readFile(out),oe=out.split('.')[1];tlSave(it,d,oe,MT_MIME[oe]||'video/mp4',`${mtStem(f.name)} (sous-titres)`);it.note='piste de sous-titres à activer dans le lecteur';return}
+    const st=SU_STYLES[o.style],ft=SU_FONTS[st.font];
+    try{await ff.createDir('/fonts')}catch(e){}
+    await ff.writeFile('/fonts/'+ft.file,(await suFontBytes(st.font)).slice());
+    const fs=suFs(st.font,o.size),al=SU_POS[o.pos],mv=o.pos==='b'?16:o.pos==='t'?14:0;
+    const sty=`FontName=${ft.name}${st.font==='roboto'?',Bold=1':''},Fontsize=${fs},PrimaryColour=${st.ass},OutlineColour=${st.box?'&H99000000&':'&H00000000&'},BorderStyle=${st.box?3:1},Outline=${st.box?3:st.out},Shadow=${st.sh},Alignment=${al},MarginV=${mv}`;
+    const out='out.mp4';names.push(out);
+    const code=await ff.exec(['-i',path,'-map','0:v:0','-map','0:a?','-vf',`subtitles=s.srt:fontsdir=/fonts:force_style='${sty}',scale=trunc(iw/2)*2:trunc(ih/2)*2`,'-c:v','libx264','-preset','ultrafast','-crf','21','-pix_fmt','yuv420p','-c:a','aac','-b:a','192k','-movflags','+faststart','-y',out]);
+    if(code!==0)throw new Error('ffmpeg '+code);
+    const d=await ff.readFile(out);tlSave(it,d,'mp4','video/mp4',`${mtStem(f.name)} (sous-titrée)`);it.note=`${st.n}, ${o.size==='s'?'petit':o.size==='l'?'grand':'moyen'}`
+  }finally{for(const n of names){try{await ff.deleteFile(n)}catch(e){}}try{await ff.unmount('/src')}catch(e){}}}
+function suFonts(){if(location.protocol==='file:')return;try{for(const k in SU_FONTS){const f=new FontFace(SU_FONTS[k].css,`url(fonts/${SU_FONTS[k].file})`);f.load().then(x=>{document.fonts.add(x);if(SU.inited)suOvStyle()}).catch(()=>{})}}catch(e){}}
+if(window.__NOVA_TEST)window.__su={SU,suSplit,suImport,suSrt,suGenerate,suLoad,suClean,runSubs};
 
 /* ---------- export / import ---------- */
 function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
