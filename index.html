@@ -851,6 +851,8 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 .ky-mom{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}.ky-mom label{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mut)}.ky-mom input{width:78px;height:32px;padding:0 6px}
 @media (max-width:900px){.ky-vf{grid-template-columns:1fr}}
 .ky-mbar{position:relative;height:6px;margin:2px 0 0;border-radius:99px;background:var(--soft)}.ky-mbar i{position:absolute;top:0;bottom:0;border-radius:99px;background:var(--brand);opacity:.85}
+.ko-clip{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;padding:8px 10px;margin-bottom:8px;border:1px solid var(--line);border-radius:10px}.ko-clip label{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mut)}.ko-clip input[type=number]{width:74px;height:32px;padding:0 6px}.ko-clip select{height:34px;max-width:260px}.ko-dest{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ky-mode{margin:0 0 10px}
 </style>
 </head>
 <body>
@@ -3657,8 +3659,8 @@ function suFonts(){if(location.protocol==='file:')return;try{for(const k in SU_F
 if(window.__NOVA_TEST)window.__su={SU,suSplit,suImport,suSrt,suGenerate,suLoad,suClean,runSubs};
 
 /* ---------- Montage : éléments clés (prendre un détail de la vidéo, l'agrandir sans flou, le détourer, l'animer) ---------- */
-const KY_DEF={zoom:'auto',out:'auto',ow:1920,oh:1080,margin:12,smooth:'nearest',decor:'none',bgColor:'#101820',blur:14,dark:55,cut:'none',tol:28,contig:true,soft:0,glow:0,glowCol:'#58c8ff',outline:0,outCol:'#000000',shadow:false,inA:'none',dur2:'none',power:1,secs:3,fps:30,live:false,gifw:480,vSoft:true,vShape:false,vOut:false,vPop:true,vBeat:false,vPulse:true,vHaloSize:70,vDim:0,vFade:0.3,vRange:'extract'};
-const KY={file:null,isImg:false,vid:null,fc:null,fw:0,fh:0,t:0,dur:0,rect:null,view:{z:1,ox:0,oy:0},o:{...KY_DEF},seeds:[],man:null,ai:null,el:null,cache:{},items:[],out:[],busy:false,cancel:false,inited:false,tool:'rect',ratio:0,drag:null,paint:'wand',brush:6,nid:0,apOn:true,apStart:0,apT:0,loop:0,live:null,space:false,playing:false,vf:{moments:[],keys:[]},mid:0};
+const KY_DEF={zoom:'auto',out:'auto',ow:1920,oh:1080,margin:12,smooth:'nearest',decor:'none',bgColor:'#101820',blur:14,dark:55,cut:'none',tol:28,contig:true,soft:0,glow:0,glowCol:'#58c8ff',outline:0,outCol:'#000000',shadow:false,inA:'none',dur2:'none',power:1,secs:3,fps:30,live:false,gifw:480};
+const KY={file:null,isImg:false,vid:null,fc:null,fw:0,fh:0,t:0,dur:0,rect:null,view:{z:1,ox:0,oy:0},o:{...KY_DEF},seeds:[],man:null,ai:null,el:null,cache:{},items:[],out:[],busy:false,cancel:false,inited:false,tool:'rect',ratio:0,drag:null,paint:'wand',brush:6,nid:0,apOn:true,apStart:0,apT:0,loop:0,live:null,space:false,playing:false};
 try{Object.assign(KY.o,JSON.parse(localStorage.getItem('nova_ky_opts')||'{}'))}catch(e){}
 const kySave=()=>{try{localStorage.setItem('nova_ky_opts',JSON.stringify(KY.o))}catch(e){}};
 const KY_VIDS=new Map();
@@ -3682,18 +3684,19 @@ function keysHtml(){return `<div class="card mt-page" id="mtP-keys" hidden>
  <div class="mt-drop mt-drop-s" id="kyDrop" tabindex="0"><b>Dépose une vidéo (ou une capture) ici</b><span class="muted">puis entoure ce qui t'intéresse : un objet, des cœurs, un texte, la barre d'objets…</span><button class="btn primary" id="kyPick" type="button">Choisir un fichier…</button><input type="file" id="kyFile" accept="video/*,image/*,.mkv,.mov,.mp4,.webm" hidden></div>
  <p class="bad sm" id="kyErr" hidden></p>
  <div id="kyWork" hidden>
-  <div class="ky-bar"><div class="seg" id="kyToolSeg"><button type="button" data-v="rect" aria-pressed="true" title="Dessiner / déplacer le cadre">▭ Cadre</button><button type="button" data-v="pan" aria-pressed="false" title="Déplacer la vue (ou clic molette, ou barre d'espace)">✋ Vue</button></div>
+  <div class="ky-mode"><div class="seg" id="kyModeSeg"><button type="button" data-v="vid" aria-pressed="true">🎬 Animer l'objet dans la vidéo</button><button type="button" data-v="elem" aria-pressed="false">🖼 Sortir l'élément (agrandi, en image)</button></div></div>
+  <div class="ky-bar"><div class="seg" id="kyToolSeg"><button type="button" data-v="rect" aria-pressed="true" title="Dessiner / déplacer le cadre">▭ Cadre</button><button type="button" data-v="wand" aria-pressed="false" title="Clique sur un objet pour le sélectionner (Maj = ajouter, Alt = retirer)">🪄 Objet</button><button type="button" data-v="pan" aria-pressed="false" title="Déplacer la vue (ou clic molette, ou barre d'espace)">✋ Vue</button></div>
    <select id="kyRatio" aria-label="Forme du cadre"><option value="0">Cadre libre</option><option value="1">Carré 1:1</option><option value="1.3333">4:3</option><option value="1.7778">16:9</option><option value="0.5625">9:16</option></select>
    <button class="btn sm" id="kyFit" type="button">Tout voir</button><button class="btn sm" id="kyZm" type="button" aria-label="Dézoomer">−</button><button class="btn sm" id="kyZp" type="button" aria-label="Zoomer">+</button><span class="muted sm" id="kyZl"></span>
    <span class="sp"></span><button class="btn sm" id="kyOther" type="button">Autre fichier…</button></div>
   <canvas id="kyStage" height="430" tabindex="0" aria-label="Image de la vidéo : dessine un cadre autour de l'élément"></canvas>
   <div class="ky-time" id="kyTime"><button class="btn sm" id="kyPlay" type="button" aria-label="Lecture">▶</button><button class="btn sm" id="kyM1" type="button">−1 s</button><button class="btn sm" id="kyPf" type="button" aria-label="Image précédente">◀ image</button><button class="btn sm" id="kyNf" type="button" aria-label="Image suivante">image ▶</button><button class="btn sm" id="kyP1" type="button">+1 s</button>
    <input type="range" id="kyT" min="0" max="1" step="0.001" value="0" aria-label="Position dans la vidéo"><span class="muted sm" id="kyTl"></span></div>
-  <div class="ky-mbar" id="kyMomBar" aria-hidden="true"></div>
-  <div class="ky-time" id="kyMark"><button class="btn sm primary" id="kyMarkA" type="button" title="L'effet commence à l'instant affiché">● Début de l'effet ici</button><button class="btn sm" id="kyMarkB" type="button" title="L'effet se termine à l'instant affiché">■ Fin de l'effet ici</button><span class="muted sm">Lis la vidéo (▶) ou avance, et clique quand l'effet doit commencer, puis quand il doit s'arrêter. Les moments apparaissent en bleu sous la barre.</span></div>
+  <div class="ky-mbar" id="kyMomBar" aria-hidden="true" data-km="vid"></div>
+  <div class="ky-time" id="kyMark" data-km="vid"><button class="btn sm primary" id="kyMarkA" type="button" title="L'effet commence à l'instant affiché">● Début de l'animation ici</button><button class="btn sm" id="kyMarkB" type="button" title="L'effet se termine à l'instant affiché">■ Fin de l'animation ici</button><span class="muted sm">Lis la vidéo (▶) ou avance, et clique quand l'animation doit commencer, puis quand elle doit s'arrêter (le type se choisit dans « Animer l'objet »). Les animations apparaissent en bleu sous la barre.</span></div>
   <div class="ky-sel"><span class="lab">Cadre</span><label>x<input type="number" id="kyX" min="0" step="1"></label><label>y<input type="number" id="kyY" min="0" step="1"></label><label>largeur<input type="number" id="kyW" min="1" step="1"></label><label>hauteur<input type="number" id="kyH" min="1" step="1"></label><span class="muted sm" id="kyInfo"></span></div>
   <p class="muted sm" style="margin:6px 0 0">Molette = zoom · glisse pour dessiner le cadre · ← → = image par image (Maj = 1 s) · Ctrl + flèches = déplacer le cadre d'un pixel.</p>
-  <div class="ky-two">
+  <div class="ky-two" data-km="elem">
    <div><h3 class="h3" style="margin:14px 0 6px">Élément <span class="muted sm" id="kyElInfo"></span></h3>
     <div class="ky-cvw" id="kyElW"><canvas id="kyEl" aria-label="Élément découpé"></canvas></div>
     <div class="ky-tools"><div class="seg" id="kyPaintSeg"><button type="button" data-v="wand" aria-pressed="true" title="Clique sur une couleur pour la retirer">🎨 Retirer une couleur</button><button type="button" data-v="erase" aria-pressed="false">🧽 Gommer</button><button type="button" data-v="keep" aria-pressed="false">♻️ Restaurer</button></div>
@@ -3703,51 +3706,31 @@ function keysHtml(){return `<div class="card mt-page" id="mtP-keys" hidden>
     <div class="ky-cvw" id="kyPrW"><canvas id="kyPrev" aria-label="Aperçu du rendu animé"></canvas></div>
     <div class="ky-tools"><button class="btn sm" id="kyAPlay" type="button" aria-label="Lecture de l'aperçu">⏸</button><input type="range" id="kyAT" min="0" max="3" step="0.01" value="0" aria-label="Position dans l'animation" style="flex:1;min-width:120px;padding:0;height:auto"><span class="muted sm" id="kyAl"></span></div></div>
   </div>
-  <details open class="ky-det"><summary>Taille et agrandissement</summary><div class="ky-grid">
+  <details open class="ky-det" data-km="elem"><summary>Taille et agrandissement</summary><div class="ky-grid">
    <label>Agrandir<select data-ko="zoom"><option value="auto">le plus grand possible</option>${[2,3,4,6,8,12,16,24,32].map(n=>`<option value="${n}">× ${n}</option>`).join('')}</select></label>
    <label>Format du résultat<select data-ko="out"><option value="auto">Juste l'élément (+ marge)</option><option value="sq">Carré 1080 × 1080</option><option value="wide">Paysage 1920 × 1080</option><option value="tall">Portrait 1080 × 1920</option><option value="custom">Taille personnalisée</option></select></label>
    <label class="ky-cust">Largeur<input type="number" data-ko="ow" min="64" max="4096" step="1"></label><label class="ky-cust">Hauteur<input type="number" data-ko="oh" min="64" max="4096" step="1"></label>
    ${kyRange('margin',0,40,1,'Marge','%')}
    <div class="mt-fxr"><span class="lab" style="min-width:90px">Pixels</span><div class="seg" data-kseg="smooth"><button type="button" data-v="nearest" aria-pressed="true">Nets (pixel art)</button><button type="button" data-v="smooth" aria-pressed="false">Lissés</button></div></div></div></details>
-  <details open class="ky-det"><summary>Décor autour de l'élément</summary><div class="ky-grid">
+  <details open class="ky-det" data-km="elem"><summary>Décor autour de l'élément</summary><div class="ky-grid">
    <div class="mt-fxr" style="grid-column:1/-1"><div class="seg" data-kseg="decor"><button type="button" data-v="none" aria-pressed="true">Transparent</button><button type="button" data-v="color" aria-pressed="false">Couleur</button><button type="button" data-v="scene" aria-pressed="false">La scène, nette</button><button type="button" data-v="sceneblur" aria-pressed="false">La scène, floue et sombre</button></div><input type="color" data-ko="bgColor" aria-label="Couleur du fond"></div>
    ${kyRange('blur',0,60,1,'Flou du décor','')}${kyRange('dark',0,90,1,'Assombrir le décor','%')}</div></details>
-  <details class="ky-det"><summary>Détourage (retirer le fond de l'élément)</summary><div class="ky-grid">
-   <div class="mt-fxr" style="grid-column:1/-1"><div class="seg" data-kseg="cut"><button type="button" data-v="none" aria-pressed="true">Aucun</button><button type="button" data-v="color" aria-pressed="false">Par couleur</button><button type="button" data-v="ai" aria-pressed="false">IA</button></div></div>
+  <details class="ky-det" data-km="elem"><summary>Détourage (retirer le fond de l'élément)</summary><div class="ky-grid">
+   <div class="mt-fxr" style="grid-column:1/-1"><div class="seg" data-kseg="cut"><button type="button" data-v="none" aria-pressed="true">Aucun</button><button type="button" data-v="color" aria-pressed="false">Par couleur</button><button type="button" data-v="ai" aria-pressed="false">IA</button><button type="button" data-v="obj" aria-pressed="false" title="Contour de l'objet cliqué avec l'outil 🪄">Objet cliqué</button></div></div>
    ${kyRange('tol',1,80,1,'Tolérance de couleur','')}<label class="mt-chk"><input type="checkbox" data-ko="contig"> Seulement ce qui touche l'endroit cliqué</label>${kyRange('soft',0,10,1,'Adoucir les bords','')}
    <p class="muted sm" style="grid-column:1/-1;margin:0">« Par couleur » : clique sur le fond dans la zone « Élément » (plusieurs clics possibles). Le pinceau gomme ou restaure ce qui reste. Pour une zone qui bouge, seul le détourage par couleur est utilisé.</p></div></details>
-  <details class="ky-det"><summary>Effets</summary><div class="ky-grid">
+  <details class="ky-det" data-km="elem"><summary>Effets</summary><div class="ky-grid">
    ${kyRange('glow',0,100,1,'Halo lumineux','')}<label>Couleur du halo<input type="color" data-ko="glowCol"></label>
    ${kyRange('outline',0,8,1,'Contour (en gros pixels)','')}<label>Couleur du contour<input type="color" data-ko="outCol"></label>
    <label class="mt-chk"><input type="checkbox" data-ko="shadow"> Ombre portée</label></div></details>
-  <details open class="ky-det"><summary>Animation</summary><div class="ky-grid">
+  <details open class="ky-det" data-km="elem"><summary>Animation de l'élément agrandi</summary><div class="ky-grid">
    <label>Entrée<select data-ko="inA"><option value="none">Aucune</option><option value="pop">Pop (rebond)</option><option value="fade">Fondu</option><option value="zoomin">Zoom d'apparition</option><option value="spin">Tourne et apparaît</option><option value="left">Glisse depuis la gauche</option><option value="right">Glisse depuis la droite</option><option value="up">Glisse depuis le bas</option><option value="down">Tombe d'en haut</option></select></label>
    <label>Pendant<select data-ko="dur2"><option value="none">Rien</option><option value="zoomin">Zoom avant lent</option><option value="zoomout">Zoom arrière lent</option><option value="shake">Tremblement</option><option value="pulse">Battement</option><option value="float">Flottement</option><option value="wiggle">Balancement</option><option value="spin">Rotation</option></select></label>
    ${kyRange('power',0.3,2.5,0.1,'Intensité','')}<label>Durée (s)<input type="number" data-ko="secs" min="0.5" max="20" step="0.5"></label>
    <label>Images par seconde<select data-ko="fps"><option value="24">24</option><option value="30">30</option><option value="60">60</option></select></label>
    <label class="mt-chk" id="kyLiveW"><input type="checkbox" data-ko="live"> La zone bouge : utiliser la vidéo à partir de cet instant</label></div></details>
-  <details open class="ky-det" id="kyVf"><summary>Dans la vidéo (l'effet est dessiné sur l'objet, à sa place)</summary>
-   <p class="muted sm" style="margin:8px 0 0">Entoure l'objet dans la vidéo, puis indique <b>de quand à quand</b> l'effet doit être visible (un « moment » : boutons ● et ■ sous le lecteur, ou la liste ci-dessous), et choisis l'effet : tu récupères soit un <b>calque transparent</b> de la taille de ta vidéo (à poser par-dessus dans CapCut / Premiere, pile au bon endroit), soit la <b>vidéo finie</b> avec l'effet.</p>
-   <div class="ky-vf">
-    <div><h4 class="ky-h4">Moments</h4><div id="kyMoms"></div><button class="btn sm" id="kyMomAdd" type="button">＋ Ajouter un moment à partir d'ici</button></div>
-    <div><h4 class="ky-h4">Position de l'objet</h4><div id="kyKeys"></div><div class="ky-tools" style="margin-top:6px"><button class="btn sm" id="kyKeyAdd" type="button">＋ Mémoriser la position à cet instant</button><button class="btn sm" id="kyKeyClear" type="button">Position fixe</button></div>
-     <p class="muted sm" style="margin:6px 0 0" id="kyKeyHint"></p></div>
-   </div>
-   <div class="ky-grid" style="margin-top:12px">
-    <label class="mt-chk"><input type="checkbox" id="kyShowFx" checked> Voir l'effet sur l'image du haut</label><span></span>
-    <label class="mt-chk"><input type="checkbox" data-ko="vSoft"> Halo doux autour de l'objet</label>${kyRange('vHaloSize',20,200,5,'Taille du halo','%')}
-    <label class="mt-chk"><input type="checkbox" data-ko="vShape"> Halo qui suit la forme (réglé dans « Effets »)</label><label class="mt-chk"><input type="checkbox" data-ko="vPulse"> Le halo pulse</label>
-    <label class="mt-chk"><input type="checkbox" data-ko="vOut"> Contour autour de l'objet (réglé dans « Effets »)</label><label class="mt-chk"><input type="checkbox" data-ko="vPop"> Pop à l'entrée (l'objet grossit puis revient)</label>
-    <label class="mt-chk"><input type="checkbox" data-ko="vBeat"> Battement (l'objet grossit un peu en rythme)</label>${kyRange('vDim',0,90,5,'Assombrir la scène autour','%')}
-    ${kyRange('vFade',0.1,1.5,0.1,'Apparition / disparition (s)','')}
-   </div>
-   <p class="muted sm" style="margin:6px 0 0">Les effets qui <b>déplacent</b> l'objet (tremblement, flottement) ne sont pas proposés ici : l'objet d'origine resterait visible dessous. Le halo « qui suit la forme », le contour et le pop marchent mieux avec un détourage par couleur.</p>
-   <div class="ky-cvw" style="margin-top:10px"><canvas id="kyVfPrev" aria-label="Aperçu de l'effet dans la vidéo" style="image-rendering:auto"></canvas></div>
-   <div class="ky-tools"><button class="btn sm" id="kyVfPlay" type="button">▶ Voir l'effet en lecture</button><span class="muted sm" id="kyVfInfo"></span></div>
-   <div class="btns left"><button class="btn primary" id="kyVfWebm" type="button">Calque transparent (WebM)</button><button class="btn" id="kyVfZip" type="button">Calque en images PNG (zip)</button><button class="btn" id="kyVfMp4" type="button">Vidéo avec l'effet (MP4)</button>
-    <label class="ky-sl" style="min-width:230px"><span>Vidéo finie</span><select data-ko="vRange" aria-label="Partie de la vidéo"><option value="extract">seulement les moments (+ 1 s)</option><option value="all">toute la vidéo</option></select></label></div>
-  </details>
-  <details open class="ky-det"><summary>Enregistrer</summary>
+  <div id="kyVfHost" data-km="vid"></div>
+  <details open class="ky-det" data-km="elem"><summary>Enregistrer l'élément (image, séquence, GIF, vidéo)</summary>
    <div class="btns left" style="margin-top:6px"><button class="btn primary" id="kyPng" type="button">Image PNG</button><button class="btn" id="kySeq" type="button">Séquence PNG (zip)</button><button class="btn" id="kyWebm" type="button">WebM transparent</button><button class="btn" id="kyGif" type="button">GIF</button><button class="btn" id="kyMp4" type="button">Vidéo MP4</button><button class="btn" id="kyKeep" type="button">＋ Garder cet élément</button></div>
    <p class="muted sm" style="margin:6px 0 0">PNG / séquence PNG : fond transparent gardé, importable dans CapCut, Premiere, After Effects. MP4 : pas de transparence (le fond prend la couleur choisie). GIF : largeur <input type="number" data-ko="gifw" min="120" max="1200" step="10" style="width:84px;display:inline-block;height:28px"> px.</p>
    <div class="ky-prog" id="kyProg" hidden><div class="mt-bar"><i id="kyBar" style="width:6%"></i></div><span class="muted sm" id="kyPm"></span><button class="btn sm" id="kyCancel" type="button">Arrêter</button></div>
@@ -3764,11 +3747,11 @@ async function kyLoad(file){
   const isImg=/^image\//.test(file.type)||/\.(png|jpe?g|webp|bmp|gif|avif)$/i.test(file.name);
   if(!isImg&&!mtIsVideo(file)){kyErr("Dépose une vidéo ou une image.");return}
   try{
-    const fc=document.createElement('canvas');
+    const fc=phCv(1,1);
     if(isImg){const b=await createImageBitmap(file);fc.width=b.width;fc.height=b.height;fc.getContext('2d').drawImage(b,0,0);KY.vid=null;KY.dur=0;KY.fw=b.width;KY.fh=b.height}
     else{const v=await kyVideo(file);if(!v.videoWidth)throw new Error('format');KY.vid=v;KY.dur=v.duration;KY.fw=v.videoWidth;KY.fh=v.videoHeight;await kySeek(v,0);fc.width=KY.fw;fc.height=KY.fh;fc.getContext('2d').drawImage(v,0,0)}
     KY.file=file;KY.isImg=isImg;KY.fc=fc;KY.t=0;KY.rect=null;KY.seeds=[];KY.man=null;KY.ai=null;KY.el=null;KY.playing=false;
-    $('#kyDrop').hidden=true;$('#kyWork').hidden=false;$('#kyTime').hidden=isImg;$('#kyMark').hidden=isImg;$('#kyMomBar').hidden=isImg;$('#kyLiveW').hidden=isImg;if(isImg)KY.o.live=false;
+    $('#kyDrop').hidden=true;$('#kyWork').hidden=false;$('#kyTime').hidden=isImg;kyOptsView();$('#kyLiveW').hidden=isImg;if(isImg)KY.o.live=false;
     $('#kyT').max=KY.dur||1;kyFit();kyStage();kyRectUi();kyUpdate();kyTimeUi();kyPvStart()
   }catch(e){console.warn('éléments clés:',e);kyErr("Ce fichier ne peut pas être lu par le navigateur (certains formats vidéo, comme le HEVC, ne passent pas). Convertis-le d'abord en MP4 avec l'outil « Convertir ».")}}
 function kyGrab(){const v=KY.vid;if(!v||!v.videoWidth)return;KY.fc.getContext('2d').drawImage(v,0,0)}
@@ -3795,7 +3778,7 @@ function kyStage(){
     for(let x=x0;x<=x1;x++){const sx=Math.round(V.ox+x*V.z)+.5;g.moveTo(sx,V.oy+y0*V.z);g.lineTo(sx,V.oy+y1*V.z)}for(let y=y0;y<=y1;y++){const sy=Math.round(V.oy+y*V.z)+.5;g.moveTo(V.ox+x0*V.z,sy);g.lineTo(V.ox+x1*V.z,sy)}g.stroke()}
   if(KY.rect){const r=KY.rect,x=V.ox+r.x*V.z,y=V.oy+r.y*V.z,w=r.w*V.z,h=r.h*V.z;
     g.fillStyle='rgba(0,0,0,.55)';g.beginPath();g.rect(0,0,cw,ch);g.rect(x,y,w,h);g.fill('evenodd');
-    if(KY.vf.moments.length&&KY.rect&&$('#kyShowFx')&&$('#kyShowFx').checked&&$('#kyVf').open){const lay=kyVfLayer();if(lay&&KY.vfOn){g.imageSmoothingEnabled=true;g.drawImage(lay,V.ox,V.oy,KY.fw*V.z,KY.fh*V.z)}}
+    koStageDraw(g,V);
     g.strokeStyle='#58c8ff';g.lineWidth=2;g.strokeRect(x,y,w,h);g.fillStyle='#fff';
     for(const [hx,hy] of kyHandles(x,y,w,h))g.fillRect(hx-4,hy-4,8,8)}
   $('#kyZl').textContent=Math.round(V.z*100)+' %'}
@@ -3808,7 +3791,7 @@ function kyHit(sx,sy){
   return sx>=x&&sx<=x+w&&sy>=y&&sy<=y+h?'move':null}
 const kyClampR=r=>{r.x=Math.max(0,Math.min(KY.fw-1,Math.round(r.x)));r.y=Math.max(0,Math.min(KY.fh-1,Math.round(r.y)));r.w=Math.max(1,Math.min(KY.fw-r.x,Math.round(r.w)));r.h=Math.max(1,Math.min(KY.fh-r.y,Math.round(r.h)));return r};
 function kyDragTo(p){
-  const d=KY.drag,fx=Math.round(p.fx),fy=Math.round(p.fy);let r;
+  koDrop();const d=KY.drag,fx=Math.round(p.fx),fy=Math.round(p.fy);let r;
   if(d.kind==='new'){r={x:Math.min(d.x0,fx),y:Math.min(d.y0,fy),w:Math.abs(fx-d.x0),h:Math.abs(fy-d.y0)};
     if(KY.ratio){const w=r.w,h=Math.round(w/KY.ratio);r.h=h;if(fy<d.y0)r.y=d.y0-h}}
   else if(d.kind==='move'){r={...d.r0,x:d.r0.x+Math.round(p.fx-d.fx0),y:d.r0.y+Math.round(p.fy-d.fy0)};r.x=Math.max(0,Math.min(KY.fw-r.w,r.x));r.y=Math.max(0,Math.min(KY.fh-r.h,r.y))}
@@ -3825,6 +3808,7 @@ function kyStageWire(){
   c.addEventListener('pointerdown',e=>{
     if(!KY.fc)return;c.focus();const p=kyPos(e);c.setPointerCapture(e.pointerId);
     if(e.button===1||e.button===2||KY.tool==='pan'||KY.space){KY.drag={kind:'pan',sx:p.sx,sy:p.sy,ox:KY.view.ox,oy:KY.view.oy};return}
+    if(koStageDown(e,p))return;
     const h=kyHit(p.sx,p.sy);
     if(h==='move')KY.drag={kind:'move',r0:{...KY.rect},fx0:p.fx,fy0:p.fy};
     else if(h)KY.drag={kind:h,r0:{...KY.rect}};
@@ -3852,7 +3836,7 @@ function kyStageWire(){
 /* ---------- l'élément : découpe, détourage ---------- */
 function kyCrop(frame){const r=KY.rect;if(!r||!frame)return null;const c=phCv(r.w,r.h);c.getContext('2d').drawImage(frame,r.x,r.y,r.w,r.h,0,0,r.w,r.h);return c}
 function kyUpdate(){
-  KY.cache={};KY.pvDirty=true;KY.vfDirty=true;KY.el=KY.fc?kyCrop(KY.fc):null;kyElView();kyPrInfo();if(KY.inited)kyVfPreview()}
+  koOnUpdate();KY.cache={};KY.pvDirty=true;KY.vfDirty=true;KY.el=KY.fc?kyCrop(KY.fc):null;kyElView();kyPrInfo();if(KY.inited)kyVfPreview()}
 const kySmooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t)};
 function kyCutAlpha(src,useManual){
   const o=KY.o,w=src.width,h=src.height,n=w*h,d=src.getContext('2d').getImageData(0,0,w,h).data,al=new Float32Array(n).fill(1);let any=false;
@@ -3865,6 +3849,7 @@ function kyCutAlpha(src,useManual){
           if(y>0&&!rem[p-w]&&near(p-w,s.c)){rem[p-w]=1;st[sp++]=p-w}if(y<h-1&&!rem[p+w]&&near(p+w,s.c)){rem[p+w]=1;st[sp++]=p+w}}}
       else for(let p=0;p<n;p++)if(!rem[p]&&near(p,s.c))rem[p]=1}
     for(let p=0;p<n;p++)if(rem[p])al[p]=0;any=true}
+  if(useManual&&o.cut==='obj'&&typeof KO!=='undefined'&&KO.cur&&KO.cur.W===w&&KO.cur.H===h){for(let p=0;p<n;p++)al[p]=KO.cur.mask[p]?1:0;any=true}
   if(useManual&&o.cut==='ai'&&KY.ai&&KY.ai.w===w&&KY.ai.h===h){for(let p=0;p<n;p++)al[p]=kySmooth(0.35,0.65,KY.ai.m[p]);any=true}
   if(useManual&&KY.man&&KY.man.length===n){for(let p=0;p<n;p++){if(KY.man[p]===1)al[p]=1;else if(KY.man[p]===2)al[p]=0}any=true}
   return any?al:null}
@@ -3963,15 +3948,18 @@ function kyAnim(t,L){
 /* ---------- composition d'une image du résultat ---------- */
 function kyCompose(t,frame,into,flat,k){
   const fr=frame||KY.fc;if(!KY.rect||!fr)return null;
-  const live=frame&&frame!==KY.fc,el=live?kyCrop(fr):KY.el;if(!el)return null;
-  const cutc=live?kyCut(el,false):kyCutCached(),L=kyLayout(cutc.width,cutc.height,k),tr=kyAnim(t,L);
+  const live=frame&&frame!==KY.fc,keepR=KY.rect;let ob=null;
+  if(live&&KY.o.cut==='obj'&&typeof koObjAt==='function'&&KO.obj){ob=koObjAt(fr,KY.liveT==null?KY.t:KY.liveT);if(ob&&ob.ok)KY.rect=ob.rect;else ob=null}
+  try{
+  const el=live?kyCrop(fr):KY.el;if(!el)return null;
+  const cutc=live?(ob?koCutOf(el,ob):kyCut(el,false)):kyCutCached(),L=kyLayout(cutc.width,cutc.height,k),tr=kyAnim(t,L);
   let out=into;if(!out)out=kyCv(L.OW,L.OH);if(out.width!==L.OW||out.height!==L.OH){out.width=L.OW;out.height=L.OH}
   const g=out.getContext('2d');g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.clearRect(0,0,L.OW,L.OH);
   if(flat){g.fillStyle=KY.o.bgColor;g.fillRect(0,0,L.OW,L.OH)}
   g.save();g.translate(L.cx,L.cy);g.scale(tr.cam,tr.cam);g.translate(-L.cx,-L.cy);
   if(live)kyDecor(g,L,fr);else{if(!KY.cache.decor||KY.cache.decorKey!==L.s+'|'+L.OW+'|'+k){const d=kyCv(L.OW,L.OH);kyDecor(d.getContext('2d'),L,fr);KY.cache.decor=d;KY.cache.decorKey=L.s+'|'+L.OW+'|'+k}g.drawImage(KY.cache.decor,0,0)}
   const fx=kyBake(cutc,L,live);g.globalAlpha=Math.max(0,Math.min(1,tr.a));g.translate(L.cx+tr.dx,L.cy+tr.dy);g.rotate(tr.rot);g.scale(tr.s,tr.s);g.drawImage(fx.c,-fx.c.width/2,-fx.c.height/2);g.restore();
-  return out}
+  return out}finally{KY.rect=keepR}}
 
 /* ---------- aperçu animé ---------- */
 const kyAnimOn=()=>KY.o.inA!=='none'||KY.o.dur2!=='none'||KY.o.live;
@@ -4010,8 +3998,8 @@ async function kyFrames(flat){
   const L=kyLayout(KY.el.width,KY.el.height);if(N*L.OW*L.OH>9e9)throw new Error('trop lourd : baisse la durée ou la taille');
   for(let i=0;i<N;i++){
     if(KY.cancel)throw new Error('annulé');const t=i/(+o.fps||30);let frame=null;
-    if(pv){pv.pause();await kySeek(pv,KY.t+t);tmp.getContext('2d').drawImage(pv,0,0);frame=tmp}
-    const c=kyCompose(t,frame,box,flat);frames.push(new Uint8Array(await (await kyBlob(c)).arrayBuffer()));kyProg(`Création des images… ${i+1} / ${N}`,(i+1)/N*0.6)}
+    if(pv){pv.pause();await kySeek(pv,KY.t+t);tmp.getContext('2d').drawImage(pv,0,0);frame=tmp;KY.liveT=KY.t+t}
+    const c=kyCompose(t,frame,box,flat);KY.liveT=null;frames.push(new Uint8Array(await (await kyBlob(c)).arrayBuffer()));kyProg(`Création des images… ${i+1} / ${N}`,(i+1)/N*0.6)}
   return{frames,w:L.OW,h:L.OH}}
 async function kyEncode(kind,fr){
   const o=KY.o,fps=+o.fps||30,ff=await mtEngine();
@@ -4041,121 +4029,6 @@ async function kyExport(kind){
   finally{KY.busy=false;kyProg('');$$('#kyPng,#kySeq,#kyWebm,#kyGif,#kyMp4').forEach(b=>b.disabled=false)}}
 
 
-/* ---------- dans la vidéo : l'effet est dessiné sur l'objet, à sa place ---------- */
-const kyLerp=(a,b,u)=>a+(b-a)*u;
-function kyRectAt(t){
-  const K=KY.vf.keys;if(!K.length)return KY.rect;if(t<=K[0].t)return K[0].r;const Z=K[K.length-1];if(t>=Z.t)return Z.r;
-  for(let i=1;i<K.length;i++)if(t<=K[i].t){const a=K[i-1],b=K[i],u=(t-a.t)/Math.max(1e-6,b.t-a.t);return{x:kyLerp(a.r.x,b.r.x,u),y:kyLerp(a.r.y,b.r.y,u),w:kyLerp(a.r.w,b.r.w,u),h:kyLerp(a.r.h,b.r.h,u)}}
-  return Z.r}
-function kyVfState(t,force){
-  const M=KY.vf.moments,f=Math.max(0.05,+KY.o.vFade||0.3);let e=0,m=null;
-  for(const x of M)if(t>=x.a&&t<=x.b){const v=Math.min(1,(t-x.a)/f,(x.b-t)/f);if(v>e){e=v;m=x}}
-  if(!M.length&&force)return{e:1,tau:0.7};
-  return{e:kySmooth(0,1,Math.max(0,e)),tau:m?t-m.a:0}}
-const kyNeedPx=()=>!!(KY.o.vShape||KY.o.vOut||KY.o.vPop||KY.o.vBeat);
-const kyRgba=(hex,a)=>{const n=parseInt(String(hex).replace('#',''),16)||0;return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`};
-function kyVfDraw(g,W,H,t,frame,force){
-  const st=kyVfState(t,force);if(st.e<=0||!KY.rect)return false;
-  const o=KY.o,R=kyRectAt(t),cx=R.x+R.w/2,cy=R.y+R.h/2,size=Math.max(R.w,R.h,8),e=st.e,tau=st.tau;
-  if(o.vDim>0){const r1=size*0.7,r2=r1+Math.max(size*1.4,60),gr=g.createRadialGradient(cx,cy,r1,cx,cy,r2);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,`rgba(0,0,0,${o.vDim/100*e})`);g.fillStyle=gr;g.fillRect(0,0,W,H)}
-  if(o.vSoft){const rad=size*(o.vHaloSize/100)*(1+(o.vPulse?0.12*Math.sin(tau*Math.PI*2*1.2):0)),gr=g.createRadialGradient(cx,cy,rad*0.1,cx,cy,rad);
-    gr.addColorStop(0,kyRgba(o.glowCol,0.9*e));gr.addColorStop(0.45,kyRgba(o.glowCol,0.38*e));gr.addColorStop(1,kyRgba(o.glowCol,0));g.fillStyle=gr;g.beginPath();g.arc(cx,cy,rad,0,Math.PI*2);g.fill()}
-  if(kyNeedPx()&&frame){
-    const x=Math.max(0,Math.min(frame.width-1,Math.round(R.x))),y=Math.max(0,Math.min(frame.height-1,Math.round(R.y))),w=Math.max(1,Math.min(frame.width-x,Math.round(R.w))),h=Math.max(1,Math.min(frame.height-y,Math.round(R.h)));
-    const el=phCv(w,h);el.getContext('2d').drawImage(frame,x,y,w,h,0,0,w,h);const cut=kyCut(el,false);
-    let sc=1;if(o.vPop)sc*=1+0.35*Math.sin(Math.max(0,Math.min(1,tau/0.5))*Math.PI);if(o.vBeat)sc*=1+0.07*(0.5+0.5*Math.sin(tau*Math.PI*2*1.6));
-    sc=1+(sc-1)*e;
-    const L={s:sc,ws:Math.max(1,Math.round(w*sc)),hs:Math.max(1,Math.round(h*sc))};
-    const fx=kyBake(cut,L,true,{glow:o.vShape?Math.max(o.glow,60):0,outline:o.vOut?Math.max(o.outline,1):0,shadow:false});
-    g.save();g.globalAlpha=1;g.drawImage(fx.c,x+w/2-fx.c.width/2,y+h/2-fx.c.height/2);g.restore()}
-  return true}
-function kyVfLayer(){
-  const W=KY.fw,H=KY.fh;if(!KY.fc||!KY.rect)return null;
-  if(KY.vfLay&&!KY.vfDirty&&KY.vfLayT===KY.t&&KY.vfLay.width===W&&KY.vfLay.height===H)return KY.vfLay;
-  const lay=KY.vfLay&&KY.vfLay.width===W&&KY.vfLay.height===H?KY.vfLay:(KY.vfLay=kyCv(W,H)),lg=lay.getContext('2d');lg.clearRect(0,0,W,H);
-  KY.vfOn=kyVfDraw(lg,W,H,KY.t,KY.fc,true);KY.vfLayT=KY.t;KY.vfDirty=false;return lay}
-function kyMomBar(){const b=$('#kyMomBar');if(!b||!KY.dur)return;b.innerHTML=KY.vf.moments.map(m=>`<i style="left:${(m.a/KY.dur*100).toFixed(2)}%;width:${Math.max(0.4,(m.b-m.a)/KY.dur*100).toFixed(2)}%"></i>`).join('')}
-function kyVfPreview(){
-  const cv=$('#kyVfPrev');if(!KY.fc||!cv)return;const W=KY.fw,H=KY.fh,k=Math.min(1,900/W);
-  if(cv.width!==Math.round(W*k)){cv.width=Math.round(W*k);cv.height=Math.round(H*k)}
-  const g=cv.getContext('2d');g.drawImage(KY.fc,0,0,cv.width,cv.height);
-  if(!KY.rect){$('#kyVfInfo').textContent="Dessine d'abord un cadre autour de l'objet.";return}
-  const lay=kyVfLayer(),on=KY.vfOn;g.drawImage(lay,0,0,cv.width,cv.height);
-  const M=KY.vf.moments;$('#kyVfInfo').textContent=!M.length?"Aperçu avec l'effet à fond : ajoute un moment pour le placer dans le temps.":(on?'Effet actif à cet instant.':"Pas d'effet à cet instant (hors des moments).")+((KY.o.vShape||KY.o.vOut)&&KY.o.cut==='none'?" Astuce : fais un détourage par couleur (zone « Élément ») pour que le halo et le contour suivent la forme de l'objet, pas le cadre.":'')}
-function kyVfView(){
-  const M=KY.vf.moments.slice().sort((a,b)=>a.a-b.a);
-  $('#kyMoms').innerHTML=M.length?M.map(m=>`<div class="ky-mom"><label>de<input type="number" step="0.1" min="0" value="${m.a.toFixed(2)}" data-mom="${m.id}:a" aria-label="Début"></label><button class="btn sm" data-mnow="${m.id}:a" type="button" title="Mettre l'instant actuel">⏱</button><label>à<input type="number" step="0.1" min="0" value="${m.b.toFixed(2)}" data-mom="${m.id}:b" aria-label="Fin"></label><button class="btn sm" data-mnow="${m.id}:b" type="button" title="Mettre l'instant actuel">⏱</button><span class="muted sm">${(m.b-m.a).toFixed(1)} s</span><button class="btn sm" data-mrm="${m.id}" type="button" aria-label="Retirer ce moment">✕</button></div>`).join(''):'<p class="muted sm" style="margin:0 0 6px">Aucun moment : l\'aperçu montre l\'effet à fond.</p>';
-  const K=KY.vf.keys;
-  $('#kyKeys').innerHTML=K.length?K.map((k,i)=>`<div class="ky-mom"><b>${mtFmt(k.t,2)}</b><span class="muted sm">x ${Math.round(k.r.x)}, y ${Math.round(k.r.y)} · ${Math.round(k.r.w)} × ${Math.round(k.r.h)}</span><button class="btn sm" data-kgo="${i}" type="button">Aller</button><button class="btn sm" data-krm="${i}" type="button" aria-label="Retirer">✕</button></div>`).join(''):'';
-  $('#kyKeyHint').textContent=K.length?"L'effet suit ces positions (déplacement progressif entre deux positions).":"Position fixe : l'effet reste sur le cadre. Si l'objet bouge, place-toi à un instant, ajuste le cadre, puis mémorise la position (2 ou 3 fois).";
-  KY.vfDirty=true;kyMomBar();kyStage();kyVfPreview()}
-async function kyVfPlay(){
-  if(KY.isImg||!KY.vid)return;if(KY.playing){kyStop();KY.vfStop=null;return}
-  const M=KY.vf.moments;if(!M.length){toast("Ajoute d'abord un moment (● Début de l'effet ici)");return}
-  KY.vfStop=Math.min(KY.dur,Math.max(...M.map(m=>m.b))+0.7);await kySetTime(Math.max(0,Math.min(...M.map(m=>m.a))-0.7));kyTogglePlay()}
-function kyMark(k){
-  if(KY.isImg)return;const M=KY.vf.moments;
-  if(k==='a'){const m={id:++KY.mid,a:KY.t,b:Math.min(KY.dur,KY.t+3)};M.push(m);KY.openMom=m.id;kyVfView();toast("Début posé : avance dans la vidéo puis clique « ■ Fin de l'effet ici »")}
-  else{let m=M.find(x=>x.id===KY.openMom)||M.filter(x=>x.a<=KY.t+0.01).sort((a,b)=>b.a-a.a)[0];
-    if(!m){toast("Pose d'abord un début (● Début de l'effet ici)");return}
-    if(KY.t<=m.a+0.1){toast("La fin doit être après le début : avance dans la vidéo");return}
-    m.b=KY.t;KY.openMom=null;kyVfView();toast(`Moment de ${(m.b-m.a).toFixed(1)} s enregistré ✓`)}}
-async function kyVfExport(kind){
-  if(KY.busy)return;kyErr('');const M=KY.vf.moments;
-  if(KY.isImg||!KY.vid){kyErr("Cette fonction demande une vidéo.");return}
-  if(!KY.rect){kyErr("Dessine d'abord un cadre autour de l'objet.");return}
-  if(!M.length){kyErr("Ajoute au moins un moment (bouton « Ajouter un moment »).");return}
-  if(!(KY.o.vSoft||KY.o.vShape||KY.o.vOut||KY.o.vPop||KY.o.vBeat||KY.o.vDim>0)){kyErr("Coche au moins un effet.");return}
-  const fps=Math.min(60,Math.max(15,Math.round(kyFps()))),a0=Math.max(0,Math.min(...M.map(m=>m.a))),b0=Math.min(KY.dur,Math.max(...M.map(m=>m.b)));
-  if(b0-a0<0.1){kyErr("Le moment est trop court.");return}
-  const all=KY.o.vRange==='all',ra=kind==='mp4'?(all?0:Math.max(0,a0-1)):a0,rb=kind==='mp4'?(all?KY.dur:Math.min(KY.dur,b0+1)):b0;
-  if(kind==='mp4'&&rb-ra>240&&!confirm(`La vidéo finie dure ${mtFmt(rb-ra,0)} : la fabrication peut prendre longtemps dans le navigateur. Continuer ?`))return;
-  KY.busy=true;KY.cancel=false;$$('#kyVfWebm,#kyVfZip,#kyVfMp4').forEach(b=>b.disabled=true);
-  const W=KY.fw&~1,H=KY.fh&~1,N=Math.max(1,Math.round((b0-a0)*fps));let ff=null;
-  try{
-    const zipFiles=[];if(kind!=='zip'){kyProg('Chargement du moteur…',0.02);ff=await mtEngine()}
-    const run=async()=>{
-      const cv=kyCv(W,H),g=cv.getContext('2d'),need=kyNeedPx();let pv=null,tmp=null,empty=null;const names=[];
-      if(need){pv=await kyVideo(KY.file,true);tmp=kyCv(KY.fw,KY.fh)}
-      try{
-        for(let i=0;i<N;i++){
-          if(KY.cancel)throw new Error('annulé');const t=a0+i/fps;let bytes;
-          if(kyVfState(t).e<=0){if(!empty){g.clearRect(0,0,W,H);empty=new Uint8Array(await (await kyBlob(cv)).arrayBuffer())}bytes=empty.slice()}
-          else{let frame=null;if(need){pv.pause();await kySeek(pv,t);tmp.getContext('2d').drawImage(pv,0,0);frame=tmp}
-            g.clearRect(0,0,W,H);kyVfDraw(g,W,H,t,frame,false);bytes=new Uint8Array(await (await kyBlob(cv)).arrayBuffer())}
-          if(kind==='zip')zipFiles.push({name:`calque_${String(i+1).padStart(5,'0')}.png`,data:bytes});
-          else{const n=`v${String(i+1).padStart(5,'0')}.png`;await ff.writeFile(n,bytes);names.push(n)}
-          if(i%3===0)kyProg(`Création des images… ${i+1} / ${N}`,(i+1)/N*0.7)}
-        if(kind==='zip'){kyProg('Fabrication du zip…',0.9);kyAddOut(`${kyStem()} - calque ${mtFmt(a0,1).replace(':','m')}s.zip`,zipStore(zipFiles),`${N} images ${W} × ${H}, ${fps} i/s, à poser sur la vidéo à partir de ${mtFmt(a0,2)}`);return}
-        const job=MT.cur={tot:Math.max(0.1,rb-ra),pct:0},iv=setInterval(()=>kyProg(`Encodage… ${Math.round(job.pct*100)} %`,0.7+job.pct*0.3),300);
-        try{
-          let out,args,blob;
-          if(kind==='webm'){out='o.webm';args=['-framerate',String(fps),'-i','v%05d.png','-c:v','libvpx','-pix_fmt','yuva420p','-auto-alt-ref','0','-b:v','6M','-crf','8','-y',out]}
-          else{out='o.mp4';const src=await mtMount(ff,KY.file,mtExt(KY.file.name));
-            args=['-ss',ra.toFixed(3),'-t',(rb-ra).toFixed(3),'-i',src,'-framerate',String(fps),'-i','v%05d.png','-filter_complex',`[1:v]setpts=PTS+${(a0-ra).toFixed(3)}/TB[o];[0:v][o]overlay=0:0:eof_action=pass:format=auto,format=yuv420p[v]`,'-map','[v]','-map','0:a?','-c:v','libx264','-preset','veryfast','-crf','18','-c:a','aac','-b:a','192k','-movflags','+faststart','-y',out]}
-          names.push(out);const code=await ff.exec(args);if(code!==0)throw new Error('ffmpeg '+code);
-          const d=await ff.readFile(out);blob=new Blob([d],{type:kind==='webm'?'video/webm':'video/mp4'});
-          kyAddOut(kind==='webm'?`${kyStem()} - calque ${mtFmt(a0,1).replace(':','m')}s.webm`:`${kyStem()} - avec effet.mp4`,blob,kind==='webm'?`${W} × ${H}, fond transparent, à poser sur la vidéo à partir de ${mtFmt(a0,2)}`:`${mtFmt(rb-ra,1)} · ${fps} i/s`)
-        }finally{clearInterval(iv);MT.cur=null;if(kind==='mp4'){try{await ff.unmount('/src')}catch(e){}}}
-      }finally{for(const n of names){try{await ff.deleteFile(n)}catch(e){}}}}
-    if(kind==='zip')await run();else await mtSerial(run)
-  }catch(e){if(String(e&&e.message)!=='annulé'){console.warn('dans la vidéo:',e);kyErr("L'export a échoué : "+String((e&&e.message)||e).slice(0,160));mtResetEngine(e)}else toast('Arrêté')}
-  finally{KY.busy=false;kyProg('');$$('#kyVfWebm,#kyVfZip,#kyVfMp4').forEach(b=>b.disabled=false)}}
-function kyVfWire(){
-  $('#kyMomAdd').addEventListener('click',()=>{const a=KY.isImg?0:KY.t;KY.vf.moments.push({id:++KY.mid,a,b:Math.min(KY.dur||a+2,a+2)});kyVfView()});
-  $('#kyMoms').addEventListener('change',e=>{const i=e.target.dataset&&e.target.dataset.mom;if(!i)return;const [id,k]=i.split(':'),m=KY.vf.moments.find(x=>x.id===+id);if(!m)return;m[k]=Math.max(0,+e.target.value||0);if(m.b<=m.a)m.b=m.a+0.2;kyVfView()});
-  $('#kyMoms').addEventListener('click',e=>{const n=e.target.closest('[data-mnow]'),r=e.target.closest('[data-mrm]');
-    if(n){const [id,k]=n.dataset.mnow.split(':'),m=KY.vf.moments.find(x=>x.id===+id);if(m){m[k]=KY.t;if(m.b<=m.a){if(k==='a')m.b=m.a+0.5;else m.a=Math.max(0,m.b-0.5)}kyVfView()}}
-    if(r){KY.vf.moments=KY.vf.moments.filter(x=>x.id!==+r.dataset.mrm);kyVfView()}});
-  $('#kyKeyAdd').addEventListener('click',()=>{if(!KY.rect){kyErr("Dessine d'abord un cadre autour de l'objet.");return}const K=KY.vf.keys.filter(k=>Math.abs(k.t-KY.t)>0.02);K.push({t:KY.t,r:{...KY.rect}});K.sort((a,b)=>a.t-b.t);KY.vf.keys=K;kyVfView()});
-  $('#kyKeyClear').addEventListener('click',()=>{KY.vf.keys=[];kyVfView()});
-  $('#kyKeys').addEventListener('click',e=>{const g=e.target.closest('[data-kgo]'),r=e.target.closest('[data-krm]');
-    if(g){const k=KY.vf.keys[+g.dataset.kgo];if(k){KY.rect={...k.r};kyRectUi();kySetTime(k.t)}}
-    if(r){KY.vf.keys.splice(+r.dataset.krm,1);kyVfView()}});
-  $('#kyVfPlay').addEventListener('click',kyVfPlay);$('#kyMarkA').addEventListener('click',()=>kyMark('a'));$('#kyMarkB').addEventListener('click',()=>kyMark('b'));$('#kyShowFx').addEventListener('change',()=>kyStage());
-  $('#kyVfWebm').addEventListener('click',()=>kyVfExport('webm'));$('#kyVfZip').addEventListener('click',()=>kyVfExport('zip'));$('#kyVfMp4').addEventListener('click',()=>kyVfExport('mp4'));
-  kyVfView()}
-
 /* ---------- éléments gardés ---------- */
 function kyKeep(){
   if(!KY.rect||!KY.el){kyErr("Dessine d'abord un cadre autour de l'élément.");return}
@@ -4175,7 +4048,7 @@ function kyOptsView(){
   $$('#mtP-keys [data-kseg]').forEach(s=>$$('button',s).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===String(o[s.dataset.kseg])))));
   $$('#mtP-keys [data-kv]').forEach(b=>{const k=b.dataset.kv;b.textContent=o[k]});
   $$('#mtP-keys .ky-cust').forEach(x=>x.style.display=o.out==='custom'?'':'none');
-  setSeg('kyToolSeg',KY.tool);setSeg('kyPaintSeg',KY.paint);$('#kyRatio').value=String(KY.ratio);
+  setSeg('kyModeSeg',KO.o.view);$$('#mtP-keys [data-km]').forEach(e=>{e.hidden=e.dataset.km!==KO.o.view||(e.id==='kyMark'||e.id==='kyMomBar')&&KY.isImg});setSeg('kyToolSeg',KY.tool);setSeg('kyPaintSeg',KY.paint);$('#kyRatio').value=String(KY.ratio);
   $('#kyAPlay').textContent=KY.apOn?'⏸':'▶'}
 function kyWire(){
   const z=$('#kyDrop');
@@ -4185,6 +4058,7 @@ function kyWire(){
   $('#kyWork').addEventListener('dragover',e=>e.preventDefault());$('#kyWork').addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer.files[0])kyLoad(e.dataTransfer.files[0])});
   document.addEventListener('paste',e=>{if(!$('#tab-montage').classList.contains('on')||$('#mtP-keys').hidden)return;const f=[...(e.clipboardData&&e.clipboardData.files||[])].find(x=>/^image\//.test(x.type));if(f){e.preventDefault();kyLoad(f)}});
   kyStageWire();kyElWire();
+  segBind('kyModeSeg',v=>{KO.o.view=v;koSave();if(v==='elem'&&KY.tool==='wand')KY.tool='rect';kyOptsView();kyStage();if(v==='vid')kyVfPreview()});
   segBind('kyToolSeg',v=>{KY.tool=v;$('#kyStage').style.cursor=v==='pan'?'grab':'crosshair'});segBind('kyPaintSeg',v=>{KY.paint=v});
   $('#kyRatio').addEventListener('change',e=>{KY.ratio=+e.target.value});$('#kyBrush').addEventListener('input',e=>{KY.brush=+e.target.value});
   $('#kyFit').addEventListener('click',()=>{kyFit();kyStage()});$('#kyZp').addEventListener('click',()=>kyZoomAt(1.5,$('#kyStage').width/2,$('#kyStage').height/2));$('#kyZm').addEventListener('click',()=>kyZoomAt(1/1.5,$('#kyStage').width/2,$('#kyStage').height/2));
@@ -4214,7 +4088,366 @@ function kyWire(){
   $('#kyLibClear').addEventListener('click',()=>{KY.items=[];kyLibView()});
   document.addEventListener('keydown',e=>{if($('#mtP-keys').hidden||!$('#tab-montage').classList.contains('on'))return;if(e.code==='Space'&&document.activeElement===$('#kyStage'))e.preventDefault()});
   kyVfWire();kyOptsView();kyRectUi();kyLibView();kyResView()}
-if(window.__NOVA_TEST)window.__ky={KY,kyVfExport,kyVfDraw,kyVfState,kyLoad,kyCompose,kyLayout,kyCut,kySetTime,kyExport,kyPvDraw};
+if(window.__NOVA_TEST)window.__ky={KY,kyLoad,kyCompose,kyLayout,kyCut,kySetTime,kyExport,kyPvDraw};
+
+/* ---------- Éléments clés : objet cliqué (contour automatique), suivi, animations dans la vidéo ---------- */
+const KO_FX={
+  highlight:{n:'Mise en avant (halo + pop + assombrir)',px:1},
+  halo:{n:'Halo doux',vl:'Taille %',v:[30,200,5,70]},
+  shape:{n:'Halo qui suit la forme',vl:'Force',v:[10,100,5,60],px:1},
+  outline:{n:'Contour',vl:'Épaisseur (px)',v:[1,8,1,2],px:1},
+  dim:{n:'Assombrir autour',vl:'Force %',v:[10,90,5,60]},
+  pop:{n:'Pop (grossit puis revient)',vl:'Taille %',v:[10,100,5,35],px:1},
+  beat:{n:'Battement',vl:'Taille %',v:[2,30,1,8],px:1},
+  grow:{n:'Grossir et rester',vl:'Grossir ×',v:[1.1,4,0.1,1.6],px:1,hold:1},
+  shake:{n:'Tremblement',vl:'Amplitude %',v:[2,60,1,12],px:1,hide:1},
+  float:{n:'Flottement',vl:'Hauteur %',v:[5,100,5,35],px:1,hide:1},
+  wiggle:{n:'Balancement',vl:'Angle °',v:[2,40,1,8],px:1,hide:1},
+  spin:{n:'Tour complet',vl:'Tours',v:[1,6,1,1],px:1,hide:1,hold:1},
+  slide:{n:"Glissade (d'ici à là)",px:1,hide:1,hold:1,dest:1},
+  vanish:{n:'Disparaître en fondu',px:1,hide:1,hold:1}};
+const KO={obj:null,cur:null,track:[],keys:[],clips:[],cid:0,pickDest:0,openId:0,tracking:false,cancel:false,lastPos:null,maskCv:null,maskFor:null,inited:false,
+  o:{tol:22,grad:true,outline:true,holes:true,fade:0.3,hideOrig:true,type:'highlight',range:'extract',showMask:true,showFx:true,mode:'replace',view:'vid'}};
+try{Object.assign(KO.o,JSON.parse(localStorage.getItem('nova_ko_opts')||'{}'))}catch(e){}
+const koSave=()=>{try{localStorage.setItem('nova_ko_opts',JSON.stringify(KO.o))}catch(e){}};
+const koEnd=c=>KO_FX[c.type].hold&&c.hold&&c.until>c.b?c.until:c.b;
+
+/* ---------- sélection d'un objet : on grandit une zone à partir du point cliqué ---------- */
+function koFind(d,W,H,win,px,py,c,thr2,R){
+  const x0=px-win.x,y0=py-win.y,near=(x,y)=>{if(x<0||y<0||x>=W||y>=H)return false;const i=(y*W+x)*4,a=d[i]-c[0],b=d[i+1]-c[1],e=d[i+2]-c[2];return a*a+b*b+e*e<=thr2};
+  if(near(x0,y0))return{x:px,y:py};
+  for(let r=1;r<=R;r++){for(let k=-r;k<=r;k++){for(const [x,y] of [[x0+k,y0-r],[x0+k,y0+r],[x0-r,y0+k],[x0+r,y0+k]])if(near(x,y))return{x:x+win.x,y:y+win.y}}}
+  return null}
+function koGrow(d,win,adds,subs,o){
+  const W=win.w,H=win.h,n=W*H,thr=o.tol/100*441,thr2=thr*thr,loc2=Math.pow(thr*0.38,2),cap2=Math.pow(thr*2.4,2);
+  const dist=(i,c)=>{const a=d[i]-c[0],b=d[i+1]-c[1],e=d[i+2]-c[2];return a*a+b*b+e*e},dpp=(i,j)=>{const a=d[i]-d[j],b=d[i+1]-d[j+1],e=d[i+2]-d[j+2];return a*a+b*b+e*e};
+  const st=new Int32Array(n);
+  const flood=seeds=>{const m=new Uint8Array(n);
+    for(const s of seeds){const p0=(s.y-win.y)*W+(s.x-win.x);if(s.x<win.x||s.y<win.y||s.x>=win.x+W||s.y>=win.y+H||m[p0])continue;
+      let sp=0;st[sp++]=p0;m[p0]=1;
+      while(sp){const p=st[--sp],x=p%W,y=(p-x)/W,pi=p*4;
+        const tryq=q=>{if(m[q])return;const qi=q*4,dc=dist(qi,s.c);if(dc<=thr2||(o.grad&&dc<=cap2&&dpp(qi,pi)<=loc2)){m[q]=1;st[sp++]=q}};
+        if(x>0)tryq(p-1);if(x<W-1)tryq(p+1);if(y>0)tryq(p-W);if(y<H-1)tryq(p+W)}}
+    return m};
+  const m=flood(adds);if(subs.length){const ms=flood(subs);for(let p=0;p<n;p++)if(ms[p])m[p]=0}
+  if(o.holes){const out=new Uint8Array(n);let sp=0;
+    const push=q=>{if(!m[q]&&!out[q]){out[q]=1;st[sp++]=q}};
+    for(let x=0;x<W;x++){push(x);push((H-1)*W+x)}for(let y=0;y<H;y++){push(y*W);push(y*W+W-1)}
+    while(sp){const p=st[--sp],x=p%W,y=(p-x)/W;if(x>0)push(p-1);if(x<W-1)push(p+1);if(y>0)push(p-W);if(y<H-1)push(p+W)}
+    for(let p=0;p<n;p++)if(!m[p]&&!out[p])m[p]=1}
+  if(o.outline){let sum=0,cnt=0;for(let p=0;p<n;p+=3)if(m[p]){sum+=0.299*d[p*4]+0.587*d[p*4+1]+0.114*d[p*4+2];cnt++}
+    const mean=cnt?sum/cnt:128,dark=Math.max(70,Math.min(110,mean*0.6));
+    for(let it=0;it<2;it++){const add=[];for(let p=0;p<n;p++){if(m[p])continue;const x=p%W,y=(p-x)/W;
+      if(!((x>0&&m[p-1])||(x<W-1&&m[p+1])||(y>0&&m[p-W])||(y<H-1&&m[p+W])))continue;
+      const i=p*4;if(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2]<=dark)add.push(p)}
+      for(const p of add)m[p]=1}}
+  return m}
+const koWin=(cx,cy,half,fw,fh)=>{const x=Math.max(0,Math.round(cx-half)),y=Math.max(0,Math.round(cy-half));return{x,y,w:Math.max(2,Math.min(fw,Math.round(cx+half))-x),h:Math.max(2,Math.min(fh,Math.round(cy+half))-y)}};
+function koObjAt(frame,t,opt){
+  const ob=KO.obj;if(!ob||!frame)return null;opt=opt||{};
+  const P=opt.pred||koPosAt(t)||KO.lastPos||ob.c0,half=opt.pick?400:Math.round(Math.max(ob.size.w,ob.size.h)*1.5+40),win=koWin(P.x,P.y,half,frame.width,frame.height);
+  const d=frame.getContext('2d').getImageData(win.x,win.y,win.w,win.h).data,thr2=Math.pow(KO.o.tol/100*441,2),R=opt.abs?4:Math.round(Math.max(ob.size.w,ob.size.h)*0.6+6);
+  const place=(arr)=>{const r=[];for(const s of arr){const pos=opt.abs?{x:s.x,y:s.y}:{x:Math.round(P.x+s.rx),y:Math.round(P.y+s.ry)},f=koFind(d,win.w,win.h,win,pos.x,pos.y,s.c,thr2,R);if(f)r.push({x:f.x,y:f.y,c:s.c})}return r};
+  const adds=place(ob.seeds);if(!adds.length)return{ok:false};
+  const m=koGrow(d,win,adds,place(ob.subs),KO.o);
+  let x0=1e9,y0=1e9,x1=-1,y1=-1,area=0,sx=0,sy=0;
+  for(let p=0;p<m.length;p++)if(m[p]){const x=p%win.w,y=(p-x)/win.w;if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;area++;sx+=x;sy+=y}
+  if(area<4||(ob.area0&&area<ob.area0*0.12))return{ok:false};
+  const rect={x:win.x+x0,y:win.y+y0,w:x1-x0+1,h:y1-y0+1},mk=new Uint8Array(rect.w*rect.h);
+  for(let y=0;y<rect.h;y++)for(let x=0;x<rect.w;x++)mk[y*rect.w+x]=m[(y0+y)*win.w+x0+x];
+  return{ok:true,rect,mask:mk,W:rect.w,H:rect.h,cx:win.x+sx/area,cy:win.y+sy/area,area,touches:x0===0||y0===0||x1===win.w-1||y1===win.h-1}}
+function koPosAt(t){
+  const T=KO.track;if(!T.length)return null;if(t<=T[0].t)return T[0];const L=T[T.length-1];if(t>=L.t)return L;
+  let lo=0,hi=T.length-1;while(hi-lo>1){const m=(lo+hi)>>1;if(T[m].t<=t)lo=m;else hi=m}
+  const a=T[lo],b=T[hi],u=(t-a.t)/Math.max(1e-6,b.t-a.t);return{t,x:kyLerp(a.x,b.x,u),y:kyLerp(a.y,b.y,u),rect:{x:kyLerp(a.rect.x,b.rect.x,u),y:kyLerp(a.rect.y,b.rect.y,u),w:kyLerp(a.rect.w,b.rect.w,u),h:kyLerp(a.rect.h,b.rect.h,u)}}}
+const kyLerp=(a,b,u)=>a+(b-a)*u;
+function koRectAt(t){
+  const p=koPosAt(t);if(p&&KO.obj)return p.rect;
+  const K=KO.keys;if(!K.length)return KY.rect;if(t<=K[0].t)return K[0].r;const Z=K[K.length-1];if(t>=Z.t)return Z.r;
+  for(let i=1;i<K.length;i++)if(t<=K[i].t){const a=K[i-1],b=K[i],u=(t-a.t)/Math.max(1e-6,b.t-a.t);return{x:kyLerp(a.r.x,b.r.x,u),y:kyLerp(a.r.y,b.r.y,u),w:kyLerp(a.r.w,b.r.w,u),h:kyLerp(a.r.h,b.r.h,u)}}
+  return Z.r}
+function koPick(x,y,mode){
+  const fr=KY.fc;if(!fr)return;x=Math.max(0,Math.min(fr.width-1,x));y=Math.max(0,Math.min(fr.height-1,y));
+  const px=fr.getContext('2d').getImageData(x,y,1,1).data,s={x,y,c:[px[0],px[1],px[2]],rx:0,ry:0};
+  if(mode==='replace'||!KO.obj){
+    KO.obj={seeds:[s],subs:[],t0:KY.t,c0:{x,y},size:{w:60,h:60},area0:0};KO.track=[];KO.lastPos={x,y};
+    const r=koObjAt(fr,KY.t,{pick:true,abs:true,pred:{x,y}});
+    if(!r||!r.ok){KO.obj=null;toast("Je n'ai rien trouvé à cet endroit : essaie un autre point ou augmente la tolérance");koView();return}
+    s.rx=x-r.cx;s.ry=y-r.cy;KO.obj.c0={x:r.cx,y:r.cy};KO.obj.size={w:r.rect.w,h:r.rect.h};KO.obj.area0=r.area;KO.lastPos={x:r.cx,y:r.cy}}
+  else{const P=KO.cur?{x:KO.cur.cx,y:KO.cur.cy}:KO.lastPos||KO.obj.c0;s.rx=x-P.x;s.ry=y-P.y;(mode==='sub'?KO.obj.subs:KO.obj.seeds).push(s);KO.track=[]}
+  KY.o.cut='obj';kySave();KY.man=null;KY.ai=null;kyOptsView();kyUpdate();koView();
+  if(KO.cur&&KO.cur.touches)toast("L'objet touche le bord de la zone analysée : baisse la tolérance si le contour déborde")}
+
+/* ---------- suivi de l'objet dans la vidéo ---------- */
+async function koTrack(){
+  if(!KO.obj||KO.tracking||KY.isImg||!KY.vid)return false;
+  KO.tracking=true;KO.cancel=false;koView();
+  try{
+    const ob=KO.obj,C=KO.clips,t0=ob.t0,fps=Math.min(30,Math.max(10,Math.round(kyFps()))),step=1/fps;
+    let lo=t0,hi=Math.min(KY.dur,t0+8);if(C.length){lo=Math.min(t0,...C.map(c=>c.a))-0.3;hi=Math.max(t0,...C.map(koEnd))+0.3}
+    lo=Math.max(0,lo);hi=Math.min(KY.dur,hi);
+    const pv=await kyVideo(KY.file,true),tmp=phCv(KY.fw,KY.fh),total=Math.max(1,Math.round((hi-lo)*fps)),S=[];let done=0,lost=0;
+    const run=async dir=>{let prev={x:ob.c0.x,y:ob.c0.y},lastR={x:Math.round(ob.c0.x-ob.size.w/2),y:Math.round(ob.c0.y-ob.size.h/2),w:ob.size.w,h:ob.size.h};
+      for(let t=dir>0?t0:t0-step;dir>0?t<=hi+1e-6:t>=lo-1e-6;t+=dir*step){
+        if(KO.cancel)throw new Error('annulé');pv.pause();await kySeek(pv,t);tmp.getContext('2d').drawImage(pv,0,0);
+        const r=koObjAt(tmp,t,{pred:prev});
+        if(r&&r.ok){prev={x:r.cx,y:r.cy};lastR=r.rect;S.push({t,x:r.cx,y:r.cy,rect:{...r.rect},ok:true})}else{lost++;S.push({t,x:prev.x,y:prev.y,rect:{...lastR},ok:false})}
+        done++;$('#koInfo').textContent=`Suivi en cours… ${Math.min(100,Math.round(done/total*100))} %`}};
+    await run(1);if(t0>lo)await run(-1);
+    S.sort((a,b)=>a.t-b.t);KO.track=S;KO.trackInfo={lo,hi,lost,n:S.length};return true
+  }catch(e){if(String(e&&e.message)!=='annulé'){console.warn('suivi:',e);kyErr('Le suivi a échoué : '+String((e&&e.message)||e).slice(0,140))}else toast('Suivi arrêté');return false}
+  finally{KO.tracking=false;KY.vfDirty=true;koView();kyUpdate()}}
+
+/* ---------- pendant que l'image change : on retrouve l'objet ---------- */
+function koOnUpdate(){
+  if(!KO.obj||!KY.fc){KO.cur=null;return}
+  const r=koObjAt(KY.fc,KY.t);
+  if(r&&r.ok){KO.cur=r;KO.lastPos={x:r.cx,y:r.cy};KY.rect={...r.rect};kyRectUi()}else{KO.cur=null}}
+function koMaskCanvas(c){
+  if(KO.maskFor===c&&KO.maskCv)return KO.maskCv;const W=c.W,H=c.H,cv=phCv(W,H),g=cv.getContext('2d'),id=g.createImageData(W,H),d=id.data,m=c.mask;
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const p=y*W+x;if(!m[p])continue;const edge=x===0||y===0||x===W-1||y===H-1||!m[p-1]||!m[p+1]||!m[p-W]||!m[p+W];d[p*4]=edge?255:88;d[p*4+1]=edge?255:200;d[p*4+2]=edge?255:255;d[p*4+3]=edge?255:80}
+  g.putImageData(id,0,0);KO.maskCv=cv;KO.maskFor=c;return cv}
+function koStageDraw(g,V){
+  if(KO.cur&&KO.cur.ok&&KO.o.showMask){const c=KO.cur,mc=koMaskCanvas(c);g.imageSmoothingEnabled=false;g.drawImage(mc,V.ox+c.rect.x*V.z,V.oy+c.rect.y*V.z,c.W*V.z,c.H*V.z)}
+  if((KO.clips.length)&&KO.o.showFx&&KY.rect&&$('#kyVf')&&$('#kyVf').open){const lay=kyVfLayer();if(lay&&KY.vfOn){g.imageSmoothingEnabled=true;g.drawImage(lay,V.ox,V.oy,KY.fw*V.z,KY.fh*V.z)}}}
+function koStageDown(e,p){
+  if(KO.pickDest){const c=KO.clips.find(x=>x.id===KO.pickDest);KO.pickDest=0;
+    if(c){const R=koRectAt(c.a)||KY.rect;c.dx=Math.round(p.fx-(R.x+R.w/2));c.dy=Math.round(p.fy-(R.y+R.h/2))}KY.vfDirty=true;koView();toast('Destination choisie ✓');return true}
+  if(KY.tool==='wand'){koPick(Math.round(p.fx),Math.round(p.fy),e.altKey?'sub':e.shiftKey?'add':KO.o.mode);return true}
+  return false}
+/* dès qu'on déplace le cadre à la main, l'objet cliqué est abandonné */
+function koDrop(){if(!KO.obj)return;KO.obj=null;KO.cur=null;KO.track=[];KO.trackInfo=null;if(KY.o.cut==='obj'){KY.o.cut='none';kySave()}kyOptsView();koView()}
+
+/* ---------- les animations ---------- */
+const koEase=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2,koEnv=(t,a,b,f)=>kySmooth(0,1,Math.max(0,Math.min(1,(t-a)/f,(b-t)/f)));
+function koPose(t,size,force){
+  const P={dx:0,dy:0,s:1,rot:0,a:1,haloE:0,haloS:70,shapeE:0,shapeV:60,outE:0,outV:2,dim:0,hide:false,px:false,active:false};
+  let clips=KO.clips;if(!clips.length&&force){const F=KO_FX[KO.o.type];clips=[{type:KO.o.type,a:t-0.7,b:t+999,v:F.v?F.v[3]:0,dx:0,dy:0,hold:false,until:0}]}
+  const f=Math.max(0.05,+KO.o.fade||0.3);
+  for(const c of clips){
+    const F=KO_FX[c.type],end=koEnd(c);if(t<c.a||t>end)continue;
+    P.active=true;if(F.hide)P.hide=true;if(F.px)P.px=true;
+    const dur=Math.max(0.05,c.b-c.a),p=Math.min(1,Math.max(0,(t-c.a)/dur)),tau=t-c.a,e=t<=c.b?koEnv(t,c.a,c.b,f):1,v=+c.v||0,pulse=0.12*Math.sin(tau*Math.PI*2*1.2);
+    const popK=Math.sin(Math.max(0,Math.min(1,tau/0.5))*Math.PI);
+    switch(c.type){
+      case'highlight':P.haloE=Math.max(P.haloE,e);P.haloS=70*(1+pulse);P.dim=Math.max(P.dim,0.55*e);P.s*=1+0.35*popK;break;
+      case'halo':P.haloE=Math.max(P.haloE,e);P.haloS=v*(1+pulse);break;
+      case'shape':P.shapeE=Math.max(P.shapeE,e);P.shapeV=v;break;
+      case'outline':P.outE=Math.max(P.outE,e);P.outV=v;break;
+      case'dim':P.dim=Math.max(P.dim,v/100*e);break;
+      case'pop':P.s*=1+v/100*popK;break;
+      case'beat':P.s*=1+v/100*(0.5+0.5*Math.sin(tau*Math.PI*2*1.6))*e;break;
+      case'grow':P.s*=1+(v-1)*koEase(Math.min(1,tau/0.35));break;
+      case'shake':{const A=v/100*size*e;P.dx+=A*(Math.sin(t*61)+Math.sin(t*37.7+1))/2;P.dy+=A*(Math.sin(t*53+2)+Math.sin(t*29.1))/2;P.rot+=0.2*(A/size)*Math.sin(t*47);break}
+      case'float':P.dy+=Math.sin(tau*Math.PI*2/1.8)*v/100*size*e;break;
+      case'wiggle':P.rot+=Math.sin(tau*Math.PI*2/1.2)*v*Math.PI/180*e;break;
+      case'spin':P.rot+=Math.PI*2*v*koEase(p);break;
+      case'slide':P.dx+=c.dx*koEase(p);P.dy+=c.dy*koEase(p);break;
+      case'vanish':P.a*=1-koEase(p);break}}
+  return P}
+const kyRgba=(hex,a)=>{const n=parseInt(String(hex).replace('#',''),16)||0;return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`};
+function koCutOf(el,ob){
+  if(!ob.mask)return kyCut(el,false);
+  const w=el.width,h=el.height,out=phCv(w,h),g=out.getContext('2d'),id=el.getContext('2d').getImageData(0,0,w,h),d=id.data;
+  for(let p=0;p<w*h;p++)d[p*4+3]=ob.mask[p]?255:0;g.putImageData(id,0,0);
+  if(KY.o.soft>0){const t=phCv(w,h),tg=t.getContext('2d');tg.filter=`blur(${KY.o.soft*0.35}px)`;tg.drawImage(out,0,0);return t}
+  return out}
+function koObFrame(frame,t){
+  if(KO.obj){const r=koObjAt(frame,t);if(r&&r.ok){KO.lastPos={x:r.cx,y:r.cy};return r}}
+  const R0=koRectAt(t);if(!R0)return null;
+  const x=Math.max(0,Math.min(frame.width-1,Math.round(R0.x))),y=Math.max(0,Math.min(frame.height-1,Math.round(R0.y))),w=Math.max(1,Math.min(frame.width-x,Math.round(R0.w))),h=Math.max(1,Math.min(frame.height-y,Math.round(R0.h)));
+  const rect={x,y,w,h},el=phCv(w,h);el.getContext('2d').drawImage(frame,x,y,w,h,0,0,w,h);const cut=kyCut(el,false),d=cut.getContext('2d').getImageData(0,0,w,h).data,mask=new Uint8Array(w*h);
+  for(let p=0;p<w*h;p++)mask[p]=d[p*4+3]>10?1:0;return{ok:true,rect,mask,W:w,H:h,cx:x+w/2,cy:y+h/2,cut}}
+/* l'objet d'origine est caché par un remplissage du décor (les trous sont comblés avec les couleurs autour) */
+function koPatch(frame,ob){
+  const p=8,R=ob.rect,x0=Math.max(0,R.x-p),y0=Math.max(0,R.y-p),x1=Math.min(frame.width,R.x+R.w+p),y1=Math.min(frame.height,R.y+R.h+p),pw=x1-x0,ph=y1-y0;if(pw<2||ph<2)return null;
+  let m=new Uint8Array(pw*ph);for(let y=0;y<R.h;y++)for(let x=0;x<R.w;x++)if(ob.mask[y*R.w+x]){const X=R.x-x0+x,Y=R.y-y0+y;if(X>=0&&Y>=0&&X<pw&&Y<ph)m[Y*pw+X]=1}
+  for(let it=0;it<6;it++){const n=m.slice();for(let y=0;y<ph;y++)for(let x=0;x<pw;x++){const q=y*pw+x;if(m[q])continue;if((x>0&&m[q-1])||(x<pw-1&&m[q+1])||(y>0&&m[q-pw])||(y<ph-1&&m[q+pw]))n[q]=1}m=n}
+  /* 1) on essaie de copier un morceau voisin du décor (donne le même grain) */
+  const fgd=frame.getContext('2d').getImageData(x0,y0,pw,ph).data,ring=[];
+  for(let y=1;y<ph-1;y++)for(let x=1;x<pw-1;x++){const q=y*pw+x;if(!m[q]&&(m[q-1]||m[q+1]||m[q-pw]||m[q+pw]))ring.push(q)}
+  let best=null;
+  for(const [dx,dy] of [[pw,0],[-pw,0],[0,ph],[0,-ph],[pw,ph],[-pw,ph],[pw,-ph],[-pw,-ph]]){
+    if(x0+dx<0||y0+dy<0||x0+dx+pw>frame.width||y0+dy+ph>frame.height)continue;
+    const sd=frame.getContext('2d').getImageData(x0+dx,y0+dy,pw,ph).data;let sc=0,k=0;
+    for(let i=0;i<ring.length;i+=2){const q=ring[i]*4;sc+=Math.abs(fgd[q]-sd[q])+Math.abs(fgd[q+1]-sd[q+1])+Math.abs(fgd[q+2]-sd[q+2]);k++}
+    sc=k?sc/k/3:999;if(!best||sc<best.sc)best={dx,dy,sc}}
+  if(best&&best.sc<38){
+    const cl=kyCv(pw,ph);cl.getContext('2d').drawImage(frame,x0+best.dx,y0+best.dy,pw,ph,0,0,pw,ph);
+    const mm=kyCv(pw,ph),mg2=mm.getContext('2d'),mi=mg2.createImageData(pw,ph);for(let q=0;q<pw*ph;q++)if(m[q])mi.data[q*4+3]=255;
+    const raw=kyCv(pw,ph);raw.getContext('2d').putImageData(mi,0,0);mg2.filter='blur(1.2px)';mg2.drawImage(raw,0,0);
+    const og=cl.getContext('2d');og.globalCompositeOperation='destination-in';og.drawImage(mm,0,0);return{c:cl,x:x0,y:y0}}
+  /* 2) sinon remplissage flou avec les couleurs autour */
+  const hole=phCv(pw,ph),hg=hole.getContext('2d');hg.drawImage(frame,x0,y0,pw,ph,0,0,pw,ph);const id=hg.getImageData(0,0,pw,ph),d=id.data,mk=hg.createImageData(pw,ph);
+  for(let q=0;q<pw*ph;q++){if(m[q]){d[q*4+3]=0;mk.data[q*4+3]=255}}hg.putImageData(id,0,0);
+  const acc=kyCv(pw,ph),ag=acc.getContext('2d');ag.drawImage(hole,0,0);
+  for(const lv of [2,4,8,16,32,64]){const sm=kyCv(Math.max(1,Math.ceil(pw/lv)),Math.max(1,Math.ceil(ph/lv))),sg=sm.getContext('2d');sg.imageSmoothingQuality='high';sg.drawImage(hole,0,0,sm.width,sm.height);
+    const up=kyCv(pw,ph),ug=up.getContext('2d');ug.imageSmoothingQuality='high';ug.drawImage(sm,0,0,pw,ph);ag.globalCompositeOperation='destination-over';ag.drawImage(up,0,0)}
+  /* s'il reste des trous (objet très grand), on les remplit avec la couleur moyenne des pixels autour */
+  const one=phCv(1,1),og1=one.getContext('2d');og1.imageSmoothingQuality='high';og1.drawImage(hole,0,0,1,1);const av=og1.getImageData(0,0,1,1).data;
+  ag.globalCompositeOperation='destination-over';ag.fillStyle=`rgb(${av[0]},${av[1]},${av[2]})`;ag.fillRect(0,0,pw,ph);
+  ag.globalCompositeOperation='source-over';
+  const mc=kyCv(pw,ph);mc.getContext('2d').putImageData(mk,0,0);
+  const out=kyCv(pw,ph),og=out.getContext('2d');og.drawImage(acc,0,0);og.globalCompositeOperation='destination-in';og.drawImage(mc,0,0);return{c:out,x:x0,y:y0}}
+function koDraw(g,W,H,t,frame,force){
+  if(!KY.rect&&!KO.obj)return false;
+  const R0=koRectAt(t);if(!R0)return false;const size0=Math.max(R0.w,R0.h,8),P=koPose(t,size0,force);if(!P.active)return false;
+  const needOb=(P.px||P.hide)&&frame,ob=needOb?koObFrame(frame,t):null,R=ob?ob.rect:R0,cx=R.x+R.w/2,cy=R.y+R.h/2,size=Math.max(R.w,R.h,8),px=cx+P.dx,py=cy+P.dy;
+  const o=KY.o;
+  if(P.dim>0){const r1=size*0.7,r2=r1+Math.max(size*1.4,60),gr=g.createRadialGradient(px,py,r1,px,py,r2);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,`rgba(0,0,0,${P.dim})`);g.fillStyle=gr;g.fillRect(0,0,W,H)}
+  if(P.haloE>0){const rad=size*P.haloS/100,gr=g.createRadialGradient(px,py,rad*0.1,px,py,rad);gr.addColorStop(0,kyRgba(o.glowCol,0.9*P.haloE));gr.addColorStop(0.45,kyRgba(o.glowCol,0.38*P.haloE));gr.addColorStop(1,kyRgba(o.glowCol,0));g.fillStyle=gr;g.beginPath();g.arc(px,py,rad,0,Math.PI*2);g.fill()}
+  if(P.hide&&ob&&KO.o.hideOrig){const pt=koPatch(frame,ob);if(pt)g.drawImage(pt.c,pt.x,pt.y)}
+  if(P.px&&ob&&frame){
+    const w=ob.rect.w,h=ob.rect.h,el=phCv(w,h);el.getContext('2d').drawImage(frame,ob.rect.x,ob.rect.y,w,h,0,0,w,h);const cut=ob.cut||koCutOf(el,ob);
+    const L={s:P.s,ws:Math.max(1,Math.round(w*P.s)),hs:Math.max(1,Math.round(h*P.s))},sh=P.shapeE>0.02?Math.round(P.shapeV*P.shapeE):0;
+    const fx=kyBake(cut,L,true,{glow:sh,outline:P.outE>0.3?P.outV:0,shadow:false});
+    g.save();g.globalAlpha=Math.max(0,Math.min(1,P.a));g.translate(px,py);g.rotate(P.rot);g.drawImage(fx.c,-fx.c.width/2,-fx.c.height/2);g.restore()}
+  return true}
+
+/* ---------- aperçu, lecture, barre des animations ---------- */
+function kyVfLayer(){
+  const W=KY.fw,H=KY.fh;if(!KY.fc||(!KY.rect&&!KO.obj))return null;
+  if(KY.vfLay&&!KY.vfDirty&&KY.vfLayT===KY.t&&KY.vfLay.width===W&&KY.vfLay.height===H)return KY.vfLay;
+  const lay=KY.vfLay&&KY.vfLay.width===W&&KY.vfLay.height===H?KY.vfLay:(KY.vfLay=kyCv(W,H)),lg=lay.getContext('2d');lg.clearRect(0,0,W,H);
+  KY.vfOn=koDraw(lg,W,H,KY.t,KY.fc,!KO.clips.length);KY.vfLayT=KY.t;KY.vfDirty=false;return lay}
+function kyMomBar(){const b=$('#kyMomBar');if(!b||!KY.dur)return;b.innerHTML=KO.clips.map(c=>`<i style="left:${(c.a/KY.dur*100).toFixed(2)}%;width:${Math.max(0.4,(koEnd(c)-c.a)/KY.dur*100).toFixed(2)}%"></i>`).join('')}
+function kyVfPreview(){
+  const cv=$('#kyVfPrev');if(!KY.fc||!cv||!$('#kyVf')||!$('#kyVf').open)return;const W=KY.fw,H=KY.fh,k=Math.min(1,900/W);
+  if(cv.width!==Math.round(W*k)){cv.width=Math.round(W*k);cv.height=Math.round(H*k)}
+  const g=cv.getContext('2d');g.drawImage(KY.fc,0,0,cv.width,cv.height);
+  const info=$('#kyVfInfo');if(!KY.rect&&!KO.obj){info.textContent="Choisis d'abord l'objet (outil 🪄 Objet, puis un clic sur l'objet).";return}
+  const lay=kyVfLayer();if(lay)g.drawImage(lay,0,0,cv.width,cv.height);
+  info.textContent=(!KO.clips.length?"Aperçu avec l'animation choisie à fond : ajoute une animation pour la placer dans le temps.":KY.vfOn?'Animation active à cet instant.':"Pas d'animation à cet instant.")}
+async function kyVfPlay(){
+  if(KY.isImg||!KY.vid)return;if(KY.playing){kyStop();return}
+  const C=KO.clips;if(!C.length){toast("Ajoute d'abord une animation (● Début de l'animation ici)");return}
+  KY.vfStop=Math.min(KY.dur,Math.max(...C.map(koEnd))+0.7);await kySetTime(Math.max(0,Math.min(...C.map(c=>c.a))-0.7));kyTogglePlay()}
+function koAddClip(type,a,b){const F=KO_FX[type],c={id:++KO.cid,type,a,b,v:F.v?F.v[3]:0,dx:Math.round(KY.fw*0.25),dy:0,hold:false,until:b+3};KO.clips.push(c);return c}
+function kyMark(k){
+  if(KY.isImg)return;
+  if(k==='a'){const c=koAddClip(KO.o.type,KY.t,Math.min(KY.dur,KY.t+3));KO.openId=c.id;koView();toast("Début posé : avance dans la vidéo puis clique « ■ Fin de l'animation ici »")}
+  else{const C=KO.clips;let c=C.find(x=>x.id===KO.openId)||C.filter(x=>x.a<=KY.t+0.01).sort((a,b)=>b.a-a.a)[0];
+    if(!c){toast("Pose d'abord un début (● Début de l'animation ici)");return}
+    if(KY.t<=c.a+0.1){toast("La fin doit être après le début : avance dans la vidéo");return}
+    c.b=KY.t;if(c.until<c.b)c.until=c.b+3;KO.openId=0;koView();toast(`Animation de ${(c.b-c.a).toFixed(1)} s enregistrée ✓`)}}
+
+/* ---------- export : calque transparent, images, vidéo finie ---------- */
+async function kyVfExport(kind){
+  if(KY.busy)return;kyErr('');const C=KO.clips;
+  if(KY.isImg||!KY.vid){kyErr("Cette fonction demande une vidéo.");return}
+  if(!KY.rect&&!KO.obj){kyErr("Choisis d'abord l'objet (outil 🪄 Objet).");return}
+  if(!C.length){kyErr("Ajoute au moins une animation.");return}
+  const fps=Math.min(60,Math.max(15,Math.round(kyFps()))),a0=Math.max(0,Math.min(...C.map(c=>c.a))),b0=Math.min(KY.dur,Math.max(...C.map(koEnd)));
+  if(b0-a0<0.1){kyErr("La durée est trop courte.");return}
+  const all=KO.o.range==='all',ra=kind==='mp4'?(all?0:Math.max(0,a0-1)):a0,rb=kind==='mp4'?(all?KY.dur:Math.min(KY.dur,b0+1)):b0;
+  if(kind==='mp4'&&rb-ra>240&&!confirm(`La vidéo finie dure ${mtFmt(rb-ra,0)} : la fabrication peut prendre longtemps dans le navigateur. Continuer ?`))return;
+  KY.busy=true;KY.cancel=false;$$('#kyVfWebm,#kyVfZip,#kyVfMp4').forEach(b=>b.disabled=true);
+  const W=KY.fw&~1,H=KY.fh&~1,N=Math.max(1,Math.round((b0-a0)*fps));let ff=null;
+  try{
+    if(KO.obj&&!(KO.track.length&&KO.trackInfo&&KO.trackInfo.lo<=a0+0.35&&KO.trackInfo.hi>=b0-0.35)){kyProg("Suivi de l'objet…",0.02);const ok=await koTrack();if(!ok)throw new Error('annulé')}
+    const zipFiles=[];if(kind!=='zip'){kyProg('Chargement du moteur…',0.02);ff=await mtEngine()}
+    const run=async()=>{
+      const cv=kyCv(W,H),g=cv.getContext('2d'),need=!!KO.obj||C.some(c=>KO_FX[c.type].px||KO_FX[c.type].hide);let pv=null,tmp=null,empty=null;const names=[];
+      if(need){pv=await kyVideo(KY.file,true);tmp=phCv(KY.fw,KY.fh)}
+      try{
+        for(let i=0;i<N;i++){
+          if(KY.cancel)throw new Error('annulé');const t=a0+i/fps;let bytes;
+          if(!C.some(c=>t>=c.a&&t<=koEnd(c))){if(!empty){g.clearRect(0,0,W,H);empty=new Uint8Array(await (await kyBlob(cv)).arrayBuffer())}bytes=empty.slice()}
+          else{let frame=null;if(need){pv.pause();await kySeek(pv,t);tmp.getContext('2d').drawImage(pv,0,0);frame=tmp}
+            g.clearRect(0,0,W,H);koDraw(g,W,H,t,frame,false);bytes=new Uint8Array(await (await kyBlob(cv)).arrayBuffer())}
+          if(kind==='zip')zipFiles.push({name:`calque_${String(i+1).padStart(5,'0')}.png`,data:bytes});
+          else{const n=`v${String(i+1).padStart(5,'0')}.png`;await ff.writeFile(n,bytes);names.push(n)}
+          if(i%3===0)kyProg(`Création des images… ${i+1} / ${N}`,(i+1)/N*0.7)}
+        if(kind==='zip'){kyProg('Fabrication du zip…',0.9);kyAddOut(`${kyStem()} - calque ${mtFmt(a0,1).replace(':','m')}s.zip`,zipStore(zipFiles),`${N} images ${W} × ${H}, ${fps} i/s, à poser sur la vidéo à partir de ${mtFmt(a0,2)}`);return}
+        const job=MT.cur={tot:Math.max(0.1,rb-ra),pct:0},iv=setInterval(()=>kyProg(`Encodage… ${Math.round(job.pct*100)} %`,0.7+job.pct*0.3),300);
+        try{
+          let out,args;
+          if(kind==='webm'){out='o.webm';args=['-framerate',String(fps),'-i','v%05d.png','-c:v','libvpx','-pix_fmt','yuva420p','-auto-alt-ref','0','-b:v','6M','-crf','8','-y',out]}
+          else{out='o.mp4';const src=await mtMount(ff,KY.file,mtExt(KY.file.name));
+            args=['-ss',ra.toFixed(3),'-t',(rb-ra).toFixed(3),'-i',src,'-framerate',String(fps),'-i','v%05d.png','-filter_complex',`[1:v]setpts=PTS+${(a0-ra).toFixed(3)}/TB[o];[0:v][o]overlay=0:0:eof_action=pass:format=auto,format=yuv420p[v]`,'-map','[v]','-map','0:a?','-c:v','libx264','-preset','veryfast','-crf','18','-c:a','aac','-b:a','192k','-movflags','+faststart','-y',out]}
+          names.push(out);const code=await ff.exec(args);if(code!==0)throw new Error('ffmpeg '+code);
+          const d=await ff.readFile(out),blob=new Blob([d],{type:kind==='webm'?'video/webm':'video/mp4'});
+          kyAddOut(kind==='webm'?`${kyStem()} - calque ${mtFmt(a0,1).replace(':','m')}s.webm`:`${kyStem()} - avec animation.mp4`,blob,kind==='webm'?`${W} × ${H}, fond transparent, à poser sur la vidéo à partir de ${mtFmt(a0,2)}`:`${mtFmt(rb-ra,1)} · ${fps} i/s`)
+        }finally{clearInterval(iv);MT.cur=null;if(kind==='mp4'){try{await ff.unmount('/src')}catch(e){}}}
+      }finally{if(ff)for(const n of names){try{await ff.deleteFile(n)}catch(e){}}}};
+    if(kind==='zip')await run();else await mtSerial(run)
+  }catch(e){if(String(e&&e.message)!=='annulé'){console.warn('dans la vidéo:',e);kyErr("L'export a échoué : "+String((e&&e.message)||e).slice(0,160));mtResetEngine(e)}else toast('Arrêté')}
+  finally{KY.busy=false;kyProg('');$$('#kyVfWebm,#kyVfZip,#kyVfMp4').forEach(b=>b.disabled=false)}}
+
+/* ---------- interface ---------- */
+const koRange=(k,min,max,step,lab)=>`<label class="ky-sl"><span>${lab}</span><input type="range" data-kosl="${k}" min="${min}" max="${max}" step="${step}" aria-label="${lab}"><b data-kov="${k}"></b></label>`;
+function koHtml(){return `<details open class="ky-det" id="kyVf"><summary>Choisir l'objet et l'animer dans la vidéo</summary>
+ <p class="muted sm" style="margin:8px 0 0">Les animations sont dessinées <b>sur la vidéo, à la place de l'objet</b>. Tu récupères un <b>calque transparent</b> de la taille de ta vidéo (à poser par-dessus dans CapCut / Premiere) ou la <b>vidéo finie</b>.</p>
+ <h4 class="ky-h4" style="margin-top:14px"><span class="yt-n">1</span> Choisir l'objet</h4>
+ <div class="ky-tools" style="margin-top:0"><button class="btn primary sm" id="koPick" type="button">🪄 Cliquer sur l'objet</button>
+  <div class="seg" id="koModeSeg"><button type="button" data-v="replace" aria-pressed="true" title="Un clic choisit un nouvel objet">Nouvel objet</button><button type="button" data-v="add" aria-pressed="false" title="Ajoute une partie à l'objet (ou Maj + clic)">＋ Ajouter une partie</button><button type="button" data-v="sub" aria-pressed="false" title="Retire une partie (ou Alt + clic)">－ Retirer une partie</button></div>
+  <button class="btn sm" id="koClear" type="button">Effacer l'objet</button></div>
+ <div class="ky-grid">${koRange('tol',2,80,1,'Tolérance')}<label class="mt-chk"><input type="checkbox" data-koc="grad"> Suivre les dégradés (ombres, reflets)</label><label class="mt-chk"><input type="checkbox" data-koc="outline"> Inclure le contour sombre</label><label class="mt-chk"><input type="checkbox" data-koc="holes"> Remplir les trous</label><label class="mt-chk"><input type="checkbox" data-koc="showMask"> Montrer le contour sur l'image</label></div>
+ <p class="muted sm" style="margin:6px 0 0">Clique sur l'objet dans l'image du haut : la zone de même couleur autour du clic est prise (contour bleu clair). Si c'est trop petit, monte la tolérance ou ajoute des parties (Maj + clic) ; si ça déborde, baisse-la ou retire une partie (Alt + clic).</p>
+ <div class="ky-tools"><button class="btn sm" id="koTrack" type="button">Suivre l'objet dans la vidéo</button><button class="btn sm" id="koTrackStop" type="button" hidden>Arrêter</button><span class="muted sm" id="koInfo"></span></div>
+ <h4 class="ky-h4" style="margin-top:14px"><span class="yt-n">2</span> Animations <span class="muted sm" style="text-transform:none;letter-spacing:0">(autant que tu veux, chacune de quand à quand)</span></h4>
+ <div id="koClips"></div>
+ <div class="ky-tools"><select id="koType" aria-label="Type d'animation">${Object.entries(KO_FX).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('')}</select><button class="btn sm" id="koAdd" type="button">＋ Ajouter à partir d'ici</button><span class="muted sm">ou utilise ● / ■ sous le lecteur</span></div>
+ <div class="ky-grid">${koRange('fade',0.1,1.5,0.1,'Apparition / disparition (s)')}<label class="mt-chk"><input type="checkbox" data-koc="hideOrig"> Cacher l'objet d'origine quand il bouge (remplissage du décor)</label></div>
+ <details class="snd-det"><summary>Position manuelle (si le suivi ne marche pas)</summary><div id="koKeys" style="margin-top:8px"></div><div class="ky-tools"><button class="btn sm" id="koKeyAdd" type="button">＋ Mémoriser la position à cet instant</button><button class="btn sm" id="koKeyClear" type="button">Position fixe</button></div><p class="muted sm" style="margin:6px 0 0">Place-toi à un instant, ajuste le cadre, mémorise ; l'effet suit ces positions. Sans objet cliqué uniquement.</p></details>
+ <h4 class="ky-h4" style="margin-top:14px"><span class="yt-n">3</span> Voir et enregistrer</h4>
+ <div class="ky-grid"><label class="mt-chk"><input type="checkbox" data-koc="showFx"> Voir l'animation sur l'image du haut</label></div>
+ <div class="ky-cvw" style="margin-top:10px"><canvas id="kyVfPrev" aria-label="Aperçu dans la vidéo" style="image-rendering:auto"></canvas></div>
+ <div class="ky-tools"><button class="btn sm" id="kyVfPlay" type="button">▶ Voir l'effet en lecture</button><span class="muted sm" id="kyVfInfo"></span></div>
+ <div class="btns left"><button class="btn primary" id="kyVfWebm" type="button">Calque transparent (WebM)</button><button class="btn" id="kyVfZip" type="button">Calque en images PNG (zip)</button><button class="btn" id="kyVfMp4" type="button">Vidéo avec les animations (MP4)</button>
+  <label class="ky-sl" style="min-width:230px"><span>Vidéo finie</span><select id="koRange" aria-label="Partie de la vidéo"><option value="extract">seulement les animations (+ 1 s)</option><option value="all">toute la vidéo</option></select></label></div>
+ </details>`}
+function koClipHtml(c){
+  const F=KO_FX[c.type],n=x=>(+x).toFixed(2);
+  return `<div class="ko-clip" data-cid="${c.id}"><select data-kc="type" aria-label="Type">${Object.entries(KO_FX).map(([k,v])=>`<option value="${k}"${k===c.type?' selected':''}>${v.n}</option>`).join('')}</select>
+   <label>de<input type="number" step="0.1" min="0" value="${n(c.a)}" data-kc="a" aria-label="Début (s)"></label><button class="btn sm" data-kcnow="a" type="button" title="Mettre l'instant actuel">⏱</button>
+   <label>à<input type="number" step="0.1" min="0" value="${n(c.b)}" data-kc="b" aria-label="Fin (s)"></label><button class="btn sm" data-kcnow="b" type="button" title="Mettre l'instant actuel">⏱</button><span class="muted sm">${(c.b-c.a).toFixed(1)} s</span>
+   ${F.v?`<label class="ky-sl"><span>${F.vl}</span><input type="range" data-kc="v" min="${F.v[0]}" max="${F.v[1]}" step="${F.v[2]}" value="${c.v}" aria-label="${F.vl}"><b>${c.v}</b></label>`:''}
+   ${F.dest?`<span class="ko-dest"><button class="btn sm" data-kdir="l" type="button" aria-label="Vers la gauche">←</button><button class="btn sm" data-kdir="u" type="button" aria-label="Vers le haut">↑</button><button class="btn sm" data-kdir="d" type="button" aria-label="Vers le bas">↓</button><button class="btn sm" data-kdir="r" type="button" aria-label="Vers la droite">→</button><button class="btn sm" data-kpick="${c.id}" type="button">📍 Choisir sur l'image</button><span class="muted sm">${c.dx>=0?'+':''}${c.dx}, ${c.dy>=0?'+':''}${c.dy} px</span></span>`:''}
+   ${F.hold?`<label class="mt-chk"><input type="checkbox" data-kc="hold"${c.hold?' checked':''}> rester ensuite jusqu'à<input type="number" step="0.5" min="0" value="${n(c.until)}" data-kc="until" aria-label="Rester jusqu'à (s)" style="width:78px"> s</label>`:''}
+   <button class="btn sm" data-kcrm type="button" aria-label="Retirer cette animation">✕</button></div>`}
+function koView(){
+  if(!$('#kyVf'))return;
+  $('#koClips').innerHTML=KO.clips.length?KO.clips.slice().sort((a,b)=>a.a-b.a).map(koClipHtml).join(''):'<p class="muted sm" style="margin:6px 0">Aucune animation pour le moment.</p>';
+  $$('#kyVf [data-kosl]').forEach(i=>{const k=i.dataset.kosl;if(document.activeElement!==i)i.value=KO.o[k]});$$('#kyVf [data-kov]').forEach(b=>b.textContent=KO.o[b.dataset.kov]);
+  $$('#kyVf [data-koc]').forEach(i=>i.checked=!!KO.o[i.dataset.koc]);setSeg('koModeSeg',KO.o.mode);$('#koType').value=KO.o.type;$('#koRange').value=KO.o.range;
+  $('#koTrack').disabled=!KO.obj||KO.tracking;$('#koTrackStop').hidden=!KO.tracking;$('#koClear').disabled=!KO.obj;
+  if(!KO.tracking){const T=KO.track,i=KO.trackInfo;$('#koInfo').textContent=!KO.obj?"Aucun objet choisi : clique sur 🪄 puis sur l'objet.":T.length&&i?`Suivi : ${i.n} positions de ${mtFmt(i.lo,1)} à ${mtFmt(i.hi,1)}${i.lost?` (${i.lost} images où l'objet est perdu : il garde sa dernière position)`:''}.`:`Objet choisi (${KO.obj.size.w} × ${KO.obj.size.h} px). S'il bouge, clique sur « Suivre l'objet dans la vidéo ».`}
+  const K=KO.keys;$('#koKeys').innerHTML=K.map((k,i)=>`<div class="ky-mom"><b>${mtFmt(k.t,2)}</b><span class="muted sm">x ${Math.round(k.r.x)}, y ${Math.round(k.r.y)} · ${Math.round(k.r.w)} × ${Math.round(k.r.h)}</span><button class="btn sm" data-kgo="${i}" type="button">Aller</button><button class="btn sm" data-krm="${i}" type="button" aria-label="Retirer">✕</button></div>`).join('');
+  KY.vfDirty=true;kyMomBar();kyStage();kyVfPreview()}
+function kyVfWire(){
+  $('#kyVfHost').innerHTML=koHtml();
+  $('#koType').innerHTML=Object.entries(KO_FX).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('');
+  $('#koPick').addEventListener('click',()=>{KY.tool='wand';kyOptsView();toast("Clique sur l'objet dans l'image du haut")});
+  segBind('koModeSeg',v=>{KO.o.mode=v;koSave();KY.tool='wand';kyOptsView()});
+  $('#koClear').addEventListener('click',()=>{KO.obj=null;KO.cur=null;KO.track=[];KO.trackInfo=null;if(KY.o.cut==='obj'){KY.o.cut='none';kySave()}kyOptsView();kyUpdate();koView()});
+  $('#kyVf').addEventListener('input',e=>{const t=e.target;
+    if(t.dataset.kosl){const k=t.dataset.kosl;KO.o[k]=+t.value;koSave();$$('#kyVf [data-kov]').forEach(b=>b.textContent=KO.o[b.dataset.kov]);if(k==='tol'){KO.track=[];kyUpdate()}KY.vfDirty=true;kyStage();kyVfPreview()}
+    if(t.dataset.koc){KO.o[t.dataset.koc]=t.checked;koSave();if(['grad','outline','holes'].includes(t.dataset.koc)){KO.track=[];kyUpdate()}KY.vfDirty=true;kyStage();kyVfPreview()}});
+  $('#koType').addEventListener('change',e=>{KO.o.type=e.target.value;koSave();KY.vfDirty=true;kyVfPreview()});$('#koRange').addEventListener('change',e=>{KO.o.range=e.target.value;koSave()});
+  $('#koAdd').addEventListener('click',()=>{if(KY.isImg){toast("Cette fonction demande une vidéo");return}koAddClip(KO.o.type,KY.t,Math.min(KY.dur,KY.t+3));koView()});
+  $('#koClips').addEventListener('input',e=>{const t=e.target,k=t.dataset&&t.dataset.kc;if(!k||k==='type')return;const c=KO.clips.find(x=>x.id===+t.closest('.ko-clip').dataset.cid);if(!c)return;
+    if(k==='v'){c.v=+t.value;t.nextElementSibling.textContent=c.v;KY.vfDirty=true;kyStage();kyVfPreview()}});
+  $('#koClips').addEventListener('change',e=>{const t=e.target,k=t.dataset&&t.dataset.kc;if(!k)return;const c=KO.clips.find(x=>x.id===+t.closest('.ko-clip').dataset.cid);if(!c)return;
+    if(k==='type'){c.type=t.value;const F=KO_FX[c.type];c.v=F.v?F.v[3]:0;if(F.dest&&!c.dx&&!c.dy)c.dx=Math.round(KY.fw*0.25)}
+    else if(k==='hold')c.hold=t.checked;else if(k==='v')c.v=+t.value;else{c[k]=Math.max(0,+t.value||0);if(k!=='until'&&c.b<=c.a)c.b=c.a+0.2;if(c.until<c.b)c.until=c.b+3}
+    KO.track=KO.track.length&&KO.trackInfo&&KO.trackInfo.lo<=Math.min(...KO.clips.map(x=>x.a))+0.35&&KO.trackInfo.hi>=Math.max(...KO.clips.map(koEnd))-0.35?KO.track:KO.track;koView()});
+  $('#koClips').addEventListener('click',e=>{
+    const row=e.target.closest('.ko-clip');if(!row)return;const c=KO.clips.find(x=>x.id===+row.dataset.cid);if(!c)return;
+    if(e.target.closest('[data-kcrm]')){KO.clips=KO.clips.filter(x=>x!==c);koView();return}
+    const n=e.target.closest('[data-kcnow]');if(n){c[n.dataset.kcnow]=KY.t;if(c.b<=c.a){if(n.dataset.kcnow==='a')c.b=c.a+0.5;else c.a=Math.max(0,c.b-0.5)}if(c.until<c.b)c.until=c.b+3;koView();return}
+    const d=e.target.closest('[data-kdir]');if(d){const D=Math.round(KY.fw*0.25),k=d.dataset.kdir;c.dx=k==='l'?-D:k==='r'?D:0;c.dy=k==='u'?-D:k==='d'?D:0;koView();return}
+    if(e.target.closest('[data-kpick]')){KO.pickDest=c.id;toast("Clique sur l'image du haut à l'endroit où l'objet doit arriver")}});
+  $('#koTrack').addEventListener('click',()=>koTrack());$('#koTrackStop').addEventListener('click',()=>{KO.cancel=true});
+  $('#koKeyAdd').addEventListener('click',()=>{if(!KY.rect){kyErr("Dessine d'abord un cadre autour de l'objet.");return}const K=KO.keys.filter(k=>Math.abs(k.t-KY.t)>0.02);K.push({t:KY.t,r:{...KY.rect}});K.sort((a,b)=>a.t-b.t);KO.keys=K;koView()});
+  $('#koKeyClear').addEventListener('click',()=>{KO.keys=[];koView()});
+  $('#koKeys').addEventListener('click',e=>{const g=e.target.closest('[data-kgo]'),r=e.target.closest('[data-krm]');
+    if(g){const k=KO.keys[+g.dataset.kgo];if(k){KY.rect={...k.r};kyRectUi();kySetTime(k.t)}}if(r){KO.keys.splice(+r.dataset.krm,1);koView()}});
+  $('#kyVfPlay').addEventListener('click',kyVfPlay);$('#kyMarkA').addEventListener('click',()=>kyMark('a'));$('#kyMarkB').addEventListener('click',()=>kyMark('b'));
+  $('#kyVfWebm').addEventListener('click',()=>kyVfExport('webm'));$('#kyVfZip').addEventListener('click',()=>kyVfExport('zip'));$('#kyVfMp4').addEventListener('click',()=>kyVfExport('mp4'));
+  $('#kyVf').addEventListener('toggle',()=>{kyStage();kyVfPreview()});
+  koView()}
+if(window.__NOVA_TEST)window.__ko={KO,koPick,koObjAt,koTrack,koDraw,koPose,koPatch,koAddClip,kyVfExport};
 
 /* ---------- export / import ---------- */
 function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
