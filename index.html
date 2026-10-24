@@ -854,6 +854,108 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 .ko-clip{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;padding:8px 10px;margin-bottom:8px;border:1px solid var(--line);border-radius:10px}.ko-clip label{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mut)}.ko-clip input[type=number]{width:74px;height:32px;padding:0 6px}.ko-clip select{height:34px;max-width:260px}.ko-dest{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .ky-mode{margin:0 0 10px}
 .ko-def{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mut)}.ko-def input{width:70px;height:32px;padding:0 6px}
+/* ====================== STUDIO VIDÉO ====================== */
+#tab-montage .st-nav{margin-bottom:14px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px}#tab-montage .st-nav button{white-space:nowrap}
+.st-home .st-hero{display:grid;gap:16px;padding:28px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 11%,var(--card)),var(--card) 60%);box-shadow:var(--shadow)}
+.st-hero-txt h2{margin:0 0 8px;font-size:28px;letter-spacing:-.3px}.st-hero-txt p{margin:0;color:var(--mut);max-width:64ch;line-height:1.55}
+.st-drop{padding:46px 20px;border-radius:18px;background:color-mix(in srgb,var(--soft) 55%,transparent)}.st-drop .mt-ic{font-size:44px;line-height:1}.st-drop b{font-size:19px}
+.st-feat{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}.st-feat li{padding:5px 12px;border-radius:99px;background:var(--soft);font-size:13px;color:var(--mut)}
+.st-h3{margin:26px 0 12px;font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:1px}
+.st-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.st-tile{display:flex;flex-direction:column;gap:4px;align-items:flex-start;text-align:left;padding:16px 18px;border-radius:16px;border:1px solid var(--line);background:var(--card);cursor:pointer;color:var(--ink);transition:.15s;font:inherit}
+.st-tile:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.22)}.st-tile b{font-size:15px}.st-ti{font-size:26px;line-height:1.2}
+.st-tiles-s{grid-template-columns:1fr 1fr;gap:10px}.st-tiles-s .st-tile{padding:12px 14px}
+/* barre du haut */
+.stu{--vh2:clamp(260px,calc(100vh - 575px),540px);display:flex;flex-direction:column;gap:12px}
+.st-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:16px;background:var(--card);box-shadow:var(--shadow)}
+.st-file{display:flex;flex-direction:column;min-width:0}.st-file b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:34ch}
+.st-chips{display:flex;flex-wrap:wrap;gap:6px}.st-chip{height:32px;padding:0 12px;border-radius:99px;border:1px solid var(--line);background:var(--soft);color:var(--mut);font:600 13px/1 inherit;cursor:pointer}
+.st-chip[aria-pressed=true]{color:var(--brand);border-color:var(--brand);background:color-mix(in srgb,var(--brand) 13%,transparent)}.st-chip:hover{color:var(--ink)}.st-add{border-style:dashed}
+/* lecteur + panneau */
+.st-body{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:12px;align-items:stretch}
+.st-stage{padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--card);box-shadow:var(--shadow);min-width:0}
+.st-vw{position:relative;height:var(--vh2);border-radius:12px;background:#000;overflow:hidden}
+.st-vw .mt-vid{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:contain;border-radius:0;cursor:pointer}
+.st-big{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;border:0;background:rgba(10,14,32,.62);backdrop-filter:blur(6px);color:#fff;font-size:30px;padding-left:6px;cursor:pointer;transition:.15s;z-index:3}
+.st-big:hover{background:color-mix(in srgb,var(--brand) 70%,#000);transform:scale(1.06)}
+.st-transport{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px}.st-transport .sp{flex:1}
+.st-ib{min-width:38px;height:38px;padding:0 8px;border-radius:11px;border:1px solid var(--line);background:var(--soft);color:var(--ink);cursor:pointer;font-size:15px;line-height:1}.st-ib:hover{border-color:var(--brand);color:var(--brand)}
+.st-play{min-width:52px;height:42px;border:0;background:linear-gradient(135deg,var(--lg1),var(--lg2));color:#04101c;font-size:18px;box-shadow:0 4px 16px color-mix(in srgb,var(--lg2) 50%,transparent)}.st-play:hover{color:#04101c;filter:brightness(1.1)}
+.st-time{margin-left:10px;font-variant-numeric:tabular-nums}.st-time b{font-size:19px}
+.st-rate{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mut)}.st-rate select{height:34px;padding:0 6px}
+.st-insp{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;background:var(--card);box-shadow:var(--shadow);overflow:hidden;min-width:0}
+.st-tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;padding:6px;background:var(--soft);flex:none}
+.st-tabs button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 2px 6px;border:0;border-radius:10px;background:transparent;color:var(--mut);font-weight:600;font-size:11.5px;cursor:pointer;white-space:nowrap}.st-tabs button span{font-size:17px;line-height:1.1}
+.st-tabs button:hover{color:var(--ink)}.st-tabs button[aria-selected=true]{background:var(--card);color:var(--brand);box-shadow:0 1px 8px rgba(0,0,0,.28)}
+.st-panels{padding:14px 16px;overflow:auto;flex:1;max-height:calc(var(--vh2) + 74px)}
+.st-h4{margin:18px 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.9px;color:var(--mut)}.st-h4:first-child{margin-top:0}
+.st-panel .mt-ctl{margin-top:0;gap:12px 18px}.st-panel .mt-pt input{width:104px}.st-panel .mt-keep b{font-size:20px}
+.st-panel .mt-fmt{margin-top:0}.st-panel .mt-fxr{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}.st-panel .mt-aud{margin-top:10px}
+.st-panel .mt-trk{grid-template-columns:22px minmax(80px,1fr) 1fr 48px}.st-panel .mt-lv{grid-column:2/5;text-align:left}
+.st-panel .mt-opts{margin:0;display:block}.st-panel .mt-opts p{min-width:0;margin:8px 0 0}.st-panel .mt-nm{flex-wrap:nowrap}.st-panel .mt-nm input{min-width:0}.st-panel .mt-set{margin:0}
+.st-panel .mt-nm input{width:100%}
+/* timeline */
+.st-tlw{padding:12px 14px 10px;border:1px solid var(--line);border-radius:16px;background:var(--card);box-shadow:var(--shadow)}
+.st-tltop{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}.st-tltop .sp{flex:1}
+.st-keep b{font-size:16px;font-variant-numeric:tabular-nums}
+.st-tracks{position:relative;display:grid;grid-template-columns:96px minmax(0,1fr);gap:4px 12px;padding-right:22px;align-items:stretch}
+.st-ruler-l{height:28px}
+.st-l{display:flex;align-items:center;min-height:32px;font-size:11px;line-height:1.2;color:var(--mut);font-weight:600}.st-l-v{min-height:80px}
+.st-ruler{position:relative;height:28px;cursor:pointer;font-size:11px;color:var(--mut);user-select:none;touch-action:none;background:linear-gradient(var(--soft),var(--soft)) bottom/100% 1px no-repeat}
+.st-ruler i{position:absolute;bottom:0;width:1px;height:6px;background:color-mix(in srgb,var(--mut) 55%,transparent)}.st-ruler i.mj{height:13px;background:var(--mut)}
+.st-ruler span{position:absolute;top:3px;transform:translateX(4px);font-variant-numeric:tabular-nums;white-space:nowrap}
+.st-tracks .mt-tl{height:80px;margin:0;border-radius:12px;border:1px solid var(--line)}.st-tracks .mt-tl canvas{border-radius:11px}.st-tracks .mt-ph{display:none}
+.st-lane{position:relative;min-height:36px;border-radius:9px;background:var(--soft);overflow:hidden;touch-action:none;user-select:none}
+.st-phw{position:absolute;left:108px;right:22px;top:0;bottom:0;pointer-events:none;z-index:7}
+.st-phl{position:absolute;top:0;bottom:0;left:0;width:2px;margin-left:-1px;background:#ff5fa2;box-shadow:0 0 10px rgba(255,95,162,.7)}
+.st-phl::before{content:"";position:absolute;top:0;left:-6px;border:7px solid transparent;border-top-color:#ff5fa2}
+/* blocs sur la timeline (animations, sous-titres) */
+.st-lane-h{position:absolute;inset:0;display:flex;align-items:center;padding:0 12px;font-size:12px;color:var(--mut);pointer-events:none}
+.st-blk{position:absolute;height:30px;display:flex;align-items:center;min-width:10px;border-radius:8px;padding:0 10px;font-size:12px;font-weight:600;color:#06131c;cursor:grab;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:1px solid rgba(255,255,255,.35);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.st-blk.an{background:linear-gradient(135deg,#ffb86b,#ff7ab0)}.st-blk.su{background:linear-gradient(135deg,#63e6ff,#8fb4ff)}
+.st-blk.on{outline:2px solid #fff;outline-offset:1px;z-index:2}.st-blk:active{cursor:grabbing}
+.st-blk .h{position:absolute;top:0;bottom:0;width:9px;cursor:ew-resize;background:rgba(0,0,0,.18)}.st-blk .h.l{left:0}.st-blk .h.r{right:0}
+.st-blk .hold{position:absolute;right:0;top:0;bottom:0;background:repeating-linear-gradient(45deg,rgba(0,0,0,.2) 0 4px,transparent 4px 8px);pointer-events:none}
+.st-keys{margin:8px 0 0}.st-keys kbd{font-size:11px}
+body.st-open .wrap{max-width:1500px}
+@media (max-width:1100px){.st-body{grid-template-columns:1fr}.st-panels{max-height:none}.stu{--vh2:clamp(220px,42vh,460px)}}
+@media (max-width:640px){.st-tracks{grid-template-columns:1fr}.st-l,.st-ruler-l{display:none}.st-phw{left:0}.st-time b{font-size:16px}.st-rate{display:none}}
+
+/* ---- studio : lecteur (calque d'animation, sous-titres), panneaux sous-titres / animations ---- */
+.st-vr{position:absolute;pointer-events:none;overflow:hidden;z-index:2}
+.st-ov{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.st-ov.pick{pointer-events:auto;cursor:crosshair}
+.st-hint{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:6;padding:8px 16px;border-radius:99px;background:rgba(10,14,32,.86);color:#fff;font-size:13px;font-weight:600;backdrop-filter:blur(6px);pointer-events:none;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;box-shadow:0 4px 18px rgba(0,0,0,.4)}
+.st-hold{position:absolute;height:30px;border-radius:0 8px 8px 0;background:repeating-linear-gradient(45deg,rgba(255,184,107,.55) 0 5px,rgba(255,184,107,.2) 5px 10px);pointer-events:none}
+.st-bt{overflow:hidden;text-overflow:ellipsis;pointer-events:none;padding:0 6px}
+.st-embed #suDrop,.st-embed #suEng{display:none!important}
+.st-embed .su-top{grid-template-columns:1fr;margin-bottom:10px}.st-embed .su-list{max-height:340px}
+.st-embed .su-row{grid-template-columns:48px 1fr 1fr;gap:6px}.st-embed .su-tx{grid-column:1/4}.st-embed .su-ac{grid-column:1/4}
+.st-embed .mt-fxr{gap:6px 10px}.st-embed .mt-fxr .lab{min-width:90px}.st-embed .seg{height:34px}.st-embed .seg button{padding:0 11px;font-size:13px}
+.st-embed h3.h3{font-size:14px}
+.an-s{margin-bottom:6px}.an-p{margin:0 0 8px}.an-n{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--brand);color:var(--brand-ink);font-size:11px;margin-right:6px;letter-spacing:0}
+.an-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.an-info{margin:6px 0;padding:9px 12px;border-radius:10px;background:var(--soft);font-size:13px;line-height:1.45;color:var(--mut)}.an-info b{color:var(--ink)}
+.an-det{margin:8px 0;border:1px solid var(--line);border-radius:10px;padding:8px 12px}.an-det>summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--mut)}.an-det[open]>summary{margin-bottom:8px}
+.an-det .mt-chk{display:flex;margin:6px 0}
+.an-fx{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.an-fx button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 4px;border-radius:11px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font:600 12px/1.2 inherit;cursor:pointer;transition:.12s}
+.an-fx button span{font-size:20px}.an-fx button:hover{border-color:var(--brand);transform:translateY(-1px)}.an-fx button.dis{opacity:.5}
+.an-def{display:flex;gap:8px;align-items:center;margin:10px 0 6px;font-size:13px;color:var(--mut)}.an-def input{width:70px}
+.an-clip{margin:8px 0;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}.an-clip.on{border-color:var(--brand);box-shadow:0 0 0 2px color-mix(in srgb,var(--brand) 30%,transparent)}
+.an-ch{display:flex;gap:8px;align-items:center}.an-ch select{flex:1;min-width:0}.an-ic{font-size:20px}
+.an-cr{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin-top:8px}.an-cr label{display:flex;gap:5px;align-items:center;font-size:12px;color:var(--mut)}.an-cr input{width:66px}
+.an-clip .ky-sl{margin-top:8px}
+.an-exp{display:flex;flex-direction:column;gap:8px;margin:10px 0}.an-exp .btn{justify-content:center}
+.an-prog{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}.an-prog .mt-bar{flex:1 1 100%}
+.an-empty{padding:8px 0}
+button.flash{animation:anflash .9s ease 2}@keyframes anflash{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--brand) 45%,transparent)}}
+
+.st-vw.picking .st-big{display:none!important}
+
+.st-panel:is([data-p=cut],[data-p=audio],[data-p=export]) .mt-fxr>.lab,.st-panel[data-p=cut] .mt-fmt>.lab{display:none}
+.st-file b,.st-file span{text-transform:none;letter-spacing:0}
+
+.st-kd{margin-top:8px;font-size:12px;color:var(--mut)}.st-kd summary{cursor:pointer;font-weight:600}.st-kd p{margin:6px 0 0}
 </style>
 </head>
 <body>
@@ -1009,87 +1111,167 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
       <div class="card"><h2>Rythme mois par mois</h2><div class="chartbox" id="aMonths"></div></div>
     </div>
   </section>
-  <!-- ===== MONTAGE ===== -->
+  <!-- ===== MONTAGE : STUDIO ===== -->
   <section class="tab" id="tab-montage">
-    <div class="mt-hub" id="mtHub" role="tablist" aria-label="Outils vidéo">
-      <button type="button" data-t="cut" aria-pressed="true">✂️ Couper</button><button type="button" data-t="gif" aria-pressed="false">🎞 GIF</button><button type="button" data-t="speed" aria-pressed="false">⏩ Vitesse</button><button type="button" data-t="sound" aria-pressed="false">🔊 Son</button><button type="button" data-t="compress" aria-pressed="false">🗜 Compresser</button><button type="button" data-t="convert" aria-pressed="false">🔄 Convertir</button><button type="button" data-t="join" aria-pressed="false">🔗 Assembler</button><button type="button" data-t="thumb" aria-pressed="false">🖼 Miniature</button><button type="button" data-t="subs" aria-pressed="false">💬 Sous-titres</button><button type="button" data-t="rec" aria-pressed="false">🎥 Enregistrer l'écran</button><button type="button" data-t="sounds" aria-pressed="false">🎵 Sons &amp; musiques</button><button type="button" data-t="keys" aria-pressed="false">🎯 Éléments clés</button>
+    <div class="mt-hub st-nav" id="mtHub" role="tablist" aria-label="Outils vidéo">
+      <button type="button" data-t="cut" aria-pressed="true">🎬 Studio</button><button type="button" data-t="rec" aria-pressed="false">🎥 Enregistrer l'écran</button><button type="button" data-t="sounds" aria-pressed="false">🎵 Sons &amp; musiques</button><button type="button" data-t="join" aria-pressed="false">🔗 Assembler</button><button type="button" data-t="compress" aria-pressed="false">🗜 Compresser</button><button type="button" data-t="convert" aria-pressed="false">🔄 Convertir</button><button type="button" data-t="thumb" aria-pressed="false">🖼 Miniature</button><button type="button" data-t="keys" aria-pressed="false">🎯 Image d'un élément</button>
     </div>
     <div id="mtCutWrap">
-    <div class="card" id="mtStep1">
-      <div class="head"><h2 id="mtH2">Montage</h2><span class="sub" id="mtH2s">couper tes vidéos, directement dans ton navigateur</span></div>
-      <p class="mt-hint" id="mtPresetHint" hidden></p>
-      <div class="mt-drop" id="mtDrop" tabindex="0">
-        <div class="mt-ic" aria-hidden="true">🎬</div>
-        <b>Dépose tes vidéos ici</b>
-        <span class="muted">une ou plusieurs à la fois (mp4, mkv, mov, webm…)</span>
-        <button class="btn primary" id="mtPick" type="button">Choisir des vidéos…</button>
-        <input type="file" id="mtFile" accept="video/*,.mkv,.mov,.mp4,.webm" multiple hidden>
+
+    <!-- 1. ACCUEIL -->
+    <div id="mtStep1" class="st-home">
+      <div class="st-hero">
+        <div class="st-hero-txt"><h2 id="mtH2">Studio vidéo</h2><p id="mtH2s">Dépose une vidéo : coupe-la, fais-en un GIF, change la vitesse, nettoie le son, ajoute des sous-titres ou anime un objet. Tout au même endroit, dans ton navigateur.</p></div>
+        <p class="mt-hint" id="mtPresetHint" hidden></p>
+        <div class="mt-drop st-drop" id="mtDrop" tabindex="0">
+          <div class="mt-ic" aria-hidden="true">🎬</div>
+          <b>Dépose ta vidéo ici</b>
+          <span class="muted">ou plusieurs à la fois (mp4, mkv, mov, webm…)</span>
+          <button class="btn primary" id="mtPick" type="button">Choisir des vidéos…</button>
+          <input type="file" id="mtFile" accept="video/*,.mkv,.mov,.mp4,.webm" multiple hidden>
+        </div>
+        <div id="mtList"></div>
+        <div class="btns left"><button class="btn primary" id="mtGo" type="button" disabled>Ouvrir dans le studio</button><button class="btn" id="mtClear" type="button" hidden>Tout retirer</button></div>
+        <ul class="st-feat"><li>✂️ Couper</li><li>🎞 GIF</li><li>⏩ Vitesse</li><li>🔊 Pistes &amp; son</li><li>📱 Format vertical</li><li>💬 Sous-titres</li><li>🎯 Objet animé</li></ul>
+        <p class="muted sm" style="margin:6px 0 0">Tes vidéos ne quittent jamais ton ordinateur. La première fois, le site télécharge un petit moteur de montage (environ 30 Mo), ensuite Chrome le garde.</p>
       </div>
-      <div id="mtList"></div>
-      <div class="mt-opts" id="mtOpts" hidden>
-        <div><span class="muted sm">Type de coupe</span>
-          <div class="seg" id="mtMode"><button data-v="fast" aria-pressed="true" type="button">Rapide</button><button data-v="exact" aria-pressed="false" type="button">Précise</button></div></div>
-        <p class="muted sm" id="mtModeTxt"></p>
-      </div>
-      <div class="mt-set" id="mtSet" hidden>
-        <div class="mt-line" id="mtDirRow"><span class="lab">Où enregistrer</span><span id="mtDirTxt"></span><button class="btn sm" id="mtDirPick" type="button">Choisir un dossier…</button><button class="btn sm" id="mtDirClear" type="button" hidden>Retirer</button></div>
-        <div class="mt-line"><span class="lab">Nom des fichiers</span><input id="mtTpl" maxlength="120" aria-label="Modèle de nom"><span class="muted sm">{nom} {debut} {fin} {duree} {n} {date} {format}</span></div>
-      </div>
-      <div class="btns"><button class="btn" id="mtClear" type="button" hidden>Tout retirer</button><button class="btn primary" id="mtGo" type="button" disabled>Valider</button></div>
-      <p class="muted sm" style="margin:12px 0 0">Tes vidéos ne quittent jamais ton ordinateur : tout est coupé dans le navigateur. La première fois, le site télécharge un petit moteur de montage (environ 30 Mo), ensuite Chrome le garde. Tes choix (type de coupe, volumes, format, dossier, nom des fichiers) sont mémorisés.</p>
+      <h3 class="st-h3">Autres outils</h3>
+      <div class="st-tiles" id="stTiles"></div>
     </div>
 
-    <div class="card" id="mtStep2" hidden>
-      <div class="head"><h2 id="mtTitle">Vidéo 1 sur 1</h2><span class="sub" id="mtSub"></span><span class="sp"></span><button class="btn sm" id="mtBack1" type="button">← Retour à la liste</button></div>
-      <div class="mt-nm"><label for="mtName">Nom de la vidéo finale</label><input id="mtName" maxlength="150" autocomplete="off" disabled aria-label="Nom de la vidéo finale"><span class="muted sm" id="mtNameExt"></span></div>
-      <div class="mt-eng" id="mtEng"></div>
-      <div class="mt-err" id="mtErr" hidden></div>
-      <div class="mt-vw" id="mtVw"><video id="mtVid" class="mt-vid" controls playsinline preload="metadata"></video><div class="mt-crop" id="mtCrop" hidden></div></div>
-      <div class="mt-tools"><span class="muted sm">Barre de coupe</span><button class="btn sm" id="mtZm" type="button" title="Dézoomer (touche -)">−</button><button class="btn sm" id="mtZp" type="button" title="Zoomer (touche +)">+</button><button class="btn sm" id="mtZ0" type="button" title="Tout voir (touche 0)">Tout voir</button><span class="muted sm" id="mtZinfo"></span><span class="sp"></span><span class="muted sm" id="mtWaveMsg"></span></div>
-      <div class="mt-tl" id="mtTl" aria-label="Zone à garder">
-        <canvas id="mtCv"></canvas>
-        <div class="mt-range" id="mtRange"></div>
-        <i class="mt-h a" id="mtHA" role="slider" tabindex="0" aria-label="Début de la coupe"></i>
-        <i class="mt-h b" id="mtHB" role="slider" tabindex="0" aria-label="Fin de la coupe"></i>
-        <b class="mt-ph" id="mtPh"></b>
+    <!-- 2. STUDIO -->
+    <div id="mtStep2" class="stu" hidden>
+      <div class="st-top">
+        <button class="btn sm" id="mtBack1" type="button">← Accueil</button>
+        <div class="st-file"><b id="mtTitle">Vidéo 1 sur 1</b><span class="muted sm" id="mtSub"></span></div>
+        <div class="st-chips" id="stChips"></div>
+        <span class="sp"></span>
+        <button class="btn sm" id="stUndo" type="button" title="Annuler (Ctrl+Z)">↶ Annuler</button>
+        <button class="btn sm" id="stJobs" type="button" hidden>⏳ Exports</button>
+        <button class="btn primary" id="mtNext" type="button">⬇ Exporter</button>
+        <button id="mtPrevVid" type="button" hidden>←</button><button id="mtSkip" type="button" hidden>Passer</button>
       </div>
-      <input type="range" id="mtPan" class="mt-pan" min="0" max="1000" value="0" aria-label="Défiler la barre" hidden>
-      <div class="mt-times"><span id="mtT0">0:00</span><span id="mtDur"></span></div>
-      <div class="mt-ctl">
+      <div class="st-body">
+        <div class="st-stage">
+          <div class="mt-eng" id="mtEng"></div>
+          <div class="mt-err" id="mtErr" hidden></div>
+          <div class="mt-vw st-vw" id="mtVw"><video id="mtVid" class="mt-vid" playsinline preload="metadata"></video><div class="mt-crop" id="mtCrop" hidden></div><div class="st-vr" id="stVr"><canvas class="st-ov" id="stOv"></canvas><div class="su-ov" id="suOv" hidden><span id="suOvT"></span></div></div><div class="st-hint" id="stHint" hidden></div><button class="st-big" id="stBig" type="button" aria-label="Lecture">▶</button></div>
+          <div class="st-transport" id="stTr">
+            <button class="st-ib" id="stStart" type="button" title="Début de la zone gardée" aria-label="Aller au début de la zone gardée">⏮</button>
+            <button class="st-ib" id="stF1" type="button" title="Image précédente ( , )" aria-label="Image précédente">◂</button>
+            <button class="st-ib st-play" id="stPlay" type="button" title="Lecture / pause (Espace)" aria-label="Lecture ou pause">▶</button>
+            <button class="st-ib" id="stF2" type="button" title="Image suivante ( . )" aria-label="Image suivante">▸</button>
+            <button class="st-ib" id="stEnd" type="button" title="Fin de la zone gardée" aria-label="Aller à la fin de la zone gardée">⏭</button>
+            <span class="st-time"><b id="stTime">0:00.00</b><span class="muted"> / <span id="stTot">0:00</span></span></span>
+            <span class="sp"></span>
+            <label class="st-rate">vitesse de l'aperçu<select id="stRate" aria-label="Vitesse de l'aperçu"><option value="0.5">× 0,5</option><option value="1" selected>× 1</option><option value="1.5">× 1,5</option><option value="2">× 2</option></select></label>
+            <button class="st-ib" id="stMute" type="button" title="Couper le son de l'aperçu" aria-label="Couper ou remettre le son">🔊</button>
+            <button class="st-ib" id="stFs" type="button" title="Plein écran" aria-label="Plein écran">⛶</button>
+          </div>
+        </div>
+        <aside class="st-insp" aria-label="Réglages">
+          <div class="st-tabs" id="stTabs" role="tablist"></div>
+          <div class="st-panels">
+            <div class="st-panel" data-p="cut">
+              <h4 class="st-h4">Zone gardée</h4>
+              <div class="mt-ctl">
         <div class="mt-pt"><label for="mtAIn">Début (A)</label><input id="mtAIn" inputmode="decimal"><button class="btn sm" id="mtSetA" type="button" title="Raccourci : I">Début ici</button></div>
         <div class="mt-pt"><label for="mtBIn">Fin (B)</label><input id="mtBIn" inputmode="decimal"><button class="btn sm" id="mtSetB" type="button" title="Raccourci : O">Fin ici</button></div>
         <div class="mt-keep"><span class="muted sm">Partie gardée</span><b id="mtKeep"></b><span class="muted sm" id="mtEst"></span></div>
         <button class="btn" id="mtPrev" type="button">▶ Voir la partie gardée</button>
       </div>
-      <div class="mt-fmt">
+      
+              <h4 class="st-h4">Vitesse</h4>
+              <div class="mt-fxr"><span class="lab">Vitesse</span><select id="mtSpeed" aria-label="Vitesse"><option value="0.25">× 0,25 (très lent)</option><option value="0.5">× 0,5 (ralenti)</option><option value="0.75">× 0,75</option><option value="1" selected>× 1 (normale)</option><option value="1.5">× 1,5</option><option value="2">× 2 (accéléré)</option><option value="3">× 3</option><option value="4">× 4</option></select><span class="muted sm" id="mtSpeedNote"></span></div>
+              <h4 class="st-h4">Format</h4>
+              <div class="mt-fmt">
         <span class="lab">Format de la vidéo</span>
-        <div class="seg" id="mtFmt"><button data-v="orig" aria-pressed="true" type="button">Original</button><button data-v="crop" aria-pressed="false" type="button">Vertical 9:16 · recadré</button><button data-v="blur" aria-pressed="false" type="button">Vertical 9:16 · fond flou</button></div>
+        <div class="seg" id="mtFmt"><button data-v="orig" aria-pressed="true" type="button">Original</button><button data-v="crop" aria-pressed="false" type="button">Vertical · recadré</button><button data-v="blur" aria-pressed="false" type="button">Vertical · fond flou</button></div>
         <label class="mt-posl" id="mtPosL" hidden>Cadrage <input type="range" id="mtPos" min="0" max="100" value="50" aria-label="Cadrage gauche droite"></label>
         <select id="mtSz" aria-label="Taille du vertical" hidden><option value="1080">1080 × 1920 (HD)</option><option value="720">720 × 1280 (plus rapide)</option></select>
       </div>
       <p class="muted sm" id="mtFmtNote" style="margin:6px 0 0" hidden></p>
-      <div class="mt-fx" id="mtFx"><h3 class="h3" style="margin:0">Effets</h3>
-        <div class="mt-fxr"><span class="lab">Sortie</span><div class="seg" id="mtOut"><button data-v="video" aria-pressed="true" type="button">Vidéo</button><button data-v="gif" aria-pressed="false" type="button">GIF animé</button></div>
+      
+              <p class="muted sm" id="mtFmtNote2" hidden></p>
+            </div>
+            <div class="st-panel" data-p="audio" hidden>
+              <h4 class="st-h4">Son</h4>
+              <div class="mt-fxr"><span class="lab">Son</span><label class="mt-chk"><input type="checkbox" id="mtClean"> Nettoyer le son (moins de bruit de fond, voix plus claire)</label><label class="mt-chk"><input type="checkbox" id="mtNorm"> Égaliser le volume</label></div>
+              <div class="mt-aud" id="mtAud" hidden></div>
+            </div>
+            <div class="st-panel" data-p="anim" hidden><div id="stPAnim"></div></div>
+            <div class="st-panel" data-p="subs" hidden><div id="stPSubs"></div></div>
+            <div class="st-panel" data-p="export" hidden>
+              <h4 class="st-h4">Sortie</h4>
+              <div class="mt-fx" id="mtFx">
+                <div class="mt-fxr"><span class="lab">Sortie</span><div class="seg" id="mtOut"><button data-v="video" aria-pressed="true" type="button">Vidéo</button><button data-v="gif" aria-pressed="false" type="button">GIF animé</button></div>
           <span id="mtGifOpt" hidden><select id="mtGw" aria-label="Largeur du GIF"><option value="320">320 px</option><option value="480">480 px</option><option value="640">640 px</option></select> <select id="mtGf" aria-label="Images par seconde"><option value="10">10 images/s</option><option value="15">15 images/s</option><option value="20">20 images/s</option></select></span></div>
-        <div class="mt-fxr"><span class="lab">Vitesse</span><select id="mtSpeed" aria-label="Vitesse"><option value="0.25">× 0,25 (très lent)</option><option value="0.5">× 0,5 (ralenti)</option><option value="0.75">× 0,75</option><option value="1" selected>× 1 (normale)</option><option value="1.5">× 1,5</option><option value="2">× 2 (accéléré)</option><option value="3">× 3</option><option value="4">× 4</option></select><span class="muted sm" id="mtSpeedNote"></span></div>
-        <div class="mt-fxr"><span class="lab">Son</span><label class="mt-chk"><input type="checkbox" id="mtClean"> Nettoyer le son (moins de bruit de fond, voix plus claire)</label><label class="mt-chk"><input type="checkbox" id="mtNorm"> Égaliser le volume</label></div>
-        <p class="muted sm" id="mtFxNote" style="margin:4px 0 0" hidden></p>
+                <p class="muted sm" id="mtFxNote" style="margin:4px 0 0" hidden></p>
+              </div>
+              <h4 class="st-h4">Nom du fichier</h4>
+              <div class="mt-nm"><input id="mtName" maxlength="150" autocomplete="off" disabled aria-label="Nom de la vidéo finale"><span class="muted sm" id="mtNameExt"></span></div>
+              <div class="mt-opts" id="mtOpts" hidden>
+                <h4 class="st-h4">Type de coupe</h4>
+                <div class="seg" id="mtMode"><button data-v="fast" aria-pressed="true" type="button">Rapide</button><button data-v="exact" aria-pressed="false" type="button">Précise</button></div>
+                <p class="muted sm" id="mtModeTxt"></p>
+              </div>
+              <div class="mt-set" id="mtSet" hidden>
+                <h4 class="st-h4">Où enregistrer</h4>
+                <div class="mt-line" id="mtDirRow"><span id="mtDirTxt"></span><button class="btn sm" id="mtDirPick" type="button">Choisir un dossier…</button><button class="btn sm" id="mtDirClear" type="button" hidden>Retirer</button></div>
+                <div class="mt-line"><span class="lab">Modèle de nom</span><input id="mtTpl" maxlength="120" aria-label="Modèle de nom"></div>
+                <span class="muted sm">{nom} {debut} {fin} {duree} {n} {date} {format}</span>
+              </div>
+              <div class="btns left"><button class="btn primary" id="stExp2" type="button">⬇ Exporter cette vidéo</button></div>
+              <p class="muted sm" style="margin:8px 0 0">L'export se fait en arrière-plan : tu peux continuer à régler les autres vidéos. Le résultat arrive dans « Exports ».</p>
+            </div>
+            <div class="st-panel" data-p="more" hidden>
+              <h4 class="st-h4">Avec cette vidéo</h4>
+              <div class="st-tiles st-tiles-s" id="stWith"></div>
+              <h4 class="st-h4">Autres outils</h4>
+              <div class="st-tiles st-tiles-s" id="stMore"></div>
+            </div>
+          </div>
+        </aside>
       </div>
-      <div class="mt-aud" id="mtAud" hidden></div>
-      <p class="muted sm" style="margin:10px 0 0">Raccourcis : <kbd>Espace</kbd> / <kbd>K</kbd> lecture · <kbd>←</kbd> <kbd>→</kbd> ±1 s (<kbd>Maj</kbd> = ±5 s) · <kbd>J</kbd> <kbd>L</kbd> ±10 s · <kbd>,</kbd> <kbd>.</kbd> ±0,1 s · <kbd>I</kbd> début ici · <kbd>O</kbd> fin ici · <kbd>+</kbd> <kbd>-</kbd> <kbd>0</kbd> zoom · <kbd>Ctrl</kbd>+<kbd>Z</kbd> annuler. Molette sur la barre = zoom (<kbd>Maj</kbd> = défiler).</p>
-      <div class="btns">
-        <button class="btn" id="mtPrevVid" type="button">← Précédente</button>
-        <button class="btn" id="mtSkip" type="button">Passer cette vidéo</button>
-        <button class="btn primary" id="mtNext" type="button">Suivant →</button>
+      <div class="st-tlw">
+        <div class="st-tltop">
+          <button class="btn sm" id="stIn" type="button" title="Début de la zone gardée ici (I)">⌈ Début ici</button>
+          <button class="btn sm" id="stOut" type="button" title="Fin de la zone gardée ici (O)">Fin ici ⌉</button>
+          <span class="st-keep"><span class="muted sm">gardé</span> <b id="stKeep"></b> <span class="muted sm" id="stEst"></span></span>
+          <span class="sp"></span>
+          <span class="muted sm" id="mtZinfo"></span><span class="muted sm" id="mtWaveMsg"></span>
+          <button class="btn sm" id="mtZm" type="button" title="Dézoomer (touche -)">−</button><button class="btn sm" id="mtZp" type="button" title="Zoomer (touche +)">+</button><button class="btn sm" id="mtZ0" type="button" title="Tout voir (touche 0)">Tout voir</button>
+        </div>
+        <div class="st-tracks" id="stTracks">
+          <div class="st-ruler-l"></div>
+          <div class="st-ruler" id="stRuler"></div>
+          <div class="st-l st-l-v">🎞 Vidéo<br>&amp; son</div>
+          <div class="mt-tl" id="mtTl" aria-label="Zone à garder">
+            <canvas id="mtCv"></canvas>
+            <div class="mt-range" id="mtRange"></div>
+            <i class="mt-h a" id="mtHA" role="slider" tabindex="0" aria-label="Début de la coupe"></i>
+            <i class="mt-h b" id="mtHB" role="slider" tabindex="0" aria-label="Fin de la coupe"></i>
+            <b class="mt-ph" id="mtPh"></b>
+          </div>
+          <div class="st-l" id="stLA" hidden>🎯 Animations</div>
+          <div class="st-lane" id="stLaneA" hidden></div>
+          <div class="st-l" id="stLS" hidden>💬 Sous-titres</div>
+          <div class="st-lane" id="stLaneS" hidden></div>
+          <div class="st-phw" aria-hidden="true"><b class="st-phl" id="stPhl"></b></div>
+        </div>
+        <input type="range" id="mtPan" class="mt-pan" min="0" max="1000" value="0" aria-label="Défiler la barre" hidden>
+        <div class="mt-times" hidden><span id="mtT0">0:00</span><span id="mtDur"></span></div>
+        <details class="st-kd"><summary>⌨ Raccourcis clavier</summary><p class="st-keys">Raccourcis : <kbd>Espace</kbd> lecture · <kbd>←</kbd> <kbd>→</kbd> ±1 s (<kbd>Maj</kbd> ±5 s) · <kbd>,</kbd> <kbd>.</kbd> ±0,1 s · <kbd>I</kbd> / <kbd>O</kbd> début / fin ici · <kbd>+</kbd> <kbd>-</kbd> <kbd>0</kbd> zoom · <kbd>Ctrl</kbd>+<kbd>Z</kbd> annuler. Molette sur la timeline = zoom (<kbd>Maj</kbd> = défiler).</p></details>
       </div>
     </div>
 
+    <!-- 3. EXPORTS -->
     <div class="card" id="mtStep3" hidden>
-      <div class="head"><h2>Tes vidéos coupées</h2><span class="sub" id="mtResSub"></span><span class="sp"></span><button class="btn sm" id="mtNew" type="button">Nouveau montage</button></div>
+      <div class="head"><h2>Tes exports</h2><span class="sub" id="mtResSub"></span><span class="sp"></span><button class="btn sm" id="mtBack2" type="button">← Retour au studio</button><button class="btn sm" id="mtNew" type="button">Nouveau montage</button></div>
       <div class="mt-eng" id="mtEng3"></div>
       <div class="mt-line" id="mtDirRow3"></div>
       <div id="mtRes"></div>
-      <div class="btns"><button class="btn" id="mtBack2" type="button">← Retoucher une coupe</button><button class="btn primary" id="mtAll" type="button" disabled>Tout télécharger</button></div>
+      <div class="btns"><button class="btn primary" id="mtAll" type="button" disabled>Tout télécharger</button></div>
       <p class="muted sm" style="margin:12px 0 0" id="mtResNote"></p>
     </div>
     </div>
@@ -2199,7 +2381,7 @@ const mtSavePrefs=()=>{try{localStorage.setItem(MT_PK,JSON.stringify(mtPrefs))}c
 MT.mode=mtPrefs.mode==='exact'?'exact':'fast';
 
 /* --- étapes --- */
-function mtShow(n){['mtStep1','mtStep2','mtStep3'].forEach((id,k)=>{$('#'+id).hidden=k!==n-1});if(n!==2){const v=$('#mtVid');v.pause()}}
+function mtShow(n){['mtStep1','mtStep2','mtStep3'].forEach((id,k)=>{$('#'+id).hidden=k!==n-1});$('#tab-montage').dataset.st=String(n);if(n!==2){const v=$('#mtVid');v.pause()}if(typeof stOnShow==='function')stOnShow(n)}
 
 /* --- dossier d'enregistrement (Chrome : le site écrit directement dans le dossier choisi) --- */
 const mtHasDir=typeof window.showDirectoryPicker==='function';
@@ -2215,15 +2397,17 @@ const mtDirLine=()=>!mtHasDir?'<span class="muted sm">Ton navigateur ne peut pas
 /* --- 1. choix des vidéos --- */
 const mtIsVideo=f=>/^video\//.test(f.type)||/\.(mp4|mkv|mov|webm|avi|m4v|flv|wmv)$/i.test(f.name);
 function mtAdd(list){const L=[...list].filter(mtIsVideo);if(!L.length){toast('Aucune vidéo reconnue dans ce que tu as déposé');return}
+  const first=!MT.files.length,n0=MT.files.length;
   L.forEach(f=>{if(!MT.files.some(x=>x.name===f.name&&x.size===f.size&&x.lastModified===f.lastModified))MT.files.push(f)});mtRenderList();
-  if(MT.files.length)mtEngine().then(()=>mtWarm(0)).catch(()=>{})}
+  if(MT.files.length)mtEngine().then(()=>mtWarm(0)).catch(()=>{});
+  if(first&&MT.files.length)mtStart(0);else if(MT.files.length>n0&&!$('#mtStep2').hidden)toast(`${MT.files.length-n0} vidéo${MT.files.length-n0>1?'s':''} ajoutée${MT.files.length-n0>1?'s':''} : choisis-la en haut du studio`)}
 function mtRenderList(){
   $('#mtList').innerHTML=MT.files.length?`<div class="mt-files">`+MT.files.map((f,i)=>`<div class="mt-file"><span class="nm">🎞 ${esc(f.name)}</span><span class="muted sm">${mtSize(f.size)}</span><button class="btn sm" data-rm="${i}" type="button" aria-label="Retirer">✕</button></div>`).join('')+`</div>`:'';
   $('#mtGo').disabled=!MT.files.length;$('#mtClear').hidden=!MT.files.length;$('#mtOpts').hidden=!MT.files.length;$('#mtSet').hidden=!MT.files.length;
-  $('#mtGo').textContent=MT.files.length>1?`Valider (${MT.files.length} vidéos)`:'Valider';
+  $('#mtGo').textContent=MT.files.length>1?`Ouvrir dans le studio (${MT.files.length} vidéos)`:'Ouvrir dans le studio';
   setSeg('mtMode',MT.mode);$('#mtModeTxt').textContent=MT_TXT[MT.mode];
   $('#mtDirTxt').innerHTML=mtDirLine();$('#mtDirPick').hidden=!mtHasDir;$('#mtDirPick').textContent=MT.dir?'Changer…':'Choisir un dossier…';$('#mtDirClear').hidden=!MT.dir;
-  if(document.activeElement!==$('#mtTpl'))$('#mtTpl').value=mtPrefs.tpl}
+  if(document.activeElement!==$('#mtTpl'))$('#mtTpl').value=mtPrefs.tpl;if(typeof stChips==='function')stChips()}
 $('#mtPick').addEventListener('click',()=>$('#mtFile').click());
 $('#mtFile').addEventListener('change',e=>{mtAdd(e.target.files);e.target.value=''});
 const mtDrop=$('#mtDrop');
@@ -2236,16 +2420,17 @@ $('#mtClear').addEventListener('click',()=>{MT.files=[];mtRenderList()});
 segBind('mtMode',v=>{MT.mode=v;mtPrefs.mode=v;mtSavePrefs();mtRenderList()});
 $('#mtTpl').addEventListener('input',e=>{mtPrefs.tpl=e.target.value||'{nom} (coupé {debut}-{fin})';mtSavePrefs()});
 $('#mtDirPick').addEventListener('click',mtDirPick);$('#mtDirClear').addEventListener('click',mtDirClear);
-$('#mtGo').addEventListener('click',()=>{if(!MT.files.length)return;MT.cuts=[];MT.jobs=[];MT.audSel=[];MT.duck=[];if(MT.dir&&!MT.dirOk)mtDirPerm().then(mtRenderList);mtEngine().catch(()=>{});mtOpen(0)});
+function mtStart(i){if(!MT.files.length)return;MT.cuts=[];MT.jobs=[];MT.audSel=[];MT.duck=[];if(MT.dir&&!MT.dirOk)mtDirPerm().then(mtRenderList);mtEngine().catch(()=>{});mtOpen(i||0)}
+$('#mtGo').addEventListener('click',()=>mtStart(0));
 
 /* --- 2. l'éditeur de coupe --- */
 const mtV=()=>$('#mtVid');
 function mtOpen(i){
   mtShow(2);MT.i=i;const f=MT.files[i];MT.dur=0;MT.preview=false;MT.wave=null;MT.thumbs=null;MT.hist=[];MT.view={s:0,e:0};
   if(MT.url)URL.revokeObjectURL(MT.url);MT.url=URL.createObjectURL(f);
-  $('#mtTitle').textContent=`Vidéo ${i+1} sur ${MT.files.length}`;$('#mtSub').textContent=`${f.name} · ${mtSize(f.size)} · module v${MT_VER}`;
-  $('#mtErr').hidden=true;$('#mtNext').textContent=i===MT.files.length-1?'Terminer ✓':'Suivant →';$('#mtPrevVid').disabled=i===0;
-  const v=mtV();v.muted=false;mtAEls.forEach(e=>e.pause());v.src=MT.url;v.load();mtEngView();mtDraw();mtFmtView();mtFxView();$('#mtName').value='';mtNameView();MT.aud=null;mtAudView();mtPrepAudio(i)}
+  $('#mtTitle').textContent=f.name;$('#mtSub').textContent=`${mtSize(f.size)}${MT.files.length>1?` · vidéo ${i+1} sur ${MT.files.length}`:''}`;
+  $('#mtErr').hidden=true;$('#mtNext').textContent=MT.files.length>1&&i<MT.files.length-1?'⬇ Exporter et suivante →':'⬇ Exporter';$('#mtPrevVid').disabled=i===0;
+  const v=mtV();v.muted=false;mtAEls.forEach(e=>e.pause());v.src=MT.url;v.load();mtEngView();mtDraw();mtFmtView();mtFxView();$('#mtName').value='';mtNameView();MT.aud=null;mtAudView();stOnOpen(f);mtPrepAudio(i)}
 mtV().addEventListener('loadedmetadata',()=>{
   const v=mtV();let d=v.duration;
   /* certains enregistrements (navigateur, OBS en direct) ne disent pas leur durée : on la fait calculer en allant à la fin */
@@ -2279,7 +2464,7 @@ function mtDraw(){
   mtNameView();
   const zoomed=MT.dur&&mtSpan()<MT.dur-0.01;$('#mtZinfo').textContent=zoomed?`zoom : ${mtFmt(mtSpan())} affichées`:'';
   const pan=$('#mtPan');pan.hidden=!zoomed;if(zoomed&&document.activeElement!==pan)pan.value=Math.round(MT.view.s/(MT.dur-mtSpan())*1000);
-  mtPaintSoon()}
+  if(typeof stDraw==='function')stDraw();mtPaintSoon()}
 let mtRaf=0;
 function mtPaintSoon(){if(mtRaf)return;mtRaf=requestAnimationFrame(()=>{mtRaf=0;mtPaint()})}
 function mtPaint(){
@@ -2344,7 +2529,7 @@ document.addEventListener('keydown',e=>{
   if(!$('#tab-montage').classList.contains('on')||$('#mtStep2').hidden||e.altKey)return;
   const tg=e.target,typing=tg&&(/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName)||tg.isContentEditable);if(typing||document.querySelector('dialog[open]'))return;
   const v=mtV();let h=true;
-  if((e.ctrlKey||e.metaKey)&&(e.key==='z'||e.key==='Z'))mtUndo();
+  if((e.ctrlKey||e.metaKey)&&(e.key==='z'||e.key==='Z')){if(STU.tab==='cut'||STU.tab==='audio'||STU.tab==='export'||STU.tab==='more')mtUndo();else h=false}
   else if(e.ctrlKey||e.metaKey)h=false;
   else if(e.key===' '||e.key==='k'||e.key==='K')v.paused?v.play().catch(()=>{}):v.pause();
   else if(e.key==='ArrowLeft')v.currentTime=Math.max(0,v.currentTime-(e.shiftKey?5:1));
@@ -2864,7 +3049,7 @@ async function mtSaveDir(j){
 function mtResults(){mtShow(3);mtRenderRes()}
 const mtFmtTag=j=>(j.out==='gif'?' · GIF':'')+(j.fmt==='crop'?' · vertical recadré':j.fmt==='blur'?' · vertical fond flou':'')+((+j.speed||1)!==1?` · vitesse ×${j.speed}`:'')+(j.norm?' · volume égalisé':'')+(j.clean?' · son nettoyé':'');
 function mtRenderRes(){
-  mtEngView();
+  mtEngView();if(typeof stJobs==='function')stJobs();
   const list=MT.files.map((f,i)=>({f,i,c:MT.cuts[i],j:MT.jobs[i]}));
   const done=list.filter(x=>x.j&&x.j.state==='ok').length,todo=list.filter(x=>x.j).length,pending=list.filter(x=>x.j&&x.j.state==='ok'&&x.j.blob).length;
   $('#mtResSub').textContent=todo?`${done} sur ${todo} prête${done>1?'s':''}`:'aucune vidéo à couper';
@@ -2913,7 +3098,7 @@ const MT_HINT={gif:"GIF : dépose ta vidéo, choisis l'extrait (A → B) dans l'
   sound:"Son : dépose ta vidéo et choisis la partie voulue. Dans « Effets » et « Pistes audio », nettoie le son, égalise le volume et règle chaque piste."};
 function hubShow(t){
   MT.tool=t;$$('#mtHub button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===t));
-  const cutLike=['cut','gif','speed','sound'].includes(t);$('#mtCutWrap').hidden=!cutLike;
+  const cutLike=t==='cut';$('#mtCutWrap').hidden=!cutLike;
   MT.preset=cutLike&&t!=='cut'?t:'';const hint=$('#mtPresetHint');hint.hidden=!MT.preset;hint.textContent=MT_HINT[MT.preset]||'';
   $$('#mtPages>.mt-page').forEach(p=>p.hidden=p.id!=='mtP-'+t);
   if(t==='cut')try{localStorage.setItem('nova_mt_tool','')}catch(e){}
@@ -3186,7 +3371,7 @@ function recWire(){
   $('#recGo').addEventListener('click',recStart);$('#recPause').addEventListener('click',recPause);$('#recStop').addEventListener('click',()=>recStop());
   $('#recNew').addEventListener('click',recReset);$('#recDl').addEventListener('click',()=>{if(RC.blob)phDownload(RC.blob,recName())});
   $('#recDir').addEventListener('click',async()=>{if(!RC.blob)return;const it={blob:RC.blob,outName:recName()},ok=await mtSaveDir(it);toast(ok?`Enregistré dans « ${MT.dir.name} » ✓`:"Impossible d'écrire dans le dossier : utilise « Télécharger »")});
-  $('#recCut').addEventListener('click',()=>{if(!RC.blob)return;const f=new File([RC.blob],recName(),{type:RC.blob.type,lastModified:Date.now()});MT.files=[];mtAdd([f]);hubShow('cut');mtShow(1);toast('Enregistrement ajouté : clique sur « Valider » pour le couper')});
+  $('#recCut').addEventListener('click',()=>{if(!RC.blob)return;const f=new File([RC.blob],recName(),{type:RC.blob.type,lastModified:Date.now()});MT.files=[];hubShow('cut');mtAdd([f]);toast('Enregistrement ouvert dans le studio')});
   recMics()}
 const recName=()=>{const d=new Date();return `Enregistrement ${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}h${pad(d.getMinutes())}.${RC.ext}`};
 const recFmt=s=>`${pad(Math.floor(s/60))}:${pad(Math.floor(s%60))}`;
@@ -3451,7 +3636,10 @@ function subsPageHtml(){return `<div class="card mt-page" id="mtP-subs" hidden>
  <p class="bad sm" id="suErr" hidden></p>
 </div>`}
 $('#mtPages').insertAdjacentHTML('beforeend',subsPageHtml());
-const suV=()=>$('#suVid');
+/* dans le studio, le lecteur est celui du montage et le texte est posé sur son image */
+const suV=()=>SU.emb?mtV():$('#suVid');
+const suH=()=>SU.emb?($('#stVr').clientHeight||240):(suV().clientHeight||240);
+const suOn=()=>SU.emb?(typeof STU!=='undefined'&&STU.tab==='subs'&&!$('#mtStep2').hidden&&$('#tab-montage').classList.contains('on')):!$('#mtP-subs').hidden;
 function suShow(){if(!SU.inited){SU.inited=true;suWire()}suView_();if(typeof toolsRender==='function')toolsRender('subs')}
 const subsShow=suShow;
 const suErr=t=>{$('#suErr').hidden=!t;$('#suErr').textContent=t||''};
@@ -3547,8 +3735,8 @@ function suList(){
   $('#suCount').textContent=`${SU.lines.length} ligne${SU.lines.length>1?'s':''}`;SU.act=-1;SU.caret=null;
   $$('#suList textarea').forEach(t=>t.disabled=SU.busy);$$('#suList input,#suList .su-ac button,#suList .su-n').forEach(t=>t.disabled=SU.busy||t.disabled);
   if(keep){const el=box.querySelector(`.su-row[data-i="${keep[0]}"] [data-f="${keep[1]}"]`);if(el)el.focus()}
-  $('#suBurn').disabled=!SU.file||!SU.lines.some(l=>l.t.trim())||SU.busy||!!(SU.info&&!SU.info.video);suTick(true)}
-function suSet(i,f,v){const l=SU.lines[i];if(!l)return;l[f]=v;suSave()}
+  $('#suBurn').disabled=!SU.file||!SU.lines.some(l=>l.t.trim())||SU.busy||!!(SU.info&&!SU.info.video);suTick(true);if(SU.emb)stLanes()}
+function suSet(i,f,v){const l=SU.lines[i];if(!l)return;l[f]=v;suSave();if(SU.emb)stLanes()}
 function suPlayLine(i){const l=SU.lines[i],v=suV();if(!l||!SU.file)return;v.currentTime=Math.max(0,l.s);SU.stopAt=l.e;v.play().catch(()=>{})}
 function suAct(a,i){
   const L=SU.lines,l=L[i];if(!l)return;
@@ -3566,7 +3754,7 @@ function suAct(a,i){
 
 /* --- aperçu : le texte suit la vidéo --- */
 function suOvStyle(){
-  const ov=$('#suOv'),tx=$('#suOvT'),o=SU.opts,st=SU_STYLES[o.style],ft=SU_FONTS[st.font],v=suV(),h=v.clientHeight||240,k=h/288,fs=SU_EM[o.size]*h;
+  const ov=$('#suOv'),tx=$('#suOvT'),o=SU.opts,st=SU_STYLES[o.style],ft=SU_FONTS[st.font],h=suH(),k=h/288,fs=SU_EM[o.size]*h;
   tx.style.fontFamily=`'${ft.css}','${ft.name}',${st.font==='anton'?'Impact,':''}Arial,sans-serif`;tx.style.fontWeight=st.font==='roboto'?'700':'400';tx.style.fontSize=fs+'px';tx.style.color=st.col;
   tx.style.webkitTextStroke=st.out?`${st.out*2*k}px #000`:'0';tx.style.paintOrder='stroke fill';tx.style.textShadow=st.sh?`${k*1.2}px ${k*1.2}px 0 rgba(0,0,0,.6)`:'none';
   tx.style.background=st.box?'rgba(0,0,0,.6)':'none';tx.style.padding=st.box?`${k*2}px ${k*5}px`:'0';
@@ -3598,9 +3786,9 @@ function suWire(){
   $('#suGo').addEventListener('click',suGenerate);$('#suCancel').addEventListener('click',suCancel);
   segBind('suStyle',v=>{SU.opts.style=v;suSaveOpts();suOvStyle()});segBind('suSize',v=>{SU.opts.size=v;suSaveOpts();suOvStyle()});segBind('suPos',v=>{SU.opts.pos=v;suSaveOpts();suOvStyle()});segBind('suMode',v=>{SU.opts.mode=v;suSaveOpts();suView_()});
   $('#suFollow').addEventListener('change',e=>{SU.opts.follow=e.target.checked;suSaveOpts()});
-  suV().addEventListener('play',()=>suTick());suV().addEventListener('timeupdate',()=>{if(suV().paused)suTick()});suV().addEventListener('seeked',()=>suTick());suV().addEventListener('loadedmetadata',()=>{suOvStyle();suTick(true)});window.addEventListener('resize',()=>{if(!$('#mtP-subs').hidden)suOvStyle()});
+  suV().addEventListener('play',()=>suTick());suV().addEventListener('timeupdate',()=>{if(suV().paused)suTick()});suV().addEventListener('seeked',()=>suTick());suV().addEventListener('loadedmetadata',()=>{suOvStyle();suTick(true)});window.addEventListener('resize',()=>{if(suOn())suOvStyle()});
   /* la durée d'un enregistrement d'écran est parfois inconnue : on la force */
-  suV().addEventListener('loadedmetadata',()=>{const v=suV();if(v.duration===Infinity){const back=()=>{v.removeEventListener('timeupdate',back);v.currentTime=0};v.addEventListener('timeupdate',back);v.currentTime=1e101}});
+  suV().addEventListener('loadedmetadata',()=>{const v=suV();if(!SU.emb&&v.duration===Infinity){const back=()=>{v.removeEventListener('timeupdate',back);v.currentTime=0};v.addEventListener('timeupdate',back);v.currentTime=1e101}});
   const list=$('#suList');
   list.addEventListener('click',e=>{const b=e.target.closest('[data-su]');if(!b)return;suAct(b.dataset.su,+b.closest('.su-row').dataset.i)});
   list.addEventListener('focusin',e=>{const r=e.target.closest('.su-row');if(!r)return;suSnap();const l=SU.lines[+r.dataset.i];if(l&&e.target.dataset.f==='t'&&SU.file&&suV().paused)suV().currentTime=Math.max(0,l.s+0.01)});
@@ -3614,7 +3802,7 @@ function suWire(){
   $('#suOffGo').addEventListener('click',()=>{const d=parseFloat($('#suOff').value);if(!d||!isFinite(d)){toast('Écris un décalage en secondes (négatif pour avancer)');return}suSnap();SU.lines.forEach(l=>{l.s=Math.max(0,l.s+d);l.e=Math.max(l.s+0.2,l.e+d)});$('#suOff').value='0';suList();suSave();toast(`Toutes les lignes décalées de ${d>0?'+':''}${d} s`)});
   $('#suReplGo').addEventListener('click',()=>{const a=$('#suFind').value,b=$('#suRepl').value;if(!a){toast('Écris le mot à chercher');return}suSnap();let n=0;const re=new RegExp(a.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');SU.lines.forEach(l=>{l.t=l.t.replace(re,()=>{n++;return b})});suList();suSave();toast(n?`${n} remplacement${n>1?'s':''}`:'Rien trouvé')});
   $('#suRewrap').addEventListener('click',()=>{suSnap();const n0=SU.lines.length;SU.lines=SU.lines.flatMap(l=>suSplit(l,SU.opts.max));suList();suSave();toast(SU.lines.length>n0?`${SU.lines.length-n0} ligne(s) coupée(s)`:'Aucune ligne trop longue')});
-  document.addEventListener('keydown',e=>{if($('#mtP-subs').hidden||!(e.ctrlKey||e.metaKey)||e.key.toLowerCase()!=='z'||e.shiftKey)return;if(document.activeElement&&document.activeElement.tagName==='TEXTAREA')return;e.preventDefault();suUndo()});
+  document.addEventListener('keydown',e=>{if(!suOn()||!(e.ctrlKey||e.metaKey)||e.key.toLowerCase()!=='z'||e.shiftKey)return;if(document.activeElement&&document.activeElement.tagName==='TEXTAREA')return;e.preventDefault();suUndo()});
   $$('[data-suex]').forEach(b=>b.addEventListener('click',()=>suExport(b.dataset.suex)));
   $('#suBurn').addEventListener('click',suBurn);
   window.addEventListener('beforeunload',e=>{if(SU.busy){e.preventDefault();e.returnValue=''}})}
@@ -3685,7 +3873,6 @@ function keysHtml(){return `<div class="card mt-page" id="mtP-keys" hidden>
  <div class="mt-drop mt-drop-s" id="kyDrop" tabindex="0"><b>Dépose une vidéo (ou une capture) ici</b><span class="muted">puis entoure ce qui t'intéresse : un objet, des cœurs, un texte, la barre d'objets…</span><button class="btn primary" id="kyPick" type="button">Choisir un fichier…</button><input type="file" id="kyFile" accept="video/*,image/*,.mkv,.mov,.mp4,.webm" hidden></div>
  <p class="bad sm" id="kyErr" hidden></p>
  <div id="kyWork" hidden>
-  <div class="ky-mode"><div class="seg" id="kyModeSeg"><button type="button" data-v="vid" aria-pressed="true">🎬 Animer l'objet dans la vidéo</button><button type="button" data-v="elem" aria-pressed="false">🖼 Sortir l'élément (agrandi, en image)</button></div></div>
   <div class="ky-bar"><div class="seg" id="kyToolSeg"><button type="button" data-v="rect" aria-pressed="true" title="Dessiner / déplacer le cadre">▭ Cadre</button><button type="button" data-v="wand" aria-pressed="false" title="Clique sur un objet pour le sélectionner (Maj = ajouter, Alt = retirer)">🪄 Objet</button><button type="button" data-v="pan" aria-pressed="false" title="Déplacer la vue (ou clic molette, ou barre d'espace)">✋ Vue</button></div>
    <select id="kyRatio" aria-label="Forme du cadre"><option value="0">Cadre libre</option><option value="1">Carré 1:1</option><option value="1.3333">4:3</option><option value="1.7778">16:9</option><option value="0.5625">9:16</option></select>
    <button class="btn sm" id="kyFit" type="button">Tout voir</button><button class="btn sm" id="kyZm" type="button" aria-label="Dézoomer">−</button><button class="btn sm" id="kyZp" type="button" aria-label="Zoomer">+</button><span class="muted sm" id="kyZl"></span>
@@ -3693,8 +3880,6 @@ function keysHtml(){return `<div class="card mt-page" id="mtP-keys" hidden>
   <canvas id="kyStage" height="430" tabindex="0" aria-label="Image de la vidéo : dessine un cadre autour de l'élément"></canvas>
   <div class="ky-time" id="kyTime"><button class="btn sm" id="kyPlay" type="button" aria-label="Lecture">▶</button><button class="btn sm" id="kyM1" type="button">−1 s</button><button class="btn sm" id="kyPf" type="button" aria-label="Image précédente">◀ image</button><button class="btn sm" id="kyNf" type="button" aria-label="Image suivante">image ▶</button><button class="btn sm" id="kyP1" type="button">+1 s</button>
    <input type="range" id="kyT" min="0" max="1" step="0.001" value="0" aria-label="Position dans la vidéo"><span class="muted sm" id="kyTl"></span></div>
-  <div class="ky-mbar" id="kyMomBar" aria-hidden="true" data-km="vid"></div>
-  <div class="ky-time" id="kyMark" data-km="vid"><button class="btn sm primary" id="kyMarkA" type="button" title="L'effet commence à l'instant affiché">● Début de l'animation ici</button><button class="btn sm" id="kyMarkB" type="button" title="L'effet se termine à l'instant affiché">■ Fin de l'animation ici</button><span class="muted sm">Lis la vidéo (▶) ou avance, et clique quand l'animation doit commencer, puis quand elle doit s'arrêter (le type se choisit dans « Animer l'objet »). Les animations apparaissent en bleu sous la barre.</span></div>
   <div class="ky-sel"><span class="lab">Cadre</span><label>x<input type="number" id="kyX" min="0" step="1"></label><label>y<input type="number" id="kyY" min="0" step="1"></label><label>largeur<input type="number" id="kyW" min="1" step="1"></label><label>hauteur<input type="number" id="kyH" min="1" step="1"></label><span class="muted sm" id="kyInfo"></span></div>
   <p class="muted sm" style="margin:6px 0 0">Molette = zoom · glisse pour dessiner le cadre · ← → = image par image (Maj = 1 s) · Ctrl + flèches = déplacer le cadre d'un pixel.</p>
   <div class="ky-two" data-km="elem">
@@ -3730,7 +3915,6 @@ function keysHtml(){return `<div class="card mt-page" id="mtP-keys" hidden>
    ${kyRange('power',0.3,2.5,0.1,'Intensité','')}<label>Durée (s)<input type="number" data-ko="secs" min="0.5" max="20" step="0.5"></label>
    <label>Images par seconde<select data-ko="fps"><option value="24">24</option><option value="30">30</option><option value="60">60</option></select></label>
    <label class="mt-chk" id="kyLiveW"><input type="checkbox" data-ko="live"> La zone bouge : utiliser la vidéo à partir de cet instant</label></div></details>
-  <div id="kyVfHost" data-km="vid"></div>
   <details open class="ky-det" data-km="elem"><summary>Enregistrer l'élément (image, séquence, GIF, vidéo)</summary>
    <div class="btns left" style="margin-top:6px"><button class="btn primary" id="kyPng" type="button">Image PNG</button><button class="btn" id="kySeq" type="button">Séquence PNG (zip)</button><button class="btn" id="kyWebm" type="button">WebM transparent</button><button class="btn" id="kyGif" type="button">GIF</button><button class="btn" id="kyMp4" type="button">Vidéo MP4</button><button class="btn" id="kyKeep" type="button">＋ Garder cet élément</button></div>
    <p class="muted sm" style="margin:6px 0 0">PNG / séquence PNG : fond transparent gardé, importable dans CapCut, Premiere, After Effects. MP4 : pas de transparence (le fond prend la couleur choisie). GIF : largeur <input type="number" data-ko="gifw" min="120" max="1200" step="10" style="width:84px;display:inline-block;height:28px"> px.</p>
@@ -3764,7 +3948,7 @@ async function kySetTime(t){
 function kyTimeUi(){const vp=$('#kyVfPlay');if(vp)vp.textContent=KY.playing?'⏸ Arrêter la lecture':'▶ Voir l\'effet en lecture';$('#kyT').value=KY.t;$('#kyTl').textContent=KY.isImg?'':`${mtFmt(KY.t,2)} / ${mtFmt(KY.dur,1)}`;$('#kyPlay').textContent=KY.playing?'⏸':'▶'}
 function kyPlayLoop(){
   if(!KY.playing)return;const v=KY.vid;if(v.ended||v.paused&&KY.t>=KY.dur-0.05){kyStop();return}
-  KY.t=v.currentTime;kyGrab();kyStage();kyTimeUi();if($('#kyVf').open)kyVfPreview();if(KY.vfStop!=null&&KY.t>=KY.vfStop){KY.vfStop=null;kyStop();return}if(!KY.sl||performance.now()-KY.sl>150){KY.sl=performance.now();kyUpdate()}requestAnimationFrame(kyPlayLoop)}
+  KY.t=v.currentTime;kyGrab();kyStage();kyTimeUi();if(KY.vfStop!=null&&KY.t>=KY.vfStop){KY.vfStop=null;kyStop();return}if(!KY.sl||performance.now()-KY.sl>150){KY.sl=performance.now();kyUpdate()}requestAnimationFrame(kyPlayLoop)}
 function kyStop(){KY.vfStop=null;KY.playing=false;if(KY.vid)KY.vid.pause();if(KY.vid){KY.t=KY.vid.currentTime;kyGrab()}kyStage();kyUpdate();kyTimeUi()}
 async function kyTogglePlay(){
   if(KY.isImg||!KY.vid)return;if(KY.playing){kyStop();return}
@@ -3838,7 +4022,7 @@ function kyStageWire(){
 /* ---------- l'élément : découpe, détourage ---------- */
 function kyCrop(frame){const r=KY.rect;if(!r||!frame)return null;const c=phCv(r.w,r.h);c.getContext('2d').drawImage(frame,r.x,r.y,r.w,r.h,0,0,r.w,r.h);return c}
 function kyUpdate(){
-  koOnUpdate();KY.cache={};KY.pvDirty=true;KY.vfDirty=true;KY.el=KY.fc?kyCrop(KY.fc):null;kyElView();kyPrInfo();if(KY.inited)kyVfPreview()}
+  koOnUpdate();KY.cache={};KY.pvDirty=true;KY.vfDirty=true;KY.el=KY.fc?kyCrop(KY.fc):null;kyElView();kyPrInfo()}
 const kySmooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t)};
 function kyCutAlpha(src,useManual){
   const o=KY.o,w=src.width,h=src.height,n=w*h,d=src.getContext('2d').getImageData(0,0,w,h).data,al=new Float32Array(n).fill(1);let any=false;
@@ -4050,7 +4234,7 @@ function kyOptsView(){
   $$('#mtP-keys [data-kseg]').forEach(s=>$$('button',s).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===String(o[s.dataset.kseg])))));
   $$('#mtP-keys [data-kv]').forEach(b=>{const k=b.dataset.kv;b.textContent=o[k]});
   $$('#mtP-keys .ky-cust').forEach(x=>x.style.display=o.out==='custom'?'':'none');
-  setSeg('kyModeSeg',KO.o.view);$$('#mtP-keys [data-km]').forEach(e=>{e.hidden=e.dataset.km!==KO.o.view||(e.id==='kyMark'||e.id==='kyMomBar')&&KY.isImg});setSeg('kyToolSeg',KY.tool);setSeg('kyPaintSeg',KY.paint);$('#kyRatio').value=String(KY.ratio);
+  $$('#mtP-keys [data-km]').forEach(e=>{e.hidden=e.dataset.km!==KO.o.view||(e.id==='kyMark'||e.id==='kyMomBar')&&KY.isImg});setSeg('kyToolSeg',KY.tool);setSeg('kyPaintSeg',KY.paint);$('#kyRatio').value=String(KY.ratio);
   $('#kyAPlay').textContent=KY.apOn?'⏸':'▶'}
 function kyWire(){
   const z=$('#kyDrop');
@@ -4060,7 +4244,6 @@ function kyWire(){
   $('#kyWork').addEventListener('dragover',e=>e.preventDefault());$('#kyWork').addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer.files[0])kyLoad(e.dataTransfer.files[0])});
   document.addEventListener('paste',e=>{if(!$('#tab-montage').classList.contains('on')||$('#mtP-keys').hidden)return;const f=[...(e.clipboardData&&e.clipboardData.files||[])].find(x=>/^image\//.test(x.type));if(f){e.preventDefault();kyLoad(f)}});
   kyStageWire();kyElWire();
-  segBind('kyModeSeg',v=>{KO.o.view=v;koSave();if(v==='elem'&&KY.tool==='wand')KY.tool='rect';kyOptsView();kyStage();if(v==='vid')kyVfPreview()});
   segBind('kyToolSeg',v=>{KY.tool=v;$('#kyStage').style.cursor=v==='pan'?'grab':'crosshair'});segBind('kyPaintSeg',v=>{KY.paint=v});
   $('#kyRatio').addEventListener('change',e=>{KY.ratio=+e.target.value});$('#kyBrush').addEventListener('input',e=>{KY.brush=+e.target.value});
   $('#kyFit').addEventListener('click',()=>{kyFit();kyStage()});$('#kyZp').addEventListener('click',()=>kyZoomAt(1.5,$('#kyStage').width/2,$('#kyStage').height/2));$('#kyZm').addEventListener('click',()=>kyZoomAt(1/1.5,$('#kyStage').width/2,$('#kyStage').height/2));
@@ -4089,7 +4272,7 @@ function kyWire(){
   $('#kyLibZip').addEventListener('click',async()=>{const files=[];for(const it of KY.items){const b=await kyItemPng(it);files.push({name:`${mtStem(it.file.name)} - ${it.name}.png`,data:new Uint8Array(await b.arrayBuffer())})}phDownload(zipStore(files),'elements.zip')});
   $('#kyLibClear').addEventListener('click',()=>{KY.items=[];kyLibView()});
   document.addEventListener('keydown',e=>{if($('#mtP-keys').hidden||!$('#tab-montage').classList.contains('on'))return;if(e.code==='Space'&&document.activeElement===$('#kyStage'))e.preventDefault()});
-  kyVfWire();kyOptsView();kyRectUi();kyLibView();kyResView()}
+  kyOptsView();kyRectUi();kyLibView();kyResView()}
 if(window.__NOVA_TEST)window.__ky={KY,kyLoad,kyCompose,kyLayout,kyCut,kySetTime,kyExport,kyPvDraw};
 
 /* ---------- Éléments clés : objet cliqué (contour automatique), suivi, animations dans la vidéo ---------- */
@@ -4111,6 +4294,7 @@ const KO_FX={
 const KO={obj:null,cur:null,track:[],keys:[],clips:[],cid:0,pickDest:0,openId:0,tracking:false,cancel:false,lastPos:null,maskCv:null,maskFor:null,inited:false,
   o:{tol:22,grad:true,outline:true,holes:true,fade:0.3,hideOrig:true,type:'highlight',range:'extract',showMask:true,showFx:true,mode:'replace',view:'vid',defDur:5}};
 try{Object.assign(KO.o,JSON.parse(localStorage.getItem('nova_ko_opts')||'{}'))}catch(e){}
+KO.o.view='elem';
 const koSave=()=>{try{localStorage.setItem('nova_ko_opts',JSON.stringify(KO.o))}catch(e){}};
 const koEnd=c=>KO_FX[c.type].hold&&c.hold&&c.until>c.b?c.until:c.b;
 
@@ -4197,7 +4381,7 @@ async function koTrack(){
         done++;$('#koInfo').textContent=`Suivi en cours… ${Math.min(100,Math.round(done/total*100))} %`}};
     await run(1);if(t0>lo)await run(-1);
     S.sort((a,b)=>a.t-b.t);KO.track=S;KO.trackInfo={lo,hi,lost,n:S.length};return true
-  }catch(e){if(String(e&&e.message)!=='annulé'){console.warn('suivi:',e);kyErr('Le suivi a échoué : '+String((e&&e.message)||e).slice(0,140))}else toast('Suivi arrêté');return false}
+  }catch(e){if(String(e&&e.message)!=='annulé'){console.warn('suivi:',e);anErr('Le suivi a échoué : '+String((e&&e.message)||e).slice(0,140))}else toast('Suivi arrêté');return false}
   finally{KO.tracking=false;KY.vfDirty=true;koView();kyUpdate()}}
 
 /* ---------- pendant que l'image change : on retrouve l'objet ---------- */
@@ -4210,8 +4394,7 @@ function koMaskCanvas(c){
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){const p=y*W+x;if(!m[p])continue;const edge=x===0||y===0||x===W-1||y===H-1||!m[p-1]||!m[p+1]||!m[p-W]||!m[p+W];d[p*4]=edge?255:88;d[p*4+1]=edge?255:200;d[p*4+2]=edge?255:255;d[p*4+3]=edge?255:80}
   g.putImageData(id,0,0);KO.maskCv=cv;KO.maskFor=c;return cv}
 function koStageDraw(g,V){
-  if(KO.cur&&KO.cur.ok&&KO.o.showMask){const c=KO.cur,mc=koMaskCanvas(c);g.imageSmoothingEnabled=false;g.drawImage(mc,V.ox+c.rect.x*V.z,V.oy+c.rect.y*V.z,c.W*V.z,c.H*V.z)}
-  if((KO.clips.length)&&KO.o.showFx&&KY.rect&&$('#kyVf')&&$('#kyVf').open){const lay=kyVfLayer();if(lay&&KY.vfOn){g.imageSmoothingEnabled=true;g.drawImage(lay,V.ox,V.oy,KY.fw*V.z,KY.fh*V.z)}}}
+  if(KO.cur&&KO.cur.ok&&KO.o.showMask){const c=KO.cur,mc=koMaskCanvas(c);g.imageSmoothingEnabled=false;g.drawImage(mc,V.ox+c.rect.x*V.z,V.oy+c.rect.y*V.z,c.W*V.z,c.H*V.z)}}
 function koStageDown(e,p){
   if(KO.pickDest){const c=KO.clips.find(x=>x.id===KO.pickDest);KO.pickDest=0;
     if(c){const R=koRectAt(c.a)||KY.rect;c.dx=Math.round(p.fx-(R.x+R.w/2));c.dy=Math.round(p.fy-(R.y+R.h/2))}KY.vfDirty=true;koView();toast('Destination choisie ✓');return true}
@@ -4311,43 +4494,24 @@ function kyVfLayer(){
   const W=KY.fw,H=KY.fh;if(!KY.fc||(!KY.rect&&!KO.obj))return null;
   if(KY.vfLay&&!KY.vfDirty&&KY.vfLayT===KY.t&&KY.vfLay.width===W&&KY.vfLay.height===H)return KY.vfLay;
   const lay=KY.vfLay&&KY.vfLay.width===W&&KY.vfLay.height===H?KY.vfLay:(KY.vfLay=kyCv(W,H)),lg=lay.getContext('2d');lg.clearRect(0,0,W,H);
-  KY.vfOn=koDraw(lg,W,H,KY.t,KY.fc,!KO.clips.length);KY.vfLayT=KY.t;KY.vfDirty=false;return lay}
-function kyMomBar(){const b=$('#kyMomBar');if(!b||!KY.dur)return;b.innerHTML=KO.clips.map(c=>`<i style="left:${(c.a/KY.dur*100).toFixed(2)}%;width:${Math.max(0.4,(koEnd(c)-c.a)/KY.dur*100).toFixed(2)}%"></i>`).join('')}
-function kyVfPreview(){
-  const cv=$('#kyVfPrev');if(!KY.fc||!cv||!$('#kyVf')||!$('#kyVf').open)return;const W=KY.fw,H=KY.fh,k=Math.min(1,900/W);
-  if(cv.width!==Math.round(W*k)){cv.width=Math.round(W*k);cv.height=Math.round(H*k)}
-  const g=cv.getContext('2d');g.drawImage(KY.fc,0,0,cv.width,cv.height);
-  const info=$('#kyVfInfo');if(!KY.rect&&!KO.obj){info.textContent="Choisis d'abord l'objet (outil 🪄 Objet, puis un clic sur l'objet).";return}
-  const lay=kyVfLayer();if(lay)g.drawImage(lay,0,0,cv.width,cv.height);
-  info.textContent=(!KO.clips.length?"Aperçu avec l'animation choisie à fond : ajoute une animation pour la placer dans le temps.":KY.vfOn?'Animation active à cet instant.':"Pas d'animation à cet instant.")}
-async function kyVfPlay(){
-  if(KY.isImg||!KY.vid)return;if(KY.playing){kyStop();return}
-  const C=KO.clips;if(!C.length){toast("Ajoute d'abord une animation (● Début de l'animation ici)");return}
-  KY.vfStop=Math.min(KY.dur,Math.max(...C.map(koEnd))+0.7);await kySetTime(Math.max(0,Math.min(...C.map(c=>c.a))-0.7));kyTogglePlay()}
+  KY.vfOn=koDraw(lg,W,H,KY.t,KY.fc,false);KY.vfLayT=KY.t;KY.vfDirty=false;return lay}
 function koAddClip(type,a,b){const F=KO_FX[type],c={id:++KO.cid,type,a,b,v:F.v?F.v[3]:0,dx:Math.round(KY.fw*0.25),dy:0,hold:false,until:b+3};KO.clips.push(c);return c}
-function kyMark(k){
-  if(KY.isImg)return;
-  if(k==='a'){const c=koAddClip(KO.o.type,KY.t,Math.min(KY.dur,KY.t+(+KO.o.defDur||5)));KO.openId=c.id;koView();toast("Début posé : avance dans la vidéo puis clique « ■ Fin de l'animation ici »")}
-  else{const C=KO.clips;let c=C.find(x=>x.id===KO.openId)||C.filter(x=>x.a<=KY.t+0.01).sort((a,b)=>b.a-a.a)[0];
-    if(!c){toast("Pose d'abord un début (● Début de l'animation ici)");return}
-    if(KY.t<=c.a+0.1){toast("La fin doit être après le début : avance dans la vidéo");return}
-    c.b=KY.t;if(c.until<c.b)c.until=c.b+3;KO.openId=0;koView();toast(`Animation de ${(c.b-c.a).toFixed(1)} s enregistrée ✓`)}}
 
 /* ---------- export : calque transparent, images, vidéo finie ---------- */
 async function kyVfExport(kind){
-  if(KY.busy)return;kyErr('');const C=KO.clips;
-  if(KY.isImg||!KY.vid){kyErr("Cette fonction demande une vidéo.");return}
-  if(!KY.rect&&!KO.obj){kyErr("Choisis d'abord l'objet (outil 🪄 Objet).");return}
-  if(!C.length){kyErr("Ajoute au moins une animation.");return}
+  if(KY.busy)return;anErr('');const C=KO.clips;
+  if(KY.isImg||!KY.vid){anErr("Cette fonction demande une vidéo.");return}
+  if(!KY.rect&&!KO.obj){anErr("Choisis d'abord l'objet (outil 🪄 Objet).");return}
+  if(!C.length){anErr("Ajoute au moins une animation.");return}
   const fps=Math.min(60,Math.max(15,Math.round(kyFps()))),a0=Math.max(0,Math.min(...C.map(c=>c.a))),b0=Math.min(KY.dur,Math.max(...C.map(koEnd)));
-  if(b0-a0<0.1){kyErr("La durée est trop courte.");return}
+  if(b0-a0<0.1){anErr("La durée est trop courte.");return}
   const all=KO.o.range==='all',ra=kind==='mp4'?(all?0:Math.max(0,a0-1)):a0,rb=kind==='mp4'?(all?KY.dur:Math.min(KY.dur,b0+1)):b0;
   if(kind==='mp4'&&rb-ra>240&&!confirm(`La vidéo finie dure ${mtFmt(rb-ra,0)} : la fabrication peut prendre longtemps dans le navigateur. Continuer ?`))return;
   KY.busy=true;KY.cancel=false;$$('#kyVfWebm,#kyVfZip,#kyVfMp4').forEach(b=>b.disabled=true);
   const W=KY.fw&~1,H=KY.fh&~1,N=Math.max(1,Math.round((b0-a0)*fps));let ff=null;
   try{
-    if(KO.obj&&!(KO.track.length&&KO.trackInfo&&KO.trackInfo.lo<=a0+0.35&&KO.trackInfo.hi>=b0-0.35)){kyProg("Suivi de l'objet…",0.02);const ok=await koTrack();if(!ok)throw new Error('annulé')}
-    const zipFiles=[];if(kind!=='zip'){kyProg('Chargement du moteur…',0.02);ff=await mtEngine()}
+    if(KO.obj&&!(KO.track.length&&KO.trackInfo&&KO.trackInfo.lo<=a0+0.35&&KO.trackInfo.hi>=b0-0.35)){anProg("Suivi de l'objet…",0.02);const ok=await koTrack();if(!ok)throw new Error('annulé')}
+    const zipFiles=[];if(kind!=='zip'){anProg('Chargement du moteur…',0.02);ff=await mtEngine()}
     const run=async()=>{
       const cv=kyCv(W,H),g=cv.getContext('2d'),need=!!KO.obj||C.some(c=>KO_FX[c.type].px||KO_FX[c.type].hide);let pv=null,tmp=null,empty=null;const names=[];
       if(need){pv=await kyVideo(KY.file,true);tmp=phCv(KY.fw,KY.fh)}
@@ -4359,9 +4523,9 @@ async function kyVfExport(kind){
             g.clearRect(0,0,W,H);koDraw(g,W,H,t,frame,false);bytes=new Uint8Array(await (await kyBlob(cv)).arrayBuffer())}
           if(kind==='zip')zipFiles.push({name:`calque_${String(i+1).padStart(5,'0')}.png`,data:bytes});
           else{const n=`v${String(i+1).padStart(5,'0')}.png`;await ff.writeFile(n,bytes);names.push(n)}
-          if(i%3===0)kyProg(`Création des images… ${i+1} / ${N}`,(i+1)/N*0.7)}
-        if(kind==='zip'){kyProg('Fabrication du zip…',0.9);kyAddOut(`${kyStem()} - calque ${mtFmt(a0,1).replace(':','m')}s.zip`,zipStore(zipFiles),`${N} images ${W} × ${H}, ${fps} i/s, à poser sur la vidéo à partir de ${mtFmt(a0,2)}`);return}
-        const job=MT.cur={tot:Math.max(0.1,rb-ra),pct:0},iv=setInterval(()=>kyProg(`Encodage… ${Math.round(job.pct*100)} %`,0.7+job.pct*0.3),300);
+          if(i%3===0)anProg(`Création des images… ${i+1} / ${N}`,(i+1)/N*0.7)}
+        if(kind==='zip'){anProg('Fabrication du zip…',0.9);anAddOut(`${kyStem()} - calque ${mtFmt(a0,1).replace(':','m')}s.zip`,zipStore(zipFiles),`${N} images ${W} × ${H}, ${fps} i/s, à poser sur la vidéo à partir de ${mtFmt(a0,2)}`);return}
+        const job=MT.cur={tot:Math.max(0.1,rb-ra),pct:0},iv=setInterval(()=>anProg(`Encodage… ${Math.round(job.pct*100)} %`,0.7+job.pct*0.3),300);
         try{
           let out,args;
           if(kind==='webm'){out='o.webm';args=['-framerate',String(fps),'-i','v%05d.png','-c:v','libvpx','-pix_fmt','yuva420p','-auto-alt-ref','0','-b:v','6M','-crf','8','-y',out]}
@@ -4369,88 +4533,361 @@ async function kyVfExport(kind){
             args=['-ss',ra.toFixed(3),'-t',(rb-ra).toFixed(3),'-i',src,'-framerate',String(fps),'-i','v%05d.png','-filter_complex',`[1:v]setpts=PTS+${(a0-ra).toFixed(3)}/TB[o];[0:v][o]overlay=0:0:eof_action=pass:format=auto,format=yuv420p[v]`,'-map','[v]','-map','0:a?','-c:v','libx264','-preset','veryfast','-crf','18','-c:a','aac','-b:a','192k','-movflags','+faststart','-y',out]}
           names.push(out);const code=await ff.exec(args);if(code!==0)throw new Error('ffmpeg '+code);
           const d=await ff.readFile(out),blob=new Blob([d],{type:kind==='webm'?'video/webm':'video/mp4'});
-          kyAddOut(kind==='webm'?`${kyStem()} - calque ${mtFmt(a0,1).replace(':','m')}s.webm`:`${kyStem()} - avec animation.mp4`,blob,kind==='webm'?`${W} × ${H}, fond transparent, à poser sur la vidéo à partir de ${mtFmt(a0,2)}`:`${mtFmt(rb-ra,1)} · ${fps} i/s`)
+          anAddOut(kind==='webm'?`${kyStem()} - calque ${mtFmt(a0,1).replace(':','m')}s.webm`:`${kyStem()} - avec animation.mp4`,blob,kind==='webm'?`${W} × ${H}, fond transparent, à poser sur la vidéo à partir de ${mtFmt(a0,2)}`:`${mtFmt(rb-ra,1)} · ${fps} i/s`)
         }finally{clearInterval(iv);MT.cur=null;if(kind==='mp4'){try{await ff.unmount('/src')}catch(e){}}}
       }finally{if(ff)for(const n of names){try{await ff.deleteFile(n)}catch(e){}}}};
     if(kind==='zip')await run();else await mtSerial(run)
-  }catch(e){if(String(e&&e.message)!=='annulé'){console.warn('dans la vidéo:',e);kyErr("L'export a échoué : "+String((e&&e.message)||e).slice(0,160));mtResetEngine(e)}else toast('Arrêté')}
-  finally{KY.busy=false;kyProg('');$$('#kyVfWebm,#kyVfZip,#kyVfMp4').forEach(b=>b.disabled=false)}}
+  }catch(e){if(String(e&&e.message)!=='annulé'){console.warn('dans la vidéo:',e);anErr("L'export a échoué : "+String((e&&e.message)||e).slice(0,160));mtResetEngine(e)}else toast('Arrêté')}
+  finally{KY.busy=false;anProg('');$$('#kyVfWebm,#kyVfZip,#kyVfMp4').forEach(b=>b.disabled=false)}}
 
-/* ---------- interface ---------- */
-const koRange=(k,min,max,step,lab)=>`<label class="ky-sl"><span>${lab}</span><input type="range" data-kosl="${k}" min="${min}" max="${max}" step="${step}" aria-label="${lab}"><b data-kov="${k}"></b></label>`;
-function koHtml(){return `<details open class="ky-det" id="kyVf"><summary>Choisir l'objet et l'animer dans la vidéo</summary>
- <p class="muted sm" style="margin:8px 0 0">Les animations sont dessinées <b>sur la vidéo, à la place de l'objet</b>. Tu récupères un <b>calque transparent</b> de la taille de ta vidéo (à poser par-dessus dans CapCut / Premiere) ou la <b>vidéo finie</b>.</p>
- <h4 class="ky-h4" style="margin-top:14px"><span class="yt-n">1</span> Choisir l'objet</h4>
- <div class="ky-tools" style="margin-top:0"><button class="btn primary sm" id="koPick" type="button">🪄 Cliquer sur l'objet</button>
-  <div class="seg" id="koModeSeg"><button type="button" data-v="replace" aria-pressed="true" title="Un clic choisit un nouvel objet">Nouvel objet</button><button type="button" data-v="add" aria-pressed="false" title="Ajoute une partie à l'objet (ou Maj + clic)">＋ Ajouter une partie</button><button type="button" data-v="sub" aria-pressed="false" title="Retire une partie (ou Alt + clic)">－ Retirer une partie</button></div>
-  <button class="btn sm" id="koClear" type="button">Effacer l'objet</button></div>
- <div class="ky-grid">${koRange('tol',2,80,1,'Tolérance')}<label class="mt-chk"><input type="checkbox" data-koc="grad"> Suivre les dégradés (ombres, reflets)</label><label class="mt-chk"><input type="checkbox" data-koc="outline"> Inclure le contour sombre</label><label class="mt-chk"><input type="checkbox" data-koc="holes"> Remplir les trous</label><label class="mt-chk"><input type="checkbox" data-koc="showMask"> Montrer le contour sur l'image</label></div>
- <p class="muted sm" style="margin:6px 0 0">Clique sur l'objet dans l'image du haut : la zone de même couleur autour du clic est prise (contour bleu clair). Si c'est trop petit, monte la tolérance ou ajoute des parties (Maj + clic) ; si ça déborde, baisse-la ou retire une partie (Alt + clic).</p>
- <div class="ky-tools"><button class="btn sm" id="koTrack" type="button">Suivre l'objet dans la vidéo</button><button class="btn sm" id="koTrackStop" type="button" hidden>Arrêter</button><span class="muted sm" id="koInfo"></span></div>
- <h4 class="ky-h4" style="margin-top:14px"><span class="yt-n">2</span> Animations <span class="muted sm" style="text-transform:none;letter-spacing:0">(autant que tu veux, chacune de quand à quand)</span></h4>
- <div id="koClips"></div>
- <div class="ky-tools"><select id="koType" aria-label="Type d'animation">${Object.entries(KO_FX).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('')}</select><label class="ko-def">durée <input type="number" id="koDef" min="0.5" max="60" step="0.5" aria-label="Durée par défaut (s)"> s</label><button class="btn sm" id="koAdd" type="button">＋ Ajouter à partir d'ici</button><span class="muted sm">ou ● / ■ sous le lecteur. La durée se change ensuite dans chaque ligne ci-dessus.</span></div>
- <div class="ky-grid">${koRange('fade',0.1,1.5,0.1,'Apparition / disparition (s)')}<label class="mt-chk"><input type="checkbox" data-koc="hideOrig"> Cacher l'objet d'origine quand il bouge (remplissage du décor)</label></div>
- <details class="snd-det"><summary>Position manuelle (si le suivi ne marche pas)</summary><div id="koKeys" style="margin-top:8px"></div><div class="ky-tools"><button class="btn sm" id="koKeyAdd" type="button">＋ Mémoriser la position à cet instant</button><button class="btn sm" id="koKeyClear" type="button">Position fixe</button></div><p class="muted sm" style="margin:6px 0 0">Place-toi à un instant, ajuste le cadre, mémorise ; l'effet suit ces positions. Sans objet cliqué uniquement.</p></details>
- <h4 class="ky-h4" style="margin-top:14px"><span class="yt-n">3</span> Voir et enregistrer</h4>
- <div class="ky-grid"><label class="mt-chk"><input type="checkbox" data-koc="showFx"> Voir l'animation sur l'image du haut</label></div>
- <div class="ky-cvw" style="margin-top:10px"><canvas id="kyVfPrev" aria-label="Aperçu dans la vidéo" style="image-rendering:auto"></canvas></div>
- <div class="ky-tools"><button class="btn sm" id="kyVfPlay" type="button">▶ Voir l'effet en lecture</button><span class="muted sm" id="kyVfInfo"></span></div>
- <div class="btns left"><button class="btn primary" id="kyVfWebm" type="button">Calque transparent (WebM)</button><button class="btn" id="kyVfZip" type="button">Calque en images PNG (zip)</button><button class="btn" id="kyVfMp4" type="button">Vidéo avec les animations (MP4)</button>
-  <label class="ky-sl" style="min-width:230px"><span>Vidéo finie</span><select id="koRange" aria-label="Partie de la vidéo"><option value="extract">seulement les animations (+ 1 s)</option><option value="all">toute la vidéo</option></select></label></div>
- </details>`}
-function koClipHtml(c){
-  const F=KO_FX[c.type],n=x=>(+x).toFixed(2);
-  return `<div class="ko-clip" data-cid="${c.id}"><select data-kc="type" aria-label="Type">${Object.entries(KO_FX).map(([k,v])=>`<option value="${k}"${k===c.type?' selected':''}>${v.n}</option>`).join('')}</select>
-   <label>de<input type="number" step="0.1" min="0" value="${n(c.a)}" data-kc="a" aria-label="Début (s)"></label><button class="btn sm" data-kcnow="a" type="button" title="Mettre l'instant actuel">⏱</button>
-   <label>à<input type="number" step="0.1" min="0" value="${n(c.b)}" data-kc="b" aria-label="Fin (s)"></label><button class="btn sm" data-kcnow="b" type="button" title="Mettre l'instant actuel">⏱</button><label>durée<input type="number" step="0.5" min="0.2" value="${(c.b-c.a).toFixed(1)}" data-kc="dur" aria-label="Durée (s)"> s</label>
-   ${F.v?`<label class="ky-sl"><span>${F.vl}</span><input type="range" data-kc="v" min="${F.v[0]}" max="${F.v[1]}" step="${F.v[2]}" value="${c.v}" aria-label="${F.vl}"><b>${c.v}</b></label>`:''}
-   ${F.dest?`<span class="ko-dest"><button class="btn sm" data-kdir="l" type="button" aria-label="Vers la gauche">←</button><button class="btn sm" data-kdir="u" type="button" aria-label="Vers le haut">↑</button><button class="btn sm" data-kdir="d" type="button" aria-label="Vers le bas">↓</button><button class="btn sm" data-kdir="r" type="button" aria-label="Vers la droite">→</button><button class="btn sm" data-kpick="${c.id}" type="button">📍 Choisir sur l'image</button><span class="muted sm">${c.dx>=0?'+':''}${c.dx}, ${c.dy>=0?'+':''}${c.dy} px</span></span>`:''}
-   ${F.hold?`<label class="mt-chk"><input type="checkbox" data-kc="hold"${c.hold?' checked':''}> rester ensuite jusqu'à<input type="number" step="0.5" min="0" value="${n(c.until)}" data-kc="until" aria-label="Rester jusqu'à (s)" style="width:78px"> s</label>`:''}
-   <button class="btn sm" data-kcrm type="button" aria-label="Retirer cette animation">✕</button></div>`}
-function koView(){
-  if(!$('#kyVf'))return;
-  $('#koClips').innerHTML=KO.clips.length?KO.clips.slice().sort((a,b)=>a.a-b.a).map(koClipHtml).join(''):'<p class="muted sm" style="margin:6px 0">Aucune animation pour le moment.</p>';
-  $$('#kyVf [data-kosl]').forEach(i=>{const k=i.dataset.kosl;if(document.activeElement!==i)i.value=KO.o[k]});$$('#kyVf [data-kov]').forEach(b=>b.textContent=KO.o[b.dataset.kov]);
-  $$('#kyVf [data-koc]').forEach(i=>i.checked=!!KO.o[i.dataset.koc]);setSeg('koModeSeg',KO.o.mode);$('#koType').value=KO.o.type;$('#koRange').value=KO.o.range;if(document.activeElement!==$('#koDef'))$('#koDef').value=KO.o.defDur;
-  $('#koTrack').disabled=!KO.obj||KO.tracking;$('#koTrackStop').hidden=!KO.tracking;$('#koClear').disabled=!KO.obj;
-  if(!KO.tracking){const T=KO.track,i=KO.trackInfo;$('#koInfo').textContent=!KO.obj?"Aucun objet choisi : clique sur 🪄 puis sur l'objet.":T.length&&i?`Suivi : ${i.n} positions de ${mtFmt(i.lo,1)} à ${mtFmt(i.hi,1)}${i.lost?` (${i.lost} images où l'objet est perdu : il garde sa dernière position)`:''}.`:`Objet choisi (${KO.obj.size.w} × ${KO.obj.size.h} px). S'il bouge, clique sur « Suivre l'objet dans la vidéo ».`}
-  const K=KO.keys;$('#koKeys').innerHTML=K.map((k,i)=>`<div class="ky-mom"><b>${mtFmt(k.t,2)}</b><span class="muted sm">x ${Math.round(k.r.x)}, y ${Math.round(k.r.y)} · ${Math.round(k.r.w)} × ${Math.round(k.r.h)}</span><button class="btn sm" data-kgo="${i}" type="button">Aller</button><button class="btn sm" data-krm="${i}" type="button" aria-label="Retirer">✕</button></div>`).join('');
-  KY.vfDirty=true;kyMomBar();kyStage();kyVfPreview()}
-function kyVfWire(){
-  $('#kyVfHost').innerHTML=koHtml();
-  $('#koType').innerHTML=Object.entries(KO_FX).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('');
-  $('#koPick').addEventListener('click',()=>{KY.tool='wand';kyOptsView();toast("Clique sur l'objet dans l'image du haut")});
-  segBind('koModeSeg',v=>{KO.o.mode=v;koSave();KY.tool='wand';kyOptsView()});
-  $('#koClear').addEventListener('click',()=>{KO.obj=null;KO.cur=null;KO.track=[];KO.trackInfo=null;if(KY.o.cut==='obj'){KY.o.cut='none';kySave()}kyOptsView();kyUpdate();koView()});
-  $('#kyVf').addEventListener('input',e=>{const t=e.target;
-    if(t.dataset.kosl){const k=t.dataset.kosl;KO.o[k]=+t.value;koSave();$$('#kyVf [data-kov]').forEach(b=>b.textContent=KO.o[b.dataset.kov]);if(k==='tol'){KO.track=[];kyUpdate()}KY.vfDirty=true;kyStage();kyVfPreview()}
-    if(t.dataset.koc){KO.o[t.dataset.koc]=t.checked;koSave();if(['grad','outline','holes'].includes(t.dataset.koc)){KO.track=[];kyUpdate()}KY.vfDirty=true;kyStage();kyVfPreview()}});
-  $('#koType').addEventListener('change',e=>{KO.o.type=e.target.value;koSave();KY.vfDirty=true;kyVfPreview()});$('#koDef').addEventListener('change',e=>{KO.o.defDur=Math.max(0.5,Math.min(60,+e.target.value||5));koSave();koView()});$('#koRange').addEventListener('change',e=>{KO.o.range=e.target.value;koSave()});
-  $('#koAdd').addEventListener('click',()=>{if(KY.isImg){toast("Cette fonction demande une vidéo");return}koAddClip(KO.o.type,KY.t,Math.min(KY.dur,KY.t+(+KO.o.defDur||5)));koView()});
-  $('#koClips').addEventListener('input',e=>{const t=e.target,k=t.dataset&&t.dataset.kc;if(!k||k==='type')return;const c=KO.clips.find(x=>x.id===+t.closest('.ko-clip').dataset.cid);if(!c)return;
-    if(k==='v'){c.v=+t.value;t.nextElementSibling.textContent=c.v;KY.vfDirty=true;kyStage();kyVfPreview()}});
-  $('#koClips').addEventListener('change',e=>{const t=e.target,k=t.dataset&&t.dataset.kc;if(!k)return;const c=KO.clips.find(x=>x.id===+t.closest('.ko-clip').dataset.cid);if(!c)return;
-    if(k==='type'){c.type=t.value;const F=KO_FX[c.type];c.v=F.v?F.v[3]:0;if(F.dest&&!c.dx&&!c.dy)c.dx=Math.round(KY.fw*0.25)}
-    else if(k==='dur'){c.b=c.a+Math.max(0.2,+t.value||0.2);if(c.until<c.b)c.until=c.b+3}
-    else if(k==='hold')c.hold=t.checked;else if(k==='v')c.v=+t.value;else{c[k]=Math.max(0,+t.value||0);if(k!=='until'&&c.b<=c.a)c.b=c.a+0.2;if(c.until<c.b)c.until=c.b+3}
-    KO.track=KO.track.length&&KO.trackInfo&&KO.trackInfo.lo<=Math.min(...KO.clips.map(x=>x.a))+0.35&&KO.trackInfo.hi>=Math.max(...KO.clips.map(koEnd))-0.35?KO.track:KO.track;koView()});
-  $('#koClips').addEventListener('click',e=>{
-    const row=e.target.closest('.ko-clip');if(!row)return;const c=KO.clips.find(x=>x.id===+row.dataset.cid);if(!c)return;
-    if(e.target.closest('[data-kcrm]')){KO.clips=KO.clips.filter(x=>x!==c);koView();return}
-    const n=e.target.closest('[data-kcnow]');if(n){c[n.dataset.kcnow]=KY.t;if(c.b<=c.a){if(n.dataset.kcnow==='a')c.b=c.a+0.5;else c.a=Math.max(0,c.b-0.5)}if(c.until<c.b)c.until=c.b+3;koView();return}
-    const d=e.target.closest('[data-kdir]');if(d){const D=Math.round(KY.fw*0.25),k=d.dataset.kdir;c.dx=k==='l'?-D:k==='r'?D:0;c.dy=k==='u'?-D:k==='d'?D:0;koView();return}
-    if(e.target.closest('[data-kpick]')){KO.pickDest=c.id;toast("Clique sur l'image du haut à l'endroit où l'objet doit arriver")}});
-  $('#koTrack').addEventListener('click',()=>koTrack());$('#koTrackStop').addEventListener('click',()=>{KO.cancel=true});
-  $('#koKeyAdd').addEventListener('click',()=>{if(!KY.rect){kyErr("Dessine d'abord un cadre autour de l'objet.");return}const K=KO.keys.filter(k=>Math.abs(k.t-KY.t)>0.02);K.push({t:KY.t,r:{...KY.rect}});K.sort((a,b)=>a.t-b.t);KO.keys=K;koView()});
-  $('#koKeyClear').addEventListener('click',()=>{KO.keys=[];koView()});
-  $('#koKeys').addEventListener('click',e=>{const g=e.target.closest('[data-kgo]'),r=e.target.closest('[data-krm]');
-    if(g){const k=KO.keys[+g.dataset.kgo];if(k){KY.rect={...k.r};kyRectUi();kySetTime(k.t)}}if(r){KO.keys.splice(+r.dataset.krm,1);koView()}});
-  $('#kyVfPlay').addEventListener('click',kyVfPlay);$('#kyMarkA').addEventListener('click',()=>kyMark('a'));$('#kyMarkB').addEventListener('click',()=>kyMark('b'));
-  $('#kyVfWebm').addEventListener('click',()=>kyVfExport('webm'));$('#kyVfZip').addEventListener('click',()=>kyVfExport('zip'));$('#kyVfMp4').addEventListener('click',()=>kyVfExport('mp4'));
-  $('#kyVf').addEventListener('toggle',()=>{kyStage();kyVfPreview()});
-  koView()}
 if(window.__NOVA_TEST)window.__ko={KO,koPick,koObjAt,koTrack,koDraw,koPose,koPatch,koAddClip,kyVfExport};
+
+/* ---------- Studio : animer un objet dans la vidéo (panneau de droite + calque sur le lecteur + blocs sur la timeline) ---------- */
+const AN_FX={highlight:['✨','Mise en avant'],halo:['💡','Halo doux'],shape:['🌟','Halo de forme'],outline:['⬜','Contour'],dim:['🌑','Assombrir'],pop:['💥','Pop'],beat:['💓','Battement'],grow:['🔍','Grossir'],shake:['📳','Tremblement'],float:['🎈','Flottement'],wiggle:['〰️','Balancement'],spin:['🔄','Tour complet'],slide:['➡️','Glissade'],vanish:['🫥','Disparition']};
+const AN={file:null,sel:0,picking:false,stopAt:null,out:[],nid:0,raf:0,last:0,soon:0,store:new Map()};
+/* chaque vidéo garde son objet et ses animations */
+const AN_KEYS=['obj','cur','track','trackInfo','keys','clips','openId','lastPos','maskCv','maskFor'];
+const anOn=()=>!$('#mtStep2').hidden&&$('#tab-montage').classList.contains('on')&&MT.dur>0;
+const anWant=()=>anOn()&&(STU.tab==='anim'||(KO.clips.length>0&&!!(KO.obj||KY.rect)));
+function anSwap(f){
+  if(AN.file===f)return;
+  if(AN.file){const o={};AN_KEYS.forEach(k=>o[k]=KO[k]);AN.store.set(AN.file,o)}
+  const n=AN.store.get(f);
+  if(n)AN_KEYS.forEach(k=>KO[k]=n[k]);else{KO.obj=null;KO.cur=null;KO.track=[];KO.trackInfo=null;KO.keys=[];KO.clips=[];KO.openId=0;KO.lastPos=null;KO.maskCv=null;KO.maskFor=null}
+  AN.file=f;AN.sel=0;KY.file=null;anPickEnd();koView()}
+
+/* --- on relie le moteur d'objets à l'image affichée dans le lecteur --- */
+function anBind(){
+  const f=MT.files[MT.i],v=mtV();if(!f||!v.videoWidth||!MT.dur)return false;
+  if(KY.file!==f||KY.vid!==v||KY.fw!==v.videoWidth||KY.fh!==v.videoHeight){
+    KY.file=f;KY.vid=v;KY.isImg=false;KY.fw=v.videoWidth;KY.fh=v.videoHeight;KY.fc=phCv(KY.fw,KY.fh);KY.rect=null;KY.seeds=[];KY.man=null;KY.ai=null;KY.el=null;KY.playing=false;KY.vfLay=null;KY.vfDirty=true}
+  KY.dur=MT.dur;KY.t=v.currentTime||0;
+  try{KY.fc.getContext('2d').drawImage(v,0,0)}catch(e){return false}
+  return true}
+function anRefresh(){
+  if(!anWant()){anClear();return}
+  if(!anBind())return;koOnUpdate();KY.vfDirty=true;anPaint()}
+const anSoon=()=>{if(AN.soon)return;AN.soon=requestAnimationFrame(()=>{AN.soon=0;anRefresh()})};
+function anClear(){const cv=$('#stOv');if(cv.width>1){const g=cv.getContext('2d');g.clearRect(0,0,cv.width,cv.height)}}
+function anPaint(){
+  const cv=$('#stOv');if(!KY.fc||!KY.fw)return;
+  const k=Math.min(1,1280/KY.fw),cw=Math.round(KY.fw*k),ch=Math.round(KY.fh*k);
+  if(cv.width!==cw||cv.height!==ch){cv.width=cw;cv.height=ch}
+  const g=cv.getContext('2d'),v=mtV(),playing=!v.paused&&!v.ended;g.clearRect(0,0,cw,ch);
+  if(STU.tab==='anim'&&!playing){
+    if(KO.cur&&KO.cur.ok&&KO.o.showMask){const c=KO.cur,mc=koMaskCanvas(c);g.imageSmoothingEnabled=false;g.globalAlpha=.9;g.drawImage(mc,c.rect.x*k,c.rect.y*k,c.W*k,c.H*k);g.globalAlpha=1}
+    const sc=KO.clips.find(c=>c.id===AN.sel&&c.type==='slide');
+    if(sc){const R=koRectAt(sc.a);if(R){const x0=(R.x+R.w/2)*k,y0=(R.y+R.h/2)*k,x1=x0+sc.dx*k,y1=y0+sc.dy*k;
+      g.save();g.strokeStyle='#ffd166';g.fillStyle='#ffd166';g.lineWidth=Math.max(2,cw/300);g.setLineDash([cw/60,cw/90]);g.beginPath();g.moveTo(x0,y0);g.lineTo(x1,y1);g.stroke();g.setLineDash([]);
+      g.beginPath();g.arc(x1,y1,Math.max(5,cw/130),0,Math.PI*2);g.fill();g.restore()}}}
+  if(KO.o.showFx&&KO.clips.length&&(KO.obj||KY.rect)){const lay=kyVfLayer();if(lay&&KY.vfOn){g.imageSmoothingEnabled=true;g.drawImage(lay,0,0,cw,ch)}}}
+
+/* --- pendant la lecture, on redessine l'effet sur chaque image --- */
+function anLoop(){
+  AN.raf=0;const v=mtV();
+  if(AN.stopAt!=null&&v.currentTime>=AN.stopAt){v.pause();AN.stopAt=null}
+  if(v.paused||v.ended){anSoon();return}
+  if(anWant()){const now=performance.now();if(now-AN.last>45){AN.last=now;if(anBind()){KY.vfDirty=true;anPaint()}}}
+  AN.raf=requestAnimationFrame(anLoop)}
+['play','playing'].forEach(ev=>mtV().addEventListener(ev,()=>{if(!AN.raf&&anWant())AN.raf=requestAnimationFrame(anLoop)}));
+['seeked','pause','loadeddata'].forEach(ev=>mtV().addEventListener(ev,()=>{if(mtV().paused)anSoon()}));
+
+/* --- clic sur l'objet, directement dans le lecteur --- */
+function anHint(t){const h=$('#stHint');h.hidden=!t;h.textContent=t||''}
+function anPickStart(txt){
+  if(!anBind())return;AN.picking=true;KY.tool=KO.pickDest?'rect':'wand';mtV().pause();$('#stOv').classList.add('pick');$('#mtVw').classList.add('picking');
+  anHint(txt||"Clique sur l'objet à animer (Échap pour annuler)");anPaint();koView()}
+function anPickEnd(){AN.picking=false;KY.tool='rect';KO.pickDest=0;$('#stOv').classList.remove('pick');$('#mtVw').classList.remove('picking');anHint('');if(typeof koView==='function')koView()}
+$('#stOv').addEventListener('pointerdown',e=>{
+  if(!AN.picking)return;e.preventDefault();e.stopPropagation();
+  const r=$('#stOv').getBoundingClientRect();if(!r.width||!anBind())return;
+  const p={fx:(e.clientX-r.left)/r.width*KY.fw,fy:(e.clientY-r.top)/r.height*KY.fh};
+  if(koStageDown(e,p)){anPickEnd();anSoon()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&AN.picking){anPickEnd();anSoon()}});
+
+/* --- animations : ajout, aperçu, suivi --- */
+function anAdd(type,at){
+  if(!KO.obj&&!KY.rect){toast("Choisis d'abord l'objet : clique sur « Cliquer sur l'objet », puis sur l'objet dans la vidéo");anFlash($('#koPick'));return null}
+  anBind();const v=mtV(),t0=at!=null?at:(v.currentTime||0),d=Math.max(0.5,+KO.o.defDur||5);
+  const b=Math.min(MT.dur,t0+d),c=koAddClip(type,Math.max(0,Math.min(t0,b-0.5)),b);
+  KO.o.type=type;koSave();AN.sel=c.id;koView();toast(`${AN_FX[type][1]} ajouté : de ${mtFmt(c.a,1)} à ${mtFmt(c.b,1)}`);return c}
+function anFlash(el){if(!el)return;el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')}
+const anTracked=()=>{const C=KO.clips,T=KO.trackInfo;if(!KO.obj||!C.length)return true;return!!(KO.track.length&&T&&T.lo<=Math.min(...C.map(c=>c.a))+0.35&&T.hi>=Math.max(...C.map(koEnd))-0.35)};
+async function anPlay(){
+  const v=mtV();if(!v.paused){v.pause();return}
+  const C=KO.clips;if(!C.length){toast("Ajoute d'abord une animation (clique sur un effet)");return}
+  if(!anBind())return;
+  if(KO.obj&&!anTracked()){const ok=await koTrack();if(!ok)return}
+  const a=Math.max(0,Math.min(...C.map(c=>c.a))-0.7);AN.stopAt=Math.min(MT.dur,Math.max(...C.map(koEnd))+0.7);
+  await new Promise(res=>{const h=()=>{v.removeEventListener('seeked',h);res()};v.addEventListener('seeked',h);v.currentTime=a;setTimeout(h,1500)});
+  v.play().catch(()=>{})}
+
+/* --- enregistrements (calque transparent, images, vidéo finie) --- */
+function anProg(txt,pct){const b=$('#anProg');b.hidden=!txt;$('#anPm').textContent=txt||'';$('#anBar').style.width=Math.max(6,Math.round((pct||0)*100))+'%'}
+function anErr(t){const e=$('#anErr');e.hidden=!t;e.textContent=t||''}
+function anAddOut(name,blob,note){AN.out.unshift({id:++AN.nid,name,blob,note:note||''});anResView()}
+function anResView(){$('#anRes').innerHTML=AN.out.length?'<h4 class="st-h4">Résultats</h4>'+AN.out.map(r=>`<div class="mt-row"><div class="nm"><b>${esc(r.name)}</b><span class="sm">${esc(r.note)}</span></div><div class="mt-st"><span class="muted sm">${phFmtSize(r.blob.size)}</span><button class="btn primary sm" data-adl="${r.id}" type="button">Télécharger</button></div><button class="btn sm" data-adel="${r.id}" type="button" aria-label="Retirer">✕</button></div>`).join(''):''}
+
+/* ---------- panneau ---------- */
+function anHtml(){return `<section class="an-s">
+ <h4 class="st-h4"><span class="an-n">1</span> Choisis l'objet</h4>
+ <p class="muted sm an-p">Mets la vidéo sur une image où l'objet se voit bien, puis clique dessus : son contour est trouvé tout seul.</p>
+ <div class="an-row"><button class="btn primary" id="koPick" type="button">🪄 Cliquer sur l'objet</button><button class="btn sm" id="koClear" type="button">Effacer</button></div>
+ <div class="an-info" id="koInfo"></div>
+ <div class="an-row"><button class="btn sm" id="koTrack" type="button" title="Suit l'objet image par image pour que l'effet le suive">Suivre l'objet dans la vidéo</button><button class="btn sm" id="koTrackStop" type="button" hidden>Arrêter</button></div>
+ <details class="an-det"><summary>Le contour n'est pas bon ?</summary>
+  <div class="an-row"><div class="seg sm" id="koModeSeg"><button type="button" data-v="replace" aria-pressed="true" title="Un clic choisit un nouvel objet">Nouvel objet</button><button type="button" data-v="add" aria-pressed="false" title="Clique sur une partie à ajouter">＋ Ajouter</button><button type="button" data-v="sub" aria-pressed="false" title="Clique sur une partie à retirer">− Retirer</button></div></div>
+  <label class="ky-sl"><span>Tolérance</span><input type="range" data-kosl="tol" min="2" max="80" step="1" aria-label="Tolérance"><b data-kov="tol"></b></label>
+  <label class="mt-chk"><input type="checkbox" data-koc="grad"> Suivre les dégradés (ombres, reflets)</label>
+  <label class="mt-chk"><input type="checkbox" data-koc="outline"> Inclure le contour sombre</label>
+  <label class="mt-chk"><input type="checkbox" data-koc="holes"> Boucher les trous</label>
+  <p class="muted sm" style="margin:6px 0 0">Si ça déborde, baisse la tolérance. Si l'objet est coupé en morceaux, monte-la ou utilise « Ajouter ».</p>
+ </details>
+</section>
+<section class="an-s">
+ <h4 class="st-h4"><span class="an-n">2</span> Ajoute des animations</h4>
+ <p class="muted sm an-p">Clique sur un effet : il est posé là où se trouve la barre de lecture. Sur la timeline, glisse le bloc pour le déplacer et tire ses bords pour changer sa durée.</p>
+ <div class="an-fx" id="anFx">${Object.entries(AN_FX).map(([k,[i,n]])=>`<button type="button" data-fx="${k}"><span aria-hidden="true">${i}</span>${n}</button>`).join('')}</div>
+ <label class="an-def">Durée d'un nouvel effet <input type="number" id="koDef" min="0.5" max="60" step="0.5" aria-label="Durée par défaut en secondes"> s</label>
+ <div id="koClips"></div>
+</section>
+<section class="an-s">
+ <h4 class="st-h4"><span class="an-n">3</span> Regarde et enregistre</h4>
+ <div class="an-row"><button class="btn primary" id="kyVfPlay" type="button">▶ Voir le résultat</button><label class="mt-chk"><input type="checkbox" data-koc="showFx"> Voir l'animation sur le lecteur</label></div>
+ <div class="an-exp">
+  <button class="btn primary" id="kyVfMp4" type="button">🎬 Vidéo avec l'animation</button>
+  <button class="btn" id="kyVfWebm" type="button" title="Une vidéo transparente à poser sur la tienne dans CapCut, Premiere…">Calque transparent (.webm)</button>
+  <button class="btn" id="kyVfZip" type="button">Images PNG (.zip)</button>
+ </div>
+ <label class="an-def">Vidéo finie : <select id="koRange" aria-label="Partie de la vidéo"><option value="extract">seulement l'animation (+ 1 s)</option><option value="all">toute la vidéo</option></select></label>
+ <div class="an-prog" id="anProg" hidden><div class="mt-bar"><i id="anBar" style="width:6%"></i></div><span class="muted sm" id="anPm"></span><button class="btn sm" id="anCancel" type="button">Arrêter</button></div>
+ <p class="bad sm" id="anErr" hidden></p>
+ <div id="anRes"></div>
+ <details class="an-det"><summary>Réglages avancés</summary>
+  <label class="ky-sl"><span>Apparition / disparition (s)</span><input type="range" data-kosl="fade" min="0.1" max="1.5" step="0.1" aria-label="Apparition et disparition"><b data-kov="fade"></b></label>
+  <label class="mt-chk"><input type="checkbox" data-koc="hideOrig"> Cacher l'objet d'origine quand il bouge (le décor est reconstitué)</label>
+  <label class="mt-chk"><input type="checkbox" data-koc="showMask"> Montrer le contour de l'objet sur le lecteur</label>
+ </details>
+</section>`}
+function anClipHtml(c){
+  const F=KO_FX[c.type],n=x=>(+x).toFixed(2),ic=(AN_FX[c.type]||['✨'])[0];
+  return `<div class="an-clip${c.id===AN.sel?' on':''}" data-cid="${c.id}">
+   <div class="an-ch"><span class="an-ic" aria-hidden="true">${ic}</span><select data-kc="type" aria-label="Type d'animation">${Object.keys(KO_FX).map(k=>`<option value="${k}"${k===c.type?' selected':''}>${AN_FX[k][1]}</option>`).join('')}</select><button class="btn sm" data-kcrm type="button" aria-label="Retirer cette animation">✕</button></div>
+   <div class="an-cr"><label>de<input type="number" step="0.1" min="0" value="${n(c.a)}" data-kc="a" aria-label="Début (s)"></label><button class="btn sm" data-kcnow="a" type="button" title="Mettre l'instant du lecteur">⏱</button>
+    <label>à<input type="number" step="0.1" min="0" value="${n(c.b)}" data-kc="b" aria-label="Fin (s)"></label><button class="btn sm" data-kcnow="b" type="button" title="Mettre l'instant du lecteur">⏱</button>
+    <label>durée<input type="number" step="0.5" min="0.2" value="${n(c.b-c.a)}" data-kc="dur" aria-label="Durée (s)"></label></div>
+   ${F.v?`<label class="ky-sl"><span>${F.vl}</span><input type="range" data-kc="v" min="${F.v[0]}" max="${F.v[1]}" step="${F.v[2]}" value="${c.v}" aria-label="${F.vl}"><b>${c.v}</b></label>`:''}
+   ${F.dest?`<div class="an-cr"><span class="muted sm">Vers :</span><button class="btn sm" data-kdir="l" type="button" aria-label="Vers la gauche">←</button><button class="btn sm" data-kdir="u" type="button" aria-label="Vers le haut">↑</button><button class="btn sm" data-kdir="d" type="button" aria-label="Vers le bas">↓</button><button class="btn sm" data-kdir="r" type="button" aria-label="Vers la droite">→</button><button class="btn sm" data-kpick type="button">📍 Choisir sur la vidéo</button></div>`:''}
+   ${F.hold?`<label class="mt-chk"><input type="checkbox" data-kc="hold"${c.hold?' checked':''}> Rester ensuite jusqu'à <input type="number" step="0.5" min="0" value="${n(c.until)}" data-kc="until" aria-label="Rester jusqu'à (s)" style="width:74px"> s</label>`:''}
+  </div>`}
+function koView(){
+  const box=$('#koClips');if(!box)return;
+  const L=KO.clips.slice().sort((a,b)=>a.a-b.a),keep=document.activeElement&&box.contains(document.activeElement)?[document.activeElement.closest('.an-clip').dataset.cid,document.activeElement.dataset.kc]:null;
+  box.innerHTML=L.length?L.map(anClipHtml).join(''):'<p class="muted sm an-empty">Aucune animation pour le moment : choisis un effet ci-dessus.</p>';
+  if(keep){const el=box.querySelector(`.an-clip[data-cid="${keep[0]}"] [data-kc="${keep[1]}"]`);if(el&&el.type!=='range')el.focus()}
+  $$('#stPAnim [data-kosl]').forEach(i=>{if(document.activeElement!==i)i.value=KO.o[i.dataset.kosl]});$$('#stPAnim [data-kov]').forEach(b=>b.textContent=KO.o[b.dataset.kov]);
+  $$('#stPAnim [data-koc]').forEach(i=>i.checked=!!KO.o[i.dataset.koc]);setSeg('koModeSeg',KO.o.mode);
+  if(document.activeElement!==$('#koDef'))$('#koDef').value=KO.o.defDur;$('#koRange').value=KO.o.range;
+  $('#koTrack').disabled=!KO.obj||KO.tracking;$('#koTrackStop').hidden=!KO.tracking;$('#koClear').disabled=!KO.obj;
+  $('#koPick').textContent=AN.picking&&!KO.pickDest?'👆 Clique sur l\'objet dans le lecteur':KO.obj?'🪄 Choisir un autre objet':'🪄 Cliquer sur l\'objet';
+  $$('#anFx button').forEach(b=>b.classList.toggle('dis',!KO.obj&&!KY.rect));
+  if(!KO.tracking){const T=KO.track,i=KO.trackInfo,ob=KO.obj;
+    $('#koInfo').innerHTML=!ob?"<b>Aucun objet choisi</b> : clique sur 🪄 puis sur l'objet dans le lecteur.":`<b>Objet choisi</b> (${ob.size.w} × ${ob.size.h} px, vu à ${mtFmt(ob.t0,1)}). ${T.length&&i?`Suivi : de ${mtFmt(i.lo,1)} à ${mtFmt(i.hi,1)}${i.lost?` (${i.lost} images où il est perdu)`:''}.`:"Le suivi se fait tout seul quand tu regardes ou enregistres."}`}
+  KY.vfDirty=true;stLanes();anSoon()}
+function anWire(){
+  $('#stPAnim').innerHTML=anHtml();
+  $('#koPick').addEventListener('click',()=>{if(AN.picking){anPickEnd();return}if(!anBind()){toast('La vidéo se charge…');return}anPickStart()});
+  segBind('koModeSeg',v=>{KO.o.mode=v;koSave();if(!AN.picking)anPickStart(v==='sub'?'Clique sur la partie à retirer (Échap pour annuler)':v==='add'?"Clique sur la partie à ajouter à l'objet (Échap pour annuler)":null);else koView()});
+  $('#koClear').addEventListener('click',()=>{KO.obj=null;KO.cur=null;KO.track=[];KO.trackInfo=null;anPickEnd();koView();anSoon()});
+  $('#stPAnim').addEventListener('input',e=>{const t=e.target;
+    if(t.dataset.kosl){const k=t.dataset.kosl;KO.o[k]=+t.value;koSave();$$('#stPAnim [data-kov]').forEach(b=>b.textContent=KO.o[b.dataset.kov]);if(k==='tol'){KO.track=[];KO.trackInfo=null;anSoon()}KY.vfDirty=true;anSoon()}
+    if(t.dataset.koc){KO.o[t.dataset.koc]=t.checked;koSave();if(['grad','outline','holes'].includes(t.dataset.koc)){KO.track=[];KO.trackInfo=null}KY.vfDirty=true;anSoon()}});
+  $('#anFx').addEventListener('click',e=>{const b=e.target.closest('[data-fx]');if(b)anAdd(b.dataset.fx)});
+  $('#koDef').addEventListener('change',e=>{KO.o.defDur=Math.max(0.5,Math.min(60,+e.target.value||5));koSave();koView()});
+  $('#koRange').addEventListener('change',e=>{KO.o.range=e.target.value;koSave()});
+  const clip=t=>{const r=t.closest('.an-clip');return r?KO.clips.find(x=>x.id===+r.dataset.cid):null};
+  $('#koClips').addEventListener('input',e=>{const t=e.target,k=t.dataset&&t.dataset.kc;if(k!=='v')return;const c=clip(t);if(!c)return;c.v=+t.value;t.nextElementSibling.textContent=c.v;KY.vfDirty=true;anSoon()});
+  $('#koClips').addEventListener('change',e=>{const t=e.target,k=t.dataset&&t.dataset.kc;if(!k)return;const c=clip(t);if(!c)return;
+    if(k==='type'){c.type=t.value;const F=KO_FX[c.type];c.v=F.v?F.v[3]:0;if(F.dest&&!c.dx&&!c.dy)c.dx=Math.round(KY.fw*0.25)}
+    else if(k==='dur'){c.b=Math.min(MT.dur,c.a+Math.max(0.2,+t.value||0.2));if(c.until<c.b)c.until=c.b+3}
+    else if(k==='hold')c.hold=t.checked;else if(k==='v')c.v=+t.value;
+    else{c[k]=Math.max(0,Math.min(MT.dur,+t.value||0));if(k!=='until'&&c.b<=c.a){if(k==='a')c.b=Math.min(MT.dur,c.a+0.5);else c.a=Math.max(0,c.b-0.5)}if(c.until<c.b)c.until=c.b+3}
+    KY.vfDirty=true;koView()});
+  $('#koClips').addEventListener('click',e=>{
+    const c=clip(e.target);if(!c)return;
+    if(e.target.closest('[data-kcrm]')){KO.clips=KO.clips.filter(x=>x!==c);if(AN.sel===c.id)AN.sel=0;koView();return}
+    const n=e.target.closest('[data-kcnow]');if(n){const t=mtV().currentTime;c[n.dataset.kcnow]=t;if(c.b<=c.a){if(n.dataset.kcnow==='a')c.b=Math.min(MT.dur,c.a+0.5);else c.a=Math.max(0,c.b-0.5)}if(c.until<c.b)c.until=c.b+3;koView();return}
+    const d=e.target.closest('[data-kdir]');if(d){const D=Math.round(KY.fw*0.25),k=d.dataset.kdir;c.dx=k==='l'?-D:k==='r'?D:0;c.dy=k==='u'?-D:k==='d'?D:0;koView();return}
+    if(e.target.closest('[data-kpick]')){KO.pickDest=c.id;anPickStart("Clique là où l'objet doit arriver (Échap pour annuler)");return}
+    if(!e.target.closest('input,select,button')||e.target.closest('.an-ch')){AN.sel=c.id;mtV().currentTime=c.a;koView()}});
+  $('#koTrack').addEventListener('click',async()=>{if(!anBind())return;await koTrack();anSoon()});$('#koTrackStop').addEventListener('click',()=>{KO.cancel=true});
+  $('#kyVfPlay').addEventListener('click',anPlay);
+  $('#kyVfWebm').addEventListener('click',()=>anExport('webm'));$('#kyVfZip').addEventListener('click',()=>anExport('zip'));$('#kyVfMp4').addEventListener('click',()=>anExport('mp4'));
+  $('#anCancel').addEventListener('click',()=>{KY.cancel=true});
+  $('#anRes').addEventListener('click',e=>{const d=e.target.closest('[data-adl]'),x=e.target.closest('[data-adel]');if(d){const r=AN.out.find(o=>o.id===+d.dataset.adl);if(r)phDownload(r.blob,r.name)}if(x){AN.out=AN.out.filter(o=>o.id!==+x.dataset.adel);anResView()}});
+  koView()}
+async function anExport(kind){if(!anBind()){toast('La vidéo se charge…');return}mtV().pause();anErr('');await kyVfExport(kind)}
+function anTab(k){if(k!=='anim')anPickEnd();anSoon();stLanes()}
+window.addEventListener('resize',()=>{if(anWant())anSoon()});
+if(window.__NOVA_TEST)window.__an={AN,anBind,anAdd,anRefresh,anPlay,anExport,anSwap};
+
+/* ---------- Studio : une seule fenêtre pour monter (lecteur, timeline, panneaux de réglages) ---------- */
+const STU={tab:'cut',raf:0,rulerSig:'',mute:false};
+const ST_TABS=[['cut','✂️','Découpe'],['audio','🔊','Son'],['anim','🎯','Animations'],['subs','💬','Sous-titres'],['export','📤','Export'],['more','✨','Plus']];
+const ST_TOOLS=[['rec','🎥','Enregistrer l\'écran','filmer ton écran, ton jeu et ton micro'],['sounds','🎵','Sons & musiques','chercher des sons libres de droits'],['join','🔗','Assembler','coller plusieurs vidéos bout à bout'],['compress','🗜','Compresser','rendre une vidéo assez légère pour Discord'],['convert','🔄','Convertir','changer de format ou en tirer le son'],['thumb','🖼','Miniature','créer une miniature YouTube'],['keys','🎯','Image d\'un élément','sortir un détail de la vidéo, agrandi, en image']];
+function stTiles(){
+  const h=ST_TOOLS.map(([k,i,n,d])=>`<button class="st-tile" type="button" data-hub="${k}"><span class="st-ti">${i}</span><b>${esc(n)}</b><span class="muted sm">${esc(d)}</span></button>`).join('');
+  $('#stTiles').innerHTML=h;$('#stMore').innerHTML=ST_TOOLS.filter(t=>t[0]==='rec'||t[0]==='sounds').map(([k,i,n,d])=>`<button class="st-tile" type="button" data-hub="${k}"><span class="st-ti">${i}</span><b>${esc(n)}</b><span class="muted sm">${esc(d)}</span></button>`).join('');
+  $('#stWith').innerHTML=ST_WITH.map(([k,i,n,d])=>`<button class="st-tile" type="button" data-with="${k}"><span class="st-ti">${i}</span><b>${esc(n)}</b><span class="muted sm">${esc(d)}</span></button>`).join('')}
+const ST_WITH=[['compress','🗜','Compresser','la rendre assez légère pour Discord'],['convert','🔄','Convertir','changer de format ou en tirer le son'],['join','🔗','Assembler','la coller avec d\'autres vidéos'],['thumb','🖼','Miniature','prendre une image dans la vidéo'],['keys','🎯','Image d\'un élément','sortir un détail, agrandi, en image']];
+function stWith(t){
+  const f=MT.files[MT.i];if(!f)return;
+  if(t==='compress'||t==='convert'){hubShow(t);tlAdd(t,[f])}
+  else if(t==='join'){hubShow('join');tlAdd('join',MT.files.slice())}
+  else if(t==='thumb'){hubShow('thumb');const inp=$('#thVidIn'),dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;inp.dispatchEvent(new Event('change'))}
+  else if(t==='keys'){hubShow('keys');kyLoad(f)}}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-with]');if(t)stWith(t.dataset.with)});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-hub]');if(t)hubShow(t.dataset.hub)});
+/* --- onglets du panneau de droite --- */
+function stTab(k){
+  STU.tab=k;$$('#stTabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.k===k)));$$('#mtStep2 .st-panel').forEach(p=>p.hidden=p.dataset.p!==k);
+  try{localStorage.setItem('nova_st_tab',k)}catch(e){}stOnTab(k)}
+function stTabsInit(){
+  $('#stTabs').innerHTML=ST_TABS.map(([k,i,n])=>`<button type="button" role="tab" data-k="${k}" aria-selected="false"><span aria-hidden="true">${i}</span> ${n}</button>`).join('');
+  $('#stTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)stTab(b.dataset.k)});
+  let k='cut';try{k=localStorage.getItem('nova_st_tab')||'cut'}catch(e){}stTab(ST_TABS.some(t=>t[0]===k)?k:'cut')}
+/* --- puces des vidéos (plusieurs fichiers) --- */
+function stChips(){
+  const box=$('#stChips');if(!box)return;
+  box.innerHTML=MT.files.length>1?MT.files.map((f,i)=>{const j=MT.jobs[i],st=j?(j.state==='ok'?' ✓':j.state==='err'?' ⚠':' ⏳'):'';return `<button type="button" class="st-chip" data-ci="${i}" aria-pressed="${i===MT.i}" title="${esc(f.name)}">${i+1}. ${esc(f.name.length>22?f.name.slice(0,20)+'…':f.name)}${st}</button>`}).join('')+'<button type="button" class="st-chip st-add" id="stAdd" title="Ajouter une vidéo">＋</button>':'<button type="button" class="st-chip st-add" id="stAdd" title="Ajouter une autre vidéo">＋ Ajouter une vidéo</button>'}
+document.addEventListener('click',e=>{
+  const c=e.target.closest('.st-chip[data-ci]');if(c&&!$('#mtStep2').hidden){mtOpen(+c.dataset.ci);return}
+  if(e.target.closest('#stAdd'))$('#mtFile').click()});
+/* --- bouton « Exports » (état des exports en cours) --- */
+function stJobs(){
+  const b=$('#stJobs');if(!b)return;const J=MT.jobs.filter(Boolean);b.hidden=!J.length;if(!J.length)return;
+  const run=J.find(j=>j.state==='run'),ok=J.filter(j=>j.state==='ok').length;
+  b.textContent=run?`⏳ Export ${ok+1}/${J.length} · ${Math.round((run.pct||0)*100)} %`:ok===J.length?`✅ Exports (${ok})`:`Exports (${ok}/${J.length})`;stChips()}
+$('#stJobs').addEventListener('click',()=>mtResults());
+setInterval(()=>{if(MT.busy&&!$('#mtStep2').hidden)stJobs()},800);
+/* --- affichage : temps, règle, durée gardée --- */
+function stRuler(){
+  const el=$('#stRuler'),w=el.clientWidth;if(!w||!MT.dur){el.innerHTML='';STU.rulerSig='';return}
+  const sig=MT.view.s.toFixed(3)+'|'+MT.view.e.toFixed(3)+'|'+w;if(sig===STU.rulerSig)return;STU.rulerSig=sig;
+  const sp=mtSpan(),steps=[0.1,0.2,0.5,1,2,5,10,15,30,60,120,300,600,900,1800,3600],step=steps.find(x=>x/sp*w>=84)||3600,minor=step/(step>=10&&(step===15||step===30||step===900)?3:5);
+  let h='';for(let t=Math.ceil(MT.view.s/minor)*minor;t<=MT.view.e+1e-6;t+=minor){const big=Math.abs(t/step-Math.round(t/step))<1e-6;h+=`<i class="${big?'mj':''}" style="left:${mtX(t)*100}%"></i>`;if(big)h+=`<span style="left:${mtX(t)*100}%">${mtFmt(t,step<1?1:0)}</span>`}
+  el.innerHTML=h}
+function stHead(){
+  const v=mtV(),x=mtX(v.currentTime||0),l=$('#stPhl');l.style.left=x*100+'%';l.style.visibility=x<0||x>1||!MT.dur?'hidden':'';
+  $('#stTime').textContent=mtFmt(v.currentTime||0,2)}
+function stPlayUi(){const v=mtV(),p=!v.paused&&!v.ended;$('#stPlay').textContent=p?'⏸':'▶';$('#stBig').hidden=p||!MT.dur;$('#mtVw').classList.toggle('playing',p)}
+function stDraw(){
+  const c=mtCut(),keep=Math.max(0,c.b-c.a);
+  $('#stTot').textContent=MT.dur?mtFmt(MT.dur,1):'0:00';$('#stKeep').textContent=MT.dur?mtFmt(keep):'–';$('#stEst').textContent=$('#mtEst').textContent;
+  $('#stUndo').disabled=STU.tab==='subs'?!SU.hist.length:!MT.hist.length;stFit();stRuler();stLanes();stHead();stPlayUi();const fx=$('#mtFmtNote');$('#mtFmtNote2').hidden=fx.hidden;$('#mtFmtNote2').textContent=fx.textContent}
+function stTick(){const v=mtV();if(v.paused||v.ended){STU.raf=0;stPlayUi();return}stHead();STU.raf=requestAnimationFrame(stTick)}
+['play','playing'].forEach(ev=>mtV().addEventListener(ev,()=>{stPlayUi();if(!STU.raf)STU.raf=requestAnimationFrame(stTick)}));
+['pause','ended','seeked','loadedmetadata'].forEach(ev=>mtV().addEventListener(ev,()=>{stPlayUi();stHead()}));
+/* --- transport --- */
+const stToggle=()=>{const v=mtV();if(!MT.dur)return;v.paused?v.play().catch(()=>{}):v.pause()};
+$('#stPlay').addEventListener('click',stToggle);$('#stBig').addEventListener('click',stToggle);
+$('#mtVid').addEventListener('click',stToggle);
+$('#stStart').addEventListener('click',()=>{mtV().currentTime=mtCut().a});$('#stEnd').addEventListener('click',()=>{mtV().currentTime=Math.max(0,mtCut().b-0.05)});
+$('#stF1').addEventListener('click',()=>{mtV().pause();mtV().currentTime=Math.max(0,mtV().currentTime-1/30)});$('#stF2').addEventListener('click',()=>{mtV().pause();mtV().currentTime=Math.min(MT.dur,mtV().currentTime+1/30)});
+$('#stRate').addEventListener('change',e=>{mtV().playbackRate=+e.target.value});
+$('#stMute').addEventListener('click',()=>{STU.mute=!STU.mute;mtV().muted=STU.mute||mtAEls.length>1;mtAEls.forEach(e=>{e.muted=STU.mute});$('#stMute').textContent=STU.mute?'🔇':'🔊'});
+$('#stFs').addEventListener('click',()=>{const el=$('#mtVw');if(document.fullscreenElement)document.exitFullscreen();else if(el.requestFullscreen)el.requestFullscreen()});
+$('#stIn').addEventListener('click',()=>mtSetA(mtV().currentTime));$('#stOut').addEventListener('click',()=>mtSetB(mtV().currentTime));
+$('#stUndo').addEventListener('click',()=>{if(STU.tab==='subs')suUndo();else mtUndo()});$('#stExp2').addEventListener('click',()=>$('#mtNext').click());
+/* clic sur la règle : on se déplace dans la vidéo */
+$('#stRuler').addEventListener('pointerdown',e=>{if(!MT.dur)return;const r=$('#stRuler').getBoundingClientRect(),go=ev=>{mtV().currentTime=MT.view.s+Math.min(1,Math.max(0,(ev.clientX-r.left)/r.width))*mtSpan()};go(e);$('#stRuler').setPointerCapture(e.pointerId);const mv=ev=>go(ev),up=()=>{$('#stRuler').removeEventListener('pointermove',mv);$('#stRuler').removeEventListener('pointerup',up)};$('#stRuler').addEventListener('pointermove',mv);$('#stRuler').addEventListener('pointerup',up)});
+window.addEventListener('resize',()=>{STU.rulerSig='';if(!$('#mtStep2').hidden)stDraw()});
+function stOnShow(n){document.body.classList.toggle('st-open',n===2);if(n===2){setTimeout(()=>{const y=$('#mtStep2').getBoundingClientRect().top+window.scrollY-72;if(Math.abs(y-window.scrollY)>30)window.scrollTo({top:Math.max(0,y),behavior:'smooth'})},60);STU.rulerSig='';stJobs();stChips();setTimeout(()=>{STU.rulerSig='';stDraw()},30)}}
+/* --- rectangle exact de l'image dans le lecteur (le texte et les effets se posent dessus) --- */
+function stFit(){
+  const v=mtV(),w=$('#mtVw'),r=$('#stVr'),cw=w.clientWidth,ch=w.clientHeight,sig=[v.videoWidth,v.videoHeight,cw,ch].join('x');if(sig===STU.fitSig)return;STU.fitSig=sig;
+  if(!v.videoWidth||!cw||!ch){r.style.width=r.style.height='0px';return}
+  const k=Math.min(cw/v.videoWidth,ch/v.videoHeight),W=v.videoWidth*k,H=v.videoHeight*k;
+  r.style.left=(cw-W)/2+'px';r.style.top=(ch-H)/2+'px';r.style.width=W+'px';r.style.height=H+'px';
+  if(SU.inited)suOvStyle()}
+if(window.ResizeObserver)new ResizeObserver(()=>{STU.fitSig='';if(!$('#mtStep2').hidden)stFit()}).observe($('#mtVw'));
+mtV().addEventListener('loadedmetadata',()=>{STU.fitSig='';stFit()});
+STU.fitSig='';
+
+/* ---------- timeline : pistes « Animations » et « Sous-titres » (blocs qu'on déplace et qu'on étire) ---------- */
+const stRows=items=>{const ends=[];for(const it of items){let r=ends.findIndex(e=>e<=it.a+1e-6);if(r<0){r=ends.length;ends.push(0)}ends[r]=Math.max(it.b,it.hold||0);it.row=r}return Math.max(1,ends.length)};
+const stClamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+function stLaneItems(kind){
+  if(kind==='an')return KO.clips.map(c=>({id:c.id,a:c.a,b:c.b,hold:c.hold&&c.until>c.b?c.until:0,cls:'an',txt:`${(AN_FX[c.type]||['✨'])[0]} ${(AN_FX[c.type]||['','Animation'])[1]}`,on:c.id===AN.sel})).sort((x,y)=>x.a-y.a);
+  return SU.lines.map((l,i)=>({id:i,a:l.s,b:l.e,hold:0,cls:'su',txt:l.t.trim()||'…',on:i===STU.subSel})).sort((x,y)=>x.a-y.a)}
+function stLaneFill(L,kind){
+  const items=stLaneItems(kind),rows=stRows(items),s=MT.view.s,sp=mtSpan();
+  L.style.height=(rows*34+6)+'px';
+  const hint=!items.length?`<div class="st-lane-h">${kind==='an'?(KO.obj?'Double-clique ici ou clique sur un effet pour ajouter une animation':"Choisis d'abord l'objet (onglet Animations)"):(SU.file?'Double-clique ici pour ajouter une ligne de sous-titre':'')}</div>`:'';
+  L.innerHTML=hint+items.filter(it=>Math.max(it.b,it.hold)>=s&&it.a<=MT.view.e).map(it=>{
+    const x0=(it.a-s)/sp*100,w=Math.max(0.35,(it.b-it.a)/sp*100),hw=it.hold?(it.hold-it.b)/sp*100:0;
+    return `<div class="st-blk ${it.cls}${it.on?' on':''}" data-id="${it.id}" style="left:${x0}%;width:${w}%;top:${it.row*34+3}px" title="${esc(it.txt)}"><i class="h l"></i><span class="st-bt">${esc(it.txt)}</span><i class="h r"></i></div>${hw>0?`<div class="st-hold" style="left:${x0+w}%;width:${hw}%;top:${it.row*34+3}px"></div>`:''}`}).join('')}
+function stLanes(){
+  const on=!$('#mtStep2').hidden&&MT.dur>0,A=$('#stLaneA'),S=$('#stLaneS'),wa=on&&(STU.tab==='anim'||KO.clips.length>0),ws=on&&(STU.tab==='subs'||SU.lines.length>0);
+  $('#stLA').hidden=A.hidden=!wa;$('#stLS').hidden=S.hidden=!ws;
+  if(wa&&!STU.drag)stLaneFill(A,'an');if(ws&&!STU.drag)stLaneFill(S,'su')}
+const stLaneT=(L,x)=>{const r=L.getBoundingClientRect();return MT.view.s+stClamp((x-r.left)/r.width,0,1)*mtSpan()};
+function stLaneSel(kind,id){
+  if(kind==='an'){AN.sel=id;koView();const el=$(`#koClips .an-clip[data-cid="${id}"]`);if(el)el.scrollIntoView({block:'nearest'})}
+  else{STU.subSel=id;stLanes();const el=$(`#suList .su-row[data-i="${id}"]`);if(el)el.scrollIntoView({block:'nearest'})}}
+function stLaneWire(L,kind){
+  const A=kind==='an'?'a':'s',B=kind==='an'?'b':'e',model=id=>kind==='an'?KO.clips.find(c=>c.id===id):SU.lines[id];
+  L.addEventListener('pointerdown',e=>{
+    const b=e.target.closest('.st-blk');if(!b){mtV().currentTime=stLaneT(L,e.clientX);return}
+    const id=+b.dataset.id,m=model(id);if(!m)return;e.preventDefault();
+    const mode=e.target.classList.contains('l')?'l':e.target.classList.contains('r')?'r':'m';
+    STU.drag={kind,id,m,mode,x0:e.clientX,a0:m[A],b0:m[B],u0:m.until,moved:false,pps:L.getBoundingClientRect().width/mtSpan()};L.setPointerCapture(e.pointerId);stLaneSel(kind,id)});
+  L.addEventListener('pointermove',e=>{
+    const d=STU.drag;if(!d||d.kind!==kind)return;if(!d.moved&&Math.abs(e.clientX-d.x0)<4)return;
+    if(!d.moved){d.moved=true;if(kind==='su')suSnap()}
+    const dt=(e.clientX-d.x0)/d.pps,m=d.m;let a=d.a0,b=d.b0;
+    if(d.mode==='m'){const len=b-a;a=stClamp(a+dt,0,Math.max(0,MT.dur-len));b=a+len;if(kind==='an'&&m.until!=null)m.until=d.u0+(a-d.a0)}
+    else if(d.mode==='l')a=stClamp(a+dt,0,b-0.2);
+    else b=stClamp(b+dt,a+0.2,MT.dur);
+    m[A]=a;m[B]=b;if(kind==='an'&&m.until<m.b)m.until=m.b+3;
+    const keepD=STU.drag;STU.drag=null;stLaneFill(L,kind);STU.drag=keepD;
+    mtV().currentTime=d.mode==='r'?Math.max(0,b-0.05):a;if(kind==='an')KY.vfDirty=true});
+  const end=()=>{const d=STU.drag;if(!d||d.kind!==kind)return;STU.drag=null;
+    if(!d.moved){mtV().currentTime=d.m[A]+0.001;if(kind==='su'){const el=$(`#suList .su-row[data-i="${d.id}"] textarea`);if(el)el.focus({preventScroll:false})}return}
+    if(kind==='an')koView();else{SU.lines.sort((x,y)=>x.s-y.s);suList();suSave();stLanes()}};
+  L.addEventListener('pointerup',end);L.addEventListener('pointercancel',end);
+  L.addEventListener('dblclick',e=>{
+    if(e.target.closest('.st-blk'))return;const t=stLaneT(L,e.clientX);
+    if(kind==='an')anAdd(KO.o.type,t);
+    else if(SU.file){suSnap();SU.lines.push({s:t,e:Math.min(MT.dur,t+2),t:''});SU.lines.sort((x,y)=>x.s-y.s);suList();suSave();const k=SU.lines.findIndex(l=>l.s===t&&l.t==='');STU.subSel=k;stLanes();const ta=$(`#suList .su-row[data-i="${k}"] textarea`);if(ta)ta.focus()}})}
+stLaneWire($('#stLaneA'),'an');stLaneWire($('#stLaneS'),'su');
+/* touche Suppr : retire le bloc choisi sur la timeline */
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Delete'&&e.key!=='Backspace')return;if($('#mtStep2').hidden||!$('#tab-montage').classList.contains('on')||document.querySelector('dialog[open]'))return;
+  const tg=e.target;if(tg&&(/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName)||tg.isContentEditable))return;
+  if(STU.tab==='anim'&&AN.sel){e.preventDefault();KO.clips=KO.clips.filter(c=>c.id!==AN.sel);AN.sel=0;koView()}
+  else if(STU.tab==='subs'&&STU.subSel>=0&&SU.lines[STU.subSel]){e.preventDefault();suSnap();SU.lines.splice(STU.subSel,1);STU.subSel=-1;suList();suSave()}});
+
+/* ---------- sous-titres : le module existant vit maintenant dans le panneau, sur le lecteur du studio ---------- */
+function stSubsInit(){
+  const pg=$('#mtP-subs');SU.emb=true;pg.hidden=false;pg.className='st-embed';pg.removeAttribute('id');pg.id='stSubsPg';
+  pg.querySelector('.head').remove();$('#stPSubs').appendChild(pg);
+  $('.su-vcol',pg).remove();
+  /* réglages de la reconnaissance : repliés, le bouton « Générer » reste en haut */
+  const body=$('#suBody'),btns=body.querySelector('.btns'),det=document.createElement('details');det.className='an-det';det.innerHTML="<summary>Réglages de la reconnaissance (langue, précision, longueur des lignes…)</summary>";
+  det.append($('#suOpts'),$('#suNote'));body.prepend(det);body.prepend($('#suProg'));body.prepend(btns);
+  SU.inited=true;suWire();toolsRender('subs')}
+function stSubsUse(){
+  const f=MT.files[MT.i];if(!f||SU.busy)return;
+  if(SU.file===f)return;
+  SU.file=f;SU.info=MT_INFO.get(f)||null;SU.segs=[];SU.hist=[];SU.lines=[];SU.manual=false;SU.act=-1;SU.id=f.name+':'+f.size;STU.subSel=-1;
+  const old=suProj()[SU.id];if(old&&old.lines&&old.lines.length)SU.lines=old.lines;
+  suErr('');suView_();suTick(true)}
+/* --- à chaque nouvelle vidéo --- */
+function stOnOpen(f){anSwap(f);stSubsUse();STU.fitSig='';stFit();stLanes()}
+function stOnTab(k){anTab(k);if(k==='subs'){stSubsUse();suOvStyle()}stLanes();if(!$('#mtStep2').hidden)stDraw()}
+stTabsInit();stTiles();stChips();stSubsInit();anWire();
+if(window.__NOVA_TEST)window.__st={STU,stTab,stLanes};
 
 /* ---------- export / import ---------- */
 function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
