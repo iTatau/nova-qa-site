@@ -847,6 +847,9 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 .ky-prog{display:flex;gap:12px;align-items:center;margin-top:10px}.ky-prog .mt-bar{flex:1}
 .ky-lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}.ky-li{display:grid;grid-template-columns:56px 1fr;gap:4px 10px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:10px}.ky-li img{grid-row:1/3;width:56px;height:56px;object-fit:contain;image-rendering:pixelated;background:repeating-conic-gradient(#1a2142 0 25%,#12183a 0 50%) 0 0/10px 10px;border-radius:6px}.ky-li div{grid-column:1/3}
 @media (max-width:900px){.ky-two{grid-template-columns:1fr}}
+.ky-vf{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:10px;align-items:start}.ky-h4{margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--mut)}
+.ky-mom{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}.ky-mom label{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mut)}.ky-mom input{width:78px;height:32px;padding:0 6px}
+@media (max-width:900px){.ky-vf{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -3653,8 +3656,8 @@ function suFonts(){if(location.protocol==='file:')return;try{for(const k in SU_F
 if(window.__NOVA_TEST)window.__su={SU,suSplit,suImport,suSrt,suGenerate,suLoad,suClean,runSubs};
 
 /* ---------- Montage : éléments clés (prendre un détail de la vidéo, l'agrandir sans flou, le détourer, l'animer) ---------- */
-const KY_DEF={zoom:'auto',out:'auto',ow:1920,oh:1080,margin:12,smooth:'nearest',decor:'none',bgColor:'#101820',blur:14,dark:55,cut:'none',tol:28,contig:true,soft:0,glow:0,glowCol:'#58c8ff',outline:0,outCol:'#000000',shadow:false,inA:'none',dur2:'none',power:1,secs:3,fps:30,live:false,gifw:480};
-const KY={file:null,isImg:false,vid:null,fc:null,fw:0,fh:0,t:0,dur:0,rect:null,view:{z:1,ox:0,oy:0},o:{...KY_DEF},seeds:[],man:null,ai:null,el:null,cache:{},items:[],out:[],busy:false,cancel:false,inited:false,tool:'rect',ratio:0,drag:null,paint:'wand',brush:6,nid:0,apOn:true,apStart:0,apT:0,loop:0,live:null,space:false,playing:false};
+const KY_DEF={zoom:'auto',out:'auto',ow:1920,oh:1080,margin:12,smooth:'nearest',decor:'none',bgColor:'#101820',blur:14,dark:55,cut:'none',tol:28,contig:true,soft:0,glow:0,glowCol:'#58c8ff',outline:0,outCol:'#000000',shadow:false,inA:'none',dur2:'none',power:1,secs:3,fps:30,live:false,gifw:480,vSoft:true,vShape:false,vOut:false,vPop:true,vBeat:false,vPulse:true,vHaloSize:70,vDim:0,vFade:0.3,vRange:'extract'};
+const KY={file:null,isImg:false,vid:null,fc:null,fw:0,fh:0,t:0,dur:0,rect:null,view:{z:1,ox:0,oy:0},o:{...KY_DEF},seeds:[],man:null,ai:null,el:null,cache:{},items:[],out:[],busy:false,cancel:false,inited:false,tool:'rect',ratio:0,drag:null,paint:'wand',brush:6,nid:0,apOn:true,apStart:0,apT:0,loop:0,live:null,space:false,playing:false,vf:{moments:[],keys:[]},mid:0};
 try{Object.assign(KY.o,JSON.parse(localStorage.getItem('nova_ky_opts')||'{}'))}catch(e){}
 const kySave=()=>{try{localStorage.setItem('nova_ky_opts',JSON.stringify(KY.o))}catch(e){}};
 const KY_VIDS=new Map();
@@ -3720,6 +3723,26 @@ function keysHtml(){return `<div class="card mt-page" id="mtP-keys" hidden>
    ${kyRange('power',0.3,2.5,0.1,'Intensité','')}<label>Durée (s)<input type="number" data-ko="secs" min="0.5" max="20" step="0.5"></label>
    <label>Images par seconde<select data-ko="fps"><option value="24">24</option><option value="30">30</option><option value="60">60</option></select></label>
    <label class="mt-chk" id="kyLiveW"><input type="checkbox" data-ko="live"> La zone bouge : utiliser la vidéo à partir de cet instant</label></div></details>
+  <details open class="ky-det" id="kyVf"><summary>Dans la vidéo (l'effet est dessiné sur l'objet, à sa place)</summary>
+   <p class="muted sm" style="margin:8px 0 0">Entoure l'objet dans la vidéo, ajoute un ou plusieurs <b>moments</b>, choisis l'effet : tu récupères soit un <b>calque transparent</b> de la taille de ta vidéo (à poser par-dessus dans CapCut / Premiere, pile au bon endroit), soit la <b>vidéo finie</b> avec l'effet.</p>
+   <div class="ky-vf">
+    <div><h4 class="ky-h4">Moments</h4><div id="kyMoms"></div><button class="btn sm" id="kyMomAdd" type="button">＋ Ajouter un moment à partir d'ici</button></div>
+    <div><h4 class="ky-h4">Position de l'objet</h4><div id="kyKeys"></div><div class="ky-tools" style="margin-top:6px"><button class="btn sm" id="kyKeyAdd" type="button">＋ Mémoriser la position à cet instant</button><button class="btn sm" id="kyKeyClear" type="button">Position fixe</button></div>
+     <p class="muted sm" style="margin:6px 0 0" id="kyKeyHint"></p></div>
+   </div>
+   <div class="ky-grid" style="margin-top:12px">
+    <label class="mt-chk"><input type="checkbox" data-ko="vSoft"> Halo doux autour de l'objet</label>${kyRange('vHaloSize',20,200,5,'Taille du halo','%')}
+    <label class="mt-chk"><input type="checkbox" data-ko="vShape"> Halo qui suit la forme (réglé dans « Effets »)</label><label class="mt-chk"><input type="checkbox" data-ko="vPulse"> Le halo pulse</label>
+    <label class="mt-chk"><input type="checkbox" data-ko="vOut"> Contour autour de l'objet (réglé dans « Effets »)</label><label class="mt-chk"><input type="checkbox" data-ko="vPop"> Pop à l'entrée (l'objet grossit puis revient)</label>
+    <label class="mt-chk"><input type="checkbox" data-ko="vBeat"> Battement (l'objet grossit un peu en rythme)</label>${kyRange('vDim',0,90,5,'Assombrir la scène autour','%')}
+    ${kyRange('vFade',0.1,1.5,0.1,'Apparition / disparition (s)','')}
+   </div>
+   <p class="muted sm" style="margin:6px 0 0">Les effets qui <b>déplacent</b> l'objet (tremblement, flottement) ne sont pas proposés ici : l'objet d'origine resterait visible dessous. Le halo « qui suit la forme », le contour et le pop marchent mieux avec un détourage par couleur.</p>
+   <div class="ky-cvw" style="margin-top:10px"><canvas id="kyVfPrev" aria-label="Aperçu de l'effet dans la vidéo" style="image-rendering:auto"></canvas></div>
+   <div class="ky-tools"><button class="btn sm" id="kyVfPlay" type="button">▶ Voir l'effet en lecture</button><span class="muted sm" id="kyVfInfo"></span></div>
+   <div class="btns left"><button class="btn primary" id="kyVfWebm" type="button">Calque transparent (WebM)</button><button class="btn" id="kyVfZip" type="button">Calque en images PNG (zip)</button><button class="btn" id="kyVfMp4" type="button">Vidéo avec l'effet (MP4)</button>
+    <label class="ky-sl" style="min-width:230px"><span>Vidéo finie</span><select data-ko="vRange" aria-label="Partie de la vidéo"><option value="extract">seulement les moments (+ 1 s)</option><option value="all">toute la vidéo</option></select></label></div>
+  </details>
   <details open class="ky-det"><summary>Enregistrer</summary>
    <div class="btns left" style="margin-top:6px"><button class="btn primary" id="kyPng" type="button">Image PNG</button><button class="btn" id="kySeq" type="button">Séquence PNG (zip)</button><button class="btn" id="kyWebm" type="button">WebM transparent</button><button class="btn" id="kyGif" type="button">GIF</button><button class="btn" id="kyMp4" type="button">Vidéo MP4</button><button class="btn" id="kyKeep" type="button">＋ Garder cet élément</button></div>
    <p class="muted sm" style="margin:6px 0 0">PNG / séquence PNG : fond transparent gardé, importable dans CapCut, Premiere, After Effects. MP4 : pas de transparence (le fond prend la couleur choisie). GIF : largeur <input type="number" data-ko="gifw" min="120" max="1200" step="10" style="width:84px;display:inline-block;height:28px"> px.</p>
@@ -3752,7 +3775,7 @@ async function kySetTime(t){
 function kyTimeUi(){$('#kyT').value=KY.t;$('#kyTl').textContent=KY.isImg?'':`${mtFmt(KY.t,2)} / ${mtFmt(KY.dur,1)}`;$('#kyPlay').textContent=KY.playing?'⏸':'▶'}
 function kyPlayLoop(){
   if(!KY.playing)return;const v=KY.vid;if(v.ended||v.paused&&KY.t>=KY.dur-0.05){kyStop();return}
-  KY.t=v.currentTime;kyGrab();kyStage();kyTimeUi();if(!KY.sl||performance.now()-KY.sl>150){KY.sl=performance.now();kyUpdate()}requestAnimationFrame(kyPlayLoop)}
+  KY.t=v.currentTime;kyGrab();kyStage();kyTimeUi();if($('#kyVf').open)kyVfPreview();if(!KY.sl||performance.now()-KY.sl>150){KY.sl=performance.now();kyUpdate()}requestAnimationFrame(kyPlayLoop)}
 function kyStop(){KY.playing=false;if(KY.vid)KY.vid.pause();if(KY.vid){KY.t=KY.vid.currentTime;kyGrab()}kyStage();kyUpdate();kyTimeUi()}
 async function kyTogglePlay(){
   if(KY.isImg||!KY.vid)return;if(KY.playing){kyStop();return}
@@ -3824,7 +3847,7 @@ function kyStageWire(){
 /* ---------- l'élément : découpe, détourage ---------- */
 function kyCrop(frame){const r=KY.rect;if(!r||!frame)return null;const c=phCv(r.w,r.h);c.getContext('2d').drawImage(frame,r.x,r.y,r.w,r.h,0,0,r.w,r.h);return c}
 function kyUpdate(){
-  KY.cache={};KY.pvDirty=true;KY.el=KY.fc?kyCrop(KY.fc):null;kyElView();kyPrInfo()}
+  KY.cache={};KY.pvDirty=true;KY.el=KY.fc?kyCrop(KY.fc):null;kyElView();kyPrInfo();if(KY.inited)kyVfPreview()}
 const kySmooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t)};
 function kyCutAlpha(src,useManual){
   const o=KY.o,w=src.width,h=src.height,n=w*h,d=src.getContext('2d').getImageData(0,0,w,h).data,al=new Float32Array(n).fill(1);let any=false;
@@ -3897,16 +3920,16 @@ function kyDecor(g,L,frame){
   if(x1>x0&&y1>y0)lg.drawImage(frame,x0,y0,x1-x0,y1-y0,dx+x0*s,dy+y0*s,(x1-x0)*s,(y1-y0)*s);
   if(o.decor==='sceneblur'){const t=kyCv(L.OW,L.OH),tg=t.getContext('2d'),k=Math.min(L.OW,L.OH)/540;tg.filter=`blur(${o.blur*k}px)`;tg.drawImage(layer,0,0);tg.filter='none';tg.fillStyle=`rgba(0,0,0,${o.dark/100})`;tg.fillRect(0,0,L.OW,L.OH);g.drawImage(t,0,0)}
   else g.drawImage(layer,0,0)}
-function kyBake(cutc,L,live){
-  const key='b'+L.s+'|'+L.ws;if(!live&&KY.cache[key])return KY.cache[key];
-  const o=KY.o,sm=o.smooth!=='nearest'||L.s<1,ws=L.ws,hs=L.hs,gl=o.glow>0?Math.round(o.glow/100*Math.max(ws,hs)*0.35):0,ol=Math.round(o.outline*Math.max(1,L.s)),sh=o.shadow?Math.max(4,Math.round(L.s*1.5)):0;
+function kyBake(cutc,L,live,fo){
+  const key='b'+L.s+'|'+L.ws;if(!live&&!fo&&KY.cache[key])return KY.cache[key];
+  const o=fo?{...KY.o,...fo}:KY.o,sm=fo?true:o.smooth!=='nearest'||L.s<1,ws=L.ws,hs=L.hs,gl=o.glow>0?Math.round(o.glow/100*Math.max(ws,hs)*0.35):0,ol=Math.round(o.outline*Math.max(1,L.s)),sh=o.shadow?Math.max(4,Math.round(L.s*1.5)):0;
   const pad=Math.ceil(Math.max(gl*2,ol+2,sh*3)+2),c=kyCv(ws+2*pad,hs+2*pad),g=c.getContext('2d'),sc=kyCv(ws,hs),sg=sc.getContext('2d');
   sg.imageSmoothingEnabled=!(!sm);if(sm)sg.imageSmoothingQuality='high';sg.drawImage(cutc,0,0,ws,hs);
   const tint=col=>{const t=kyCv(ws,hs),tg=t.getContext('2d');tg.drawImage(sc,0,0);tg.globalCompositeOperation='source-in';tg.fillStyle=col;tg.fillRect(0,0,ws,hs);return t};
   if(sh){g.save();g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=sh*2;g.shadowOffsetX=sh;g.shadowOffsetY=sh;g.drawImage(tint('#000'),pad,pad);g.restore()}
   if(gl){g.save();g.shadowColor=o.glowCol;g.shadowBlur=gl;const T=tint(o.glowCol);for(let i=0;i<3;i++)g.drawImage(T,pad,pad);g.restore()}
   if(ol){const T=tint(o.outCol);for(const [x,y] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]])g.drawImage(T,pad+x*ol,pad+y*ol)}
-  g.drawImage(sc,pad,pad);const res={c,pad};if(!live)KY.cache[key]=res;return res}
+  g.drawImage(sc,pad,pad);const res={c,pad};if(!live&&!fo)KY.cache[key]=res;return res}
 
 /* ---------- animation ---------- */
 const kyOut=x=>1-Math.pow(1-x,3),kyBack=x=>{const a=1.70158,b=a+1;return 1+b*Math.pow(x-1,3)+a*Math.pow(x-1,2)};
@@ -4012,6 +4035,109 @@ async function kyExport(kind){
   }catch(e){if(String(e&&e.message)!=='annulé'){console.warn('éléments clés:',e);kyErr("L'export a échoué : "+String((e&&e.message)||e).slice(0,160));mtResetEngine(e)}else toast('Arrêté')}
   finally{KY.busy=false;kyProg('');$$('#kyPng,#kySeq,#kyWebm,#kyGif,#kyMp4').forEach(b=>b.disabled=false)}}
 
+
+/* ---------- dans la vidéo : l'effet est dessiné sur l'objet, à sa place ---------- */
+const kyLerp=(a,b,u)=>a+(b-a)*u;
+function kyRectAt(t){
+  const K=KY.vf.keys;if(!K.length)return KY.rect;if(t<=K[0].t)return K[0].r;const Z=K[K.length-1];if(t>=Z.t)return Z.r;
+  for(let i=1;i<K.length;i++)if(t<=K[i].t){const a=K[i-1],b=K[i],u=(t-a.t)/Math.max(1e-6,b.t-a.t);return{x:kyLerp(a.r.x,b.r.x,u),y:kyLerp(a.r.y,b.r.y,u),w:kyLerp(a.r.w,b.r.w,u),h:kyLerp(a.r.h,b.r.h,u)}}
+  return Z.r}
+function kyVfState(t,force){
+  const M=KY.vf.moments,f=Math.max(0.05,+KY.o.vFade||0.3);let e=0,m=null;
+  for(const x of M)if(t>=x.a&&t<=x.b){const v=Math.min(1,(t-x.a)/f,(x.b-t)/f);if(v>e){e=v;m=x}}
+  if(!M.length&&force)return{e:1,tau:0.7};
+  return{e:kySmooth(0,1,Math.max(0,e)),tau:m?t-m.a:0}}
+const kyNeedPx=()=>!!(KY.o.vShape||KY.o.vOut||KY.o.vPop||KY.o.vBeat);
+const kyRgba=(hex,a)=>{const n=parseInt(String(hex).replace('#',''),16)||0;return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`};
+function kyVfDraw(g,W,H,t,frame,force){
+  const st=kyVfState(t,force);if(st.e<=0||!KY.rect)return false;
+  const o=KY.o,R=kyRectAt(t),cx=R.x+R.w/2,cy=R.y+R.h/2,size=Math.max(R.w,R.h,8),e=st.e,tau=st.tau;
+  if(o.vDim>0){const r1=size*0.7,r2=r1+Math.max(size*1.4,60),gr=g.createRadialGradient(cx,cy,r1,cx,cy,r2);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,`rgba(0,0,0,${o.vDim/100*e})`);g.fillStyle=gr;g.fillRect(0,0,W,H)}
+  if(o.vSoft){const rad=size*(o.vHaloSize/100)*(1+(o.vPulse?0.12*Math.sin(tau*Math.PI*2*1.2):0)),gr=g.createRadialGradient(cx,cy,rad*0.1,cx,cy,rad);
+    gr.addColorStop(0,kyRgba(o.glowCol,0.9*e));gr.addColorStop(0.45,kyRgba(o.glowCol,0.38*e));gr.addColorStop(1,kyRgba(o.glowCol,0));g.fillStyle=gr;g.beginPath();g.arc(cx,cy,rad,0,Math.PI*2);g.fill()}
+  if(kyNeedPx()&&frame){
+    const x=Math.max(0,Math.min(frame.width-1,Math.round(R.x))),y=Math.max(0,Math.min(frame.height-1,Math.round(R.y))),w=Math.max(1,Math.min(frame.width-x,Math.round(R.w))),h=Math.max(1,Math.min(frame.height-y,Math.round(R.h)));
+    const el=phCv(w,h);el.getContext('2d').drawImage(frame,x,y,w,h,0,0,w,h);const cut=kyCut(el,false);
+    let sc=1;if(o.vPop)sc*=1+0.35*Math.sin(Math.max(0,Math.min(1,tau/0.5))*Math.PI);if(o.vBeat)sc*=1+0.07*(0.5+0.5*Math.sin(tau*Math.PI*2*1.6));
+    sc=1+(sc-1)*e;
+    const L={s:sc,ws:Math.max(1,Math.round(w*sc)),hs:Math.max(1,Math.round(h*sc))};
+    const fx=kyBake(cut,L,true,{glow:o.vShape?Math.max(o.glow,60):0,outline:o.vOut?Math.max(o.outline,1):0,shadow:false});
+    g.save();g.globalAlpha=1;g.drawImage(fx.c,x+w/2-fx.c.width/2,y+h/2-fx.c.height/2);g.restore()}
+  return true}
+function kyVfPreview(){
+  const cv=$('#kyVfPrev');if(!KY.fc||!cv)return;const W=KY.fw,H=KY.fh,k=Math.min(1,900/W);
+  if(cv.width!==Math.round(W*k)){cv.width=Math.round(W*k);cv.height=Math.round(H*k)}
+  const g=cv.getContext('2d');g.drawImage(KY.fc,0,0,cv.width,cv.height);
+  if(!KY.rect){$('#kyVfInfo').textContent="Dessine d'abord un cadre autour de l'objet.";return}
+  const lay=KY.vfTmp&&KY.vfTmp.width===W&&KY.vfTmp.height===H?KY.vfTmp:(KY.vfTmp=kyCv(W,H)),lg=lay.getContext('2d');lg.clearRect(0,0,W,H);
+  const on=kyVfDraw(lg,W,H,KY.t,KY.fc,true);g.drawImage(lay,0,0,cv.width,cv.height);
+  const M=KY.vf.moments;$('#kyVfInfo').textContent=!M.length?"Aperçu avec l'effet à fond : ajoute un moment pour le placer dans le temps.":(on?'Effet actif à cet instant.':"Pas d'effet à cet instant (hors des moments).")+((KY.o.vShape||KY.o.vOut)&&KY.o.cut==='none'?" Astuce : fais un détourage par couleur (zone « Élément ») pour que le halo et le contour suivent la forme de l'objet, pas le cadre.":'')}
+function kyVfView(){
+  const M=KY.vf.moments.slice().sort((a,b)=>a.a-b.a);
+  $('#kyMoms').innerHTML=M.length?M.map(m=>`<div class="ky-mom"><label>de<input type="number" step="0.1" min="0" value="${m.a.toFixed(2)}" data-mom="${m.id}:a" aria-label="Début"></label><button class="btn sm" data-mnow="${m.id}:a" type="button" title="Mettre l'instant actuel">⏱</button><label>à<input type="number" step="0.1" min="0" value="${m.b.toFixed(2)}" data-mom="${m.id}:b" aria-label="Fin"></label><button class="btn sm" data-mnow="${m.id}:b" type="button" title="Mettre l'instant actuel">⏱</button><span class="muted sm">${(m.b-m.a).toFixed(1)} s</span><button class="btn sm" data-mrm="${m.id}" type="button" aria-label="Retirer ce moment">✕</button></div>`).join(''):'<p class="muted sm" style="margin:0 0 6px">Aucun moment : l\'aperçu montre l\'effet à fond.</p>';
+  const K=KY.vf.keys;
+  $('#kyKeys').innerHTML=K.length?K.map((k,i)=>`<div class="ky-mom"><b>${mtFmt(k.t,2)}</b><span class="muted sm">x ${Math.round(k.r.x)}, y ${Math.round(k.r.y)} · ${Math.round(k.r.w)} × ${Math.round(k.r.h)}</span><button class="btn sm" data-kgo="${i}" type="button">Aller</button><button class="btn sm" data-krm="${i}" type="button" aria-label="Retirer">✕</button></div>`).join(''):'';
+  $('#kyKeyHint').textContent=K.length?"L'effet suit ces positions (déplacement progressif entre deux positions).":"Position fixe : l'effet reste sur le cadre. Si l'objet bouge, place-toi à un instant, ajuste le cadre, puis mémorise la position (2 ou 3 fois).";
+  kyVfPreview()}
+async function kyVfPlay(){
+  if(KY.isImg||!KY.vid)return;const M=KY.vf.moments;if(M.length)await kySetTime(Math.max(0,Math.min(...M.map(m=>m.a))-0.7));
+  if(!KY.playing)kyTogglePlay()}
+async function kyVfExport(kind){
+  if(KY.busy)return;kyErr('');const M=KY.vf.moments;
+  if(KY.isImg||!KY.vid){kyErr("Cette fonction demande une vidéo.");return}
+  if(!KY.rect){kyErr("Dessine d'abord un cadre autour de l'objet.");return}
+  if(!M.length){kyErr("Ajoute au moins un moment (bouton « Ajouter un moment »).");return}
+  if(!(KY.o.vSoft||KY.o.vShape||KY.o.vOut||KY.o.vPop||KY.o.vBeat||KY.o.vDim>0)){kyErr("Coche au moins un effet.");return}
+  const fps=Math.min(60,Math.max(15,Math.round(kyFps()))),a0=Math.max(0,Math.min(...M.map(m=>m.a))),b0=Math.min(KY.dur,Math.max(...M.map(m=>m.b)));
+  if(b0-a0<0.1){kyErr("Le moment est trop court.");return}
+  const all=KY.o.vRange==='all',ra=kind==='mp4'?(all?0:Math.max(0,a0-1)):a0,rb=kind==='mp4'?(all?KY.dur:Math.min(KY.dur,b0+1)):b0;
+  if(kind==='mp4'&&rb-ra>240&&!confirm(`La vidéo finie dure ${mtFmt(rb-ra,0)} : la fabrication peut prendre longtemps dans le navigateur. Continuer ?`))return;
+  KY.busy=true;KY.cancel=false;$$('#kyVfWebm,#kyVfZip,#kyVfMp4').forEach(b=>b.disabled=true);
+  const W=KY.fw&~1,H=KY.fh&~1,N=Math.max(1,Math.round((b0-a0)*fps));let ff=null;
+  try{
+    const zipFiles=[];if(kind!=='zip'){kyProg('Chargement du moteur…',0.02);ff=await mtEngine()}
+    const run=async()=>{
+      const cv=kyCv(W,H),g=cv.getContext('2d'),need=kyNeedPx();let pv=null,tmp=null,empty=null;const names=[];
+      if(need){pv=await kyVideo(KY.file,true);tmp=kyCv(KY.fw,KY.fh)}
+      try{
+        for(let i=0;i<N;i++){
+          if(KY.cancel)throw new Error('annulé');const t=a0+i/fps;let bytes;
+          if(kyVfState(t).e<=0){if(!empty){g.clearRect(0,0,W,H);empty=new Uint8Array(await (await kyBlob(cv)).arrayBuffer())}bytes=empty.slice()}
+          else{let frame=null;if(need){pv.pause();await kySeek(pv,t);tmp.getContext('2d').drawImage(pv,0,0);frame=tmp}
+            g.clearRect(0,0,W,H);kyVfDraw(g,W,H,t,frame,false);bytes=new Uint8Array(await (await kyBlob(cv)).arrayBuffer())}
+          if(kind==='zip')zipFiles.push({name:`calque_${String(i+1).padStart(5,'0')}.png`,data:bytes});
+          else{const n=`v${String(i+1).padStart(5,'0')}.png`;await ff.writeFile(n,bytes);names.push(n)}
+          if(i%3===0)kyProg(`Création des images… ${i+1} / ${N}`,(i+1)/N*0.7)}
+        if(kind==='zip'){kyProg('Fabrication du zip…',0.9);kyAddOut(`${kyStem()} - calque ${mtFmt(a0,1).replace(':','m')}s.zip`,zipStore(zipFiles),`${N} images ${W} × ${H}, ${fps} i/s, à poser sur la vidéo à partir de ${mtFmt(a0,2)}`);return}
+        const job=MT.cur={tot:Math.max(0.1,rb-ra),pct:0},iv=setInterval(()=>kyProg(`Encodage… ${Math.round(job.pct*100)} %`,0.7+job.pct*0.3),300);
+        try{
+          let out,args,blob;
+          if(kind==='webm'){out='o.webm';args=['-framerate',String(fps),'-i','v%05d.png','-c:v','libvpx','-pix_fmt','yuva420p','-auto-alt-ref','0','-b:v','6M','-crf','8','-y',out]}
+          else{out='o.mp4';const src=await mtMount(ff,KY.file,mtExt(KY.file.name));
+            args=['-ss',ra.toFixed(3),'-t',(rb-ra).toFixed(3),'-i',src,'-framerate',String(fps),'-i','v%05d.png','-filter_complex',`[1:v]setpts=PTS+${(a0-ra).toFixed(3)}/TB[o];[0:v][o]overlay=0:0:eof_action=pass:format=auto,format=yuv420p[v]`,'-map','[v]','-map','0:a?','-c:v','libx264','-preset','veryfast','-crf','18','-c:a','aac','-b:a','192k','-movflags','+faststart','-y',out]}
+          names.push(out);const code=await ff.exec(args);if(code!==0)throw new Error('ffmpeg '+code);
+          const d=await ff.readFile(out);blob=new Blob([d],{type:kind==='webm'?'video/webm':'video/mp4'});
+          kyAddOut(kind==='webm'?`${kyStem()} - calque ${mtFmt(a0,1).replace(':','m')}s.webm`:`${kyStem()} - avec effet.mp4`,blob,kind==='webm'?`${W} × ${H}, fond transparent, à poser sur la vidéo à partir de ${mtFmt(a0,2)}`:`${mtFmt(rb-ra,1)} · ${fps} i/s`)
+        }finally{clearInterval(iv);MT.cur=null;if(kind==='mp4'){try{await ff.unmount('/src')}catch(e){}}}
+      }finally{for(const n of names){try{await ff.deleteFile(n)}catch(e){}}}}
+    if(kind==='zip')await run();else await mtSerial(run)
+  }catch(e){if(String(e&&e.message)!=='annulé'){console.warn('dans la vidéo:',e);kyErr("L'export a échoué : "+String((e&&e.message)||e).slice(0,160));mtResetEngine(e)}else toast('Arrêté')}
+  finally{KY.busy=false;kyProg('');$$('#kyVfWebm,#kyVfZip,#kyVfMp4').forEach(b=>b.disabled=false)}}
+function kyVfWire(){
+  $('#kyMomAdd').addEventListener('click',()=>{const a=KY.isImg?0:KY.t;KY.vf.moments.push({id:++KY.mid,a,b:Math.min(KY.dur||a+2,a+2)});kyVfView()});
+  $('#kyMoms').addEventListener('change',e=>{const i=e.target.dataset&&e.target.dataset.mom;if(!i)return;const [id,k]=i.split(':'),m=KY.vf.moments.find(x=>x.id===+id);if(!m)return;m[k]=Math.max(0,+e.target.value||0);if(m.b<=m.a)m.b=m.a+0.2;kyVfView()});
+  $('#kyMoms').addEventListener('click',e=>{const n=e.target.closest('[data-mnow]'),r=e.target.closest('[data-mrm]');
+    if(n){const [id,k]=n.dataset.mnow.split(':'),m=KY.vf.moments.find(x=>x.id===+id);if(m){m[k]=KY.t;if(m.b<=m.a){if(k==='a')m.b=m.a+0.5;else m.a=Math.max(0,m.b-0.5)}kyVfView()}}
+    if(r){KY.vf.moments=KY.vf.moments.filter(x=>x.id!==+r.dataset.mrm);kyVfView()}});
+  $('#kyKeyAdd').addEventListener('click',()=>{if(!KY.rect){kyErr("Dessine d'abord un cadre autour de l'objet.");return}const K=KY.vf.keys.filter(k=>Math.abs(k.t-KY.t)>0.02);K.push({t:KY.t,r:{...KY.rect}});K.sort((a,b)=>a.t-b.t);KY.vf.keys=K;kyVfView()});
+  $('#kyKeyClear').addEventListener('click',()=>{KY.vf.keys=[];kyVfView()});
+  $('#kyKeys').addEventListener('click',e=>{const g=e.target.closest('[data-kgo]'),r=e.target.closest('[data-krm]');
+    if(g){const k=KY.vf.keys[+g.dataset.kgo];if(k){KY.rect={...k.r};kyRectUi();kySetTime(k.t)}}
+    if(r){KY.vf.keys.splice(+r.dataset.krm,1);kyVfView()}});
+  $('#kyVfPlay').addEventListener('click',kyVfPlay);
+  $('#kyVfWebm').addEventListener('click',()=>kyVfExport('webm'));$('#kyVfZip').addEventListener('click',()=>kyVfExport('zip'));$('#kyVfMp4').addEventListener('click',()=>kyVfExport('mp4'));
+  kyVfView()}
+
 /* ---------- éléments gardés ---------- */
 function kyKeep(){
   if(!KY.rect||!KY.el){kyErr("Dessine d'abord un cadre autour de l'élément.");return}
@@ -4069,8 +4195,8 @@ function kyWire(){
   $('#kyLibZip').addEventListener('click',async()=>{const files=[];for(const it of KY.items){const b=await kyItemPng(it);files.push({name:`${mtStem(it.file.name)} - ${it.name}.png`,data:new Uint8Array(await b.arrayBuffer())})}phDownload(zipStore(files),'elements.zip')});
   $('#kyLibClear').addEventListener('click',()=>{KY.items=[];kyLibView()});
   document.addEventListener('keydown',e=>{if($('#mtP-keys').hidden||!$('#tab-montage').classList.contains('on'))return;if(e.code==='Space'&&document.activeElement===$('#kyStage'))e.preventDefault()});
-  kyOptsView();kyRectUi();kyLibView();kyResView()}
-if(window.__NOVA_TEST)window.__ky={KY,kyLoad,kyCompose,kyLayout,kyCut,kySetTime,kyExport,kyPvDraw};
+  kyVfWire();kyOptsView();kyRectUi();kyLibView();kyResView()}
+if(window.__NOVA_TEST)window.__ky={KY,kyVfExport,kyVfDraw,kyVfState,kyLoad,kyCompose,kyLayout,kyCut,kySetTime,kyExport,kyPvDraw};
 
 /* ---------- export / import ---------- */
 function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
