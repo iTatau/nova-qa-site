@@ -853,6 +853,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 .ky-mbar{position:relative;height:6px;margin:2px 0 0;border-radius:99px;background:var(--soft)}.ky-mbar i{position:absolute;top:0;bottom:0;border-radius:99px;background:var(--brand);opacity:.85}
 .ko-clip{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;padding:8px 10px;margin-bottom:8px;border:1px solid var(--line);border-radius:10px}.ko-clip label{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mut)}.ko-clip input[type=number]{width:74px;height:32px;padding:0 6px}.ko-clip select{height:34px;max-width:260px}.ko-dest{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .ky-mode{margin:0 0 10px}
+.ko-def{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mut)}.ko-def input{width:70px;height:32px;padding:0 6px}
 </style>
 </head>
 <body>
@@ -4099,7 +4100,7 @@ const KO_FX={
   outline:{n:'Contour',vl:'Épaisseur (px)',v:[1,8,1,2],px:1},
   dim:{n:'Assombrir autour',vl:'Force %',v:[10,90,5,60]},
   pop:{n:'Pop (grossit puis revient)',vl:'Taille %',v:[10,100,5,35],px:1},
-  beat:{n:'Battement',vl:'Taille %',v:[2,30,1,8],px:1},
+  beat:{n:'Battement',vl:'Taille %',v:[2,40,1,12],px:1},
   grow:{n:'Grossir et rester',vl:'Grossir ×',v:[1.1,4,0.1,1.6],px:1,hold:1},
   shake:{n:'Tremblement',vl:'Amplitude %',v:[2,60,1,12],px:1,hide:1},
   float:{n:'Flottement',vl:'Hauteur %',v:[5,100,5,35],px:1,hide:1},
@@ -4108,7 +4109,7 @@ const KO_FX={
   slide:{n:"Glissade (d'ici à là)",px:1,hide:1,hold:1,dest:1},
   vanish:{n:'Disparaître en fondu',px:1,hide:1,hold:1}};
 const KO={obj:null,cur:null,track:[],keys:[],clips:[],cid:0,pickDest:0,openId:0,tracking:false,cancel:false,lastPos:null,maskCv:null,maskFor:null,inited:false,
-  o:{tol:22,grad:true,outline:true,holes:true,fade:0.3,hideOrig:true,type:'highlight',range:'extract',showMask:true,showFx:true,mode:'replace',view:'vid'}};
+  o:{tol:22,grad:true,outline:true,holes:true,fade:0.3,hideOrig:true,type:'highlight',range:'extract',showMask:true,showFx:true,mode:'replace',view:'vid',defDur:5}};
 try{Object.assign(KO.o,JSON.parse(localStorage.getItem('nova_ko_opts')||'{}'))}catch(e){}
 const koSave=()=>{try{localStorage.setItem('nova_ko_opts',JSON.stringify(KO.o))}catch(e){}};
 const koEnd=c=>KO_FX[c.type].hold&&c.hold&&c.until>c.b?c.until:c.b;
@@ -4326,7 +4327,7 @@ async function kyVfPlay(){
 function koAddClip(type,a,b){const F=KO_FX[type],c={id:++KO.cid,type,a,b,v:F.v?F.v[3]:0,dx:Math.round(KY.fw*0.25),dy:0,hold:false,until:b+3};KO.clips.push(c);return c}
 function kyMark(k){
   if(KY.isImg)return;
-  if(k==='a'){const c=koAddClip(KO.o.type,KY.t,Math.min(KY.dur,KY.t+3));KO.openId=c.id;koView();toast("Début posé : avance dans la vidéo puis clique « ■ Fin de l'animation ici »")}
+  if(k==='a'){const c=koAddClip(KO.o.type,KY.t,Math.min(KY.dur,KY.t+(+KO.o.defDur||5)));KO.openId=c.id;koView();toast("Début posé : avance dans la vidéo puis clique « ■ Fin de l'animation ici »")}
   else{const C=KO.clips;let c=C.find(x=>x.id===KO.openId)||C.filter(x=>x.a<=KY.t+0.01).sort((a,b)=>b.a-a.a)[0];
     if(!c){toast("Pose d'abord un début (● Début de l'animation ici)");return}
     if(KY.t<=c.a+0.1){toast("La fin doit être après le début : avance dans la vidéo");return}
@@ -4388,7 +4389,7 @@ function koHtml(){return `<details open class="ky-det" id="kyVf"><summary>Choisi
  <div class="ky-tools"><button class="btn sm" id="koTrack" type="button">Suivre l'objet dans la vidéo</button><button class="btn sm" id="koTrackStop" type="button" hidden>Arrêter</button><span class="muted sm" id="koInfo"></span></div>
  <h4 class="ky-h4" style="margin-top:14px"><span class="yt-n">2</span> Animations <span class="muted sm" style="text-transform:none;letter-spacing:0">(autant que tu veux, chacune de quand à quand)</span></h4>
  <div id="koClips"></div>
- <div class="ky-tools"><select id="koType" aria-label="Type d'animation">${Object.entries(KO_FX).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('')}</select><button class="btn sm" id="koAdd" type="button">＋ Ajouter à partir d'ici</button><span class="muted sm">ou utilise ● / ■ sous le lecteur</span></div>
+ <div class="ky-tools"><select id="koType" aria-label="Type d'animation">${Object.entries(KO_FX).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('')}</select><label class="ko-def">durée <input type="number" id="koDef" min="0.5" max="60" step="0.5" aria-label="Durée par défaut (s)"> s</label><button class="btn sm" id="koAdd" type="button">＋ Ajouter à partir d'ici</button><span class="muted sm">ou ● / ■ sous le lecteur. La durée se change ensuite dans chaque ligne ci-dessus.</span></div>
  <div class="ky-grid">${koRange('fade',0.1,1.5,0.1,'Apparition / disparition (s)')}<label class="mt-chk"><input type="checkbox" data-koc="hideOrig"> Cacher l'objet d'origine quand il bouge (remplissage du décor)</label></div>
  <details class="snd-det"><summary>Position manuelle (si le suivi ne marche pas)</summary><div id="koKeys" style="margin-top:8px"></div><div class="ky-tools"><button class="btn sm" id="koKeyAdd" type="button">＋ Mémoriser la position à cet instant</button><button class="btn sm" id="koKeyClear" type="button">Position fixe</button></div><p class="muted sm" style="margin:6px 0 0">Place-toi à un instant, ajuste le cadre, mémorise ; l'effet suit ces positions. Sans objet cliqué uniquement.</p></details>
  <h4 class="ky-h4" style="margin-top:14px"><span class="yt-n">3</span> Voir et enregistrer</h4>
@@ -4402,7 +4403,7 @@ function koClipHtml(c){
   const F=KO_FX[c.type],n=x=>(+x).toFixed(2);
   return `<div class="ko-clip" data-cid="${c.id}"><select data-kc="type" aria-label="Type">${Object.entries(KO_FX).map(([k,v])=>`<option value="${k}"${k===c.type?' selected':''}>${v.n}</option>`).join('')}</select>
    <label>de<input type="number" step="0.1" min="0" value="${n(c.a)}" data-kc="a" aria-label="Début (s)"></label><button class="btn sm" data-kcnow="a" type="button" title="Mettre l'instant actuel">⏱</button>
-   <label>à<input type="number" step="0.1" min="0" value="${n(c.b)}" data-kc="b" aria-label="Fin (s)"></label><button class="btn sm" data-kcnow="b" type="button" title="Mettre l'instant actuel">⏱</button><span class="muted sm">${(c.b-c.a).toFixed(1)} s</span>
+   <label>à<input type="number" step="0.1" min="0" value="${n(c.b)}" data-kc="b" aria-label="Fin (s)"></label><button class="btn sm" data-kcnow="b" type="button" title="Mettre l'instant actuel">⏱</button><label>durée<input type="number" step="0.5" min="0.2" value="${(c.b-c.a).toFixed(1)}" data-kc="dur" aria-label="Durée (s)"> s</label>
    ${F.v?`<label class="ky-sl"><span>${F.vl}</span><input type="range" data-kc="v" min="${F.v[0]}" max="${F.v[1]}" step="${F.v[2]}" value="${c.v}" aria-label="${F.vl}"><b>${c.v}</b></label>`:''}
    ${F.dest?`<span class="ko-dest"><button class="btn sm" data-kdir="l" type="button" aria-label="Vers la gauche">←</button><button class="btn sm" data-kdir="u" type="button" aria-label="Vers le haut">↑</button><button class="btn sm" data-kdir="d" type="button" aria-label="Vers le bas">↓</button><button class="btn sm" data-kdir="r" type="button" aria-label="Vers la droite">→</button><button class="btn sm" data-kpick="${c.id}" type="button">📍 Choisir sur l'image</button><span class="muted sm">${c.dx>=0?'+':''}${c.dx}, ${c.dy>=0?'+':''}${c.dy} px</span></span>`:''}
    ${F.hold?`<label class="mt-chk"><input type="checkbox" data-kc="hold"${c.hold?' checked':''}> rester ensuite jusqu'à<input type="number" step="0.5" min="0" value="${n(c.until)}" data-kc="until" aria-label="Rester jusqu'à (s)" style="width:78px"> s</label>`:''}
@@ -4411,7 +4412,7 @@ function koView(){
   if(!$('#kyVf'))return;
   $('#koClips').innerHTML=KO.clips.length?KO.clips.slice().sort((a,b)=>a.a-b.a).map(koClipHtml).join(''):'<p class="muted sm" style="margin:6px 0">Aucune animation pour le moment.</p>';
   $$('#kyVf [data-kosl]').forEach(i=>{const k=i.dataset.kosl;if(document.activeElement!==i)i.value=KO.o[k]});$$('#kyVf [data-kov]').forEach(b=>b.textContent=KO.o[b.dataset.kov]);
-  $$('#kyVf [data-koc]').forEach(i=>i.checked=!!KO.o[i.dataset.koc]);setSeg('koModeSeg',KO.o.mode);$('#koType').value=KO.o.type;$('#koRange').value=KO.o.range;
+  $$('#kyVf [data-koc]').forEach(i=>i.checked=!!KO.o[i.dataset.koc]);setSeg('koModeSeg',KO.o.mode);$('#koType').value=KO.o.type;$('#koRange').value=KO.o.range;if(document.activeElement!==$('#koDef'))$('#koDef').value=KO.o.defDur;
   $('#koTrack').disabled=!KO.obj||KO.tracking;$('#koTrackStop').hidden=!KO.tracking;$('#koClear').disabled=!KO.obj;
   if(!KO.tracking){const T=KO.track,i=KO.trackInfo;$('#koInfo').textContent=!KO.obj?"Aucun objet choisi : clique sur 🪄 puis sur l'objet.":T.length&&i?`Suivi : ${i.n} positions de ${mtFmt(i.lo,1)} à ${mtFmt(i.hi,1)}${i.lost?` (${i.lost} images où l'objet est perdu : il garde sa dernière position)`:''}.`:`Objet choisi (${KO.obj.size.w} × ${KO.obj.size.h} px). S'il bouge, clique sur « Suivre l'objet dans la vidéo ».`}
   const K=KO.keys;$('#koKeys').innerHTML=K.map((k,i)=>`<div class="ky-mom"><b>${mtFmt(k.t,2)}</b><span class="muted sm">x ${Math.round(k.r.x)}, y ${Math.round(k.r.y)} · ${Math.round(k.r.w)} × ${Math.round(k.r.h)}</span><button class="btn sm" data-kgo="${i}" type="button">Aller</button><button class="btn sm" data-krm="${i}" type="button" aria-label="Retirer">✕</button></div>`).join('');
@@ -4425,12 +4426,13 @@ function kyVfWire(){
   $('#kyVf').addEventListener('input',e=>{const t=e.target;
     if(t.dataset.kosl){const k=t.dataset.kosl;KO.o[k]=+t.value;koSave();$$('#kyVf [data-kov]').forEach(b=>b.textContent=KO.o[b.dataset.kov]);if(k==='tol'){KO.track=[];kyUpdate()}KY.vfDirty=true;kyStage();kyVfPreview()}
     if(t.dataset.koc){KO.o[t.dataset.koc]=t.checked;koSave();if(['grad','outline','holes'].includes(t.dataset.koc)){KO.track=[];kyUpdate()}KY.vfDirty=true;kyStage();kyVfPreview()}});
-  $('#koType').addEventListener('change',e=>{KO.o.type=e.target.value;koSave();KY.vfDirty=true;kyVfPreview()});$('#koRange').addEventListener('change',e=>{KO.o.range=e.target.value;koSave()});
-  $('#koAdd').addEventListener('click',()=>{if(KY.isImg){toast("Cette fonction demande une vidéo");return}koAddClip(KO.o.type,KY.t,Math.min(KY.dur,KY.t+3));koView()});
+  $('#koType').addEventListener('change',e=>{KO.o.type=e.target.value;koSave();KY.vfDirty=true;kyVfPreview()});$('#koDef').addEventListener('change',e=>{KO.o.defDur=Math.max(0.5,Math.min(60,+e.target.value||5));koSave();koView()});$('#koRange').addEventListener('change',e=>{KO.o.range=e.target.value;koSave()});
+  $('#koAdd').addEventListener('click',()=>{if(KY.isImg){toast("Cette fonction demande une vidéo");return}koAddClip(KO.o.type,KY.t,Math.min(KY.dur,KY.t+(+KO.o.defDur||5)));koView()});
   $('#koClips').addEventListener('input',e=>{const t=e.target,k=t.dataset&&t.dataset.kc;if(!k||k==='type')return;const c=KO.clips.find(x=>x.id===+t.closest('.ko-clip').dataset.cid);if(!c)return;
     if(k==='v'){c.v=+t.value;t.nextElementSibling.textContent=c.v;KY.vfDirty=true;kyStage();kyVfPreview()}});
   $('#koClips').addEventListener('change',e=>{const t=e.target,k=t.dataset&&t.dataset.kc;if(!k)return;const c=KO.clips.find(x=>x.id===+t.closest('.ko-clip').dataset.cid);if(!c)return;
     if(k==='type'){c.type=t.value;const F=KO_FX[c.type];c.v=F.v?F.v[3]:0;if(F.dest&&!c.dx&&!c.dy)c.dx=Math.round(KY.fw*0.25)}
+    else if(k==='dur'){c.b=c.a+Math.max(0.2,+t.value||0.2);if(c.until<c.b)c.until=c.b+3}
     else if(k==='hold')c.hold=t.checked;else if(k==='v')c.v=+t.value;else{c[k]=Math.max(0,+t.value||0);if(k!=='until'&&c.b<=c.a)c.b=c.a+0.2;if(c.until<c.b)c.until=c.b+3}
     KO.track=KO.track.length&&KO.trackInfo&&KO.trackInfo.lo<=Math.min(...KO.clips.map(x=>x.a))+0.35&&KO.trackInfo.hi>=Math.max(...KO.clips.map(koEnd))-0.35?KO.track:KO.track;koView()});
   $('#koClips').addEventListener('click',e=>{
