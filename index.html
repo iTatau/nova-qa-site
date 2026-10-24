@@ -825,6 +825,11 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 .yl-msg p,.yl-msg ul{margin:6px 0 0}.yl-msg ul{padding-left:20px}
 .yl-dl{margin:6px 0 0;display:grid;grid-template-columns:auto 1fr;gap:2px 12px}.yl-dl dt{color:var(--mut)}.yl-dl dd{margin:0;word-break:break-word}
 #ylRun{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+/* ---------- Image en texte ---------- */
+.oc-text{width:100%;min-height:200px;resize:vertical;padding:12px;line-height:1.5;font:inherit}
+.oc-items{display:grid;gap:8px;margin-top:12px}.oc-it{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:10px}
+.oc-th{width:56px;height:56px;object-fit:contain;border-radius:8px;background:var(--soft)}.oc-it .nm{display:flex;flex-direction:column;gap:3px;min-width:0}.oc-it .nm b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.oc-bar{display:block;max-width:240px;height:6px}
 </style>
 </head>
 <body>
@@ -1070,7 +1075,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
   <!-- ===== PHOTOS ===== -->
   <section class="tab" id="tab-photos">
     <div class="mt-hub" id="phHub" role="tablist" aria-label="Outils photo">
-      <button type="button" data-t="edit" aria-pressed="true">🪄 Retoucher</button><button type="button" data-t="batch" aria-pressed="false">📐 Redimensionner en lot</button><button type="button" data-t="collage" aria-pressed="false">🧩 Collage</button><button type="button" data-t="bg" aria-pressed="false">✂️ Enlever le fond</button>
+      <button type="button" data-t="edit" aria-pressed="true">🪄 Retoucher</button><button type="button" data-t="batch" aria-pressed="false">📐 Redimensionner en lot</button><button type="button" data-t="collage" aria-pressed="false">🧩 Collage</button><button type="button" data-t="bg" aria-pressed="false">✂️ Enlever le fond</button><button type="button" data-t="ocr" aria-pressed="false">📝 Image en texte</button>
     </div>
     <div id="phPages"></div>
   </section>
@@ -3981,11 +3986,11 @@ const phOutName=(file,tpl,w,h,ext)=>mtClean((tpl||'{nom}').replace(/\{(\w+)\}/g,
 const phFmtSize=b=>b>=1e6?`${(b/1e6).toFixed(2).replace('.',',')} Mo`:`${Math.max(1,Math.round(b/1024))} Ko`;
 
 /* --- menu des outils photo --- */
-const PH_TOOLS=['edit','batch','collage','bg'];
+const PH_TOOLS=['edit','batch','collage','bg','ocr'];
 function phShow(t){
   PH.tool=t;$$('#phHub button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===t));
   PH_TOOLS.forEach(k=>{const p=$('#phP-'+k);if(p)p.hidden=k!==t});
-  if(t==='collage'&&typeof pcShow==='function')pcShow();if(t==='bg'&&typeof bgShow==='function')bgShow()}
+  if(t==='collage'&&typeof pcShow==='function')pcShow();if(t==='bg'&&typeof bgShow==='function')bgShow();if(t==='ocr'&&typeof ocShow==='function')ocShow()}
 $('#phHub').addEventListener('click',e=>{const b=e.target.closest('button');if(b)phShow(b.dataset.t)});
 
 function phDropInit(zone,input,cb){
@@ -4393,6 +4398,115 @@ function bgWire(){
   $('#pbgDl').addEventListener('click',async()=>{try{const o=await exp();phDownload(o.blob,o.name);bgMsg(`${o.name} · ${o.w} × ${o.h} px · ${phFmtSize(o.blob.size)}`)}catch(e){bgMsg('Rien à exporter pour le moment.')}});
   $('#pbgDir').addEventListener('click',async()=>{try{const o=await exp(),it={blob:o.blob,outName:o.name},ok=await mtSaveDir(it);toast(ok?`Enregistré dans « ${MT.dir.name} » ✓`:"Impossible d'écrire dans le dossier : utilise « Télécharger »")}catch(e){}})}
 if(window.__NOVA_TEST)window.__pb={BG,bgLoad,bgDetect,bgCompose};
+
+/* ---------- Photos : image en texte (reconnaissance de caractères Tesseract, exécutée dans ton navigateur) ---------- */
+const OC_VER='5.1.1';
+const OC={items:[],lang:'fra+eng',inv:true,up:true,head:false,worker:null,wlang:'',busy:false,id:0,undo:[],inited:false,cur:null};
+try{const o=JSON.parse(localStorage.getItem('nova_ocr_opts')||'{}');if(['fra+eng','fra','eng'].includes(o.lang))OC.lang=o.lang;if('inv' in o)OC.inv=!!o.inv;if('up' in o)OC.up=!!o.up;if('head' in o)OC.head=!!o.head}catch(e){}
+const ocSave=()=>{try{localStorage.setItem('nova_ocr_opts',JSON.stringify({lang:OC.lang,inv:OC.inv,up:OC.up,head:OC.head}))}catch(e){}};
+/* le lecteur vient de jsdelivr ; les données de langue (français, anglais) sont dans le dossier « ocr/ » de ce site */
+const ocPaths=()=>{let b='';try{b=localStorage.getItem('nova_ocr_base')||''}catch(e){}
+  const lang=new URL('ocr/',location.href).href;
+  return b?{lib:b+'/tesseract.min.js',worker:b+'/worker.min.js',core:b+'/core',lang}
+    :{lib:`https://cdn.jsdelivr.net/npm/tesseract.js@${OC_VER}/dist/tesseract.min.js`,worker:`https://cdn.jsdelivr.net/npm/tesseract.js@${OC_VER}/dist/worker.min.js`,core:`https://cdn.jsdelivr.net/npm/tesseract.js-core@${OC_VER}`,lang}};
+function ocHtml(){return `<div class="card mt-page" id="phP-ocr" hidden>
+ <div class="head"><h2>Image en texte</h2><span class="sub">lire le texte d'une capture ou d'une photo, prêt à copier-coller</span></div>
+ <div class="mt-drop mt-drop-s" id="ocDrop" tabindex="0"><b>Dépose, colle (Ctrl+V) ou choisis une image</b><span class="muted">capture d'écran, photo d'un document, affiche…</span><button class="btn primary" id="ocPick" type="button">Choisir des images…</button><input type="file" id="ocIn" accept="image/*" multiple hidden></div>
+ <div class="mt-set" id="ocOpts">
+  <div class="mt-fxr"><span class="lab">Langue du texte</span><div class="seg" id="ocLang"><button type="button" data-v="fra+eng" aria-pressed="true">Français + English</button><button type="button" data-v="fra" aria-pressed="false">Français</button><button type="button" data-v="eng" aria-pressed="false">English</button></div></div>
+  <div class="mt-fxr"><span class="lab"></span><label class="mt-chk"><input type="checkbox" id="ocUp"> Agrandir les petites images (plus précis)</label><label class="mt-chk"><input type="checkbox" id="ocInv"> Texte clair sur fond sombre : inverser automatiquement</label><label class="mt-chk"><input type="checkbox" id="ocHead"> Mettre le nom de l'image avant chaque texte</label></div>
+ </div>
+ <div class="mt-eng" id="ocMsg" hidden></div>
+ <div id="ocList"></div>
+ <h3 class="h3" style="margin:16px 0 6px">Texte lu <span class="muted sm" id="ocCount"></span></h3>
+ <textarea id="ocText" rows="10" class="oc-text" placeholder="Le texte apparaît ici. Tu peux le corriger directement." spellcheck="true" aria-label="Texte lu dans les images"></textarea>
+ <div class="btns left"><button class="btn primary" id="ocCopy" type="button" disabled>Copier tout</button><button class="btn" id="ocTxt" type="button" disabled>Télécharger .txt</button><button class="btn" id="ocJoin" type="button" disabled title="Colle les lignes d'un même paragraphe (utile pour du texte copié depuis une page)">Recoller les lignes</button><button class="btn" id="ocBlank" type="button" disabled>Enlever les lignes vides</button><button class="btn" id="ocUndo" type="button" disabled>↶ Annuler</button><button class="btn" id="ocClear" type="button" disabled>Tout vider</button></div>
+ <p class="muted sm" style="margin:10px 0 0">Tout se passe dans ton navigateur : tes images ne sont envoyées nulle part. La première fois, le site télécharge le lecteur de texte (≈ 8 Mo), ensuite Chrome le garde. Plus l'image est nette et grande, meilleur est le résultat. Les écritures à la main ne sont pas bien lues.</p>
+</div>`}
+$('#phPages').insertAdjacentHTML('beforeend',ocHtml());
+function ocShow(){if(!OC.inited){OC.inited=true;ocWire()}ocView()}
+const ocMsg=t=>{const m=$('#ocMsg');m.hidden=!t;m.textContent=t||''};
+
+/* --- ajouter des images --- */
+function ocAdd(files){
+  const L=[...files].filter(f=>/^image\//.test(f.type)||/\.(png|jpe?g|webp|bmp|gif|avif)$/i.test(f.name));
+  if(!L.length){toast("Aucune image reconnue");return}
+  L.forEach(f=>OC.items.push({id:++OC.id,file:f,url:URL.createObjectURL(f),state:'wait',pct:0,name:f.name&&f.name!=='image.png'?f.name:`Capture ${OC.id}`}));
+  ocView();ocPump()}
+
+/* --- préparation de l'image : grande taille, niveaux de gris, fond sombre inversé --- */
+async function ocPrep(file){
+  const bmp=await createImageBitmap(file);let w=bmp.width,h=bmp.height,s=1;const big=Math.max(w,h);
+  if(OC.up&&big<1800)s=Math.min(3,1800/big);if(big*s>3600)s=3600/big;
+  const W=Math.max(1,Math.round(w*s)),H=Math.max(1,Math.round(h*s)),c=document.createElement('canvas');c.width=W;c.height=H;
+  const g=c.getContext('2d',{willReadFrequently:true});g.fillStyle='#fff';g.fillRect(0,0,W,H);g.imageSmoothingQuality='high';g.drawImage(bmp,0,0,W,H);bmp.close&&bmp.close();
+  const d=g.getImageData(0,0,W,H),p=d.data;let sum=0;const n=W*H;
+  for(let i=0;i<p.length;i+=4){const y=0.299*p[i]+0.587*p[i+1]+0.114*p[i+2];p[i]=p[i+1]=p[i+2]=y;sum+=y}
+  const dark=OC.inv&&sum/n<115;
+  if(dark)for(let i=0;i<p.length;i+=4){const v=255-p[i];p[i]=p[i+1]=p[i+2]=v}
+  g.putImageData(d,0,0);return{canvas:c,inverted:dark}}
+
+/* --- lecteur --- */
+async function ocWorker(){
+  if(OC.worker&&OC.wlang===OC.lang)return OC.worker;
+  if(OC.worker){try{await OC.worker.terminate()}catch(e){}OC.worker=null}
+  if(location.protocol==='file:')throw new Error('file');
+  const P=ocPaths();
+  if(!window.Tesseract){ocMsg('⏳ Chargement du lecteur de texte…');await mtLoadScript(P.lib)}
+  const w=await Tesseract.createWorker(OC.lang,1,{workerPath:P.worker,corePath:P.core,langPath:P.lang,gzip:true,
+    logger:m=>{if(m.status==='recognizing text'&&OC.cur){OC.cur.pct=m.progress;ocListView()}
+      else if(/core/.test(m.status))ocMsg('⏳ Chargement du lecteur de texte…');else if(/language/.test(m.status))ocMsg('⏳ Chargement de la langue…');else if(/initializ/.test(m.status))ocMsg('⏳ Préparation…')}});
+  OC.worker=w;OC.wlang=OC.lang;ocMsg('');return w}
+const ocTidy=t=>String(t||'').replace(/\r/g,'').split('\n').map(l=>l.replace(/[ \t]+$/,'')).join('\n').replace(/\n{3,}/g,'\n\n').trim();
+async function ocPump(){
+  if(OC.busy)return;const it=OC.items.find(x=>x.state==='wait');if(!it)return;
+  OC.busy=true;it.state='run';it.pct=0;OC.cur=it;ocView();
+  try{
+    const w=await ocWorker(),{canvas,inverted}=await ocPrep(it.file);
+    const r=await w.recognize(canvas);it.text=ocTidy(r.data.text);it.conf=Math.round(r.data.confidence||0);it.inv=inverted;it.state='ok';
+    if(it.text)ocAppend(it)}
+  catch(e){it.state='err';it.err=String((e&&e.message)||e);console.warn('image en texte:',e);
+    if(OC.worker){try{OC.worker.terminate()}catch(_){}OC.worker=null}
+    ocMsg(it.err==='file'?"Cette fonction marche depuis le site (nova-qa.fr), pas depuis un fichier ouvert directement.":/script|Failed to fetch|network|importScripts|NetworkError/i.test(it.err)?"Impossible de charger le lecteur de texte. Vérifie ta connexion (un VPN ou un bloqueur peut empêcher le téléchargement depuis cdn.jsdelivr.net), puis clique sur « Relire ».":"La lecture a échoué : "+it.err.slice(0,160))}
+  OC.busy=false;OC.cur=null;if(it.state==='ok')ocMsg('');ocView();ocPump()}
+
+/* --- zone de texte --- */
+function ocSnap(){const t=$('#ocText').value;if(OC.undo[OC.undo.length-1]!==t){OC.undo.push(t);if(OC.undo.length>30)OC.undo.shift()}}
+function ocAppend(it){ocSnap();const ta=$('#ocText'),blk=(OC.head?`— ${it.name} —\n`:'')+it.text;ta.value=(ta.value.trim()?ta.value.replace(/\s+$/,'')+'\n\n':'')+blk;ta.scrollTop=ta.scrollHeight;ocBtns()}
+function ocBtns(){const has=!!$('#ocText').value.trim();['ocCopy','ocTxt','ocJoin','ocBlank','ocClear'].forEach(k=>$('#'+k).disabled=!has);$('#ocUndo').disabled=!OC.undo.length;
+  const t=$('#ocText').value.trim(),words=t?t.split(/\s+/).length:0;$('#ocCount').textContent=t?`· ${words} mot${words>1?'s':''}, ${t.length} caractères`:''}
+function ocListView(){
+  const L=$('#ocList');if(!OC.items.length){L.innerHTML='';return}
+  L.innerHTML='<div class="oc-items">'+OC.items.map(it=>{
+    const st=it.state==='wait'?'<span class="muted sm">en attente…</span>':it.state==='run'?`<span class="muted sm">lecture… ${Math.round((it.pct||0)*100)} %</span><span class="mt-bar oc-bar"><i style="width:${Math.max(6,Math.round((it.pct||0)*100))}%"></i></span>`
+      :it.state==='err'?`<span class="bad sm">échec</span> <button class="btn sm" data-ocretry="${it.id}" type="button">Relire</button>`
+      :!it.text?'<span class="muted sm">aucun texte trouvé</span> <button class="btn sm" data-ocretry="'+it.id+'" type="button">Relire</button>'
+      :`<span class="${it.conf<65?'bad':'ok'} sm">✓ ${it.text.length} caractères${it.conf<65?` · lecture peu sûre (${it.conf} %) : essaie une image plus grande ou plus nette`:''}${it.inv?' · fond sombre inversé':''}</span>`;
+    return `<div class="oc-it"><img src="${it.url}" alt="" class="oc-th"><div class="nm"><b>${esc(it.name)}</b>${st}</div><button class="btn sm" data-ocrm="${it.id}" type="button" aria-label="Retirer cette image">✕</button></div>`}).join('')+'</div>'}
+function ocView(){
+  setSeg('ocLang',OC.lang);$('#ocUp').checked=OC.up;$('#ocInv').checked=OC.inv;$('#ocHead').checked=OC.head;ocListView();ocBtns()}
+
+/* --- câblage --- */
+function ocWire(){
+  const z=$('#ocDrop');
+  ['dragenter','dragover'].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.add('over')}));['dragleave','drop'].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.remove('over')}));
+  z.addEventListener('drop',e=>ocAdd(e.dataTransfer.files));z.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('#ocIn').click()}});
+  $('#ocPick').addEventListener('click',()=>$('#ocIn').click());$('#ocIn').addEventListener('change',e=>{ocAdd(e.target.files);e.target.value=''});
+  /* Ctrl+V : coller une capture d'écran directement */
+  document.addEventListener('paste',e=>{if(!$('#tab-photos').classList.contains('on')||$('#phP-ocr').hidden)return;const fs=[...(e.clipboardData&&e.clipboardData.files||[])].filter(f=>/^image\//.test(f.type));if(!fs.length)return;e.preventDefault();ocAdd(fs)});
+  segBind('ocLang',v=>{OC.lang=v;ocSave()});
+  $('#ocUp').addEventListener('change',e=>{OC.up=e.target.checked;ocSave()});$('#ocInv').addEventListener('change',e=>{OC.inv=e.target.checked;ocSave()});$('#ocHead').addEventListener('change',e=>{OC.head=e.target.checked;ocSave()});
+  $('#ocList').addEventListener('click',e=>{
+    const rm=e.target.closest('[data-ocrm]');if(rm){const i=OC.items.findIndex(x=>x.id===+rm.dataset.ocrm),it=OC.items[i];if(it&&it.state!=='run'){URL.revokeObjectURL(it.url);OC.items.splice(i,1);ocView()}}
+    const rt=e.target.closest('[data-ocretry]');if(rt){const it=OC.items.find(x=>x.id===+rt.dataset.ocretry);if(it){it.state='wait';ocMsg('');ocView();ocPump()}}});
+  $('#ocText').addEventListener('input',ocBtns);$('#ocText').addEventListener('focus',ocSnap);
+  $('#ocCopy').addEventListener('click',async()=>{const ta=$('#ocText');try{await navigator.clipboard.writeText(ta.value);toast('Texte copié ✓')}catch(err){ta.select();try{document.execCommand('copy');toast('Texte copié ✓')}catch(e2){toast('Sélectionne le texte et copie avec Ctrl+C')}}});
+  $('#ocTxt').addEventListener('click',()=>phDownload(new Blob([$('#ocText').value+'\n'],{type:'text/plain;charset=utf-8'}),'texte.txt'));
+  $('#ocJoin').addEventListener('click',()=>{ocSnap();const ta=$('#ocText');ta.value=ta.value.replace(/(\w)-\n(\w)/g,'$1$2').replace(/([^\n])\n(?!\n)/g,'$1 ');ocBtns()});
+  $('#ocBlank').addEventListener('click',()=>{ocSnap();const ta=$('#ocText');ta.value=ta.value.replace(/\n{2,}/g,'\n');ocBtns()});
+  $('#ocUndo').addEventListener('click',()=>{const t=OC.undo.pop();if(t!=null)$('#ocText').value=t;ocBtns()});
+  $('#ocClear').addEventListener('click',()=>{ocSnap();$('#ocText').value='';ocBtns()})}
+if(window.__NOVA_TEST)window.__oc={OC,ocAdd,ocPrep};
 
 /* ---------- relevés d'activité (à imprimer ou enregistrer en PDF) ---------- */
 const JOURS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
