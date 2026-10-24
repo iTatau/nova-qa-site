@@ -3733,9 +3733,10 @@ function keysHtml(){return `<div class="card mt-page" id="mtP-keys" hidden>
   <details open class="ky-det" data-km="elem"><summary>Enregistrer l'élément (image, séquence, GIF, vidéo)</summary>
    <div class="btns left" style="margin-top:6px"><button class="btn primary" id="kyPng" type="button">Image PNG</button><button class="btn" id="kySeq" type="button">Séquence PNG (zip)</button><button class="btn" id="kyWebm" type="button">WebM transparent</button><button class="btn" id="kyGif" type="button">GIF</button><button class="btn" id="kyMp4" type="button">Vidéo MP4</button><button class="btn" id="kyKeep" type="button">＋ Garder cet élément</button></div>
    <p class="muted sm" style="margin:6px 0 0">PNG / séquence PNG : fond transparent gardé, importable dans CapCut, Premiere, After Effects. MP4 : pas de transparence (le fond prend la couleur choisie). GIF : largeur <input type="number" data-ko="gifw" min="120" max="1200" step="10" style="width:84px;display:inline-block;height:28px"> px.</p>
-   <div class="ky-prog" id="kyProg" hidden><div class="mt-bar"><i id="kyBar" style="width:6%"></i></div><span class="muted sm" id="kyPm"></span><button class="btn sm" id="kyCancel" type="button">Arrêter</button></div>
-   <div id="kyRes"></div>
-   <div id="kyLibW" hidden><h3 class="h3" style="margin:16px 0 6px">Mes éléments gardés</h3><div id="kyLib" class="ky-lib"></div><div class="btns left"><button class="btn" id="kyLibZip" type="button">Tout en PNG (zip)</button><button class="btn" id="kyLibClear" type="button">Vider la liste</button></div></div></details>
+   </details>
+  <div class="ky-prog" id="kyProg" hidden><div class="mt-bar"><i id="kyBar" style="width:6%"></i></div><span class="muted sm" id="kyPm"></span><button class="btn sm" id="kyCancel" type="button">Arrêter</button></div>
+  <div id="kyRes"></div>
+  <div id="kyLibW" hidden><h3 class="h3" style="margin:16px 0 6px">Mes éléments gardés</h3><div id="kyLib" class="ky-lib"></div><div class="btns left"><button class="btn" id="kyLibZip" type="button">Tout en PNG (zip)</button><button class="btn" id="kyLibClear" type="button">Vider la liste</button></div></div>
  </div>
 </div>`}
 $('#mtPages').insertAdjacentHTML('beforeend',keysHtml());
