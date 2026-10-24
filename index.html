@@ -830,6 +830,23 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 .oc-items{display:grid;gap:8px;margin-top:12px}.oc-it{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:10px}
 .oc-th{width:56px;height:56px;object-fit:contain;border-radius:8px;background:var(--soft)}.oc-it .nm{display:flex;flex-direction:column;gap:3px;min-width:0}.oc-it .nm b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .oc-bar{display:block;max-width:240px;height:6px}
+/* ---------- Éléments clés ---------- */
+#kyStage{display:block;width:100%;height:430px;border-radius:12px;border:1px solid var(--line);background:#0b1020;touch-action:none;cursor:crosshair;outline:none}#kyStage:focus-visible{border-color:var(--brand)}
+.ky-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 8px}.ky-bar .sp{flex:1}
+.ky-time{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}.ky-time input[type=range]{flex:1;min-width:140px;padding:0;height:auto}
+.ky-sel{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:8px}.ky-sel label{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--mut)}.ky-sel input{width:84px;height:34px;padding:0 8px}.ky-sel .lab{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--mut)}
+.ky-two{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.ky-cvw{display:flex;justify-content:center;align-items:center;min-height:140px;padding:10px;border-radius:12px;border:1px solid var(--line);background:repeating-conic-gradient(#1a2142 0 25%,#12183a 0 50%) 0 0/16px 16px;overflow:auto}
+.ky-cvw canvas{display:block;image-rendering:pixelated;max-width:100%}
+.ky-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.ky-det{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:8px 12px}.ky-det>summary{cursor:pointer;font-weight:700;font-size:14px}
+.ky-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px 18px;margin-top:10px;align-items:end}
+.ky-grid label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mut)}.ky-grid label.mt-chk{flex-direction:row;color:var(--ink)}.ky-grid select,.ky-grid input[type=number]{height:36px;padding:0 8px}
+.ky-grid input[type=color]{height:36px;width:70px;padding:2px}
+.ky-sl{display:flex!important;flex-direction:row!important;align-items:center;gap:8px}.ky-sl>span{min-width:110px}.ky-sl input[type=range]{flex:1;padding:0;height:auto}.ky-sl b{min-width:28px;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.ky-prog{display:flex;gap:12px;align-items:center;margin-top:10px}.ky-prog .mt-bar{flex:1}
+.ky-lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}.ky-li{display:grid;grid-template-columns:56px 1fr;gap:4px 10px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:10px}.ky-li img{grid-row:1/3;width:56px;height:56px;object-fit:contain;image-rendering:pixelated;background:repeating-conic-gradient(#1a2142 0 25%,#12183a 0 50%) 0 0/10px 10px;border-radius:6px}.ky-li div{grid-column:1/3}
+@media (max-width:900px){.ky-two{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -988,7 +1005,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
   <!-- ===== MONTAGE ===== -->
   <section class="tab" id="tab-montage">
     <div class="mt-hub" id="mtHub" role="tablist" aria-label="Outils vidéo">
-      <button type="button" data-t="cut" aria-pressed="true">✂️ Couper</button><button type="button" data-t="gif" aria-pressed="false">🎞 GIF</button><button type="button" data-t="speed" aria-pressed="false">⏩ Vitesse</button><button type="button" data-t="sound" aria-pressed="false">🔊 Son</button><button type="button" data-t="compress" aria-pressed="false">🗜 Compresser</button><button type="button" data-t="convert" aria-pressed="false">🔄 Convertir</button><button type="button" data-t="join" aria-pressed="false">🔗 Assembler</button><button type="button" data-t="thumb" aria-pressed="false">🖼 Miniature</button><button type="button" data-t="subs" aria-pressed="false">💬 Sous-titres</button><button type="button" data-t="rec" aria-pressed="false">🎥 Enregistrer l'écran</button><button type="button" data-t="sounds" aria-pressed="false">🎵 Sons &amp; musiques</button>
+      <button type="button" data-t="cut" aria-pressed="true">✂️ Couper</button><button type="button" data-t="gif" aria-pressed="false">🎞 GIF</button><button type="button" data-t="speed" aria-pressed="false">⏩ Vitesse</button><button type="button" data-t="sound" aria-pressed="false">🔊 Son</button><button type="button" data-t="compress" aria-pressed="false">🗜 Compresser</button><button type="button" data-t="convert" aria-pressed="false">🔄 Convertir</button><button type="button" data-t="join" aria-pressed="false">🔗 Assembler</button><button type="button" data-t="thumb" aria-pressed="false">🖼 Miniature</button><button type="button" data-t="subs" aria-pressed="false">💬 Sous-titres</button><button type="button" data-t="rec" aria-pressed="false">🎥 Enregistrer l'écran</button><button type="button" data-t="sounds" aria-pressed="false">🎵 Sons &amp; musiques</button><button type="button" data-t="keys" aria-pressed="false">🎯 Éléments clés</button>
     </div>
     <div id="mtCutWrap">
     <div class="card" id="mtStep1">
@@ -2894,7 +2911,7 @@ function hubShow(t){
   $$('#mtPages>.mt-page').forEach(p=>p.hidden=p.id!=='mtP-'+t);
   if(t==='cut')try{localStorage.setItem('nova_mt_tool','')}catch(e){}
   if(t==='thumb'&&typeof thumbShow==='function')thumbShow();
-  if(t==='subs'&&typeof subsShow==='function')subsShow();if(t==='rec'&&typeof recShow==='function')recShow();if(t==='sounds'&&typeof sndShow==='function')sndShow();
+  if(t==='subs'&&typeof subsShow==='function')subsShow();if(t==='rec'&&typeof recShow==='function')recShow();if(t==='sounds'&&typeof sndShow==='function')sndShow();if(t==='keys'&&typeof keysShow==='function')keysShow();
   if(['compress','convert','join'].includes(t))toolsRender(t)}
 $('#mtHub').addEventListener('click',e=>{const b=e.target.closest('button');if(b)hubShow(b.dataset.t)});
 
@@ -3634,6 +3651,426 @@ async function runSubs(ff,it){
   }finally{for(const n of names){try{await ff.deleteFile(n)}catch(e){}}try{await ff.unmount('/src')}catch(e){}}}
 function suFonts(){if(location.protocol==='file:')return;try{for(const k in SU_FONTS){const f=new FontFace(SU_FONTS[k].css,`url(fonts/${SU_FONTS[k].file})`);f.load().then(x=>{document.fonts.add(x);if(SU.inited)suOvStyle()}).catch(()=>{})}}catch(e){}}
 if(window.__NOVA_TEST)window.__su={SU,suSplit,suImport,suSrt,suGenerate,suLoad,suClean,runSubs};
+
+/* ---------- Montage : éléments clés (prendre un détail de la vidéo, l'agrandir sans flou, le détourer, l'animer) ---------- */
+const KY_DEF={zoom:'auto',out:'auto',ow:1920,oh:1080,margin:12,smooth:'nearest',decor:'none',bgColor:'#101820',blur:14,dark:55,cut:'none',tol:28,contig:true,soft:0,glow:0,glowCol:'#58c8ff',outline:0,outCol:'#000000',shadow:false,inA:'none',dur2:'none',power:1,secs:3,fps:30,live:false,gifw:480};
+const KY={file:null,isImg:false,vid:null,fc:null,fw:0,fh:0,t:0,dur:0,rect:null,view:{z:1,ox:0,oy:0},o:{...KY_DEF},seeds:[],man:null,ai:null,el:null,cache:{},items:[],out:[],busy:false,cancel:false,inited:false,tool:'rect',ratio:0,drag:null,paint:'wand',brush:6,nid:0,apOn:true,apStart:0,apT:0,loop:0,live:null,space:false,playing:false};
+try{Object.assign(KY.o,JSON.parse(localStorage.getItem('nova_ky_opts')||'{}'))}catch(e){}
+const kySave=()=>{try{localStorage.setItem('nova_ky_opts',JSON.stringify(KY.o))}catch(e){}};
+const KY_VIDS=new Map();
+function kyVideo(file,fresh){
+  const key=fresh?'pv':'main',m=KY_VIDS.get(file)||{};if(m[key])return m[key];
+  const p=new Promise((res,rej)=>{const v=document.createElement('video');v.muted=true;v.playsInline=true;v.preload='auto';v.src=URL.createObjectURL(file);
+    v.onerror=()=>rej(new Error('lecture'));
+    v.onloadedmetadata=()=>{if(v.duration===Infinity){const back=()=>{v.removeEventListener('timeupdate',back);v.currentTime=0;res(v)};v.addEventListener('timeupdate',back);v.currentTime=1e101}else res(v)}});
+  m[key]=p;KY_VIDS.set(file,m);p.catch(()=>{m[key]=null});return p}
+const kySeek=(v,t)=>new Promise(res=>{const d=isFinite(v.duration)?v.duration:1e9;t=Math.max(0,Math.min(d,t));if(Math.abs(v.currentTime-t)<0.0005&&v.readyState>=2){res();return}
+  const h=()=>{clearTimeout(to);v.removeEventListener('seeked',h);res()},to=setTimeout(h,3000);v.addEventListener('seeked',h);v.currentTime=t});
+const kyErr=t=>{const e=$('#kyErr');e.hidden=!t;e.textContent=t||''};
+const kyMsg=t=>{const e=$('#kyMsg');e.hidden=!t;e.textContent=t||''};
+const kyFps=()=>{const i=KY.file&&typeof MT_INFO!=='undefined'?MT_INFO.get(KY.file):null;return i&&i.video&&i.video.fps>1?i.video.fps:30};
+
+/* ---------- page ---------- */
+const kyRange=(k,min,max,step,lab,unit)=>`<label class="ky-sl"><span>${lab}</span><input type="range" data-ko="${k}" min="${min}" max="${max}" step="${step}" aria-label="${lab}"><b data-kv="${k}"></b>${unit||''}</label>`;
+function keysHtml(){return `<div class="card mt-page" id="mtP-keys" hidden>
+ <div class="head"><h2>Éléments clés</h2><span class="sub">prendre un détail de ta vidéo, l'agrandir sans flou, le détourer et l'animer</span></div>
+ <div class="mt-eng" id="kyMsg" hidden></div>
+ <div class="mt-drop mt-drop-s" id="kyDrop" tabindex="0"><b>Dépose une vidéo (ou une capture) ici</b><span class="muted">puis entoure ce qui t'intéresse : un objet, des cœurs, un texte, la barre d'objets…</span><button class="btn primary" id="kyPick" type="button">Choisir un fichier…</button><input type="file" id="kyFile" accept="video/*,image/*,.mkv,.mov,.mp4,.webm" hidden></div>
+ <p class="bad sm" id="kyErr" hidden></p>
+ <div id="kyWork" hidden>
+  <div class="ky-bar"><div class="seg" id="kyToolSeg"><button type="button" data-v="rect" aria-pressed="true" title="Dessiner / déplacer le cadre">▭ Cadre</button><button type="button" data-v="pan" aria-pressed="false" title="Déplacer la vue (ou clic molette, ou barre d'espace)">✋ Vue</button></div>
+   <select id="kyRatio" aria-label="Forme du cadre"><option value="0">Cadre libre</option><option value="1">Carré 1:1</option><option value="1.3333">4:3</option><option value="1.7778">16:9</option><option value="0.5625">9:16</option></select>
+   <button class="btn sm" id="kyFit" type="button">Tout voir</button><button class="btn sm" id="kyZm" type="button" aria-label="Dézoomer">−</button><button class="btn sm" id="kyZp" type="button" aria-label="Zoomer">+</button><span class="muted sm" id="kyZl"></span>
+   <span class="sp"></span><button class="btn sm" id="kyOther" type="button">Autre fichier…</button></div>
+  <canvas id="kyStage" height="430" tabindex="0" aria-label="Image de la vidéo : dessine un cadre autour de l'élément"></canvas>
+  <div class="ky-time" id="kyTime"><button class="btn sm" id="kyPlay" type="button" aria-label="Lecture">▶</button><button class="btn sm" id="kyM1" type="button">−1 s</button><button class="btn sm" id="kyPf" type="button" aria-label="Image précédente">◀ image</button><button class="btn sm" id="kyNf" type="button" aria-label="Image suivante">image ▶</button><button class="btn sm" id="kyP1" type="button">+1 s</button>
+   <input type="range" id="kyT" min="0" max="1" step="0.001" value="0" aria-label="Position dans la vidéo"><span class="muted sm" id="kyTl"></span></div>
+  <div class="ky-sel"><span class="lab">Cadre</span><label>x<input type="number" id="kyX" min="0" step="1"></label><label>y<input type="number" id="kyY" min="0" step="1"></label><label>largeur<input type="number" id="kyW" min="1" step="1"></label><label>hauteur<input type="number" id="kyH" min="1" step="1"></label><span class="muted sm" id="kyInfo"></span></div>
+  <p class="muted sm" style="margin:6px 0 0">Molette = zoom · glisse pour dessiner le cadre · ← → = image par image (Maj = 1 s) · Ctrl + flèches = déplacer le cadre d'un pixel.</p>
+  <div class="ky-two">
+   <div><h3 class="h3" style="margin:14px 0 6px">Élément <span class="muted sm" id="kyElInfo"></span></h3>
+    <div class="ky-cvw" id="kyElW"><canvas id="kyEl" aria-label="Élément découpé"></canvas></div>
+    <div class="ky-tools"><div class="seg" id="kyPaintSeg"><button type="button" data-v="wand" aria-pressed="true" title="Clique sur une couleur pour la retirer">🎨 Retirer une couleur</button><button type="button" data-v="erase" aria-pressed="false">🧽 Gommer</button><button type="button" data-v="keep" aria-pressed="false">♻️ Restaurer</button></div>
+     <label class="ky-sl" style="min-width:150px"><span>Pinceau</span><input type="range" id="kyBrush" min="1" max="40" value="6" aria-label="Taille du pinceau"></label></div>
+    <div class="ky-tools"><button class="btn sm" id="kyUndoSeed" type="button">Annuler le dernier clic</button><button class="btn sm" id="kyAI" type="button">🤖 Détourage IA</button><button class="btn sm" id="kyResetCut" type="button">Réinitialiser le détourage</button></div></div>
+   <div><h3 class="h3" style="margin:14px 0 6px">Rendu <span class="muted sm" id="kyPrInfo"></span></h3>
+    <div class="ky-cvw" id="kyPrW"><canvas id="kyPrev" aria-label="Aperçu du rendu animé"></canvas></div>
+    <div class="ky-tools"><button class="btn sm" id="kyAPlay" type="button" aria-label="Lecture de l'aperçu">⏸</button><input type="range" id="kyAT" min="0" max="3" step="0.01" value="0" aria-label="Position dans l'animation" style="flex:1;min-width:120px;padding:0;height:auto"><span class="muted sm" id="kyAl"></span></div></div>
+  </div>
+  <details open class="ky-det"><summary>Taille et agrandissement</summary><div class="ky-grid">
+   <label>Agrandir<select data-ko="zoom"><option value="auto">le plus grand possible</option>${[2,3,4,6,8,12,16,24,32].map(n=>`<option value="${n}">× ${n}</option>`).join('')}</select></label>
+   <label>Format du résultat<select data-ko="out"><option value="auto">Juste l'élément (+ marge)</option><option value="sq">Carré 1080 × 1080</option><option value="wide">Paysage 1920 × 1080</option><option value="tall">Portrait 1080 × 1920</option><option value="custom">Taille personnalisée</option></select></label>
+   <label class="ky-cust">Largeur<input type="number" data-ko="ow" min="64" max="4096" step="1"></label><label class="ky-cust">Hauteur<input type="number" data-ko="oh" min="64" max="4096" step="1"></label>
+   ${kyRange('margin',0,40,1,'Marge','%')}
+   <div class="mt-fxr"><span class="lab" style="min-width:90px">Pixels</span><div class="seg" data-kseg="smooth"><button type="button" data-v="nearest" aria-pressed="true">Nets (pixel art)</button><button type="button" data-v="smooth" aria-pressed="false">Lissés</button></div></div></div></details>
+  <details open class="ky-det"><summary>Décor autour de l'élément</summary><div class="ky-grid">
+   <div class="mt-fxr" style="grid-column:1/-1"><div class="seg" data-kseg="decor"><button type="button" data-v="none" aria-pressed="true">Transparent</button><button type="button" data-v="color" aria-pressed="false">Couleur</button><button type="button" data-v="scene" aria-pressed="false">La scène, nette</button><button type="button" data-v="sceneblur" aria-pressed="false">La scène, floue et sombre</button></div><input type="color" data-ko="bgColor" aria-label="Couleur du fond"></div>
+   ${kyRange('blur',0,60,1,'Flou du décor','')}${kyRange('dark',0,90,1,'Assombrir le décor','%')}</div></details>
+  <details class="ky-det"><summary>Détourage (retirer le fond de l'élément)</summary><div class="ky-grid">
+   <div class="mt-fxr" style="grid-column:1/-1"><div class="seg" data-kseg="cut"><button type="button" data-v="none" aria-pressed="true">Aucun</button><button type="button" data-v="color" aria-pressed="false">Par couleur</button><button type="button" data-v="ai" aria-pressed="false">IA</button></div></div>
+   ${kyRange('tol',1,80,1,'Tolérance de couleur','')}<label class="mt-chk"><input type="checkbox" data-ko="contig"> Seulement ce qui touche l'endroit cliqué</label>${kyRange('soft',0,10,1,'Adoucir les bords','')}
+   <p class="muted sm" style="grid-column:1/-1;margin:0">« Par couleur » : clique sur le fond dans la zone « Élément » (plusieurs clics possibles). Le pinceau gomme ou restaure ce qui reste. Pour une zone qui bouge, seul le détourage par couleur est utilisé.</p></div></details>
+  <details class="ky-det"><summary>Effets</summary><div class="ky-grid">
+   ${kyRange('glow',0,100,1,'Halo lumineux','')}<label>Couleur du halo<input type="color" data-ko="glowCol"></label>
+   ${kyRange('outline',0,8,1,'Contour (en gros pixels)','')}<label>Couleur du contour<input type="color" data-ko="outCol"></label>
+   <label class="mt-chk"><input type="checkbox" data-ko="shadow"> Ombre portée</label></div></details>
+  <details open class="ky-det"><summary>Animation</summary><div class="ky-grid">
+   <label>Entrée<select data-ko="inA"><option value="none">Aucune</option><option value="pop">Pop (rebond)</option><option value="fade">Fondu</option><option value="zoomin">Zoom d'apparition</option><option value="spin">Tourne et apparaît</option><option value="left">Glisse depuis la gauche</option><option value="right">Glisse depuis la droite</option><option value="up">Glisse depuis le bas</option><option value="down">Tombe d'en haut</option></select></label>
+   <label>Pendant<select data-ko="dur2"><option value="none">Rien</option><option value="zoomin">Zoom avant lent</option><option value="zoomout">Zoom arrière lent</option><option value="shake">Tremblement</option><option value="pulse">Battement</option><option value="float">Flottement</option><option value="wiggle">Balancement</option><option value="spin">Rotation</option></select></label>
+   ${kyRange('power',0.3,2.5,0.1,'Intensité','')}<label>Durée (s)<input type="number" data-ko="secs" min="0.5" max="20" step="0.5"></label>
+   <label>Images par seconde<select data-ko="fps"><option value="24">24</option><option value="30">30</option><option value="60">60</option></select></label>
+   <label class="mt-chk" id="kyLiveW"><input type="checkbox" data-ko="live"> La zone bouge : utiliser la vidéo à partir de cet instant</label></div></details>
+  <details open class="ky-det"><summary>Enregistrer</summary>
+   <div class="btns left" style="margin-top:6px"><button class="btn primary" id="kyPng" type="button">Image PNG</button><button class="btn" id="kySeq" type="button">Séquence PNG (zip)</button><button class="btn" id="kyWebm" type="button">WebM transparent</button><button class="btn" id="kyGif" type="button">GIF</button><button class="btn" id="kyMp4" type="button">Vidéo MP4</button><button class="btn" id="kyKeep" type="button">＋ Garder cet élément</button></div>
+   <p class="muted sm" style="margin:6px 0 0">PNG / séquence PNG : fond transparent gardé, importable dans CapCut, Premiere, After Effects. MP4 : pas de transparence (le fond prend la couleur choisie). GIF : largeur <input type="number" data-ko="gifw" min="120" max="1200" step="10" style="width:84px;display:inline-block;height:28px"> px.</p>
+   <div class="ky-prog" id="kyProg" hidden><div class="mt-bar"><i id="kyBar" style="width:6%"></i></div><span class="muted sm" id="kyPm"></span><button class="btn sm" id="kyCancel" type="button">Arrêter</button></div>
+   <div id="kyRes"></div>
+   <div id="kyLibW" hidden><h3 class="h3" style="margin:16px 0 6px">Mes éléments gardés</h3><div id="kyLib" class="ky-lib"></div><div class="btns left"><button class="btn" id="kyLibZip" type="button">Tout en PNG (zip)</button><button class="btn" id="kyLibClear" type="button">Vider la liste</button></div></div></details>
+ </div>
+</div>`}
+$('#mtPages').insertAdjacentHTML('beforeend',keysHtml());
+
+/* ---------- chargement ---------- */
+function keysShow(){if(!KY.inited){KY.inited=true;kyWire()}kyOptsView();kyStage();kyPvStart()}
+async function kyLoad(file){
+  if(!file)return;kyErr('');
+  const isImg=/^image\//.test(file.type)||/\.(png|jpe?g|webp|bmp|gif|avif)$/i.test(file.name);
+  if(!isImg&&!mtIsVideo(file)){kyErr("Dépose une vidéo ou une image.");return}
+  try{
+    const fc=document.createElement('canvas');
+    if(isImg){const b=await createImageBitmap(file);fc.width=b.width;fc.height=b.height;fc.getContext('2d').drawImage(b,0,0);KY.vid=null;KY.dur=0;KY.fw=b.width;KY.fh=b.height}
+    else{const v=await kyVideo(file);if(!v.videoWidth)throw new Error('format');KY.vid=v;KY.dur=v.duration;KY.fw=v.videoWidth;KY.fh=v.videoHeight;await kySeek(v,0);fc.width=KY.fw;fc.height=KY.fh;fc.getContext('2d').drawImage(v,0,0)}
+    KY.file=file;KY.isImg=isImg;KY.fc=fc;KY.t=0;KY.rect=null;KY.seeds=[];KY.man=null;KY.ai=null;KY.el=null;KY.playing=false;
+    $('#kyDrop').hidden=true;$('#kyWork').hidden=false;$('#kyTime').hidden=isImg;$('#kyLiveW').hidden=isImg;if(isImg)KY.o.live=false;
+    $('#kyT').max=KY.dur||1;kyFit();kyStage();kyRectUi();kyUpdate();kyTimeUi();kyPvStart()
+  }catch(e){console.warn('éléments clés:',e);kyErr("Ce fichier ne peut pas être lu par le navigateur (certains formats vidéo, comme le HEVC, ne passent pas). Convertis-le d'abord en MP4 avec l'outil « Convertir ».")}}
+function kyGrab(){const v=KY.vid;if(!v||!v.videoWidth)return;KY.fc.getContext('2d').drawImage(v,0,0)}
+let kySeekBusy=false,kySeekWant=null;
+async function kySetTime(t){
+  if(KY.isImg||!KY.vid)return;KY.t=Math.max(0,Math.min(KY.dur,t));kySeekWant=KY.t;if(kySeekBusy)return;kySeekBusy=true;
+  try{while(kySeekWant!=null){const w=kySeekWant;kySeekWant=null;await kySeek(KY.vid,w);kyGrab();kyStage();kyUpdate()}}finally{kySeekBusy=false}kyTimeUi()}
+function kyTimeUi(){$('#kyT').value=KY.t;$('#kyTl').textContent=KY.isImg?'':`${mtFmt(KY.t,2)} / ${mtFmt(KY.dur,1)}`;$('#kyPlay').textContent=KY.playing?'⏸':'▶'}
+function kyPlayLoop(){
+  if(!KY.playing)return;const v=KY.vid;if(v.ended||v.paused&&KY.t>=KY.dur-0.05){kyStop();return}
+  KY.t=v.currentTime;kyGrab();kyStage();kyTimeUi();if(!KY.sl||performance.now()-KY.sl>150){KY.sl=performance.now();kyUpdate()}requestAnimationFrame(kyPlayLoop)}
+function kyStop(){KY.playing=false;if(KY.vid)KY.vid.pause();if(KY.vid){KY.t=KY.vid.currentTime;kyGrab()}kyStage();kyUpdate();kyTimeUi()}
+async function kyTogglePlay(){
+  if(KY.isImg||!KY.vid)return;if(KY.playing){kyStop();return}
+  if(KY.t>=KY.dur-0.05)await kySeek(KY.vid,0);KY.playing=true;try{await KY.vid.play()}catch(e){KY.playing=false}kyTimeUi();requestAnimationFrame(kyPlayLoop)}
+
+/* ---------- zone de sélection (zoom, déplacement, cadre) ---------- */
+function kyFit(){const c=$('#kyStage'),cw=c.clientWidth||800,ch=c.height,z=Math.min(cw/KY.fw,ch/KY.fh);KY.view.z=z;KY.view.ox=(cw-KY.fw*z)/2;KY.view.oy=(ch-KY.fh*z)/2}
+function kyStage(){
+  const c=$('#kyStage'),cw=c.clientWidth||800;if(c.width!==cw)c.width=cw;const ch=c.height,g=c.getContext('2d'),V=KY.view;
+  g.fillStyle='#0b1020';g.fillRect(0,0,cw,ch);if(!KY.fc)return;
+  g.imageSmoothingEnabled=V.z<1;g.drawImage(KY.fc,V.ox,V.oy,KY.fw*V.z,KY.fh*V.z);
+  if(V.z>=10){g.strokeStyle='rgba(255,255,255,.12)';g.lineWidth=1;g.beginPath();const x0=Math.max(0,Math.floor(-V.ox/V.z)),x1=Math.min(KY.fw,Math.ceil((cw-V.ox)/V.z)),y0=Math.max(0,Math.floor(-V.oy/V.z)),y1=Math.min(KY.fh,Math.ceil((ch-V.oy)/V.z));
+    for(let x=x0;x<=x1;x++){const sx=Math.round(V.ox+x*V.z)+.5;g.moveTo(sx,V.oy+y0*V.z);g.lineTo(sx,V.oy+y1*V.z)}for(let y=y0;y<=y1;y++){const sy=Math.round(V.oy+y*V.z)+.5;g.moveTo(V.ox+x0*V.z,sy);g.lineTo(V.ox+x1*V.z,sy)}g.stroke()}
+  if(KY.rect){const r=KY.rect,x=V.ox+r.x*V.z,y=V.oy+r.y*V.z,w=r.w*V.z,h=r.h*V.z;
+    g.fillStyle='rgba(0,0,0,.55)';g.beginPath();g.rect(0,0,cw,ch);g.rect(x,y,w,h);g.fill('evenodd');
+    g.strokeStyle='#58c8ff';g.lineWidth=2;g.strokeRect(x,y,w,h);g.fillStyle='#fff';
+    for(const [hx,hy] of kyHandles(x,y,w,h))g.fillRect(hx-4,hy-4,8,8)}
+  $('#kyZl').textContent=Math.round(V.z*100)+' %'}
+const kyHandles=(x,y,w,h)=>[[x,y],[x+w/2,y],[x+w,y],[x+w,y+h/2],[x+w,y+h],[x+w/2,y+h],[x,y+h],[x,y+h/2]];
+const KY_HN=['nw','n','ne','e','se','s','sw','w'];
+function kyPos(e){const c=$('#kyStage'),r=c.getBoundingClientRect(),sx=(e.clientX-r.left)*(c.width/r.width),sy=(e.clientY-r.top)*(c.height/r.height),V=KY.view;return{sx,sy,fx:(sx-V.ox)/V.z,fy:(sy-V.oy)/V.z}}
+function kyHit(sx,sy){
+  if(!KY.rect)return null;const V=KY.view,r=KY.rect,x=V.ox+r.x*V.z,y=V.oy+r.y*V.z,w=r.w*V.z,h=r.h*V.z;
+  const H=kyHandles(x,y,w,h);for(let i=0;i<8;i++)if(Math.abs(sx-H[i][0])<=8&&Math.abs(sy-H[i][1])<=8)return KY_HN[i];
+  return sx>=x&&sx<=x+w&&sy>=y&&sy<=y+h?'move':null}
+const kyClampR=r=>{r.x=Math.max(0,Math.min(KY.fw-1,Math.round(r.x)));r.y=Math.max(0,Math.min(KY.fh-1,Math.round(r.y)));r.w=Math.max(1,Math.min(KY.fw-r.x,Math.round(r.w)));r.h=Math.max(1,Math.min(KY.fh-r.y,Math.round(r.h)));return r};
+function kyDragTo(p){
+  const d=KY.drag,fx=Math.round(p.fx),fy=Math.round(p.fy);let r;
+  if(d.kind==='new'){r={x:Math.min(d.x0,fx),y:Math.min(d.y0,fy),w:Math.abs(fx-d.x0),h:Math.abs(fy-d.y0)};
+    if(KY.ratio){const w=r.w,h=Math.round(w/KY.ratio);r.h=h;if(fy<d.y0)r.y=d.y0-h}}
+  else if(d.kind==='move'){r={...d.r0,x:d.r0.x+Math.round(p.fx-d.fx0),y:d.r0.y+Math.round(p.fy-d.fy0)};r.x=Math.max(0,Math.min(KY.fw-r.w,r.x));r.y=Math.max(0,Math.min(KY.fh-r.h,r.y))}
+  else{const o=d.r0;let x0=o.x,y0=o.y,x1=o.x+o.w,y1=o.y+o.h,k=d.kind;
+    if(k.includes('w'))x0=Math.min(fx,x1-1);if(k.includes('e'))x1=Math.max(fx,x0+1);if(k.includes('n'))y0=Math.min(fy,y1-1);if(k.includes('s'))y1=Math.max(fy,y0+1);
+    r={x:x0,y:y0,w:x1-x0,h:y1-y0};
+    if(KY.ratio&&k.length===2){r.h=Math.round(r.w/KY.ratio);if(k.includes('n'))r.y=y1-r.h}}
+  KY.rect=kyClampR(r);kyRectUi();kyStage();kySoon()}
+function kyRectUi(){const r=KY.rect;['X','Y','W','H'].forEach((k,i)=>{const el=$('#ky'+k);if(document.activeElement!==el)el.value=r?[r.x,r.y,r.w,r.h][i]:''});$('#kyInfo').textContent=r?`${r.w} × ${r.h} px`:`Dessine un cadre sur l'image (vidéo : ${KY.fw} × ${KY.fh})`}
+let kyRaf=0;const kySoon=()=>{if(kyRaf)return;kyRaf=requestAnimationFrame(()=>{kyRaf=0;kyUpdate()})};
+function kyZoomAt(f,sx,sy){const V=KY.view,z2=Math.max(0.05,Math.min(80,V.z*f));V.ox=sx-(sx-V.ox)*(z2/V.z);V.oy=sy-(sy-V.oy)*(z2/V.z);V.z=z2;kyStage()}
+function kyStageWire(){
+  const c=$('#kyStage');
+  c.addEventListener('pointerdown',e=>{
+    if(!KY.fc)return;c.focus();const p=kyPos(e);c.setPointerCapture(e.pointerId);
+    if(e.button===1||e.button===2||KY.tool==='pan'||KY.space){KY.drag={kind:'pan',sx:p.sx,sy:p.sy,ox:KY.view.ox,oy:KY.view.oy};return}
+    const h=kyHit(p.sx,p.sy);
+    if(h==='move')KY.drag={kind:'move',r0:{...KY.rect},fx0:p.fx,fy0:p.fy};
+    else if(h)KY.drag={kind:h,r0:{...KY.rect}};
+    else KY.drag={kind:'new',x0:Math.max(0,Math.min(KY.fw,Math.round(p.fx))),y0:Math.max(0,Math.min(KY.fh,Math.round(p.fy))),prev:KY.rect?{...KY.rect}:null,moved:false}});
+  c.addEventListener('pointermove',e=>{
+    const p=kyPos(e),d=KY.drag;
+    if(!d){c.style.cursor=KY.tool==='pan'?'grab':({nw:'nwse-resize',se:'nwse-resize',ne:'nesw-resize',sw:'nesw-resize',n:'ns-resize',s:'ns-resize',e:'ew-resize',w:'ew-resize',move:'move'}[kyHit(p.sx,p.sy)]||'crosshair');return}
+    if(d.kind==='pan'){KY.view.ox=d.ox+p.sx-d.sx;KY.view.oy=d.oy+p.sy-d.sy;kyStage();return}
+    if(d.kind==='new'){d.moved=d.moved||Math.abs(Math.round(p.fx)-d.x0)+Math.abs(Math.round(p.fy)-d.y0)>1;if(!d.moved)return}
+    kyDragTo(p)});
+  const end=e=>{const d=KY.drag;KY.drag=null;if(!d||d.kind==='pan')return;
+    if(d.kind==='new'&&!d.moved){return}
+    if(KY.rect&&(KY.rect.w<2&&KY.rect.h<2)&&d.prev){KY.rect=d.prev}
+    KY.man=null;KY.ai=null;kyRectUi();kyStage();kyUpdate()};
+  c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);
+  c.addEventListener('wheel',e=>{if(!KY.fc)return;e.preventDefault();const p=kyPos(e);kyZoomAt(e.deltaY<0?1.2:1/1.2,p.sx,p.sy)},{passive:false});
+  c.addEventListener('contextmenu',e=>e.preventDefault());
+  c.addEventListener('keydown',e=>{
+    if(e.code==='Space'){KY.space=true;e.preventDefault();return}
+    if(!KY.fc||!/^Arrow/.test(e.key))return;e.preventDefault();
+    if((e.ctrlKey||e.metaKey)&&KY.rect){const dx=e.key==='ArrowLeft'?-1:e.key==='ArrowRight'?1:0,dy=e.key==='ArrowUp'?-1:e.key==='ArrowDown'?1:0,k=e.shiftKey?10:1;KY.rect.x=Math.max(0,Math.min(KY.fw-KY.rect.w,KY.rect.x+dx*k));KY.rect.y=Math.max(0,Math.min(KY.fh-KY.rect.h,KY.rect.y+dy*k));KY.man=null;KY.ai=null;kyRectUi();kyStage();kyUpdate();return}
+    if(KY.isImg)return;const step=e.shiftKey?1:1/kyFps();if(e.key==='ArrowLeft')kySetTime(KY.t-step);else if(e.key==='ArrowRight')kySetTime(KY.t+step)});
+  c.addEventListener('keyup',e=>{if(e.code==='Space')KY.space=false})}
+
+/* ---------- l'élément : découpe, détourage ---------- */
+function kyCrop(frame){const r=KY.rect;if(!r||!frame)return null;const c=phCv(r.w,r.h);c.getContext('2d').drawImage(frame,r.x,r.y,r.w,r.h,0,0,r.w,r.h);return c}
+function kyUpdate(){
+  KY.cache={};KY.pvDirty=true;KY.el=KY.fc?kyCrop(KY.fc):null;kyElView();kyPrInfo()}
+const kySmooth=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t)};
+function kyCutAlpha(src,useManual){
+  const o=KY.o,w=src.width,h=src.height,n=w*h,d=src.getContext('2d').getImageData(0,0,w,h).data,al=new Float32Array(n).fill(1);let any=false;
+  if(o.cut==='color'&&KY.seeds.length){
+    const thr=o.tol/100*441,thr2=thr*thr,rem=new Uint8Array(n),near=(i,c)=>{const dr=d[i*4]-c[0],dg=d[i*4+1]-c[1],db=d[i*4+2]-c[2];return dr*dr+dg*dg+db*db<=thr2};
+    for(const s of KY.seeds){
+      if(o.contig){const sx=Math.min(w-1,s.x),sy=Math.min(h-1,s.y),st=new Int32Array(n);let sp=0,p0=sy*w+sx;if(!near(p0,s.c)||rem[p0])continue;st[sp++]=p0;rem[p0]=1;
+        while(sp){const p=st[--sp],x=p%w,y=(p-x)/w;
+          if(x>0&&!rem[p-1]&&near(p-1,s.c)){rem[p-1]=1;st[sp++]=p-1}if(x<w-1&&!rem[p+1]&&near(p+1,s.c)){rem[p+1]=1;st[sp++]=p+1}
+          if(y>0&&!rem[p-w]&&near(p-w,s.c)){rem[p-w]=1;st[sp++]=p-w}if(y<h-1&&!rem[p+w]&&near(p+w,s.c)){rem[p+w]=1;st[sp++]=p+w}}}
+      else for(let p=0;p<n;p++)if(!rem[p]&&near(p,s.c))rem[p]=1}
+    for(let p=0;p<n;p++)if(rem[p])al[p]=0;any=true}
+  if(useManual&&o.cut==='ai'&&KY.ai&&KY.ai.w===w&&KY.ai.h===h){for(let p=0;p<n;p++)al[p]=kySmooth(0.35,0.65,KY.ai.m[p]);any=true}
+  if(useManual&&KY.man&&KY.man.length===n){for(let p=0;p<n;p++){if(KY.man[p]===1)al[p]=1;else if(KY.man[p]===2)al[p]=0}any=true}
+  return any?al:null}
+function kyCut(src,useManual){
+  const al=kyCutAlpha(src,useManual);if(!al)return src;
+  const w=src.width,h=src.height,out=phCv(w,h),g=out.getContext('2d'),id=src.getContext('2d').getImageData(0,0,w,h),d=id.data;
+  for(let p=0;p<w*h;p++)d[p*4+3]=Math.round(d[p*4+3]*al[p]);g.putImageData(id,0,0);
+  if(KY.o.soft>0){const t=phCv(w,h),tg=t.getContext('2d');tg.filter=`blur(${KY.o.soft*0.35}px)`;tg.drawImage(out,0,0);return t}
+  return out}
+function kyCutCached(){if(!KY.cache.cut)KY.cache.cut=KY.el?kyCut(KY.el,true):null;return KY.cache.cut}
+function kyElView(){
+  const c=$('#kyEl'),el=KY.el;if(!el){c.width=1;c.height=1;c.getContext('2d').clearRect(0,0,1,1);$('#kyElInfo').textContent='';return}
+  const cut=kyCutCached();c.width=cut.width;c.height=cut.height;const g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);g.drawImage(cut,0,0);
+  const sc=Math.max(1,Math.min(Math.floor(380/Math.max(cut.width,cut.height)),24));c.style.width=cut.width*sc+'px';c.style.height=cut.height*sc+'px';c.style.maxWidth='100%';
+  $('#kyElInfo').textContent=`${el.width} × ${el.height} px`}
+function kyPrInfo(){const el=KY.el;if(!el){$('#kyPrInfo').textContent='';return}const L=kyLayout(el.width,el.height);$('#kyPrInfo').textContent=`${L.OW} × ${L.OH} px · élément × ${+L.s.toFixed(2)}`}
+async function kyAI(){
+  const el=KY.el;if(!el){kyMsg('Dessine d\'abord un cadre.');return}
+  kyMsg('🤖 Détourage en cours…');const keep={work:BG.work,W:BG.W,H:BG.H,mask:BG.mask};
+  try{
+    const s=Math.max(1,Math.min(Math.ceil(320/Math.max(el.width,el.height)),32)),W=el.width*s,H=el.height*s,big=phCv(W,H),g=big.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(el,0,0,W,H);
+    BG.work=big;BG.W=W;BG.H=H;await bgDetect();const m=new Float32Array(el.width*el.height);
+    for(let y=0;y<el.height;y++)for(let x=0;x<el.width;x++)m[y*el.width+x]=BG.mask[Math.min(H-1,Math.floor((y+0.5)*s))*W+Math.min(W-1,Math.floor((x+0.5)*s))];
+    KY.ai={w:el.width,h:el.height,m};KY.o.cut='ai';kySave();kyMsg('');kyOptsView();kyUpdate()}
+  catch(e){console.warn('détourage IA:',e);kyMsg(location.protocol==='file:'?"Le détourage IA marche depuis le site (nova-qa.fr), pas depuis un fichier ouvert directement.":"Impossible de lancer le détourage IA (connexion ? un bloqueur peut empêcher le téléchargement du moteur). Le détourage par couleur reste disponible.")}
+  finally{Object.assign(BG,keep)}}
+function kyElWire(){
+  const c=$('#kyEl');let down=false;
+  const pt=e=>{const r=c.getBoundingClientRect();return{x:Math.max(0,Math.min(c.width-1,Math.floor((e.clientX-r.left)*c.width/r.width))),y:Math.max(0,Math.min(c.height-1,Math.floor((e.clientY-r.top)*c.height/r.height)))}};
+  const paintAt=p=>{if(!KY.el)return;const w=KY.el.width,h=KY.el.height;if(!KY.man||KY.man.length!==w*h)KY.man=new Uint8Array(w*h);const R=Math.max(0,(KY.brush-1)/2),v=KY.paint==='erase'?2:1;
+    for(let y=Math.max(0,Math.floor(p.y-R));y<=Math.min(h-1,Math.ceil(p.y+R));y++)for(let x=Math.max(0,Math.floor(p.x-R));x<=Math.min(w-1,Math.ceil(p.x+R));x++)if((x-p.x)**2+(y-p.y)**2<=R*R+0.5)KY.man[y*w+x]=v;
+    KY.cache.cut=null;kyElView()};
+  c.addEventListener('pointerdown',e=>{
+    if(!KY.el)return;const p=pt(e);
+    if(KY.paint==='wand'){const d=KY.el.getContext('2d').getImageData(p.x,p.y,1,1).data;KY.seeds.push({x:p.x,y:p.y,c:[d[0],d[1],d[2]]});if(KY.o.cut==='none'||KY.o.cut==='ai'&&!KY.ai)KY.o.cut='color';kySave();kyOptsView();kyUpdate();return}
+    down=true;c.setPointerCapture(e.pointerId);if(KY.o.cut==='none'){KY.o.cut='color';kySave();kyOptsView()}paintAt(p)});
+  c.addEventListener('pointermove',e=>{if(down)paintAt(pt(e))});
+  const up=()=>{if(down){down=false;kyUpdate()}};c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);
+  c.style.cursor='crosshair'}
+
+/* ---------- mise en page, décor, effets ---------- */
+const kyCv=(w,h)=>{const c=document.createElement('canvas');c.width=Math.max(1,Math.round(w));c.height=Math.max(1,Math.round(h));return c};
+function kyLayout(w,h,k){
+  const o=KY.o,mg=o.margin/100,MAX=4096;let OW,OH,s;
+  const lim=Math.min(MAX/w,MAX/h);
+  if(o.out==='auto'){s=o.zoom==='auto'?Math.max(1,Math.floor(Math.min(1080/Math.max(w,h),lim))):Math.min(+o.zoom,lim);if(o.zoom==='auto'&&o.smooth!=='nearest')s=Math.max(1,Math.min(1080/Math.max(w,h),lim));
+    const m=Math.round(Math.max(w,h)*s*mg);OW=Math.round(w*s+2*m);OH=Math.round(h*s+2*m)}
+  else{[OW,OH]=o.out==='sq'?[1080,1080]:o.out==='wide'?[1920,1080]:o.out==='tall'?[1080,1920]:[Math.max(64,Math.min(4096,+o.ow||1920)),Math.max(64,Math.min(4096,+o.oh||1080))];
+    s=o.zoom==='auto'?Math.min(OW*(1-2*mg)/w,OH*(1-2*mg)/h):+o.zoom;if(o.zoom==='auto'&&o.smooth==='nearest'&&s>=1)s=Math.floor(s);s=Math.min(s,lim)}
+  if(k&&k<1){const s2=s>=2?Math.max(1,Math.round(s*k)):s*k,f=s2/s;s=s2;OW=Math.max(1,Math.round(OW*f));OH=Math.max(1,Math.round(OH*f))}
+  return{OW,OH,s,ws:Math.max(1,Math.round(w*s)),hs:Math.max(1,Math.round(h*s)),cx:OW/2,cy:OH/2}}
+function kyDecor(g,L,frame){
+  const o=KY.o;if(o.decor==='none')return;
+  if(o.decor==='color'){g.fillStyle=o.bgColor;g.fillRect(0,0,L.OW,L.OH);return}
+  const r=KY.rect,s=L.s,dx=L.cx-(r.x+r.w/2)*s,dy=L.cy-(r.y+r.h/2)*s,fw=frame.width,fh=frame.height;
+  const x0=Math.max(0,Math.floor(-dx/s)),y0=Math.max(0,Math.floor(-dy/s)),x1=Math.min(fw,Math.ceil((L.OW-dx)/s)),y1=Math.min(fh,Math.ceil((L.OH-dy)/s));
+  const layer=kyCv(L.OW,L.OH),lg=layer.getContext('2d');lg.imageSmoothingEnabled=o.smooth!=='nearest'||s<1;
+  if(x1>x0&&y1>y0)lg.drawImage(frame,x0,y0,x1-x0,y1-y0,dx+x0*s,dy+y0*s,(x1-x0)*s,(y1-y0)*s);
+  if(o.decor==='sceneblur'){const t=kyCv(L.OW,L.OH),tg=t.getContext('2d'),k=Math.min(L.OW,L.OH)/540;tg.filter=`blur(${o.blur*k}px)`;tg.drawImage(layer,0,0);tg.filter='none';tg.fillStyle=`rgba(0,0,0,${o.dark/100})`;tg.fillRect(0,0,L.OW,L.OH);g.drawImage(t,0,0)}
+  else g.drawImage(layer,0,0)}
+function kyBake(cutc,L,live){
+  const key='b'+L.s+'|'+L.ws;if(!live&&KY.cache[key])return KY.cache[key];
+  const o=KY.o,sm=o.smooth!=='nearest'||L.s<1,ws=L.ws,hs=L.hs,gl=o.glow>0?Math.round(o.glow/100*Math.max(ws,hs)*0.35):0,ol=Math.round(o.outline*Math.max(1,L.s)),sh=o.shadow?Math.max(4,Math.round(L.s*1.5)):0;
+  const pad=Math.ceil(Math.max(gl*2,ol+2,sh*3)+2),c=kyCv(ws+2*pad,hs+2*pad),g=c.getContext('2d'),sc=kyCv(ws,hs),sg=sc.getContext('2d');
+  sg.imageSmoothingEnabled=!(!sm);if(sm)sg.imageSmoothingQuality='high';sg.drawImage(cutc,0,0,ws,hs);
+  const tint=col=>{const t=kyCv(ws,hs),tg=t.getContext('2d');tg.drawImage(sc,0,0);tg.globalCompositeOperation='source-in';tg.fillStyle=col;tg.fillRect(0,0,ws,hs);return t};
+  if(sh){g.save();g.shadowColor='rgba(0,0,0,.6)';g.shadowBlur=sh*2;g.shadowOffsetX=sh;g.shadowOffsetY=sh;g.drawImage(tint('#000'),pad,pad);g.restore()}
+  if(gl){g.save();g.shadowColor=o.glowCol;g.shadowBlur=gl;const T=tint(o.glowCol);for(let i=0;i<3;i++)g.drawImage(T,pad,pad);g.restore()}
+  if(ol){const T=tint(o.outCol);for(const [x,y] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]])g.drawImage(T,pad+x*ol,pad+y*ol)}
+  g.drawImage(sc,pad,pad);const res={c,pad};if(!live)KY.cache[key]=res;return res}
+
+/* ---------- animation ---------- */
+const kyOut=x=>1-Math.pow(1-x,3),kyBack=x=>{const a=1.70158,b=a+1;return 1+b*Math.pow(x-1,3)+a*Math.pow(x-1,2)};
+function kyAnim(t,L){
+  const o=KY.o,P=+o.power||1,T=+o.secs||3,r={s:1,rot:0,dx:0,dy:0,a:1,cam:1};if(t==null)return r;
+  const x=Math.min(1,t/0.6);
+  switch(o.inA){
+    case'pop':r.s=Math.max(0,kyBack(x));r.a=Math.min(1,t/0.1);break;
+    case'fade':r.a=x;break;
+    case'zoomin':r.s=0.2+0.8*kyOut(x);r.a=Math.min(1,x*1.6);break;
+    case'spin':r.s=kyOut(x);r.rot=(1-kyOut(x))*Math.PI*2;r.a=Math.min(1,x*2);break;
+    case'left':r.dx=-(1-kyOut(x))*L.OW*0.7;break;
+    case'right':r.dx=(1-kyOut(x))*L.OW*0.7;break;
+    case'up':r.dy=(1-kyOut(x))*L.OH*0.7;break;
+    case'down':r.dy=-(1-kyOut(x))*L.OH*0.7;r.s=1;break}
+  switch(o.dur2){
+    case'zoomin':r.cam=1+0.18*P*(t/T);break;
+    case'zoomout':r.cam=1+0.18*P*(1-t/T);break;
+    case'shake':r.dx+=(Math.sin(t*61)+Math.sin(t*37.7+1))*0.5*L.OW*0.012*P;r.dy+=(Math.sin(t*53+2)+Math.sin(t*29.1))*0.5*L.OH*0.012*P;r.rot+=Math.sin(t*47)*0.015*P;break;
+    case'pulse':{const k=(t%0.9)/0.9;r.s*=1+0.08*P*(Math.max(0,Math.sin(k*Math.PI*2*1))**3+0.6*Math.max(0,Math.sin((k-0.25)*Math.PI*2))**3);break}
+    case'float':r.dy+=Math.sin(t*Math.PI*2/1.8)*L.OH*0.025*P;break;
+    case'wiggle':r.rot+=Math.sin(t*Math.PI*2/1.3)*0.07*P;break;
+    case'spin':r.rot+=t/T*Math.PI*2*Math.round(P);break}
+  return r}
+
+/* ---------- composition d'une image du résultat ---------- */
+function kyCompose(t,frame,into,flat,k){
+  const fr=frame||KY.fc;if(!KY.rect||!fr)return null;
+  const live=frame&&frame!==KY.fc,el=live?kyCrop(fr):KY.el;if(!el)return null;
+  const cutc=live?kyCut(el,false):kyCutCached(),L=kyLayout(cutc.width,cutc.height,k),tr=kyAnim(t,L);
+  let out=into;if(!out)out=kyCv(L.OW,L.OH);if(out.width!==L.OW||out.height!==L.OH){out.width=L.OW;out.height=L.OH}
+  const g=out.getContext('2d');g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.clearRect(0,0,L.OW,L.OH);
+  if(flat){g.fillStyle=KY.o.bgColor;g.fillRect(0,0,L.OW,L.OH)}
+  g.save();g.translate(L.cx,L.cy);g.scale(tr.cam,tr.cam);g.translate(-L.cx,-L.cy);
+  if(live)kyDecor(g,L,fr);else{if(!KY.cache.decor||KY.cache.decorKey!==L.s+'|'+L.OW+'|'+k){const d=kyCv(L.OW,L.OH);kyDecor(d.getContext('2d'),L,fr);KY.cache.decor=d;KY.cache.decorKey=L.s+'|'+L.OW+'|'+k}g.drawImage(KY.cache.decor,0,0)}
+  const fx=kyBake(cutc,L,live);g.globalAlpha=Math.max(0,Math.min(1,tr.a));g.translate(L.cx+tr.dx,L.cy+tr.dy);g.rotate(tr.rot);g.scale(tr.s,tr.s);g.drawImage(fx.c,-fx.c.width/2,-fx.c.height/2);g.restore();
+  return out}
+
+/* ---------- aperçu animé ---------- */
+const kyAnimOn=()=>KY.o.inA!=='none'||KY.o.dur2!=='none'||KY.o.live;
+function kyPvStart(){if(KY.loop)return;const tick=ts=>{
+  if($('#mtP-keys').hidden||$('#kyWork').hidden){KY.loop=0;return}
+  KY.loop=requestAnimationFrame(tick);
+  try{kyPvDraw(ts)}catch(e){console.warn('aperçu:',e)}};KY.loop=requestAnimationFrame(tick)}
+async function kyLiveEnsure(){if(KY.live||!KY.file||KY.isImg)return;KY.live={v:null,tmp:phCv(KY.fw,KY.fh),busy:true};try{const v=await kyVideo(KY.file,true);KY.live.v=v;KY.live.busy=false}catch(e){KY.live=null}}
+function kyPvDraw(ts){
+  const cv=$('#kyPrev');if(!KY.rect||!KY.el){if(cv.width!==1){cv.width=1;cv.height=1}$('#kyAl').textContent='';return}
+  const T=+KY.o.secs||3;if(!KY.apStart)KY.apStart=ts;
+  let t;if(KY.apOn){t=((ts-KY.apStart)/1000)%T}else t=KY.apT;
+  const still=!kyAnimOn();let frame=null;
+  if(!KY.pvDirty&&!KY.o.live&&(still||!KY.apOn&&KY.pvT===t))return;KY.pvDirty=false;KY.pvT=t;
+  if(KY.o.live&&!KY.isImg){kyLiveEnsure();const lv=KY.live;if(lv&&lv.v&&!lv.busy){const v=lv.v;
+      if(!KY.apOn){if(Math.abs(v.currentTime-(KY.t+t))>0.05&&!v.seeking)v.currentTime=Math.min(KY.dur,KY.t+t);v.pause()}
+      else{if(v.paused||v.currentTime<KY.t-0.05||v.currentTime>KY.t+T){v.currentTime=KY.t;v.play().catch(()=>{})}t=Math.max(0,Math.min(T,v.currentTime-KY.t))}
+      lv.tmp.getContext('2d').drawImage(v,0,0);frame=lv.tmp}}
+  else if(KY.live&&KY.live.v&&!KY.live.v.paused)KY.live.v.pause();
+  const L0=kyLayout(KY.el.width,KY.el.height),kp=Math.min(1,440/Math.max(L0.OW,L0.OH)),c=kyCompose(still&&!frame?null:t,frame,KY.pvBox||(KY.pvBox=kyCv(2,2)),false,kp);if(!c)return;
+  if(cv.width!==c.width||cv.height!==c.height){cv.width=c.width;cv.height=c.height}
+  const g=cv.getContext('2d');g.clearRect(0,0,cv.width,cv.height);g.drawImage(c,0,0);
+  const px=KY.o.smooth==='nearest';cv.style.width=c.width+'px';cv.style.height=c.height+'px';cv.style.imageRendering=px?'pixelated':'auto';
+  $('#kyAT').max=T;$('#kyAT').value=t;$('#kyAl').textContent=still?'':`${t.toFixed(1)} / ${T} s`}
+
+/* ---------- exports ---------- */
+const kyStem=()=>KY.file?mtStem(KY.file.name):'element';
+const kyName=(ext,extra)=>`${kyStem()} - élément${extra?' '+extra:''}.${ext}`;
+const kyBlob=(c,type='image/png')=>new Promise(r=>c.toBlob(r,type));
+function kyProg(txt,pct){const b=$('#kyProg');b.hidden=!txt;$('#kyPm').textContent=txt||'';$('#kyBar').style.width=Math.max(6,Math.round((pct||0)*100))+'%'}
+function kyAddOut(name,blob,note){KY.out.unshift({id:++KY.nid,name,blob,note:note||''});kyResView()}
+function kyResView(){$('#kyRes').innerHTML=KY.out.length?`<h3 class="h3" style="margin:14px 0 6px">Résultats</h3>`+KY.out.map(r=>`<div class="mt-row"><div class="nm"><b>${esc(r.name)}</b><span class="sm">${esc(r.note)}</span></div><div class="mt-st"><span class="muted sm">${phFmtSize(r.blob.size)}</span><button class="btn primary sm" data-kdl="${r.id}" type="button">Télécharger</button></div><button class="btn sm" data-kdel="${r.id}" type="button" aria-label="Retirer">✕</button></div>`).join(''):''}
+async function kyFrames(flat){
+  const o=KY.o,N=Math.max(1,Math.round((+o.secs||3)*(+o.fps||30))),box=kyCv(2,2),frames=[];let pv=null,tmp=null;
+  if(o.live&&!KY.isImg){pv=await kyVideo(KY.file,true);tmp=phCv(KY.fw,KY.fh)}
+  const L=kyLayout(KY.el.width,KY.el.height);if(N*L.OW*L.OH>9e9)throw new Error('trop lourd : baisse la durée ou la taille');
+  for(let i=0;i<N;i++){
+    if(KY.cancel)throw new Error('annulé');const t=i/(+o.fps||30);let frame=null;
+    if(pv){pv.pause();await kySeek(pv,KY.t+t);tmp.getContext('2d').drawImage(pv,0,0);frame=tmp}
+    const c=kyCompose(t,frame,box,flat);frames.push(new Uint8Array(await (await kyBlob(c)).arrayBuffer()));kyProg(`Création des images… ${i+1} / ${N}`,(i+1)/N*0.6)}
+  return{frames,w:L.OW,h:L.OH}}
+async function kyEncode(kind,fr){
+  const o=KY.o,fps=+o.fps||30,ff=await mtEngine();
+  return mtSerial(async()=>{
+    const job=MT.cur={tot:Math.max(0.1,fr.frames.length/fps),pct:0},names=[];
+    const iv=setInterval(()=>kyProg(`Encodage… ${Math.round(job.pct*100)} %`,0.6+job.pct*0.4),300);
+    try{
+      for(let i=0;i<fr.frames.length;i++){const n=`k${String(i+1).padStart(5,'0')}.png`;await ff.writeFile(n,fr.frames[i].slice());names.push(n)}
+      const out=kind==='gif'?'o.gif':kind==='mp4'?'o.mp4':'o.webm';names.push(out);
+      const inp=['-framerate',String(fps),'-i','k%05d.png'];let args;
+      if(kind==='gif'){const w=Math.max(120,Math.min(1200,+o.gifw||480));args=[...inp,'-vf',`scale='min(${w},iw)':-1:flags=${o.smooth==='nearest'?'neighbor':'lanczos'},split[a][b];[a]palettegen=reserve_transparent=1[p];[b][p]paletteuse=alpha_threshold=128`,'-loop','0','-y',out]}
+      else if(kind==='mp4')args=[...inp,'-vf','scale=trunc(iw/2)*2:trunc(ih/2)*2,format=yuv420p','-c:v','libx264','-preset','veryfast','-crf','16','-movflags','+faststart','-y',out];
+      else args=[...inp,'-c:v','libvpx','-pix_fmt','yuva420p','-auto-alt-ref','0','-b:v','6M','-crf','8','-y',out];
+      const code=await ff.exec(args);if(code!==0)throw new Error('ffmpeg '+code);
+      const d=await ff.readFile(out);return new Blob([d],{type:kind==='gif'?'image/gif':kind==='mp4'?'video/mp4':'video/webm'})
+    }finally{clearInterval(iv);MT.cur=null;for(const n of names){try{await ff.deleteFile(n)}catch(e){}}}})}
+async function kyExport(kind){
+  if(KY.busy)return;if(!KY.rect||!KY.el){kyErr("Dessine d'abord un cadre autour de l'élément.");return}kyErr('');
+  KY.busy=true;KY.cancel=false;$$('#kyWork [data-kexp],#kyPng,#kySeq,#kyWebm,#kyGif,#kyMp4').forEach(b=>b.disabled=true);
+  try{
+    if(kind==='png'){const c=kyCompose(null,null,null,false);kyAddOut(kyName('png'),await kyBlob(c),`${c.width} × ${c.height} px, fond transparent gardé`)}
+    else{
+      const fr=await kyFrames(kind==='mp4');
+      if(kind==='seq'){kyProg('Fabrication du zip…',0.8);const files=fr.frames.map((d,i)=>({name:`image_${String(i+1).padStart(4,'0')}.png`,data:d}));kyAddOut(kyName('zip','(séquence)'),zipStore(files),`${files.length} images ${fr.w} × ${fr.h}, ${KY.o.fps} i/s`)}
+      else{const b=await kyEncode(kind,fr);kyAddOut(kyName(kind==='webm'?'webm':kind),b,`${fr.frames.length} images, ${KY.o.fps} i/s${kind==='webm'?' · fond transparent (VP8)':''}`)}}
+  }catch(e){if(String(e&&e.message)!=='annulé'){console.warn('éléments clés:',e);kyErr("L'export a échoué : "+String((e&&e.message)||e).slice(0,160));mtResetEngine(e)}else toast('Arrêté')}
+  finally{KY.busy=false;kyProg('');$$('#kyPng,#kySeq,#kyWebm,#kyGif,#kyMp4').forEach(b=>b.disabled=false)}}
+
+/* ---------- éléments gardés ---------- */
+function kyKeep(){
+  if(!KY.rect||!KY.el){kyErr("Dessine d'abord un cadre autour de l'élément.");return}
+  const c=kyCompose(null,null,null,false),t=phCv(96,96),tg=t.getContext('2d'),k=Math.min(96/c.width,96/c.height);tg.imageSmoothingEnabled=false;tg.drawImage(c,(96-c.width*k)/2,(96-c.height*k)/2,c.width*k,c.height*k);
+  KY.items.push({id:++KY.nid,file:KY.file,t:KY.t,rect:{...KY.rect},o:{...KY.o},seeds:KY.seeds.map(s=>({...s,c:[...s.c]})),man:KY.man?KY.man.slice():null,ai:KY.ai?{...KY.ai}:null,thumb:t.toDataURL(),name:`Élément ${KY.items.length+1}`});kyLibView();toast('Élément gardé ✓')}
+function kyLibView(){$('#kyLibW').hidden=!KY.items.length;$('#kyLib').innerHTML=KY.items.map(it=>`<div class="ky-li"><img src="${it.thumb}" alt=""><b>${esc(it.name)}</b><span class="muted sm">${it.rect.w}×${it.rect.h} px · ${mtFmt(it.t,1)}</span><div><button class="btn sm" data-kload="${it.id}" type="button">Reprendre</button> <button class="btn sm" data-kitem="${it.id}" type="button">PNG</button> <button class="btn sm" data-krm="${it.id}" type="button" aria-label="Retirer">✕</button></div></div>`).join('')}
+async function kyRestore(it){
+  if(it.file!==KY.file)await kyLoad(it.file);
+  KY.o={...it.o};kySave();KY.seeds=it.seeds.map(s=>({...s,c:[...s.c]}));KY.man=it.man?it.man.slice():null;KY.ai=it.ai?{...it.ai}:null;KY.rect={...it.rect};
+  if(!KY.isImg){KY.t=it.t;await kySeek(KY.vid,it.t);kyGrab()}kyOptsView();kyRectUi();kyStage();kyUpdate();kyTimeUi()}
+async function kyItemPng(it){await kyRestore(it);const c=kyCompose(null,null,null,false);return kyBlob(c)}
+
+/* ---------- réglages ---------- */
+function kyOptsView(){
+  const o=KY.o;
+  $$('#mtP-keys [data-ko]').forEach(i=>{const v=o[i.dataset.ko];if(i.type==='checkbox')i.checked=!!v;else if(document.activeElement!==i)i.value=v});
+  $$('#mtP-keys [data-kseg]').forEach(s=>$$('button',s).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===String(o[s.dataset.kseg])))));
+  $$('#mtP-keys [data-kv]').forEach(b=>{const k=b.dataset.kv;b.textContent=o[k]});
+  $$('#mtP-keys .ky-cust').forEach(x=>x.style.display=o.out==='custom'?'':'none');
+  setSeg('kyToolSeg',KY.tool);setSeg('kyPaintSeg',KY.paint);$('#kyRatio').value=String(KY.ratio);
+  $('#kyAPlay').textContent=KY.apOn?'⏸':'▶'}
+function kyWire(){
+  const z=$('#kyDrop');
+  ['dragenter','dragover'].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.add('over')}));['dragleave','drop'].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.remove('over')}));
+  z.addEventListener('drop',e=>kyLoad(e.dataTransfer.files[0]));z.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('#kyFile').click()}});
+  $('#kyPick').addEventListener('click',()=>$('#kyFile').click());$('#kyOther').addEventListener('click',()=>$('#kyFile').click());$('#kyFile').addEventListener('change',e=>{kyLoad(e.target.files[0]);e.target.value=''});
+  $('#kyWork').addEventListener('dragover',e=>e.preventDefault());$('#kyWork').addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer.files[0])kyLoad(e.dataTransfer.files[0])});
+  document.addEventListener('paste',e=>{if(!$('#tab-montage').classList.contains('on')||$('#mtP-keys').hidden)return;const f=[...(e.clipboardData&&e.clipboardData.files||[])].find(x=>/^image\//.test(x.type));if(f){e.preventDefault();kyLoad(f)}});
+  kyStageWire();kyElWire();
+  segBind('kyToolSeg',v=>{KY.tool=v;$('#kyStage').style.cursor=v==='pan'?'grab':'crosshair'});segBind('kyPaintSeg',v=>{KY.paint=v});
+  $('#kyRatio').addEventListener('change',e=>{KY.ratio=+e.target.value});$('#kyBrush').addEventListener('input',e=>{KY.brush=+e.target.value});
+  $('#kyFit').addEventListener('click',()=>{kyFit();kyStage()});$('#kyZp').addEventListener('click',()=>kyZoomAt(1.5,$('#kyStage').width/2,$('#kyStage').height/2));$('#kyZm').addEventListener('click',()=>kyZoomAt(1/1.5,$('#kyStage').width/2,$('#kyStage').height/2));
+  window.addEventListener('resize',()=>{if(!$('#mtP-keys').hidden){kyStage()}});
+  $('#kyPlay').addEventListener('click',kyTogglePlay);$('#kyM1').addEventListener('click',()=>kySetTime(KY.t-1));$('#kyP1').addEventListener('click',()=>kySetTime(KY.t+1));
+  $('#kyPf').addEventListener('click',()=>kySetTime(KY.t-1/kyFps()));$('#kyNf').addEventListener('click',()=>kySetTime(KY.t+1/kyFps()));
+  $('#kyT').addEventListener('input',e=>{if(KY.playing)kyStop();kySetTime(+e.target.value)});
+  [['kyX','x'],['kyY','y'],['kyW','w'],['kyH','h']].forEach(([id,k])=>$('#'+id).addEventListener('change',e=>{const r=KY.rect||{x:0,y:0,w:16,h:16};r[k]=+e.target.value||0;KY.rect=kyClampR(r);KY.man=null;KY.ai=null;kyRectUi();kyStage();kyUpdate()}));
+  const optSet=e=>{const t=e.target,k=t.dataset&&t.dataset.ko;if(!k)return;
+    KY.o[k]=t.type==='checkbox'?t.checked:t.type==='range'||t.type==='number'?+t.value:(k==='fps'||k==='zoom'&&t.value!=='auto')?+t.value:t.value;
+    kySave();$$('#mtP-keys [data-kv]').forEach(b=>b.textContent=KY.o[b.dataset.kv]);$$('#mtP-keys .ky-cust').forEach(x=>x.style.display=KY.o.out==='custom'?'':'none');kyUpdate();if(k==='secs')KY.apStart=0};
+  $('#mtP-keys').addEventListener('input',optSet);$('#mtP-keys').addEventListener('change',e=>{if(e.target.tagName==='SELECT')optSet(e)});
+  $$('#mtP-keys [data-kseg]').forEach(s=>s.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const k=s.dataset.kseg;KY.o[k]=b.dataset.v;kySave();
+    if(k==='cut'&&b.dataset.v==='ai'&&!KY.ai)kyAI();kyOptsView();kyUpdate()}));
+  $('#kyAI').addEventListener('click',kyAI);$('#kyUndoSeed').addEventListener('click',()=>{KY.seeds.pop();kyUpdate()});
+  $('#kyResetCut').addEventListener('click',()=>{KY.seeds=[];KY.man=null;KY.ai=null;KY.o.cut='none';kySave();kyOptsView();kyUpdate()});
+  $('#kyAPlay').addEventListener('click',()=>{KY.apOn=!KY.apOn;KY.apStart=0;if(!KY.apOn)KY.apT=+$('#kyAT').value;kyOptsView()});
+  $('#kyAT').addEventListener('input',e=>{KY.apOn=false;KY.apT=+e.target.value;kyOptsView()});
+  $('#kyPng').addEventListener('click',()=>kyExport('png'));$('#kySeq').addEventListener('click',()=>kyExport('seq'));$('#kyGif').addEventListener('click',()=>kyExport('gif'));$('#kyMp4').addEventListener('click',()=>kyExport('mp4'));$('#kyWebm').addEventListener('click',()=>kyExport('webm'));
+  $('#kyCancel').addEventListener('click',()=>{KY.cancel=true});$('#kyKeep').addEventListener('click',kyKeep);
+  $('#kyRes').addEventListener('click',e=>{const d=e.target.closest('[data-kdl]'),x=e.target.closest('[data-kdel]');if(d){const r=KY.out.find(o=>o.id===+d.dataset.kdl);if(r)phDownload(r.blob,r.name)}if(x){KY.out=KY.out.filter(o=>o.id!==+x.dataset.kdel);kyResView()}});
+  $('#kyLib').addEventListener('click',async e=>{const l=e.target.closest('[data-kload]'),p=e.target.closest('[data-kitem]'),r=e.target.closest('[data-krm]');
+    if(l)await kyRestore(KY.items.find(i=>i.id===+l.dataset.kload));
+    if(p){const it=KY.items.find(i=>i.id===+p.dataset.kitem);phDownload(await kyItemPng(it),`${mtStem(it.file.name)} - ${it.name}.png`)}
+    if(r){KY.items=KY.items.filter(i=>i.id!==+r.dataset.krm);kyLibView()}});
+  $('#kyLibZip').addEventListener('click',async()=>{const files=[];for(const it of KY.items){const b=await kyItemPng(it);files.push({name:`${mtStem(it.file.name)} - ${it.name}.png`,data:new Uint8Array(await b.arrayBuffer())})}phDownload(zipStore(files),'elements.zip')});
+  $('#kyLibClear').addEventListener('click',()=>{KY.items=[];kyLibView()});
+  document.addEventListener('keydown',e=>{if($('#mtP-keys').hidden||!$('#tab-montage').classList.contains('on'))return;if(e.code==='Space'&&document.activeElement===$('#kyStage'))e.preventDefault()});
+  kyOptsView();kyRectUi();kyLibView();kyResView()}
+if(window.__NOVA_TEST)window.__ky={KY,kyLoad,kyCompose,kyLayout,kyCut,kySetTime,kyExport,kyPvDraw};
 
 /* ---------- export / import ---------- */
 function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
