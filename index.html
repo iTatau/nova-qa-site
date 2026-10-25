@@ -874,7 +874,7 @@ body.locked>header.top,body.locked>main,body.locked>.calc-tab,body.locked>#calc{
 /* lecteur + panneau */
 .st-body{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:12px;align-items:stretch}
 .st-stage{padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--card);box-shadow:var(--shadow);min-width:0}
-.st-vw{position:relative;height:var(--vh2);border-radius:12px;background:#000;overflow:hidden}
+.st-vw{position:relative;height:var(--vh2);border-radius:0;background:#000;overflow:hidden}
 .st-vw .mt-vid{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:contain;border-radius:0;cursor:pointer}
 .st-big{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;border:0;background:rgba(10,14,32,.62);backdrop-filter:blur(6px);color:#fff;font-size:30px;padding-left:6px;cursor:pointer;transition:.15s;z-index:3}
 .st-big:hover{background:color-mix(in srgb,var(--brand) 70%,#000);transform:scale(1.06)}
@@ -967,6 +967,9 @@ button.flash{animation:anflash .9s ease 2}@keyframes anflash{50%{box-shadow:0 0 
 .an-col{width:44px;height:30px;padding:0;border:1px solid var(--line);border-radius:8px;background:none;cursor:pointer}
 .an-tool{margin:8px 0}.an-tool .seg{height:36px}.an-tool .seg button{padding:0 11px;font-size:13px}
 .st-vw.picking{cursor:crosshair}
+
+.st-net{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;background:#000}
+.st-ib[aria-pressed=true]#stNetB{border-color:var(--brand);color:var(--brand)}
 </style>
 </head>
 <body>
@@ -1166,7 +1169,7 @@ button.flash{animation:anflash .9s ease 2}@keyframes anflash{50%{box-shadow:0 0 
         <div class="st-stage">
           <div class="mt-eng" id="mtEng"></div>
           <div class="mt-err" id="mtErr" hidden></div>
-          <div class="mt-vw st-vw" id="mtVw"><div class="st-zm" id="stZm"><video id="mtVid" class="mt-vid" playsinline preload="metadata"></video><div class="mt-crop" id="mtCrop" hidden></div><div class="st-vr" id="stVr"><canvas class="st-ov" id="stOv"></canvas><div class="su-ov" id="suOv" hidden><span id="suOvT"></span></div></div></div><canvas class="st-loupe" id="stLoupe" width="160" height="160" hidden></canvas><div class="st-zt" id="stZt" hidden><button class="st-ib" id="stZi" type="button" title="Zoomer (molette)" aria-label="Zoomer">＋</button><button class="st-ib" id="stZo" type="button" title="Dézoomer" aria-label="Dézoomer">－</button><button class="btn sm" id="stZr" type="button">Tout voir</button></div><div class="st-hint" id="stHint" hidden></div><button class="st-big" id="stBig" type="button" aria-label="Lecture">▶</button></div>
+          <div class="mt-vw st-vw" id="mtVw"><div class="st-zm" id="stZm"><video id="mtVid" class="mt-vid" playsinline preload="metadata"></video><div class="mt-crop" id="mtCrop" hidden></div><div class="st-vr" id="stVr"><canvas class="st-net" id="stNet" hidden></canvas><canvas class="st-ov" id="stOv"></canvas><div class="su-ov" id="suOv" hidden><span id="suOvT"></span></div></div></div><canvas class="st-loupe" id="stLoupe" width="160" height="160" hidden></canvas><div class="st-zt" id="stZt" hidden><button class="st-ib" id="stZi" type="button" title="Zoomer (molette)" aria-label="Zoomer">＋</button><button class="st-ib" id="stZo" type="button" title="Dézoomer" aria-label="Dézoomer">－</button><button class="btn sm" id="stZr" type="button">Tout voir</button></div><div class="st-hint" id="stHint" hidden></div><button class="st-big" id="stBig" type="button" aria-label="Lecture">▶</button></div>
           <div class="st-transport" id="stTr">
             <button class="st-ib" id="stStart" type="button" title="Début de la zone gardée" aria-label="Aller au début de la zone gardée">⏮</button>
             <button class="st-ib" id="stF1" type="button" title="Image précédente ( , )" aria-label="Image précédente">◂</button>
@@ -1177,6 +1180,7 @@ button.flash{animation:anflash .9s ease 2}@keyframes anflash{50%{box-shadow:0 0 
             <span class="sp"></span>
             <label class="st-rate">vitesse de l'aperçu<select id="stRate" aria-label="Vitesse de l'aperçu"><option value="0.5">× 0,5</option><option value="1" selected>× 1</option><option value="1.5">× 1,5</option><option value="2">× 2</option></select></label>
             <button class="st-ib" id="stMute" type="button" title="Couper le son de l'aperçu" aria-label="Couper ou remettre le son">🔊</button>
+            <button class="st-ib" id="stNetB" type="button" title="Aperçu net : redessine la vidéo avec un filtre de qualité quand elle est réduite (évite le scintillement des textures fines)" aria-label="Aperçu net" aria-pressed="true">✨</button>
             <button class="st-ib" id="stWide" type="button" title="Agrandir le lecteur (cache les réglages)" aria-label="Agrandir le lecteur">⤢</button>
             <button class="st-ib" id="stFs" type="button" title="Plein écran" aria-label="Plein écran">⛶</button>
           </div>
@@ -2513,8 +2517,9 @@ $('#mtTl').addEventListener('wheel',e=>{if(!MT.dur)return;e.preventDefault();con
 
 function mtSetA(t){mtPush();const c=mtCut();c.a=Math.min(Math.max(0,t),c.b-0.2);mtDraw()}
 function mtSetB(t){mtPush();const c=mtCut();c.b=Math.max(Math.min(MT.dur,t),c.a+0.2);mtDraw()}
+let mtDrawT=0;
 mtV().addEventListener('timeupdate',()=>{const v=mtV(),c=mtCut();
-  if(MT.preview&&v.currentTime>=c.b){v.pause();MT.preview=false;v.currentTime=c.b}if(!v.paused)mtFollow();mtDraw()});
+  if(MT.preview&&v.currentTime>=c.b){v.pause();MT.preview=false;v.currentTime=c.b}if(!v.paused){mtFollow();const n=performance.now();if(n-mtDrawT<900)return;mtDrawT=n}mtDraw()});
 mtV().addEventListener('seeked',mtDraw);
 mtV().addEventListener('pause',()=>{MT.preview=false});
 $('#mtSetA').addEventListener('click',()=>mtSetA(mtV().currentTime));
@@ -2566,8 +2571,11 @@ async function mtThumbs(i){
   vid.muted=true;vid.preload='auto';vid.src=url;
   try{
     await new Promise((res,rej)=>{vid.onloadeddata=res;vid.onerror=()=>rej(new Error('video'));setTimeout(()=>rej(new Error('timeout')),15000)});
+    await new Promise(r=>setTimeout(r,1200));
     for(let k=0;k<n;k++){
       if(MT.i!==i||MT.thumbs!==th)return;
+      /* on ne décode rien d'autre pendant que la vidéo se lit : la lecture reste fluide */
+      while(!mtV().paused&&!mtV().ended){await new Promise(r=>setTimeout(r,500));if(MT.i!==i||MT.thumbs!==th)return}
       await new Promise(res=>{let done=false;const fin=()=>{if(!done){done=true;res()}};vid.onseeked=fin;vid.onerror=fin;setTimeout(fin,4000);vid.currentTime=Math.min(d-0.05,(k+0.5)*d/n)});
       try{g.drawImage(vid,k*tw,0,tw,thh);th.ok[k]=true}catch(e){}
       if(k%4===3||k===n-1)mtPaintSoon()}
@@ -2952,7 +2960,7 @@ function mtDuckStart(){cancelAnimationFrame(mtDuckRaf);const dk=MT.duck[MT.i];
       mtAEls.forEach((e,k)=>{if(k!==d.voice&&e._d)e._d.gain.setTargetAtTime(loud?Math.pow(10,-db/20):1,mtCtx.currentTime,loud?0.03:0.35)})}
     mtDuckRaf=requestAnimationFrame(loop)};
   mtDuckRaf=requestAnimationFrame(loop)}
-function mtAudSync(force){const v=mtV();mtAEls.forEach(e=>{if(force||Math.abs(e.currentTime-v.currentTime)>0.2)e.currentTime=v.currentTime})}
+function mtAudSync(force){const v=mtV();mtAEls.forEach(e=>{if(force||Math.abs(e.currentTime-v.currentTime)>0.35)e.currentTime=v.currentTime})}
 ['play','playing'].forEach(ev=>mtV().addEventListener(ev,()=>{if(mtCtx&&mtCtx.state==='suspended')mtCtx.resume();mtAudSync(true);mtAEls.forEach(e=>e.play().catch(()=>{}))}));
 ['pause','waiting'].forEach(ev=>mtV().addEventListener(ev,()=>mtAEls.forEach(e=>e.pause())));
 ['seeking','seeked'].forEach(ev=>mtV().addEventListener(ev,()=>mtAudSync(true)));
@@ -4353,6 +4361,7 @@ function koGrow(d,win,adds,subs,o){
 const koWin=(cx,cy,half,fw,fh)=>{const x=Math.max(0,Math.round(cx-half)),y=Math.max(0,Math.round(cy-half));return{x,y,w:Math.max(2,Math.min(fw,Math.round(cx+half))-x),h:Math.max(2,Math.min(fh,Math.round(cy+half))-y)}};
 function koObjAt(frame,t,opt){
   const ob=KO.obj;if(!ob||!frame)return null;opt=opt||{};
+  if(ob.sam&&!opt.pick&&Math.abs(t-ob.t0)<0.05)return ob.sam;
   const P=opt.pred||koPosAt(t)||KO.lastPos||ob.c0,half=opt.pick?400:Math.round(Math.max(ob.size.w,ob.size.h)*1.5+40),win=koWin(P.x,P.y,half,frame.width,frame.height);
   const d=frame.getContext('2d').getImageData(win.x,win.y,win.w,win.h).data,thr2=Math.pow(KO.o.tol/100*441,2),R=opt.abs?4:Math.round(Math.max(ob.size.w,ob.size.h)*0.6+6);
   const place=(arr)=>{const r=[];for(const s of arr){const pos=opt.abs?{x:s.x,y:s.y}:{x:Math.round(P.x+s.rx),y:Math.round(P.y+s.ry)},f=koFind(d,win.w,win.h,win,pos.x,pos.y,s.c,thr2,R);if(f)r.push({x:f.x,y:f.y,c:s.c})}return r};
@@ -4661,7 +4670,7 @@ function anLoop(){
 function anHint(t){const h=$('#stHint');h.hidden=!t;h.textContent=t||''}
 function anPickStart(txt){
   if(!anBind())return;AN.picking=true;AN.stroke=null;AN.rectD=null;AN.hov=null;KY.tool=KO.pickDest||AN.pathFor?'rect':'wand';mtV().pause();$('#stOv').classList.add('pick');$('#mtVw').classList.add('picking');
-  anHint(txt||(AN.tool==='brush'?"Colorie l'objet (ou son symbole) avec le pinceau — Échap pour annuler":AN.tool==='rect'?"Encadre l'objet en glissant — Échap pour annuler":"Clique sur l'objet à animer — Échap pour annuler"));anPaint();koView()}
+  anHint(txt||(AN.tool==='sam'?"Clique sur l'objet : l'IA le découpe — Échap pour annuler":AN.tool==='brush'?"Colorie l'objet (ou son symbole) avec le pinceau — Échap pour annuler":AN.tool==='rect'?"Encadre l'objet en glissant — Échap pour annuler":"Clique sur l'objet à animer — Échap pour annuler"));anPaint();koView()}
 function anPickEnd(){AN.picking=false;AN.stroke=null;AN.rectD=null;AN.hov=null;AN.pathFor=0;$('#stLoupe').hidden=true;KY.tool='rect';KO.pickDest=0;$('#stOv').classList.remove('pick');$('#mtVw').classList.remove('picking');anHint('');if(typeof koView==='function')koView()}
 const anFpt=e=>{const r=$('#stOv').getBoundingClientRect();return{fx:(e.clientX-r.left)/r.width*KY.fw,fy:(e.clientY-r.top)/r.height*KY.fh}};
 const anMode=e=>e.altKey?'sub':e.shiftKey?'add':KO.o.mode;
@@ -4670,6 +4679,7 @@ $('#stOv').addEventListener('pointerdown',e=>{
   const r=$('#stOv').getBoundingClientRect();if(!r.width||!anBind())return;const p=anFpt(e);
   if(AN.pathFor){const c=KO.clips.find(x=>x.id===AN.pathFor),R=c&&koRectAt(c.a);if(c&&R){c.pts.push({x:Math.round(p.fx-(R.x+R.w/2)),y:Math.round(p.fy-(R.y+R.h/2))});KY.vfDirty=true;koView();anPaint()}return}
   if(KO.pickDest){if(koStageDown(e,p)){anPickEnd();anSoon()}return}
+  if(AN.tool==='sam'){anSamClick(p,anMode(e));return}
   if(AN.tool==='wand'){const m=anMode(e);if(koStageDown({altKey:m==='sub',shiftKey:m==='add'},p)){anPickEnd();anSoon()}return}
   $('#stOv').setPointerCapture(e.pointerId);
   if(AN.tool==='brush'){AN.stroke={pts:[{x:p.fx,y:p.fy}],mode:anMode(e)}}else AN.rectD={x0:p.fx,y0:p.fy,x1:p.fx,y1:p.fy,mode:anMode(e)};
@@ -4753,7 +4763,7 @@ function anRectPick(r,mode){
   anSetObj(mode==='sub'?[]:keep.slice(0,60),mode==='sub'?keep.slice(0,60):[],mode)}
 /* --- zoom et déplacement de l'image du lecteur (pour viser précisément) --- */
 const ZM={z:1,ox:0,oy:0,space:false,drag:null,just:false};
-function zmApply(){const el=$('#stZm');el.style.transform=ZM.z>1.001?`translate(${ZM.ox}px,${ZM.oy}px) scale(${ZM.z})`:'';$('#stZt').hidden=!(STU.tab==='anim'&&anOn());$('#stZr').textContent=ZM.z>1.01?`Tout voir (${Math.round(ZM.z*100)} %)`:'Tout voir';$('#mtVw').classList.toggle('zoomed',ZM.z>1.01)}
+function zmApply(){if(typeof netSync==='function')netSync();const el=$('#stZm');el.style.transform=ZM.z>1.001?`translate(${ZM.ox}px,${ZM.oy}px) scale(${ZM.z})`:'';$('#stZt').hidden=!(STU.tab==='anim'&&anOn());$('#stZr').textContent=ZM.z>1.01?`Tout voir (${Math.round(ZM.z*100)} %)`:'Tout voir';$('#mtVw').classList.toggle('zoomed',ZM.z>1.01)}
 function zmClamp(){const w=$('#mtVw').clientWidth,h=$('#mtVw').clientHeight;if(ZM.z<=1.001){ZM.z=1;ZM.ox=ZM.oy=0;return}ZM.ox=Math.min(0,Math.max(w-w*ZM.z,ZM.ox));ZM.oy=Math.min(0,Math.max(h-h*ZM.z,ZM.oy))}
 function zmAt(f,cx,cy){const z2=Math.max(1,Math.min(16,ZM.z*f));f=z2/ZM.z;ZM.ox=cx-(cx-ZM.ox)*f;ZM.oy=cy-(cy-ZM.oy)*f;ZM.z=z2;zmClamp();zmApply()}
 const zmReset=()=>{ZM.z=1;ZM.ox=ZM.oy=0;zmApply()};
@@ -4767,7 +4777,7 @@ $('#mtVw').addEventListener('contextmenu',e=>{if(STU.tab==='anim')e.preventDefau
 $('#stZi').addEventListener('click',()=>zmAt(1.5,$('#mtVw').clientWidth/2,$('#mtVw').clientHeight/2));$('#stZo').addEventListener('click',()=>zmAt(1/1.5,$('#mtVw').clientWidth/2,$('#mtVw').clientHeight/2));$('#stZr').addEventListener('click',zmReset);
 document.addEventListener('keydown',e=>{if(e.code==='Space'&&AN.picking&&!/^(INPUT|TEXTAREA|SELECT)$/.test((e.target||{}).tagName||'')){ZM.space=true;e.preventDefault();e.stopImmediatePropagation()}},true);
 document.addEventListener('keyup',e=>{if(e.code==='Space')ZM.space=false});
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&AN.pathFor){anPickEnd();anSoon()}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&(AN.pathFor||(AN.picking&&AN.tool==='sam'))&&!/^(INPUT|TEXTAREA|SELECT)$/.test((e.target||{}).tagName||'')){e.preventDefault();anPickEnd();anSoon()}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&AN.picking){anPickEnd();anSoon()}});
 
 /* --- animations : ajout, aperçu, suivi --- */
@@ -4797,7 +4807,7 @@ function anResView(){$('#anRes').innerHTML=AN.out.length?'<h4 class="st-h4">Rés
 function anHtml(){return `<section class="an-s">
  <h4 class="st-h4"><span class="an-n">1</span> Choisis l'objet</h4>
  <p class="muted sm an-p">Mets la vidéo sur une image où l'objet se voit bien, choisis une façon de le désigner, puis vise dans le lecteur (une loupe t'aide ; molette = zoom).</p>
- <div class="an-tool"><div class="seg sm" id="anToolSeg"><button type="button" data-v="wand" aria-pressed="true" title="Un clic sur l'objet">🪄 Clic</button><button type="button" data-v="brush" aria-pressed="false" title="Colorier l'objet ou le symbole">🖌 Pinceau</button><button type="button" data-v="rect" aria-pressed="false" title="Encadrer l'objet">▭ Cadre</button></div></div>
+ <div class="an-tool"><div class="seg sm" id="anToolSeg"><button type="button" data-v="wand" aria-pressed="true" title="Un clic sur l'objet">🪄 Clic</button><button type="button" data-v="brush" aria-pressed="false" title="Colorier l'objet ou le symbole">🖌 Pinceau</button><button type="button" data-v="rect" aria-pressed="false" title="Encadrer l'objet">▭ Cadre</button><button type="button" data-v="sam" aria-pressed="false" title="Détourage précis par IA (SAM)">✨ IA</button></div></div>
  <p class="muted sm an-p" id="anToolTxt"></p>
  <label class="ky-sl" id="anBszW"><span>Taille du pinceau</span><input type="range" id="anBsz" min="2" max="40" step="1" aria-label="Taille du pinceau"><b id="anBszV"></b></label>
  <div class="an-row"><button class="btn primary" id="koPick" type="button">🪄 Choisir l'objet</button><button class="btn sm" id="koClear" type="button">Effacer</button><button class="btn sm" id="anObjPng" type="button" title="Enregistre l'objet seul, fond transparent">⬇ Image de l'objet</button></div>
@@ -4860,8 +4870,8 @@ function koView(){
   $$('#stPAnim [data-koc]').forEach(i=>i.checked=!!KO.o[i.dataset.koc]);setSeg('koModeSeg',KO.o.mode);
   if(document.activeElement!==$('#koDef'))$('#koDef').value=KO.o.defDur;$('#koRange').value=KO.o.range;
   $('#koTrack').disabled=!KO.obj||KO.tracking;$('#koTrackStop').hidden=!KO.tracking;$('#koClear').disabled=!KO.obj;
-  const TI={wand:'🪄',brush:'🖌',rect:'▭'};setSeg('anToolSeg',AN.tool);$('#anBsz').value=AN.bsz;$('#anBszV').textContent=AN.bsz;$('#anBszW').hidden=AN.tool!=='brush';$('#anObjPng').disabled=!(KO.cur&&KO.cur.ok);
-  $('#anToolTxt').textContent={wand:"Clique sur l'objet : le contour est trouvé tout seul (la zone de même couleur).",brush:"Colorie l'objet ou juste son symbole, sans déborder : l'IA prend tout ce qui ressemble à ce que tu as colorié (même s'il y a plusieurs couleurs).",rect:"Encadre l'objet en glissant : tout ce qui se distingue du fond est pris."}[AN.tool];
+  const TI={wand:'🪄',brush:'🖌',rect:'▭',sam:'✨'};setSeg('anToolSeg',AN.tool);$('#anBsz').value=AN.bsz;$('#anBszV').textContent=AN.bsz;$('#anBszW').hidden=AN.tool!=='brush';$('#anObjPng').disabled=!(KO.cur&&KO.cur.ok);
+  $('#anToolTxt').textContent={wand:"Clique sur l'objet : le contour est trouvé tout seul (la zone de même couleur).",brush:"Colorie l'objet ou juste son symbole, sans déborder : l'IA prend tout ce qui ressemble à ce que tu as colorié (même s'il y a plusieurs couleurs).",rect:"Encadre l'objet en glissant : tout ce qui se distingue du fond est pris.",sam:"Une IA (SAM) découpe l'objet avec précision : clique dessus, puis affine (Alt + clic pour retirer une partie). Elle se télécharge une fois (≈ 50 Mo) et tourne sur ton ordinateur, quelques secondes par image. Sur les autres images de la vidéo, le suivi se fait par couleur."}[AN.tool];
   $('#koPick').textContent=AN.picking&&!KO.pickDest&&!AN.pathFor?'👆 Vise dans le lecteur… (Échap pour annuler)':KO.obj?TI[AN.tool]+' Choisir un autre objet':TI[AN.tool]+' Choisir l\'objet';
   $$('#stPAnim [data-fx]').forEach(b=>b.classList.toggle('dis',!KO.obj&&!KY.rect));
   if(!KO.tracking){const T=KO.track,i=KO.trackInfo,ob=KO.obj;
@@ -4912,6 +4922,110 @@ async function anExport(kind){if(!anBind()){toast('La vidéo se charge…');retu
 function anTab(k){if(k!=='anim'){anPickEnd();zmReset()}else zmApply();anSoon();stLanes()}
 window.addEventListener('resize',()=>{if(anWant())anSoon()});
 if(window.__NOVA_TEST)window.__an={AN,anBind,anAdd,anRefresh,anPlay,anExport,anSwap};
+
+/* ---------- Studio : détourage par IA (SAM, modèle « SlimSAM »), en option, dans le navigateur ---------- */
+const SAM_ID='Xenova/slimsam-77-uniform';
+const SAM={w:null,pend:null,key:'',ready:false,busy:false,pts:[],idle:0,k:1,sw:0,sh:0,frame:null};
+const samCfg=k=>{try{return localStorage.getItem(k)||''}catch(e){return''}};
+
+/* le calcul tourne dans un « worker » pour ne pas figer la page */
+function samWorkerMain(){
+  let tr=null,model=null,proc=null,emb=null,inp=null;const post=(m,t)=>self.postMessage(m,t||[]);
+  self.onmessage=async e=>{const m=e.data;
+    try{
+      if(m.t==='embed'){
+        if(!tr)tr=await import(m.lib);
+        const env=tr.env;
+        if(m.local){env.allowRemoteModels=false;env.allowLocalModels=true;env.localModelPath=m.local}else{env.allowLocalModels=false;env.allowRemoteModels=true}
+        env.backends.onnx.wasm.wasmPaths=m.wasm;
+        if(!model){const fl={},cb=p=>{if(p.status==='progress'&&p.total){fl[p.file]=[p.loaded,p.total];let l=0,t=0;for(const f in fl){l+=fl[f][0];t+=fl[f][1]}post({t:'dl',loaded:l,total:t})}};
+          model=await tr.SamModel.from_pretrained(m.id,{progress_callback:cb});proc=await tr.AutoProcessor.from_pretrained(m.id,{progress_callback:cb})}
+        post({t:'enc'});
+        const img=new tr.RawImage(new Uint8ClampedArray(m.rgba),m.w,m.h,4).rgb();
+        inp=await proc(img);emb=await model.get_image_embeddings(inp);post({t:'ready'})}
+      else if(m.t==='decode'){
+        const rs=inp.reshaped_input_sizes[0],os=inp.original_sizes[0],pts=[],lab=[];
+        for(const p of m.pts){pts.push(p.x/os[1]*rs[1],p.y/os[0]*rs[0]);lab.push(BigInt(p.l))}
+        const ip=new tr.Tensor('float32',new Float32Array(pts),[1,1,m.pts.length,2]),il=new tr.Tensor('int64',BigInt64Array.from(lab),[1,1,m.pts.length]);
+        const out=await model({...emb,input_points:ip,input_labels:il});
+        const masks=await proc.post_process_masks(out.pred_masks,inp.original_sizes,inp.reshaped_input_sizes);
+        const sc=out.iou_scores.data;let b=0;for(let i=1;i<sc.length;i++)if(sc[i]>sc[b])b=i;
+        const mt=masks[0],H=mt.dims[2],W=mt.dims[3],hw=H*W,res=new Uint8Array(hw),src=mt.data;for(let i=0;i<hw;i++)res[i]=src[b*hw+i]?1:0;
+        post({t:'mask',w:W,h:H,mask:res,score:sc[b]},[res.buffer])}
+    }catch(er){post({t:'err',msg:String((er&&er.message)||er)})}}}
+
+/* appel au worker : une réponse attendue à la fois */
+function samCall(msg,transfer){
+  if(samCfg('nova_sam_mock'))return samMock(msg);
+  return new Promise((res,rej)=>{
+    if(!SAM.w){SAM.w=new Worker(URL.createObjectURL(new Blob(['('+samWorkerMain.toString()+')()'],{type:'text/javascript'})));
+      SAM.w.onmessage=e=>{const m=e.data;
+        if(m.t==='dl'){const p=SAM.pend;anHint(`✨ Téléchargement du modèle de l'IA (une seule fois)… ${(m.loaded/1e6).toFixed(0)} / ${(m.total/1e6).toFixed(0)} Mo`);return}
+        if(m.t==='enc'){anHint("✨ L'IA analyse l'image… (quelques secondes)");return}
+        const p=SAM.pend;if(!p)return;SAM.pend=null;
+        if(m.t==='err')p.rej(new Error(m.msg));else p.res(m)};
+      SAM.w.onerror=e=>{const p=SAM.pend;SAM.pend=null;samKill();if(p)p.rej(new Error(e.message||'worker'))}}
+    SAM.pend={res,rej};
+    const local=samCfg('nova_sam_local'),base=samCfg('nova_sam_base')||samCfg('nova_su_base');
+    if(msg.t==='embed'){msg.lib=(base?base+'/':SU_LIB)+'transformers.min.js';msg.wasm=base?base+'/':SU_LIB;msg.local=local?new URL(local,location.href).href:'';msg.id=SAM_ID}
+    SAM.w.postMessage(msg,transfer||[]);
+    clearTimeout(SAM.idle);SAM.idle=setTimeout(samKill,8*60*1000)})}
+function samKill(){if(SAM.w){try{SAM.w.terminate()}catch(e){}}SAM.w=null;SAM.pend=null;SAM.ready=false;SAM.key=''}
+/* version de test : sans modèle, on prend la zone de couleur proche du clic (sert à vérifier l'interface) */
+function samMock(msg){
+  if(msg.t==='embed'){SAM.frame={rgba:new Uint8ClampedArray(msg.rgba),w:msg.w,h:msg.h};return Promise.resolve({t:'ready'})}
+  const F=SAM.frame,m=new Uint8Array(F.w*F.h),pos=msg.pts.filter(p=>p.l===1),neg=msg.pts.filter(p=>p.l===0);
+  const col=p=>{const i=(Math.round(p.y)*F.w+Math.round(p.x))*4;return[F.rgba[i],F.rgba[i+1],F.rgba[i+2]]};
+  for(const p of pos){const c=col(p),st=[[Math.round(p.x),Math.round(p.y)]];const seen=new Set();
+    while(st.length){const [x,y]=st.pop();if(x<0||y<0||x>=F.w||y>=F.h)continue;const k=y*F.w+x;if(seen.has(k))continue;seen.add(k);const i=k*4;
+      if(Math.abs(F.rgba[i]-c[0])+Math.abs(F.rgba[i+1]-c[1])+Math.abs(F.rgba[i+2]-c[2])>90)continue;m[k]=1;st.push([x+1,y],[x-1,y],[x,y+1],[x,y-1])}}
+  for(const p of neg){const r=12;for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++)if(x*x+y*y<=r*r){const X=Math.round(p.x)+x,Y=Math.round(p.y)+y;if(X>=0&&Y>=0&&X<F.w&&Y<F.h)m[Y*F.w+X]=0}}
+  return Promise.resolve({t:'mask',w:F.w,h:F.h,mask:m,score:1})}
+
+/* --- une image à analyser (une fois par image, puis chaque clic est quasi instantané) --- */
+const samKey=()=>`${MT.i}|${KY.t.toFixed(3)}`;
+async function samEmbed(){
+  if(SAM.ready&&SAM.key===samKey())return;
+  SAM.ready=false;
+  const k=Math.min(1,1024/Math.max(KY.fw,KY.fh)),w=Math.round(KY.fw*k),h=Math.round(KY.fh*k),cv=phCv(w,h),g=cv.getContext('2d');
+  g.imageSmoothingQuality='high';g.drawImage(KY.fc,0,0,w,h);const rgba=g.getImageData(0,0,w,h).data;
+  await samCall({t:'embed',rgba:rgba.buffer,w,h},[rgba.buffer]);
+  SAM.key=samKey();SAM.ready=true;SAM.k=k;SAM.sw=w;SAM.sh=h}
+/* masque rendu par l'IA → masque à la taille de la vidéo, bords adoucis puis seuillés */
+function samToObj(r){
+  const mc=phCv(r.w,r.h),mg=mc.getContext('2d'),id=mg.createImageData(r.w,r.h);for(let i=0;i<r.mask.length;i++)id.data[i*4+3]=r.mask[i]?255:0;mg.putImageData(id,0,0);
+  const W=KY.fw,H=KY.fh,big=phCv(W,H),bg=big.getContext('2d');bg.imageSmoothingEnabled=true;bg.imageSmoothingQuality='high';bg.drawImage(mc,0,0,W,H);
+  const d=bg.getImageData(0,0,W,H).data;let x0=W,y0=H,x1=-1,y1=-1,area=0,sx=0,sy=0;
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(d[(y*W+x)*4+3]>127){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;area++;sx+=x;sy+=y}
+  if(area<12)return null;
+  const rect={x:x0,y:y0,w:x1-x0+1,h:y1-y0+1},mask=new Uint8Array(rect.w*rect.h);
+  for(let y=0;y<rect.h;y++)for(let x=0;x<rect.w;x++)mask[y*rect.w+x]=d[((y0+y)*W+x0+x)*4+3]>127?1:0;
+  return{ok:true,rect,mask,W:rect.w,H:rect.h,cx:sx/area,cy:sy/area,area,touches:false}}
+/* graines de couleur prises à l'intérieur du masque : elles servent à retrouver l'objet sur les autres images */
+function samSeeds(o){
+  const g=KY.fc.getContext('2d'),{rect,mask,W,H}=o,gap=Math.max(3,Math.round(Math.sqrt(o.area)/6)),seeds=[];
+  for(let y=gap;y<H-gap;y+=gap)for(let x=gap;x<W-gap;x+=gap){const p=y*W+x;if(mask[p]&&mask[p-1]&&mask[p+1]&&mask[p-W]&&mask[p+W]){const px=g.getImageData(rect.x+x,rect.y+y,1,1).data;seeds.push({x:rect.x+x,y:rect.y+y,c:[px[0],px[1],px[2]]})}}
+  if(!seeds.length){const px=g.getImageData(Math.round(o.cx),Math.round(o.cy),1,1).data;seeds.push({x:Math.round(o.cx),y:Math.round(o.cy),c:[px[0],px[1],px[2]]})}
+  const keep=[];for(const s of seeds){if(keep.some(k=>Math.hypot(k.x-s.x,k.y-s.y)<gap*3&&Math.abs(k.c[0]-s.c[0])+Math.abs(k.c[1]-s.c[1])+Math.abs(k.c[2]-s.c[2])<36))continue;keep.push(s)}
+  return keep.slice(0,60)}
+const SAM_TIP="✨ Clique pour affiner (Alt + clic = retirer une partie) · Entrée = terminé";
+async function anSamClick(p,mode){
+  if(SAM.busy)return;if(!anBind())return;mtV().pause();
+  if(mode==='replace'||!SAM.pts.length||SAM.key!==samKey()||!KO.obj||!KO.obj.sam)SAM.pts=[];
+  SAM.pts.push({x:p.fx,y:p.fy,l:mode==='sub'?0:1});SAM.busy=true;
+  const first=!SAM.w;anHint(first&&!samCfg('nova_sam_mock')?"✨ Chargement de l'IA… (la première fois : modèle d'environ 50 Mo à télécharger)":"✨ L'IA analyse l'image…");
+  try{
+    await samEmbed();anHint("✨ L'IA découpe l'objet…");
+    const r=await samCall({t:'decode',pts:SAM.pts.map(q=>({x:q.x*SAM.k,y:q.y*SAM.k,l:q.l}))}),o=samToObj(r);
+    if(!o){SAM.pts.pop();toast("L'IA n'a rien trouvé à cet endroit : clique plus au milieu de l'objet");anHint(SAM_TIP);return}
+    const seeds=samSeeds(o);seeds.forEach(s=>{s.rx=s.x-o.cx;s.ry=s.y-o.cy});
+    KO.obj={seeds,subs:[],t0:KY.t,c0:{x:o.cx,y:o.cy},size:{w:o.rect.w,h:o.rect.h},area0:o.area,grad:false,sam:o};KO.track=[];KO.trackInfo=null;KO.lastPos={x:o.cx,y:o.cy};
+    KY.o.cut='obj';kySave();KY.man=null;KY.ai=null;kyUpdate();koView();anSoon();anHint(SAM_TIP)
+  }catch(e){
+    SAM.pts.pop();console.warn('SAM:',e);const m=String((e&&e.message)||e);
+    toast(/fetch|network|import|load|dynamically|script|404|not found|Could not/i.test(m)?"Impossible de télécharger l'IA de détourage (connexion ? bloqueur ?). Tu peux utiliser le pinceau ou le cadre à la place.":"L'IA a eu un souci : "+m.slice(0,120));
+    anHint(SAM_TIP);samKill()}
+  finally{SAM.busy=false}}
 
 /* ---------- Studio : une seule fenêtre pour monter (lecteur, timeline, panneaux de réglages) ---------- */
 const STU={tab:'cut',raf:0,rulerSig:'',mute:false};
@@ -4965,8 +5079,9 @@ function stHead(){
 function stPlayUi(){const v=mtV(),p=!v.paused&&!v.ended;$('#stPlay').textContent=p?'⏸':'▶';$('#stBig').hidden=p||!MT.dur;$('#mtVw').classList.toggle('playing',p)}
 function stDraw(){
   const c=mtCut(),keep=Math.max(0,c.b-c.a);
-  $('#stTot').textContent=MT.dur?mtFmt(MT.dur,1):'0:00';$('#stKeep').textContent=MT.dur?mtFmt(keep):'–';$('#stEst').textContent=$('#mtEst').textContent;
+  $('#stTot').textContent=MT.dur?mtFmt(MT.dur,1):'0:00';stInfo();$('#stKeep').textContent=MT.dur?mtFmt(keep):'–';$('#stEst').textContent=$('#mtEst').textContent;
   $('#stUndo').disabled=STU.tab==='subs'?!SU.hist.length:!MT.hist.length;stFit();stRuler();stLanes();stHead();stPlayUi();const fx=$('#mtFmtNote');$('#mtFmtNote2').hidden=fx.hidden;$('#mtFmtNote2').textContent=fx.textContent}
+function stInfo(){const f=MT.files[MT.i];if(!f)return;const i=MT_INFO.get(f),v=i&&i.video,t=`${mtSize(f.size)}${MT.files.length>1?` · vidéo ${MT.i+1} sur ${MT.files.length}`:''}${v&&v.w?` · ${v.w}×${v.h}${v.fps?` · ${Math.round(v.fps)} i/s`:''}${v.codec?` · ${v.codec}`:''}`:''}`;if($('#mtSub').textContent!==t)$('#mtSub').textContent=t}
 function stTick(){const v=mtV();if(v.paused||v.ended){STU.raf=0;stPlayUi();return}stHead();STU.raf=requestAnimationFrame(stTick)}
 ['play','playing'].forEach(ev=>mtV().addEventListener(ev,()=>{stPlayUi();if(!STU.raf)STU.raf=requestAnimationFrame(stTick)}));
 ['pause','ended','seeked','loadedmetadata'].forEach(ev=>mtV().addEventListener(ev,()=>{stPlayUi();stHead()}));
@@ -4994,7 +5109,7 @@ function stFit(){
   if(!v.videoWidth||!cw||!ch){r.style.width=r.style.height='0px';return}
   const k=Math.min(cw/v.videoWidth,ch/v.videoHeight),W=v.videoWidth*k,H=v.videoHeight*k;
   r.style.left=(cw-W)/2+'px';r.style.top=(ch-H)/2+'px';r.style.width=W+'px';r.style.height=H+'px';
-  if(SU.inited)suOvStyle()}
+  if(SU.inited)suOvStyle();netSync()}
 if(window.ResizeObserver)new ResizeObserver(()=>{STU.fitSig='';if(!$('#mtStep2').hidden)stFit()}).observe($('#mtVw'));
 mtV().addEventListener('loadedmetadata',()=>{STU.fitSig='';stFit()});
 STU.fitSig='';
@@ -5071,6 +5186,25 @@ function stSubsUse(){
 /* --- à chaque nouvelle vidéo --- */
 function stOnOpen(f){anSwap(f);stSubsUse();STU.fitSig='';stFit();stLanes()}
 function stOnTab(k){anTab(k);if(k==='subs'){stSubsUse();suOvStyle()}stLanes();if(!$('#mtStep2').hidden)stDraw()}
+/* ---------- aperçu net : quand la vidéo est réduite, Chrome la rétrécit « à la louche » (textures qui scintillent) ; on la redessine avec un vrai filtre ---------- */
+const NET={on:true,cb:0};
+try{NET.on=localStorage.getItem('nova_st_net')!=='0'}catch(e){}
+function netNeeded(){const v=mtV();if(!NET.on||!v.videoWidth||$('#mtStep2').hidden)return false;const r=$('#stVr').getBoundingClientRect();return r.width>0&&v.videoWidth/(r.width*(window.devicePixelRatio||1))>1.35}
+function netDraw(){
+  const v=mtV(),c=$('#stNet'),r=$('#stVr');if(!v.videoWidth||!r.clientWidth||v.readyState<2)return;
+  const z=typeof ZM!=='undefined'?Math.max(1,ZM.z):1,w=Math.min(v.videoWidth,Math.round(r.clientWidth*(window.devicePixelRatio||1)*z)),h=Math.round(w*v.videoHeight/v.videoWidth);
+  if(c.width!==w||c.height!==h){c.width=w;c.height=h}
+  const g=c.getContext('2d');g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';try{g.drawImage(v,0,0,w,h)}catch(e){}}
+function netLoop(){
+  const v=mtV();if(NET.cb||!v.requestVideoFrameCallback)return;
+  const f=()=>{NET.cb=0;if(!netNeeded()){netSync();return}netDraw();
+    /* si l'ordinateur n'arrive pas à suivre, on revient à la lecture brute (plus légère) */
+    const now=performance.now();if(!NET.q||now-NET.q.t>3500){const k=v.getVideoPlaybackQuality(),q=NET.q;NET.q={t:now,f:k.totalVideoFrames,d:k.droppedVideoFrames};
+      if(q&&!v.paused&&NET.q.f-q.f>=60&&(NET.q.d-q.d)/(NET.q.f-q.f)>0.18){NET.on=false;NET.q=null;netSync();toast("L'aperçu net ralentit la lecture sur cet ordinateur : je reviens à la lecture brute (bouton ✨ pour le remettre)");return}}
+    if(!v.paused&&!v.ended)NET.cb=v.requestVideoFrameCallback(f);else NET.q=null};NET.cb=v.requestVideoFrameCallback(f)}
+function netSync(){const on=netNeeded();$('#stNet').hidden=!on;$('#stNetB').setAttribute('aria-pressed',String(NET.on));if(on){netDraw();netLoop()}}
+['seeked','loadeddata','pause','play','playing','loadedmetadata','emptied'].forEach(ev=>mtV().addEventListener(ev,()=>netSync()));
+$('#stNetB').addEventListener('click',()=>{NET.on=!NET.on;try{localStorage.setItem('nova_st_net',NET.on?'1':'0')}catch(e){}netSync();toast(NET.on?'Aperçu net activé':'Aperçu net désactivé (lecture brute)')});
 stTabsInit();stTiles();stChips();stSubsInit();anWire();
 if(window.__NOVA_TEST)window.__st={STU,stTab,stLanes};
 
