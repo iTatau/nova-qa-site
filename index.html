@@ -4401,6 +4401,8 @@ function koPick(x,y,mode){
   KY.o.cut='obj';kySave();KY.man=null;KY.ai=null;kyOptsView();kyUpdate();koView();
   if(KO.cur&&KO.cur.touches)toast("L'objet touche le bord de la zone analysée : baisse la tolérance si le contour déborde")}
 
+/* on vise le MILIEU de la durée d'une image : sans ça, le navigateur tombe parfois sur l'image d'avant (décalage d'une image = l'effet « saute ») */
+const kyEps=()=>0.3/Math.max(10,kyFps());
 /* ---------- suivi de l'objet : on reconnaît son aspect (gabarit) image après image, puis on retrouve son contour par la couleur ---------- */
 const ktCv=(w,h)=>phCv(Math.max(1,Math.round(w)),Math.max(1,Math.round(h)));
 /* une zone de l'image (même hors cadre), rendue à la taille dw × dh */
@@ -4408,9 +4410,15 @@ function ktRegion(src,sx,sy,sw,sh,dw,dh){
   const crop=ktCv(sw,sh),cg=crop.getContext('2d');cg.fillStyle='#000';cg.fillRect(0,0,crop.width,crop.height);cg.drawImage(src,-Math.round(sx),-Math.round(sy));
   const c=ktCv(dw,dh),g=c.getContext('2d');g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.drawImage(crop,0,0,c.width,c.height);return g.getImageData(0,0,c.width,c.height)}
 function ktTemplate(frame,r){
-  const w=r.rect.w,h=r.rect.h,cv=ktCv(w,h),g=cv.getContext('2d'),id=ktRegion(frame,r.rect.x,r.rect.y,w,h,w,h),d=id.data;
-  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const p=y*w+x,inside=r.mask[p]&&(x>0&&r.mask[p-1])&&(x<w-1&&r.mask[p+1])&&(y>0&&r.mask[p-w])&&(y<h-1&&r.mask[p+w]);d[p*4+3]=inside?255:0}
-  g.putImageData(id,0,0);return{cv,w0:w,h0:h}}
+  const bw=Math.max(2,Math.min(5,Math.round(0.07*Math.max(r.rect.w,r.rect.h)))),pad=bw+1,w=r.rect.w+2*pad,h=r.rect.h+2*pad,cv=ktCv(w,h),g=cv.getContext('2d'),id=ktRegion(frame,r.rect.x-pad,r.rect.y-pad,w,h,w,h),d=id.data;
+  const m=(x,y)=>{x-=pad;y-=pad;return x>=0&&y>=0&&x<r.rect.w&&y<r.rect.h&&r.mask[y*r.rect.w+x]};
+  let ins=new Uint8Array(w*h),band=new Uint8Array(w*h);
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(m(x,y)&&m(x-1,y)&&m(x+1,y)&&m(x,y-1)&&m(x,y+1))ins[y*w+x]=1;
+  /* bande : les pixels à moins de bw pixels de l'objet */
+  let cur=new Uint8Array(w*h);for(let p=0;p<w*h;p++)cur[p]=m(p%w,Math.floor(p/w))?1:0;
+  for(let it=0;it<bw;it++){const nx=cur.slice();for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){const p=y*w+x;if(!cur[p]&&(cur[p-1]||cur[p+1]||cur[p-w]||cur[p+w]))nx[p]=1}cur=nx}
+  for(let p=0;p<w*h;p++){if(!ins[p]&&cur[p])band[p]=1;d[p*4+3]=ins[p]?255:band[p]?150:0}
+  g.putImageData(id,0,0);return{cv,w0:w,h0:h,pad,iw:r.rect.w,ih:r.rect.h}}
 /* cherche le gabarit autour de (cx,cy) : plusieurs tailles, petite pénalité si on s'éloigne de la position attendue */
 function ktMatch(T,frame,pred,R,S,scales,f,gain,sc0){
   const aw=T.w0*S*1.12+2*R,ah=T.h0*S*1.12+2*R,ax=pred.x-aw/2,ay=pred.y-ah/2,pw=Math.max(8,Math.round(aw*f)),ph=Math.max(8,Math.round(ah*f)),pd=ktRegion(frame,ax,ay,aw,ah,pw,ph).data,P=new Float32Array(pw*ph*3);
@@ -4427,7 +4435,7 @@ function ktMatch(T,frame,pred,R,S,scales,f,gain,sc0){
     let lb=1e9,bx=0,by=0,cache={};
     const pcx=(pred.x-ax)*f,pcy=(pred.y-ay)*f;
     for(let oy=0;oy<=ph-th;oy++)for(let ox=0;ox<=pw-tw;ox++){
-      const dd=Math.hypot(ox+tw/2-pcx,oy+th/2-pcy)/f/Math.max(8,R),pen=7*dd,v=sad(ox,oy,(lb+pen)*3*n);if(v>=1e9)continue;const tot=v+pen;if(tot<lb){lb=tot;bx=ox;by=oy}}
+      const dd=Math.hypot(ox+tw/2-pcx,oy+th/2-pcy)/f/Math.max(8,R),pen=2.2*dd,v=sad(ox,oy,(lb+pen)*3*n);if(v>=1e9)continue;const tot=v+pen;if(tot<lb){lb=tot;bx=ox;by=oy}}
     if(lb>=1e9)continue;
     /* précision sous le pixel (parabole sur les voisins) */
     const s0=sad(bx,by,1e12),g1=(a,b,c)=>{const dn=a-2*b+c;return Math.abs(dn)<1e-6?0:Math.max(-0.5,Math.min(0.5,0.5*(a-c)/dn))};
@@ -4437,10 +4445,28 @@ function ktMatch(T,frame,pred,R,S,scales,f,gain,sc0){
   return best}
 const ktMean=(frame,x,y,w,h)=>{const d=ktRegion(frame,x,y,w,h,24,24).data;let s=0;for(let i=0;i<d.length;i+=4)s+=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];return s/(d.length/4)};
 function ktMaskScaled(T,mk,S){
-  const w=Math.max(2,Math.round(T.w0*S)),h=Math.max(2,Math.round(T.h0*S));
+  const w=Math.max(2,Math.round(T.iw*S)),h=Math.max(2,Math.round(T.ih*S)),pw=Math.round(T.pad*S);
   if(mk.cache&&mk.cache.w===w&&mk.cache.h===h)return mk.cache;
-  const c=ktCv(w,h),g=c.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(mk.cv,0,0,w,h);const d=g.getImageData(0,0,w,h).data,m=new Uint8Array(w*h);for(let i=0;i<w*h;i++)m[i]=d[i*4+3]>127?1:0;
+  const c=ktCv(w,h),g=c.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(mk.cv,T.pad,T.pad,T.iw,T.ih,0,0,w,h);const d=g.getImageData(0,0,w,h).data,m=new Uint8Array(w*h);for(let i=0;i<w*h;i++)m[i]=d[i*4+3]>200?1:0;
   return mk.cache={w,h,mask:m}}
+/* affinage au centième de pixel : alignement du gabarit par gradient (Lucas-Kanade), comme les trackers des logiciels de montage */
+function ktLK(T,frame,pos,Sc,gain){
+  const tw=Math.max(6,Math.round(T.w0*Sc)),th=Math.max(6,Math.round(T.h0*Sc)),tc=ktCv(tw,th),tg=tc.getContext('2d');tg.imageSmoothingQuality='high';tg.drawImage(T.cv,0,0,tw,th);
+  const td=tg.getImageData(0,0,tw,th).data,M=10,rw=tw+2*M,rh=th+2*M,ox=Math.round(pos.x-tw/2)-M,oy=Math.round(pos.y-th/2)-M,rd=ktRegion(frame,ox,oy,rw,rh,rw,rh).data,I=new Float32Array(rw*rh);
+  for(let i=0;i<rw*rh;i++)I[i]=(0.299*rd[i*4]+0.587*rd[i*4+1]+0.114*rd[i*4+2])*gain;
+  const px=[];for(let y=0;y<th;y++)for(let x=0;x<tw;x++){const a=td[(y*tw+x)*4+3];if(a>100)px.push(x,y,0.299*td[(y*tw+x)*4]+0.587*td[(y*tw+x)*4+1]+0.114*td[(y*tw+x)*4+2],a>200?1:0.6)}
+  if(px.length<40)return null;
+  const smp=(x,y)=>{x=Math.max(0,Math.min(rw-1.001,x));y=Math.max(0,Math.min(rh-1.001,y));const x0=Math.floor(x),y0=Math.floor(y),fx=x-x0,fy=y-y0,i=y0*rw+x0;return I[i]*(1-fx)*(1-fy)+I[i+1]*fx*(1-fy)+I[i+rw]*(1-fx)*fy+I[i+rw+1]*fx*fy};
+  const bx=pos.x-tw/2-ox,by=pos.y-th/2-oy;let dx=0,dy=0;
+  for(let it=0;it<6;it++){
+    let a11=0,a12=0,a22=0,b1=0,b2=0,mr=0,wsum=0;const rs=[];
+    for(let k=0;k<px.length;k+=4){const x=bx+px[k]+dx,y=by+px[k+1]+dy,v=smp(x,y),r=v-px[k+2];rs.push(r);mr+=r*px[k+3];wsum+=px[k+3]}
+    mr/=wsum;let q=0;
+    for(let k=0;k<px.length;k+=4,q++){const x=bx+px[k]+dx,y=by+px[k+1]+dy,gx=(smp(x+0.5,y)-smp(x-0.5,y)),gy=(smp(x,y+0.5)-smp(x,y-0.5)),r=rs[q]-mr,w=px[k+3]/(1+r*r/900);
+      a11+=w*gx*gx;a12+=w*gx*gy;a22+=w*gy*gy;b1+=w*gx*r;b2+=w*gy*r}
+    const det=a11*a22-a12*a12;if(det<1e-2)return null;
+    const ux=-(a22*b1-a12*b2)/det,uy=-(-a12*b1+a11*b2)/det;dx+=ux;dy+=uy;if(Math.abs(dx)>3.5||Math.abs(dy)>3.5)return null;if(Math.abs(ux)+Math.abs(uy)<0.005)break}
+  return{x:pos.x+dx,y:pos.y+dy}}
 async function koTrack(){
   if(!KO.obj||KO.tracking||KY.isImg||!KY.vid)return false;
   KO.tracking=true;KO.cancel=false;koView();
@@ -4450,7 +4476,7 @@ async function koTrack(){
     lo=Math.max(0,lo);hi=Math.min(KY.dur,hi);
     const pv=await kyVideo(KY.file,true),tmp=phCv(KY.fw,KY.fh),tg=tmp.getContext('2d'),total=Math.max(1,Math.round((hi-lo)*fps)),S=[];let done=0,lost=0,scoreSum=0;
     /* image de départ : contour exact de l'objet à l'instant choisi */
-    pv.pause();await kySeek(pv,t0);tg.drawImage(pv,0,0);
+    pv.pause();await kySeek(pv,t0+kyEps());tg.drawImage(pv,0,0);
     const r0=ob.sam&&Math.abs(ob.t0-t0)<0.05?ob.sam:koObjAt(tmp,t0,{pred:{x:ob.c0.x,y:ob.c0.y}});
     if(!r0||!r0.ok)throw new Error("l'objet n'est pas retrouvé à l'instant choisi : choisis-le de nouveau");
     const T0=ktTemplate(tmp,r0),area0=r0.area,mk0={cv:T0.cv},spriteOf=(rect,mask,W,H)=>{if(W*H>160000)return null;try{const el=ktCv(W,H);el.getContext('2d').drawImage(tmp,-rect.x,-rect.y);const o={rect,mask,W,H};return{cut:koCutOf(el,o),patch:koPatch(tmp,o),w:W,h:H}}catch(e){return null}},firstSpr=spriteOf(r0.rect,r0.mask,r0.W,r0.H);
@@ -4458,13 +4484,16 @@ async function koTrack(){
       const T={cv:ktCv(T0.w0,T0.h0),w0:T0.w0,h0:T0.h0};T.cv.getContext('2d').drawImage(T0.cv,0,0);
       let pos={x:r0.rect.x+r0.rect.w/2,y:r0.rect.y+r0.rect.h/2},vel={x:0,y:0},Sc=1,curArea=area0,lostN=0,prevMean=ktMean(tmp,pos.x-T.w0/2,pos.y-T.h0/2,T.w0*2,T.h0*2),lastMask=mk0,out=[];
       for(let t=dir>0?t0+step:t0-step;dir>0?t<=hi+1e-6:t>=lo-1e-6;t+=dir*step){
-        if(KO.cancel)throw new Error('annulé');pv.pause();await kySeek(pv,t);tg.drawImage(pv,0,0);
+        if(KO.cancel)throw new Error('annulé');pv.pause();await kySeek(pv,t+kyEps());tg.drawImage(pv,0,0);
         const size=Math.max(T.w0,T.h0)*Sc,R=Math.min(0.6*Math.min(KY.fw,KY.fh),Math.max(18,0.6*size)*(1+lostN*0.6)),f=Math.min(1,44/Math.max(12,size)),pred={x:pos.x+vel.x*dir*0,y:pos.y+vel.y};
         const cur=ktMean(tmp,pred.x-T.w0*Sc/2,pred.y-T.h0*Sc/2,T.w0*Sc*2,T.h0*Sc*2),gain=Math.max(0.75,Math.min(1.33,prevMean/Math.max(8,cur)));
         const fxp=KO.fixes.find(q=>Math.abs(q.t-t)<step*0.51);
         let m=fxp?{x:fxp.x,y:fxp.y,sc:1,score:0}:ktMatch(lostN>3?{cv:T0.cv,w0:T0.w0,h0:T0.h0}:T,tmp,pred,R,Sc,[0.93,1,1.07],f,gain);
         if(fxp){vel={x:0,y:0};lostN=0}
         let ok=!!m&&m.score<=48;
+        if(ok&&!fxp&&m.score<=40){
+          const T1=lostN>3?{cv:T0.cv,w0:T0.w0,h0:T0.h0}:T,fine=ktMatch(T1,tmp,{x:m.x,y:m.y},Math.ceil(2.5/f)+2,Sc,[m.sc],1,gain);if(fine&&fine.score<=m.score*1.3+2)m={...m,x:fine.x,y:fine.y};
+          const lk=ktLK(T1,tmp,{x:m.x,y:m.y},Sc*m.sc,gain);if(lk)m={...m,x:lk.x,y:lk.y}}
         if(ok){const nx=m.x,ny=m.y;vel={x:0.55*vel.x+0.45*(nx-pos.x),y:0.55*vel.y+0.45*(ny-pos.y)};pos={x:nx,y:ny};Sc=Math.max(0.35,Math.min(3.5,Sc*(1+(m.sc-1)*0.5)));lostN=0;scoreSum+=m.score;prevMean=prevMean*0.5+cur*0.5}
         else{lostN++;lost++;pos={x:pos.x+vel.x,y:pos.y+vel.y};vel={x:vel.x*0.8,y:vel.y*0.8}}
         /* contour : par la couleur autour de la position trouvée (il sert aussi à garder la bonne taille) ; sinon le contour du départ, à la bonne taille */
@@ -4472,12 +4501,11 @@ async function koTrack(){
         const rg=ok&&!fxp?koObjAt(tmp,t,{pred:pos}):null,sizeNow=Math.max(T.w0,T.h0)*Sc;
         if(rg&&rg.ok&&rg.area>curArea*0.7&&rg.area<curArea*1.45&&Math.hypot(rg.rect.x+rg.rect.w/2-pos.x,rg.rect.y+rg.rect.h/2-pos.y)<=0.4*sizeNow){
           rect={...rg.rect};mask=rg.mask;W=rg.W;H=rg.H;trusted=true;curArea=rg.area;
-          Sc=Math.max(0.35,Math.min(3.5,0.5*Sc+0.5*Math.sqrt(rg.area/area0)));
-          pos={x:0.5*pos.x+0.5*(rect.x+rect.w/2),y:0.5*pos.y+0.5*(rect.y+rect.h/2)}}
+          Sc=Math.max(0.35,Math.min(3.5,0.5*Sc+0.5*Math.sqrt(rg.area/area0)))}
         else{const ms=ktMaskScaled(T0,mk0,Sc);W=ms.w;H=ms.h;mask=ms.mask;rect={x:Math.round(pos.x-W/2),y:Math.round(pos.y-H/2),w:W,h:H};curArea=Math.max(20,area0*Sc*Sc)}
         /* le gabarit s'adapte doucement (lumière, rotation), mais seulement quand la taille est confirmée par le contour */
         if(trusted&&m&&m.score<30){const g=T.cv.getContext('2d');g.save();g.globalCompositeOperation='source-atop';g.globalAlpha=0.1;g.imageSmoothingQuality='high';g.drawImage(tmp,pos.x-T.w0*Sc/2,pos.y-T.h0*Sc/2,T.w0*Sc,T.h0*Sc,0,0,T.w0,T.h0);g.restore()}
-        out.push({t,x:rect.x+rect.w/2,y:rect.y+rect.h/2,rx:rect.x+rect.w/2,ry:rect.y+rect.h/2,rect,mask,W,H,ok,fixed:!!fxp,spr:spriteOf(rect,mask,W,H)});
+        out.push({t,x:pos.x,y:pos.y,raw:{x:pos.x,y:pos.y},rx:rect.x+rect.w/2,ry:rect.y+rect.h/2,rect,mask,W,H,ok,fixed:!!fxp,spr:spriteOf(rect,mask,W,H)});
         done++;$('#koInfo').textContent=`Suivi en cours… ${Math.min(100,Math.round(done/total*100))} %`}
       return out};
     /* position de départ */
@@ -4487,10 +4515,12 @@ async function koTrack(){
     /* images perdues : on relie les positions retrouvées de part et d'autre */
     for(let i=0;i<Sm.length;i++)if(!Sm[i].ok){let a=i-1,b=i+1;while(a>=0&&!Sm[a].ok)a--;while(b<Sm.length&&!Sm[b].ok)b++;
       const A=a>=0?Sm[a]:null,B=b<Sm.length?Sm[b]:null;if(A&&B){const u=(Sm[i].t-A.t)/Math.max(1e-6,B.t-A.t),nx=A.x+(B.x-A.x)*u,ny=A.y+(B.y-A.y)*u;Sm[i].rect={...Sm[i].rect,x:Math.round(nx-Sm[i].rect.w/2),y:Math.round(ny-Sm[i].rect.h/2)};Sm[i].x=nx;Sm[i].y=ny;Sm[i].rx=nx;Sm[i].ry=ny}}
-    /* mouvement adouci (comme un logiciel de montage) : la copie animée glisse au lieu de trembler */
-    const K=[1,4,6,4,1],sm=Sm.map((s0,i)=>{if(i===0||i===Sm.length-1||s0.fixed)return s0;let sx=0,sy=0,sw=0,sh=0,wt=0;
-      for(let k=-2;k<=2;k++){const q=Sm[Math.max(0,Math.min(Sm.length-1,i+k))],w=K[k+2];sx+=q.x*w;sy+=q.y*w;sw+=q.rect.w*w;sh+=q.rect.h*w;wt+=w}
-      const nx=sx/wt,ny=sy/wt,nw=sw/wt,nh=sh/wt;return{...s0,x:nx,y:ny,rect:{x:nx-nw/2,y:ny-nh/2,w:nw,h:nh}}});
+    /* la position du suivi est précise : on ne la lisse pas du tout (pas de retard sur les secousses de caméra). Seul le décalage entre cette position et le centre du contour, qui fluctue avec le bruit de la vidéo, est fortement adouci */
+    const n=Sm.length,cl=i=>Math.max(0,Math.min(n-1,i)),KB=[1,8,28,56,70,56,28,8,1],KS=[1,2,1],KW=[1,4,6,4,1];
+    const conv=(arr,K)=>arr.map((_,i)=>{let s0=0,wt=0;const h=(K.length-1)>>1;for(let k=-h;k<=h;k++){s0+=arr[cl(i+k)]*K[k+h];wt+=K[k+h]}return s0/wt});
+    const sx=Sm.map(q=>q.x),sy=Sm.map(q=>q.y),sox=conv(Sm.map(q=>q.rx-q.x),KB),soy=conv(Sm.map(q=>q.ry-q.y),KB),sw=conv(Sm.map(q=>q.rect.w),KW),sh=conv(Sm.map(q=>q.rect.h),KW);
+    const sm=Sm.map((q,i)=>{if(q.fixed)return{...q,rect:{x:q.x-q.rect.w/2,y:q.y-q.rect.h/2,w:q.rect.w,h:q.rect.h}};
+      const nx=sx[i]+sox[i],ny=sy[i]+soy[i];return{...q,x:nx,y:ny,rect:{x:nx-sw[i]/2,y:ny-sh[i]/2,w:sw[i],h:sh[i]}}});
     KO.track=sm;KO.trackInfo={lo,hi,lost,n:sm.length,mean:scoreSum/Math.max(1,sm.length-lost)};return true
   }catch(e){if(String(e&&e.message)!=='annulé'){console.warn('suivi:',e);anErr('Le suivi a échoué : '+String((e&&e.message)||e).slice(0,140))}else toast('Suivi arrêté');return false}
   finally{KO.tracking=false;KY.vfDirty=true;koView();kyUpdate()}}
@@ -4677,7 +4707,7 @@ async function kyVfExport(kind){
         for(let i=0;i<N;i++){
           if(KY.cancel)throw new Error('annulé');const t=a0+i/fps;let bytes;
           if(!C.some(c=>t>=c.a&&t<=koEnd(c))){if(!empty){g.clearRect(0,0,W,H);empty=new Uint8Array(await (await kyBlob(cv)).arrayBuffer())}bytes=empty.slice()}
-          else{let frame=null;if(need){pv.pause();await kySeek(pv,t);tmp.getContext('2d').drawImage(pv,0,0);frame=tmp}
+          else{let frame=null;if(need){pv.pause();await kySeek(pv,t+kyEps());tmp.getContext('2d').drawImage(pv,0,0);frame=tmp}
             g.clearRect(0,0,W,H);koDraw(g,W,H,t,frame,false);bytes=new Uint8Array(await (await kyBlob(cv)).arrayBuffer())}
           if(kind==='zip')zipFiles.push({name:`calque_${String(i+1).padStart(5,'0')}.png`,data:bytes});
           else{const n=`v${String(i+1).padStart(5,'0')}.png`;await ff.writeFile(n,bytes);names.push(n)}
