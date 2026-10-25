@@ -956,6 +956,9 @@ button.flash{animation:anflash .9s ease 2}@keyframes anflash{50%{box-shadow:0 0 
 .st-file b,.st-file span{text-transform:none;letter-spacing:0}
 
 .st-kd{margin-top:8px;font-size:12px;color:var(--mut)}.st-kd summary{cursor:pointer;font-weight:600}.st-kd p{margin:6px 0 0}
+
+/* lecteur agrandi : les réglages passent sous l'image */
+.stu.wide{--vh2:clamp(320px,calc(100vh - 330px),860px)}.stu.wide .st-body{grid-template-columns:1fr}.stu.wide .st-panels{max-height:none}
 </style>
 </head>
 <body>
@@ -1166,6 +1169,7 @@ button.flash{animation:anflash .9s ease 2}@keyframes anflash{50%{box-shadow:0 0 
             <span class="sp"></span>
             <label class="st-rate">vitesse de l'aperçu<select id="stRate" aria-label="Vitesse de l'aperçu"><option value="0.5">× 0,5</option><option value="1" selected>× 1</option><option value="1.5">× 1,5</option><option value="2">× 2</option></select></label>
             <button class="st-ib" id="stMute" type="button" title="Couper le son de l'aperçu" aria-label="Couper ou remettre le son">🔊</button>
+            <button class="st-ib" id="stWide" type="button" title="Agrandir le lecteur (cache les réglages)" aria-label="Agrandir le lecteur">⤢</button>
             <button class="st-ib" id="stFs" type="button" title="Plein écran" aria-label="Plein écran">⛶</button>
           </div>
         </div>
@@ -4796,6 +4800,9 @@ $('#stStart').addEventListener('click',()=>{mtV().currentTime=mtCut().a});$('#st
 $('#stF1').addEventListener('click',()=>{mtV().pause();mtV().currentTime=Math.max(0,mtV().currentTime-1/30)});$('#stF2').addEventListener('click',()=>{mtV().pause();mtV().currentTime=Math.min(MT.dur,mtV().currentTime+1/30)});
 $('#stRate').addEventListener('change',e=>{mtV().playbackRate=+e.target.value});
 $('#stMute').addEventListener('click',()=>{STU.mute=!STU.mute;mtV().muted=STU.mute||mtAEls.length>1;mtAEls.forEach(e=>{e.muted=STU.mute});$('#stMute').textContent=STU.mute?'🔇':'🔊'});
+function stWide(on){$('#mtStep2').classList.toggle('wide',on);$('#stWide').textContent=on?'⤡':'⤢';$('#stWide').title=on?'Réduire le lecteur':'Agrandir le lecteur (réglages sous l\'image)';try{localStorage.setItem('nova_st_wide',on?'1':'')}catch(e){}STU.fitSig='';stFit();STU.rulerSig='';stDraw();anSoon()}
+$('#stWide').addEventListener('click',()=>stWide(!$('#mtStep2').classList.contains('wide')));
+try{if(localStorage.getItem('nova_st_wide'))$('#mtStep2').classList.add('wide'),$('#stWide').textContent='⤡'}catch(e){}
 $('#stFs').addEventListener('click',()=>{const el=$('#mtVw');if(document.fullscreenElement)document.exitFullscreen();else if(el.requestFullscreen)el.requestFullscreen()});
 $('#stIn').addEventListener('click',()=>mtSetA(mtV().currentTime));$('#stOut').addEventListener('click',()=>mtSetB(mtV().currentTime));
 $('#stUndo').addEventListener('click',()=>{if(STU.tab==='subs')suUndo();else mtUndo()});$('#stExp2').addEventListener('click',()=>$('#mtNext').click());
