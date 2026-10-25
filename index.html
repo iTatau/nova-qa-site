@@ -4671,13 +4671,15 @@ function ktStep(T,frame,st,gain){
   const useLast=st.lostN>=2&&st.lostN%2===0&&st.lastGood,pred=useLast?{x:st.lastGood.x,y:st.lastGood.y}:{x:st.pos.x+st.vel.x*gap,y:st.pos.y+st.vel.y*gap},thP=st.th+st.om*gap;
   const rotated=Math.abs(st.th)>0.3||Math.abs(st.om)>0.02,sweep=st.lostN>=3&&(rotated||st.lostN>=8)&&st.lostN%2===1;
   const angles=sweep?[0,0.52,1.05,1.57,2.09,2.62,3.14,3.67,4.19,4.71,5.24,5.76]:st.lostN>=2?[thP,thP-0.35,thP+0.35]:[thP];
-  const scales=st.lostN>=1&&!sweep?[st.S,st.S*1.2,st.S/1.2,st.S*1.45,st.S/1.45]:[st.S];
+  const scales=st.lostN>=1&&!sweep?[st.S,st.S*1.15,st.S/1.15]:[st.S];
   const penW=st.ambN>0?8:st.lostN?1:2.2;
   let best=null,pa=null;
+  /* l'échelle ne dérive pas sans raison : un gabarit uni rapetisse volontiers pour mieux « tenir » dans une zone de même couleur */
+  const Sref=st.Sref||st.S,spen=S=>(window.__KTLAM||60)*Math.log(S/Sref)**2;
   for(const a of angles)for(const S1 of (a===angles[0]?scales:[st.S])){
     const V=ktVariant(T,S1,a,f),win=V.size/f+2*R;if(!pa||Math.abs(pa.win-win)>1)pa=Object.assign(ktPatch(frame,pred.x,pred.y,win,win,f,gain),{win});
     if(pa.pw<=V.size||pa.ph<=V.size)continue;
-    const A=ktCoarse(pa,V,pa.pw/2,pa.ph/2,R*f,penW);if(A&&(!best||A.sad<best.sad))best={ox:A.ox,oy:A.oy,S:S1,th:a,sad:A.sad,V,pa,conf:A.conf,amb:!!A.second,mean:A.mean}}
+    const A=ktCoarse(pa,V,pa.pw/2,pa.ph/2,R*f,penW);if(A&&(!best||A.sad+spen(S1)<best.sad+spen(best.S)))best={ox:A.ox,oy:A.oy,S:S1,th:a,sad:A.sad,V,pa,conf:A.conf,amb:!!A.second,mean:A.mean}}
   if(!best)return null;pa=best.pa;
   /* pose : on essaie de légères variations d'angle et de taille, avec un petit ajustement de position à chaque fois */
   const dth=Math.max(0.035,Math.min(0.16,Math.abs(st.om)*0.8+0.035)),nb=[[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,1],[-1,1],[1,-1]];
@@ -4685,11 +4687,11 @@ function ktStep(T,frame,st,gain){
     for(let iter=0;iter<4;iter++){
       let imp=false;
       for(const [a,b] of nb){
-        const S2=best.S*(1+b*ds),th2=best.th+a*dt,V2=ktVariant(T,S2,th2,f),cx0=best.ox+best.V.size/2,cy0=best.oy+best.V.size/2;let loc=null;
+        const S2=best.S*(1+b*ds),th2=best.th+a*dt;if(Math.abs(Math.log(S2/st.S))>0.17+0.04*Math.min(3,st.lostN)||Math.abs(th2-thP)>0.45+0.2*Math.min(3,st.lostN))continue;const V2=ktVariant(T,S2,th2,f),cx0=best.ox+best.V.size/2,cy0=best.oy+best.V.size/2;let loc=null;
         for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){
           const ox=Math.round(cx0+dx-V2.size/2),oy=Math.round(cy0+dy-V2.size/2);if(ox<0||oy<0||ox+V2.size>pa.pw||oy+V2.size>pa.ph)continue;
           const s=ktSad(pa,V2,ox,oy,(loc?loc.sad:best.sad)*3*V2.wsum+1);if(s<1e9&&(!loc||s<loc.sad))loc={ox,oy,sad:s}}
-        if(loc&&loc.sad<best.sad*0.985){best={...best,ox:loc.ox,oy:loc.oy,S:S2,th:th2,sad:loc.sad,V:V2,pa};imp=true}}
+        if(loc&&loc.sad+spen(S2)<(best.sad+spen(best.S))*0.985){best={...best,ox:loc.ox,oy:loc.oy,S:S2,th:th2,sad:loc.sad,V:V2,pa};imp=true}}
       if(!imp)break}}
   let x=pa.ax+(best.ox+best.V.size/2)*pa.sx,y=pa.ay+(best.oy+best.V.size/2)*pa.sy,score=best.sad;
   /* précision : même chose en pleine résolution, puis alignement par gradient */
@@ -4787,7 +4789,7 @@ function ktAnchor(Sm){
 function ktPlay(pv,t0,hi,step,onFrame){
   return new Promise(async(resolve,reject)=>{
     if(!pv.requestVideoFrameCallback){reject(new Error('rvfc'));return}
-    let done=false,last=t0,rate=0.35,wd=0,attached=false;
+    let done=false,last=t0,rate=0.35,wd=0,attached=false,slow=0;
     const fin=e=>{if(done)return;done=true;clearInterval(wd);try{pv.pause();pv.playbackRate=1}catch(_){}pv.onended=null;if(attached)pv.remove();e?reject(e):resolve()};
     if(!pv.isConnected){Object.assign(pv.style,{position:'fixed',left:'0',bottom:'0',width:'4px',height:'4px',opacity:'0.02',pointerEvents:'none'});document.body.appendChild(pv);attached=true}
     try{await kySeek(pv,t0+kyEps())}catch(e){fin(e);return}
@@ -4799,9 +4801,11 @@ function ktPlay(pv,t0,hi,step,onFrame){
       if(t>hi+step*0.5){fin();return}
       if(t>last+step*0.4){
         const gap=Math.max(1,Math.round((t-last)/step)),a=performance.now();
+        /* l'ordinateur ne suit pas, même à la vitesse minimale : des images seraient sautées. On bascule en image par image (plus lent mais sans trou) */
+        if(gap>1&&rate<=0.075){if(++slow>=2){fin(new Error('lent'));return}}else if(gap===1&&slow>0)slow--;
         try{onFrame(t,gap)}catch(e){fin(e);return}
-        last=t;const p=performance.now()-a,want=Math.max(0.1,Math.min(1,step*1000/(2.4*Math.max(1,p))));
-        rate=gap>1?Math.max(0.1,rate*0.7):0.8*rate+0.2*want;rate=Math.min(rate,want*1.15);pv.playbackRate=Math.max(0.1,Math.min(1,rate))}
+        last=t;const p=performance.now()-a,want=Math.max(0.0625,Math.min(1,step*1000/(2.4*Math.max(1,p))));
+        rate=gap>1?Math.max(0.0625,rate*0.7):0.8*rate+0.2*want;rate=Math.min(rate,want*1.15);try{pv.playbackRate=Math.max(0.0625,Math.min(1,rate))}catch(_){}}
       pv.requestVideoFrameCallback(cb)};
     pv.onended=()=>fin();
     wd=setInterval(()=>{if(performance.now()-lastAct>4000)fin(new Error('rvfc'))},500);
@@ -4857,18 +4861,25 @@ async function koTrack(){
           st.vh.push([(m.x-st.pos.x)/gap,(m.y-st.pos.y)/gap]);if(st.vh.length>4)st.vh.shift();
           let vx=0,vy=0,wt=0;st.vh.forEach((v,i)=>{const w=i+1;vx+=v[0]*w;vy+=v[1]*w;wt+=w});st.vel={x:vx/wt,y:vy/wt};
           let dth=m.th-st.th;while(dth>Math.PI)dth-=2*Math.PI;while(dth<-Math.PI)dth+=2*Math.PI;dth=Math.max(-0.4,Math.min(0.4,dth))/gap;
-          st.om=0.6*st.om+0.4*dth;st.th=m.th;st.S=Math.max(0.3,Math.min(4,m.S));st.pos={x:m.x,y:m.y};st.lostN=0;st.lastGood={x:m.x,y:m.y};
+          st.om=0.6*st.om+0.4*dth;st.th=m.th;st.S=Math.max(0.3,Math.min(4,m.S));st.Sref=(st.Sref||st.S)*0.85+st.S*0.15;st.pos={x:m.x,y:m.y};st.lostN=0;st.lastGood={x:m.x,y:m.y};
           if(m.score>0)st.prevScore=m.score;if(m.score>0){scoreSum+=m.score;scoreN++;hist.push(m.score);if(hist.length>40)hist.shift()}prevMean=prevMean*0.5+cur*0.5}
         else{st.lostN++;lost++;st.pos={x:st.pos.x+st.vel.x*gap,y:st.pos.y+st.vel.y*gap};st.vel={x:st.vel.x*0.95,y:st.vel.y*0.95};st.th+=st.om*gap;st.om*=0.9}
         /* contour : par la couleur autour de la position trouvée (il confirme aussi la taille) ; sinon le contour de départ, posé à la bonne taille et au bon angle */
-        let rect,mask,W,H,trusted=false;
+        let rect,mask,W,H,trusted=false,cen=null;
         const rg=ok&&!fxp?tm('regrow',()=>koObjAt(tmp,t,{pred:st.pos})):null,sizeNow=Math.max(T0.w0,T0.h0)*st.S;
-        if(rg&&rg.ok&&rg.area>curArea*0.7&&rg.area<curArea*1.45&&Math.hypot(rg.rect.x+rg.rect.w/2-st.pos.x,rg.rect.y+rg.rect.h/2-st.pos.y)<=0.4*sizeNow){
+        if(rg&&rg.ok&&((rg.area>curArea*0.7&&rg.area<curArea*1.45)||(st.lastRgA&&rg.area>st.lastRgA*0.8&&rg.area<st.lastRgA*1.25))&&Math.hypot(rg.rect.x+rg.rect.w/2-st.pos.x,rg.rect.y+rg.rect.h/2-st.pos.y)<=0.4*sizeNow){
           const mp0=ktMaskPose(T0,st.S,st.th),mg=ktMerge(rg,mp0,st.pos);rect={...mg.rect};mask=mg.mask;W=mg.W;H=mg.H;trusted=true;curArea=rg.area;
-          const Sa=Math.sqrt(rg.area/area0);if(Math.abs(Sa/st.S-1)<0.12)st.S=Math.max(0.3,Math.min(4,0.7*st.S+0.3*Sa))}
+          {let sx=0,sy=0,n=0;for(let y=0;y<rg.H;y++)for(let x=0;x<rg.W;x++)if(rg.mask[y*rg.W+x]){sx+=x;sy+=y;n++}if(n)cen={x:rg.rect.x+sx/n+0.5,y:rg.rect.y+sy/n+0.5}}
+          const Sa=Math.sqrt(rg.area/area0);st.lastRgA=rg.area;if(st.Sref&&Math.abs(Sa/st.Sref-1)<0.6)st.Sref=0.5*st.Sref+0.5*Sa;if(Math.abs(Sa/st.S-1)<0.12)st.S=Math.max(0.3,Math.min(4,0.7*st.S+0.3*Sa));else if(Math.abs(Sa/st.S-1)<0.6)st.S=Math.max(0.3,Math.min(4,0.65*st.S+0.35*Sa))}
         else{const mp=ktMaskPose(T0,st.S,st.th);W=mp.w;H=mp.h;mask=mp.mask;rect={x:Math.round(st.pos.x+mp.ox-W/2),y:Math.round(st.pos.y+mp.oy-H/2),w:W,h:H};curArea=Math.max(20,area0*st.S*st.S)}
         let vmask=mask,hidden=false,occ=0;
         if(ok&&!fxp&&!perm){const oc=tm('occl',()=>ktOccl(T,tmp,st,gain,rect,mask));if(oc){vmask=oc.valid;occ=oc.frac;if(oc.frac>0.62)hidden=true}}
+        /* un objet en 3D qui tourne montre d'autres faces : son centre réel s'éloigne peu à peu du point suivi. On corrige lentement, d'après le centre de la zone réellement visible */
+        if(cen&&ok&&!fxp&&occ<0.12&&!window.__KTNODC){const cc=Math.cos(st.th),ss=Math.sin(st.th),kk=st.S,ex_=st.pos.x+kk*(c0.x*cc-c0.y*ss),ey_=st.pos.y+kk*(c0.x*ss+c0.y*cc),lim=0.3*sizeNow;st.dc=st.dc||{x:0,y:0};
+          const dz=Math.max(3,0.04*sizeNow),sf=v=>Math.max(-lim,Math.min(lim,Math.abs(v)<dz?0:v-Math.sign(v)*dz));st.cb=st.cb||{x:0,y:0,n:0};
+          /* les premières images donnent le décalage « normal » entre le point suivi et le centre de la zone visible ; seul l'écart par rapport à lui compte */
+          if(st.cb.n<4){st.cb.x=(st.cb.x*st.cb.n+(cen.x-ex_))/(st.cb.n+1);st.cb.y=(st.cb.y*st.cb.n+(cen.y-ey_))/(st.cb.n+1);st.cb.n++}
+          else{st.rs=st.rs||{x:0,y:0};st.rs.x+=(window.__KTA||0.08)*(Math.max(-lim,Math.min(lim,cen.x-ex_-st.cb.x))-st.rs.x);st.rs.y+=(window.__KTA||0.08)*(Math.max(-lim,Math.min(lim,cen.y-ey_-st.cb.y))-st.rs.y);const rm=Math.hypot(st.rs.x,st.rs.y),wd_=Math.max(0,Math.min(1,(rm/Math.max(20,sizeNow)-0.1)/0.08));st.dc.x=st.rs.x*wd_;st.dc.y=st.rs.y*wd_}}
         /* le gabarit s'adapte doucement (lumière, forme) ; et il est refait à la bonne résolution quand l'objet a beaucoup grossi ou rétréci */
         if(trusted&&m&&m.score<30&&m.score>0&&occ<0.04){
           const rel=st.S/T.k;
@@ -4879,8 +4890,8 @@ async function koTrack(){
             T.cv=nc;T.w0=nw;T.h0=nh;T.pad=Math.round(T.pad*rel);T.k=st.S;T.id=++ktId}
           else{const g=T.cv.getContext('2d');g.save();g.globalCompositeOperation='source-atop';g.globalAlpha=0.06;g.imageSmoothingQuality='high';
             g.translate(T.w0/2,T.h0/2);g.rotate(-st.th);g.scale(T.k/st.S,T.k/st.S);g.translate(-st.pos.x,-st.pos.y);g.drawImage(tmp,0,0);g.restore();T.id=++ktId}}
-        if(window.__ktlog)window.__ktlog.push([t,st.pos.x,st.pos.y,m?m.score:-1,m&&m.conf,m&&m.amb?1:0,st.ambN,st.lostN,ok?1:0]);
-        const q={t,x:st.pos.x,y:st.pos.y,raw:{x:st.pos.x,y:st.pos.y},th:st.th,sc:st.S,score:m?m.score:-1,occ,hidden,rx:rect.x+rect.w/2,ry:rect.y+rect.h/2,rect,mask,W,H,ok,weak:!clean,fixed:!!fxp,spr:hidden?null:tm('sprite',()=>spriteOf(rect,vmask,W,H))};
+        if(window.__ktlog)window.__ktlog.push([t,st.pos.x,st.pos.y,m?m.score:-1,m&&m.conf,m&&m.amb?1:0,st.ambN,st.lostN,ok?1:0,st.S,st.dc?st.dc.x:0,st.dc?st.dc.y:0,cen?cen.x-st.pos.x:0,cen?cen.y-st.pos.y:0,rg&&rg.ok?rg.area/area0:-1,trusted?1:0]);
+        const q={t,x:st.pos.x,y:st.pos.y,raw:{x:st.pos.x,y:st.pos.y},th:st.th,sc:st.S,score:m?m.score:-1,occ,hidden,rx:rect.x+rect.w/2,ry:rect.y+rect.h/2,rect,mask,W,H,ok,dcx:st.dc?st.dc.x:0,dcy:st.dc?st.dc.y:0,weak:!clean,fixed:!!fxp,spr:hidden?null:tm('sprite',()=>spriteOf(rect,vmask,W,H))};
         out.push(q);prevS=q;done++;$('#koInfo').textContent=`Suivi en cours… ${Math.min(100,Math.round(done/total*100))} %`};
       return{out,feed}};
     /* sens avant : lecture continue (rapide) ; si le navigateur ne la permet pas, on se déplace image par image */
@@ -4920,7 +4931,7 @@ async function koTrack(){
     /* centre de l'objet = position du suivi + décalage constant (centre de gravité du contour de départ, qui tourne et grandit avec l'objet) ; chaque découpe sait où se trouve ce centre par rapport à elle (ax, ay) */
     const sm=Sm.map((q,i)=>{const c=Math.cos(q.th),s2=Math.sin(q.th),k=q.sc||1,ox=k*(c0.x*c-c0.y*s2),oy=k*(c0.x*s2+c0.y*c);
       if(q.fixed)return{...q,ax:q.x-q.rx,ay:q.y-q.ry,rect:{x:q.x-q.rect.w/2,y:q.y-q.rect.h/2,w:q.rect.w,h:q.rect.h}};
-      const nx=q.x+ox,ny=q.y+oy;return{...q,x:nx,y:ny,ax:nx-q.rx,ay:ny-q.ry,rect:{x:nx-sw[i]/2,y:ny-sh[i]/2,w:sw[i],h:sh[i]}}});
+      const nx=q.x+ox+(q.dcx||0),ny=q.y+oy+(q.dcy||0);return{...q,x:nx,y:ny,ax:nx-q.rx,ay:ny-q.ry,rect:{x:nx-sw[i]/2,y:ny-sh[i]/2,w:sw[i],h:sh[i]}}});
     KO.track=sm;KO.trackInfo={lo,hi,lost,n:sm.length,mean:scoreSum/Math.max(1,scoreN)};return true
   }catch(e){if(String(e&&e.message)!=='annulé'){console.warn('suivi:',e);anErr('Le suivi a échoué : '+String((e&&e.message)||e).slice(0,140))}else toast('Suivi arrêté');return false}
   finally{KO.tracking=false;KY.vfDirty=true;koView();kyUpdate()}}
