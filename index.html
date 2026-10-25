@@ -4758,10 +4758,13 @@ function ktOccl(T,frame,st,gain,rect,mask){
     diff[p]=(Math.abs(fd[p*4]*gain-td[q])+Math.abs(fd[p*4+1]*gain-td[q+1])+Math.abs(fd[p*4+2]*gain-td[q+2]))/3;cmp[p]=1;n++}
   if(n<20)return null;
   /* léger flou pour ne pas confondre bruit et objet étranger */
-  const valid=mask.slice();let bad=0;
+  const valid=mask.slice(),bl=new Float32Array(W*H),vs=[];let bad=0;
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){const p=y*W+x;if(!cmp[p])continue;let s0=0,c0=0;
     for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const X=x+dx,Y=y+dy;if(X<0||Y<0||X>=W||Y>=H)continue;const q=Y*W+X;if(cmp[q]){s0+=diff[q];c0++}}
-    if(s0/c0>46){valid[p]=0;bad++}}
+    bl[p]=s0/c0;vs.push(bl[p])}
+  /* seuil relatif : si tout l'objet a changé d'aspect (lumière, animation), ce n'est pas un intrus ; un intrus ne recouvre qu'une partie de l'objet */
+  vs.sort((u,v)=>u-v);const q30=vs[Math.floor(vs.length*0.3)]||0,th=46;
+  for(let p=0;p<W*H;p++)if(cmp[p]&&bl[p]>th){valid[p]=0;bad++}
   return{valid,frac:bad/n}}
 /* contour final : bords exacts du contour par la couleur + intérieur du contour du gabarit (comble les « trous » quand une couleur décroche) */
 function ktMerge(rg,mp,pos){
@@ -4825,7 +4828,7 @@ async function koTrack(){
         const o={rect,mask,W,H};return{cut:koCutOf(el,o),patch:koPatch(tmp,o),w:W,h:H}}catch(e){return null}},
       firstSpr=spriteOf(r0.rect,r0.mask,r0.W,r0.H);
     const PF=KO.prof={},tm=(k,f)=>{const a=performance.now(),r=f();PF[k]=(PF[k]||0)+performance.now()-a;return r};
-    const mkRun=dir=>{
+    const mkRun=(dir,perm)=>{
       const T={...T0,id:++ktId,cv:ktCv(T0.w0,T0.h0),k:1};T.cv.getContext('2d').drawImage(T0.cv,0,0);
       const st={pos:{x:r0.rect.x+r0.rect.w/2,y:r0.rect.y+r0.rect.h/2},vel:{x:0,y:0},S:1,th:0,om:0,lostN:0,gap:1,ambN:0,vh:[]};
       let curArea=area0,prevMean=ktMean(tmp,st.pos.x-T0.w0/2,st.pos.y-T0.h0/2,T0.w0*2,T0.h0*2),prevS=null;const out=[],hist=[];
@@ -4840,12 +4843,15 @@ async function koTrack(){
         if(fxp){m={x:fxp.x,y:fxp.y,S:st.S,th:st.th,score:0};st.vel={x:0,y:0};st.vh=[];st.lostN=0}
         else m=tm('step',()=>ktStep(st.lostN>3&&st.lostN%2===1?{...T0,id:T0.id,k:1}:T,tmp,st,gain));
         let viaColor=false;
-        const med=hist.length>5?hist.slice().sort((a,b)=>a-b)[hist.length>>1]:13,thr=Math.max(20,Math.min(44,med*1.8+6),(st.prevScore||0)*1.35+6);let ok=!!m&&(fxp||(!(m.conf>0.85)&&m.score<=Math.min(48,thr))||(st.lostN>=2&&m.conf<0.55&&m.score<55));
+        const med=hist.length>5?hist.slice().sort((a,b)=>a-b)[hist.length>>1]:13,thr=Math.max(20,Math.min(44,med*1.8+6),(st.prevScore||0)*1.35+6);const thr3=Math.max(30,Math.min(52,(hist.length>5?med:20)*2.6+8)),bn_=st.badN||0;
+        /* passe « souple » (utilisée seulement si la stricte perd l'objet presque tout le temps) : acceptation large */
+        let ok=!!m&&(fxp||perm||!window.__KTREJ)&&(fxp||(perm?(m.score<=thr3||(m.conf!==undefined&&m.conf<0.5&&m.score<90&&st.lostN<40)):((!(m.conf>0.85)&&m.score<=Math.min(48,thr))||(st.lostN>=2&&m.conf<0.55&&m.score<55))));
         if(!ok&&!fxp&&st.lostN>=1){const R0=Math.min(0.6*Math.min(KY.fw,KY.fh),Math.max(30,0.9*Math.max(T0.w0,T0.h0)*st.S)*Math.min(3,1+st.lostN*0.4)),pr=st.lostN%2===0&&st.lastGood?{x:st.lastGood.x,y:st.lastGood.y}:{x:st.pos.x+st.vel.x*gap,y:st.pos.y+st.vel.y*gap},cf=tm('couleur',()=>ktColorFind(tmp,ob.seeds,pr,R0,Math.max(40,area0*st.S*st.S),KO.o.tol));
           if(cf){/* on vérifie quand même que la structure ressemble au gabarit (même de loin) */
             const Tc=st.lostN%2?T0:T,Vc=ktVariant(Tc,st.S,st.th,Math.min(1,44/Math.max(12,Math.max(Tc.w0,Tc.h0)*st.S/Tc.k))),f2=Math.min(1,44/Math.max(12,Math.max(Tc.w0,Tc.h0)*st.S/Tc.k)),wn=Vc.size/f2+24,pa2=ktPatch(tmp,cf.x,cf.y,wn,wn,f2,gain);
             const A2=pa2.pw>Vc.size&&pa2.ph>Vc.size?ktCoarse(pa2,Vc,pa2.pw/2,pa2.ph/2,12*f2,1):null;
             if(A2&&A2.sad<=62){m={x:pa2.ax+(A2.ox+Vc.size/2)*pa2.sx,y:pa2.ay+(A2.oy+Vc.size/2)*pa2.sy,S:st.S,th:st.th,score:Math.max(A2.sad,30),conf:0.4};ok=true;viaColor=true}}}
+        const clean=!!fxp||(ok&&!viaColor&&m.score<=Math.min(48,thr)&&!(m.conf>0.85));st.badN=clean?0:bn_+1;
         if(m&&m.amb)st.ambN=18;else if(st.ambN>0)st.ambN--;
         if(ok){
           st.vh.push([(m.x-st.pos.x)/gap,(m.y-st.pos.y)/gap]);if(st.vh.length>4)st.vh.shift();
@@ -4862,7 +4868,7 @@ async function koTrack(){
           const Sa=Math.sqrt(rg.area/area0);if(Math.abs(Sa/st.S-1)<0.12)st.S=Math.max(0.3,Math.min(4,0.7*st.S+0.3*Sa))}
         else{const mp=ktMaskPose(T0,st.S,st.th);W=mp.w;H=mp.h;mask=mp.mask;rect={x:Math.round(st.pos.x+mp.ox-W/2),y:Math.round(st.pos.y+mp.oy-H/2),w:W,h:H};curArea=Math.max(20,area0*st.S*st.S)}
         let vmask=mask,hidden=false,occ=0;
-        if(ok&&!fxp){const oc=tm('occl',()=>ktOccl(T,tmp,st,gain,rect,mask));if(oc){vmask=oc.valid;occ=oc.frac;if(oc.frac>0.62)hidden=true}}
+        if(ok&&!fxp&&!perm){const oc=tm('occl',()=>ktOccl(T,tmp,st,gain,rect,mask));if(oc){vmask=oc.valid;occ=oc.frac;if(oc.frac>0.62)hidden=true}}
         /* le gabarit s'adapte doucement (lumière, forme) ; et il est refait à la bonne résolution quand l'objet a beaucoup grossi ou rétréci */
         if(trusted&&m&&m.score<30&&m.score>0&&occ<0.04){
           const rel=st.S/T.k;
@@ -4874,21 +4880,33 @@ async function koTrack(){
           else{const g=T.cv.getContext('2d');g.save();g.globalCompositeOperation='source-atop';g.globalAlpha=0.06;g.imageSmoothingQuality='high';
             g.translate(T.w0/2,T.h0/2);g.rotate(-st.th);g.scale(T.k/st.S,T.k/st.S);g.translate(-st.pos.x,-st.pos.y);g.drawImage(tmp,0,0);g.restore();T.id=++ktId}}
         if(window.__ktlog)window.__ktlog.push([t,st.pos.x,st.pos.y,m?m.score:-1,m&&m.conf,m&&m.amb?1:0,st.ambN,st.lostN,ok?1:0]);
-        const q={t,x:st.pos.x,y:st.pos.y,raw:{x:st.pos.x,y:st.pos.y},th:st.th,sc:st.S,score:m?m.score:-1,occ,hidden,rx:rect.x+rect.w/2,ry:rect.y+rect.h/2,rect,mask,W,H,ok,fixed:!!fxp,spr:hidden?null:tm('sprite',()=>spriteOf(rect,vmask,W,H))};
+        const q={t,x:st.pos.x,y:st.pos.y,raw:{x:st.pos.x,y:st.pos.y},th:st.th,sc:st.S,score:m?m.score:-1,occ,hidden,rx:rect.x+rect.w/2,ry:rect.y+rect.h/2,rect,mask,W,H,ok,weak:!clean,fixed:!!fxp,spr:hidden?null:tm('sprite',()=>spriteOf(rect,vmask,W,H))};
         out.push(q);prevS=q;done++;$('#koInfo').textContent=`Suivi en cours… ${Math.min(100,Math.round(done/total*100))} %`};
       return{out,feed}};
     /* sens avant : lecture continue (rapide) ; si le navigateur ne la permet pas, on se déplace image par image */
-    const FW=mkRun(1);
-    try{await ktPlay(pv,t0,hi,step,(t,gap)=>{tg.drawImage(pv,0,0);FW.feed(t,gap)});PF.mode='lecture'}
-    catch(e){
-      if(String(e&&e.message)==='annulé')throw e;
-      PF.mode='sauts';const last=FW.out.length?FW.out[FW.out.length-1].t:t0;
-      for(let k=Math.round((last-t0)/step)+1;;k++){const t=t0+k*step;if(t>hi+1e-6)break;if(KO.cancel)throw new Error('annulé');
-        const ta=performance.now();pv.pause();await kySeek(pv,t+kyEps());tg.drawImage(pv,0,0);PF.seek=(PF.seek||0)+performance.now()-ta;FW.feed(t,1)}}
-    /* sens arrière : on remonte le temps image par image */
-    const BW=mkRun(-1);
-    if(t0>lo)for(let k=1;;k++){const t=t0-k*step;if(t<lo-1e-6)break;if(KO.cancel)throw new Error('annulé');
-      const ta=performance.now();pv.pause();await kySeek(pv,t+kyEps());tg.drawImage(pv,0,0);PF.seek=(PF.seek||0)+performance.now()-ta;BW.feed(t,1)}
+    const runPass=async perm=>{
+      const FW=mkRun(1,perm);
+      try{await ktPlay(pv,t0,hi,step,(t,gap)=>{tg.drawImage(pv,0,0);FW.feed(t,gap)});PF.mode='lecture'}
+      catch(e){
+        if(String(e&&e.message)==='annulé')throw e;
+        PF.mode='sauts';const last=FW.out.length?FW.out[FW.out.length-1].t:t0;
+        for(let k=Math.round((last-t0)/step)+1;;k++){const t=t0+k*step;if(t>hi+1e-6)break;if(KO.cancel)throw new Error('annulé');
+          const ta=performance.now();pv.pause();await kySeek(pv,t+kyEps());tg.drawImage(pv,0,0);PF.seek=(PF.seek||0)+performance.now()-ta;FW.feed(t,1)}}
+      /* sens arrière : on remonte le temps image par image */
+      const BW=mkRun(-1,perm);
+      if(t0>lo)for(let k=1;;k++){const t=t0-k*step;if(t<lo-1e-6)break;if(KO.cancel)throw new Error('annulé');
+        const ta=performance.now();pv.pause();await kySeek(pv,t+kyEps());tg.drawImage(pv,0,0);PF.seek=(PF.seek||0)+performance.now()-ta;BW.feed(t,1)}
+      return{FW,BW}};
+    /* première passe : stricte (n'accepte que ce qui ressemble vraiment à l'objet, pour ne pas suivre un intrus). Si elle perd l'objet presque tout le temps (apparence qui change beaucoup), seconde passe plus souple, et on garde la meilleure */
+    let RP=await runPass(!!window.__KTPERM);
+    const lostN_=R=>R.FW.out.concat(R.BW.out).filter(q=>!q.ok&&!q.fixed).length,stuck=R=>{let w=0;for(const o of [R.FW.out,R.BW.out]){let c=0;for(const q of o)c=q.ok?0:c+1;if(c>w)w=c}return w};
+    {const n1=RP.FW.out.length+RP.BW.out.length,l1=lostN_(RP);PF.p1={n:n1,l:l1,s:stuck(RP)};
+      if(n1>12&&(l1>0.5*n1||stuck(RP)>0.3*n1)){
+        done=0;PF.pass1={lost:l1,n:n1};$('#koInfo').textContent='Suivi en cours… 2e passe (l\'objet change beaucoup)';
+        const R2=await runPass(true),l2=lostN_(R2);PF.pass2={lost:l2};
+        if(l2<l1*0.6){RP=R2;PF.perm=1}}
+      lost=lostN_(RP)}
+    const FW=RP.FW,BW=RP.BW;
     const fw=FW.out,bw=BW.out;
     const first={t:t0,x:r0.rect.x+r0.rect.w/2,y:r0.rect.y+r0.rect.h/2,score:0,raw:{x:r0.rect.x+r0.rect.w/2,y:r0.rect.y+r0.rect.h/2},th:0,sc:1,rx:r0.rect.x+r0.rect.w/2,ry:r0.rect.y+r0.rect.h/2,rect:{...r0.rect},mask:r0.mask,W:r0.W,H:r0.H,ok:true,spr:firstSpr};
     const Sm=[...bw.reverse(),first,...fw];
