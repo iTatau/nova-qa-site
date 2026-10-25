@@ -4366,6 +4366,8 @@ const koWin=(cx,cy,half,fw,fh)=>{const x=Math.max(0,Math.round(cx-half)),y=Math.
 function koObjAt(frame,t,opt){
   const ob=KO.obj;if(!ob||!frame)return null;opt=opt||{};
   if(ob.sam&&!opt.pick&&Math.abs(t-ob.t0)<0.05)return ob.sam;
+  /* objet choisi « exactement » : on ne le redevine pas par la couleur ailleurs que sur l'image choisie (le suivi le déplace) */
+  if(ob.exact&&!opt.pick)return{ok:false};
   const P=opt.pred||koPosAt(t)||KO.lastPos||ob.c0,half=opt.pick?400:Math.round(Math.max(ob.size.w,ob.size.h)*1.5+40),win=koWin(P.x,P.y,half,frame.width,frame.height);
   const d=frame.getContext('2d').getImageData(win.x,win.y,win.w,win.h).data,thr2=Math.pow(KO.o.tol/100*441,2),R=opt.abs?4:Math.round(Math.max(ob.size.w,ob.size.h)*0.6+6);
   const place=(arr)=>{const r=[];for(const s of arr){const pos=opt.abs?{x:s.x,y:s.y}:{x:Math.round(P.x+s.rx),y:Math.round(P.y+s.ry)},f=koFind(d,win.w,win.h,win,pos.x,pos.y,s.c,thr2,R);if(f)r.push({x:f.x,y:f.y,c:s.c})}return r};
@@ -4866,7 +4868,7 @@ async function koTrack(){
         else{st.lostN++;lost++;st.pos={x:st.pos.x+st.vel.x*gap,y:st.pos.y+st.vel.y*gap};st.vel={x:st.vel.x*0.95,y:st.vel.y*0.95};st.th+=st.om*gap;st.om*=0.9}
         /* contour : par la couleur autour de la position trouvée (il confirme aussi la taille) ; sinon le contour de départ, posé à la bonne taille et au bon angle */
         let rect,mask,W,H,trusted=false,cen=null;
-        const rg=ok&&!fxp?tm('regrow',()=>koObjAt(tmp,t,{pred:st.pos})):null,sizeNow=Math.max(T0.w0,T0.h0)*st.S;
+        const rg=ok&&!fxp&&!ob.exact?tm('regrow',()=>koObjAt(tmp,t,{pred:st.pos})):null,sizeNow=Math.max(T0.w0,T0.h0)*st.S;
         if(rg&&rg.ok&&((rg.area>curArea*0.7&&rg.area<curArea*1.45)||(st.lastRgA&&rg.area>st.lastRgA*0.8&&rg.area<st.lastRgA*1.25))&&Math.hypot(rg.rect.x+rg.rect.w/2-st.pos.x,rg.rect.y+rg.rect.h/2-st.pos.y)<=0.4*sizeNow){
           const mp0=ktMaskPose(T0,st.S,st.th),mg=ktMerge(rg,mp0,st.pos);rect={...mg.rect};mask=mg.mask;W=mg.W;H=mg.H;trusted=true;curArea=rg.area;
           {let sx=0,sy=0,n=0;for(let y=0;y<rg.H;y++)for(let x=0;x<rg.W;x++)if(rg.mask[y*rg.W+x]){sx+=x;sy+=y;n++}if(n)cen={x:rg.rect.x+sx/n+0.5,y:rg.rect.y+sy/n+0.5}}
@@ -4953,8 +4955,8 @@ function koTrackedAt(t){
 /* ---------- Studio : animer un objet dans la vidéo (panneau de droite + calque sur le lecteur + blocs sur la timeline) ---------- */
 const AN_FX={highlight:['✨','Mise en avant'],halo:['💡','Halo doux'],shape:['🌟','Halo de forme'],outline:['⬜','Contour'],dim:['🌑','Assombrir'],pop:['💥','Pop'],beat:['💓','Battement'],grow:['🔍','Grossir'],shake:['📳','Tremblement'],float:['🎈','Flottement'],wiggle:['〰️','Balancement'],spin:['🔄','Tour complet'],slide:['➡️','Glissade'],vanish:['🫥','Disparition'],bounce:['🏀','Rebond'],jelly:['🍮','Gélatine'],flip:['🪙','Retournement'],pendulum:['🔔','Pendule'],orbit:['🪐','Orbite'],path:['✏️','Trajectoire'],camera:['🎥','Zoom caméra'],ring:['⭕','Cercle'],arrow:['👉','Flèche']};
 const AN_GROUPS=[['Mouvement',['slide','path','bounce','float','shake','wiggle','pendulum','orbit','spin','flip']],['Forme',['beat','pop','grow','jelly','vanish']],['Mise en valeur',['highlight','halo','shape','outline','dim','ring','arrow']],['Caméra',['camera']]];
-const AN={file:null,sel:0,picking:false,stopAt:null,out:[],nid:0,raf:0,last:0,soon:0,store:new Map(),tool:'wand',bsz:12,stroke:null,rectD:null,hov:null,hovT:0,pathFor:0,mx:null};
-try{const t=localStorage.getItem('nova_an_tool');if(t)AN.tool=t;AN.bsz=+localStorage.getItem('nova_an_bsz')||12}catch(e){}
+const AN={file:null,sel:0,picking:false,stopAt:null,out:[],nid:0,raf:0,last:0,soon:0,store:new Map(),tool:'brush',exact:true,bsz:12,stroke:null,rectD:null,hov:null,hovT:0,pathFor:0,mx:null};
+try{const t=localStorage.getItem('nova_an_tool');if(t)AN.tool=t;AN.bsz=+localStorage.getItem('nova_an_bsz')||12;if(localStorage.getItem('nova_an_exact')==='0')AN.exact=false}catch(e){}
 /* chaque vidéo garde son objet et ses animations */
 const AN_KEYS=['obj','cur','fixes','track','trackInfo','keys','clips','openId','lastPos','maskCv','maskFor'];
 const anOn=()=>!$('#mtStep2').hidden&&$('#tab-montage').classList.contains('on')&&MT.dur>0;
@@ -5002,7 +5004,8 @@ function anPaintTools(g,k,cw){
   if(!AN.picking)return;
   if(AN.hov&&AN.tool==='wand'){const H=AN.hov;g.imageSmoothingEnabled=false;g.drawImage(H.cv,H.x*k,H.y*k,H.w*k,H.h*k)}
   const rr=AN.bsz*KY.fw/1280;
-  if(AN.stroke&&AN.stroke.pts.length){g.save();g.lineCap='round';g.lineJoin='round';g.strokeStyle=KO.o.mode==='sub'?'rgba(255,70,90,.6)':'rgba(255,95,200,.6)';g.lineWidth=rr*2*k;g.beginPath();AN.stroke.pts.forEach((q,i)=>i?g.lineTo(q.x*k,q.y*k):g.moveTo(q.x*k,q.y*k));if(AN.stroke.pts.length===1)g.lineTo(AN.stroke.pts[0].x*k+0.1,AN.stroke.pts[0].y*k);g.stroke();g.restore()}
+  if(AN.stroke&&AN.stroke.pts.length&&AN.tool==='lasso'){g.save();g.lineJoin='round';const P=AN.stroke.pts;g.beginPath();P.forEach((q,i)=>i?g.lineTo(q.x*k,q.y*k):g.moveTo(q.x*k,q.y*k));g.closePath();g.fillStyle=KO.o.mode==='sub'?'rgba(255,70,90,.22)':'rgba(255,95,200,.22)';g.fill();g.strokeStyle='#fff';g.lineWidth=Math.max(2,cw/400);g.setLineDash([cw/90,cw/140]);g.stroke();g.restore()}
+  else if(AN.stroke&&AN.stroke.pts.length){g.save();g.lineCap='round';g.lineJoin='round';g.strokeStyle=KO.o.mode==='sub'?'rgba(255,70,90,.6)':'rgba(255,95,200,.6)';g.lineWidth=rr*2*k;g.beginPath();AN.stroke.pts.forEach((q,i)=>i?g.lineTo(q.x*k,q.y*k):g.moveTo(q.x*k,q.y*k));if(AN.stroke.pts.length===1)g.lineTo(AN.stroke.pts[0].x*k+0.1,AN.stroke.pts[0].y*k);g.stroke();g.restore()}
   if(AN.rectD){const r=AN.rectD,x=Math.min(r.x0,r.x1)*k,y=Math.min(r.y0,r.y1)*k,w=Math.abs(r.x1-r.x0)*k,h=Math.abs(r.y1-r.y0)*k;g.save();g.fillStyle='rgba(88,200,255,.15)';g.fillRect(x,y,w,h);g.strokeStyle='#58c8ff';g.lineWidth=Math.max(2,cw/400);g.setLineDash([cw/80,cw/120]);g.strokeRect(x,y,w,h);g.restore()}
   if(AN.tool==='brush'&&AN.mx&&!AN.stroke){g.save();g.strokeStyle='#fff';g.lineWidth=Math.max(1.5,cw/500);g.beginPath();g.arc(AN.mx.fx*k,AN.mx.fy*k,rr*k,0,Math.PI*2);g.stroke();g.restore()}}
 
@@ -5014,7 +5017,7 @@ function anPaintTools(g,k,cw){
 function anHint(t){const h=$('#stHint');h.hidden=!t;h.textContent=t||''}
 function anPickStart(txt){
   if(!anBind())return;AN.picking=true;AN.stroke=null;AN.rectD=null;AN.hov=null;KY.tool=KO.pickDest||AN.pathFor?'rect':'wand';mtV().pause();$('#stOv').classList.add('pick');$('#mtVw').classList.add('picking');
-  anHint(txt||(AN.tool==='sam'?"Clique sur l'objet : l'IA le découpe — Échap pour annuler":AN.tool==='brush'?"Colorie l'objet (ou son symbole) avec le pinceau — Échap pour annuler":AN.tool==='rect'?"Encadre l'objet en glissant — Échap pour annuler":"Clique sur l'objet à animer — Échap pour annuler"));anPaint();koView()}
+  anHint(txt||(AN.tool==='sam'?"Clique sur l'objet : l'IA le découpe — Échap pour annuler":AN.tool==='brush'?(AN.exact?"Colorie exactement ce que tu veux animer — Échap pour annuler":"Colorie l'objet (ou son symbole) avec le pinceau — Échap pour annuler"):AN.tool==='lasso'?"Entoure l'objet à main levée — Échap pour annuler":AN.tool==='rect'?"Encadre l'objet en glissant — Échap pour annuler":"Clique sur l'objet à animer — Échap pour annuler"));anPaint();koView()}
 function anPickEnd(){AN.fixing=false;AN.picking=false;AN.stroke=null;AN.rectD=null;AN.hov=null;AN.pathFor=0;$('#stLoupe').hidden=true;KY.tool='rect';KO.pickDest=0;$('#stOv').classList.remove('pick');$('#mtVw').classList.remove('picking');anHint('');if(typeof koView==='function')koView()}
 const anFpt=e=>{const r=$('#stOv').getBoundingClientRect();return{fx:(e.clientX-r.left)/r.width*KY.fw,fy:(e.clientY-r.top)/r.height*KY.fh}};
 const anMode=e=>e.altKey?'sub':e.shiftKey?'add':KO.o.mode;
@@ -5027,17 +5030,17 @@ $('#stOv').addEventListener('pointerdown',e=>{
   if(AN.tool==='sam'){anSamClick(p,anMode(e));return}
   if(AN.tool==='wand'){const m=anMode(e);if(koStageDown({altKey:m==='sub',shiftKey:m==='add'},p)){anPickEnd();anSoon()}return}
   $('#stOv').setPointerCapture(e.pointerId);
-  if(AN.tool==='brush'){AN.stroke={pts:[{x:p.fx,y:p.fy}],mode:anMode(e)}}else AN.rectD={x0:p.fx,y0:p.fy,x1:p.fx,y1:p.fy,mode:anMode(e)};
+  if(AN.tool==='brush'||AN.tool==='lasso'){AN.stroke={pts:[{x:p.fx,y:p.fy}],mode:anMode(e)}}else AN.rectD={x0:p.fx,y0:p.fy,x1:p.fx,y1:p.fy,mode:anMode(e)};
   anPaint()});
 $('#stOv').addEventListener('pointermove',e=>{
   if(!AN.picking||!KY.fw)return;const p=anFpt(e);AN.mx=p;
-  if(AN.stroke){const L=AN.stroke.pts[AN.stroke.pts.length-1];if(Math.hypot(p.fx-L.x,p.fy-L.y)>=Math.max(1,AN.bsz*KY.fw/1280*0.25))AN.stroke.pts.push({x:p.fx,y:p.fy})}
+  if(AN.stroke){const L=AN.stroke.pts[AN.stroke.pts.length-1];if(Math.hypot(p.fx-L.x,p.fy-L.y)>=(AN.tool==='lasso'?Math.max(1,KY.fw/700):Math.max(1,AN.bsz*KY.fw/1280*0.25)))AN.stroke.pts.push({x:p.fx,y:p.fy})}
   else if(AN.rectD){AN.rectD.x1=p.fx;AN.rectD.y1=p.fy}
   else if(AN.tool==='wand'&&!KO.pickDest&&!AN.pathFor)anHoverSoon(p);
   anLoupe(e,p);anPaint()});
 $('#stOv').addEventListener('pointerleave',()=>{AN.mx=null;AN.hov=null;$('#stLoupe').hidden=true;if(AN.picking)anPaint()});
 $('#stOv').addEventListener('pointerup',e=>{
-  if(AN.stroke){const st=AN.stroke;AN.stroke=null;anBrushPick(st.pts,st.mode);return}
+  if(AN.stroke){const st=AN.stroke;AN.stroke=null;if(AN.tool==='lasso')anLassoPick(st.pts,st.mode);else anBrushPick(st.pts,st.mode);return}
   if(AN.rectD){const r=AN.rectD;AN.rectD=null;anRectPick(r,r.mode)}});
 $('#stOv').addEventListener('dblclick',()=>{if(AN.pathFor){anPickEnd();anSoon()}});
 $('#stOv').addEventListener('contextmenu',e=>e.preventDefault());
@@ -5082,7 +5085,63 @@ function anSetObj(adds,subs,mode){
     seeds.forEach(s=>{s.rx=s.x-r.cx;s.ry=s.y-r.cy});KO.obj.c0={x:r.cx,y:r.cy};KO.obj.size={w:r.rect.w,h:r.rect.h};KO.obj.area0=r.area;KO.lastPos={x:r.cx,y:r.cy}}
   KY.o.cut='obj';kySave();KY.man=null;KY.ai=null;kyUpdate();koView();anPickEnd();anSoon()}
 function anBrushPick(pts,mode){
-  if(!anBind()||!pts.length)return;const seeds=anSeeds(pts);anSetObj(mode==='sub'?[]:seeds,mode==='sub'?seeds:[],mode)}
+  if(!anBind()||!pts.length)return;
+  if(AN.exact){const M=anStrokeMask(pts,AN.bsz*KY.fw/1280,true);if(M)anExactApply(M,mode);return}
+  const seeds=anSeeds(pts);anSetObj(mode==='sub'?[]:seeds,mode==='sub'?seeds:[],mode)}
+/* ---- sélection EXACTE : l'objet est ce qui a été colorié (ou entouré), rien de plus ---- */
+/* masque (taille de l'image entière) d'un trait de pinceau ou d'une zone entourée */
+function anCanvasMask(draw){
+  const W=KY.fw,H=KY.fh,cv=phCv(W,H),g=cv.getContext('2d');draw(g);
+  const d=g.getImageData(0,0,W,H).data,m=new Uint8Array(W*H);for(let i=0;i<m.length;i++)if(d[i*4+3]>127)m[i]=1;return m}
+function anStrokeMask(pts,r,refine){
+  const W=KY.fw,H=KY.fh,P=anCanvasMask(g=>{g.fillStyle=g.strokeStyle='#fff';g.lineCap='round';g.lineJoin='round';g.lineWidth=Math.max(1,r*2);g.beginPath();pts.forEach((q,i)=>i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y));if(pts.length===1)g.lineTo(pts[0].x+0.1,pts[0].y);g.stroke()});
+  return refine?anRefine(P,Math.max(2,Math.round(r*0.4))):P}
+/* le trait est recalé sur les contours : ce qui déborde sur une autre couleur est retiré, et ce qui est juste à côté et de même couleur (le bord de l'objet) est pris */
+function anRefine(P,mg){
+  const W=KY.fw,H=KY.fh,fd=KY.fc.getContext('2d').getImageData(0,0,W,H).data;let x0=W,y0=H,x1=-1,y1=-1;
+  for(let i=0;i<P.length;i++)if(P[i]){const x=i%W,y=(i-x)/W;if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}
+  if(x1<0)return P;const pxs=[];const st=Math.max(1,Math.floor(Math.sqrt((x1-x0+1)*(y1-y0+1)/700)));
+  for(let y=y0;y<=y1;y+=st)for(let x=x0;x<=x1;x+=st){const i=y*W+x;if(P[i])pxs.push([fd[i*4],fd[i*4+1],fd[i*4+2]])}
+  if(pxs.length<6)return P;
+  /* les couleurs du trait : on garde celles qui comptent vraiment (plus de 14 % du trait), pas le petit débord sur le fond */
+  const C=anKMeans(pxs,3,6),cnt=C.map(()=>0);for(const q of pxs){let b=0,bd=1e9;C.forEach((c,k)=>{const dd=(q[0]-c[0])**2+(q[1]-c[1])**2+(q[2]-c[2])**2;if(dd<bd){bd=dd;b=k}});cnt[b]++}
+  const K=C.filter((_,k)=>cnt[k]>=pxs.length*0.14),T=KO.o.tol/100*441,dist=i=>{let bd=1e9;for(const c of K){const dd=(fd[i*4]-c[0])**2+(fd[i*4+1]-c[1])**2+(fd[i*4+2]-c[2])**2;if(dd<bd)bd=dd}return Math.sqrt(bd)};
+  const M=new Uint8Array(P.length),q=[];
+  for(let i=0;i<P.length;i++)if(P[i]&&dist(i)<=T*1.5){M[i]=1;q.push(i)}
+  /* bord : on étend de quelques pixels, seulement vers ce qui a la même couleur */
+  for(let it=0;it<mg;it++){const add=[];for(let y=Math.max(0,y0-mg);y<=Math.min(H-1,y1+mg);y++)for(let x=Math.max(0,x0-mg);x<=Math.min(W-1,x1+mg);x++){const i=y*W+x;if(M[i])continue;
+      if(!((x>0&&M[i-1])||(x<W-1&&M[i+1])||(y>0&&M[i-W])||(y<H-1&&M[i+W])))continue;if(dist(i)<=T*0.8)add.push(i)}
+    for(const i of add)M[i]=1}
+  return M}
+/* zone entourée au lasso : exactement l'intérieur du tracé */
+function anLassoPick(pts,mode){
+  if(!anBind())return;if(pts.length<3){toast("Entoure l'objet en dessinant tout autour, puis relâche");return}
+  const M=anCanvasMask(g=>{g.fillStyle='#fff';g.beginPath();pts.forEach((q,i)=>i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y));g.closePath();g.fill()});anExactApply(M,mode)}
+/* masque de l'image entière → objet (ajouter / retirer si l'objet existe déjà sur cette image) */
+function anExactApply(M,mode){
+  const W=KY.fw,H=KY.fh,ob=KO.obj;
+  if((mode==='add'||mode==='sub')&&ob){
+    if(!ob.exact||Math.abs(KY.t-ob.t0)>0.05){toast("Pour modifier l'objet, remets la vidéo sur l'image où tu l'as choisi");return}
+    const B=new Uint8Array(W*H),o=ob.sam;for(let y=0;y<o.H;y++)for(let x=0;x<o.W;x++)if(o.mask[y*o.W+x]){const X=o.rect.x+x,Y=o.rect.y+y;if(X>=0&&Y>=0&&X<W&&Y<H)B[Y*W+X]=1}
+    for(let i=0;i<B.length;i++){if(mode==='add'){if(M[i])B[i]=1}else if(M[i])B[i]=0}M=B}
+  const info=anInfoOf(M);if(!info){toast(mode==='sub'?"Il ne reste plus rien : l'objet est effacé":"Je n'ai rien trouvé là : colorie ou entoure un peu plus l'objet");if(mode==='sub'&&ob){KO.obj=null;KO.cur=null;KO.track=[];KO.trackInfo=null;koView();anSoon()}return}
+  info.exact=true;anSetFromMask(info)}
+function anInfoOf(M){
+  const W=KY.fw,H=KY.fh;let x0=W,y0=H,x1=-1,y1=-1,sx=0,sy=0,a=0;
+  for(let i=0;i<M.length;i++)if(M[i]){const x=i%W,y=(i-x)/W;if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;sx+=x;sy+=y;a++}
+  if(a<12)return null;
+  const rw=x1-x0+1,rh=y1-y0+1,mk=new Uint8Array(rw*rh);for(let y=0;y<rh;y++)for(let x=0;x<rw;x++)mk[y*rw+x]=M[(y0+y)*W+x0+x];
+  /* petits trous et poussières : on bouche / on enlève */
+  return{ok:true,rect:{x:x0,y:y0,w:rw,h:rh},mask:anTidy(mk,rw,rh),W:rw,H:rh,cx:sx/a+0.5,cy:sy/a+0.5,area:a,touches:false}}
+function anTidy(m,w,h){
+  const lab=new Int32Array(w*h),sz=[0],st=new Int32Array(w*h);let n=0;
+  for(let p=0;p<m.length;p++){if(!m[p]||lab[p])continue;n++;let sp=0,c=0;st[sp++]=p;lab[p]=n;while(sp){const q=st[--sp];c++;const X=q%w,Y=(q-X)/w;if(X>0&&m[q-1]&&!lab[q-1]){lab[q-1]=n;st[sp++]=q-1}if(X<w-1&&m[q+1]&&!lab[q+1]){lab[q+1]=n;st[sp++]=q+1}if(Y>0&&m[q-w]&&!lab[q-w]){lab[q-w]=n;st[sp++]=q-w}if(Y<h-1&&m[q+w]&&!lab[q+w]){lab[q+w]=n;st[sp++]=q+w}}sz.push(c)}
+  const big=Math.max(0,...sz),o=new Uint8Array(w*h);for(let p=0;p<m.length;p++)if(m[p]&&sz[lab[p]]>=Math.max(6,big*0.02))o[p]=1;
+  /* trous entourés : on les bouche */
+  const out=new Uint8Array(w*h);let sp=0;const push=q=>{if(!o[q]&&!out[q]){out[q]=1;st[sp++]=q}};
+  for(let x=0;x<w;x++){push(x);push((h-1)*w+x)}for(let y=0;y<h;y++){push(y*w);push(y*w+w-1)}
+  while(sp){const q=st[--sp],X=q%w,Y=(q-X)/w;if(X>0)push(q-1);if(X<w-1)push(q+1);if(Y>0)push(q-w);if(Y<h-1)push(q+w)}
+  for(let p=0;p<o.length;p++)if(!o[p]&&!out[p])o[p]=1;return o}
 /* sélection au cadre : l'intérieur du cadre est séparé du fond en comparant chaque pixel aux couleurs « du milieu » et aux couleurs « du bord » (modèle de couleurs, plusieurs passes) */
 function anKMeans(pts,k,iters){
   if(!pts.length)return[];const C=[];const step=Math.max(1,Math.floor(pts.length/k));for(let i=0;i<k;i++)C.push(pts[Math.min(pts.length-1,i*step)].slice());
@@ -5129,7 +5188,7 @@ function anRectPick(r,mode){
 /* objet défini par un masque exact (cadre, IA) */
 function anSetFromMask(o){
   const seeds=samSeeds(o);seeds.forEach(s=>{s.rx=s.x-o.cx;s.ry=s.y-o.cy});
-  KO.obj={seeds,subs:[],t0:KY.t,c0:{x:o.cx,y:o.cy},size:{w:o.rect.w,h:o.rect.h},area0:o.area,grad:false,sam:o};KO.track=[];KO.trackInfo=null;KO.lastPos={x:o.cx,y:o.cy};
+  KO.obj={seeds,subs:[],t0:KY.t,c0:{x:o.cx,y:o.cy},size:{w:o.rect.w,h:o.rect.h},area0:o.area,grad:false,sam:o,exact:!!o.exact};KO.track=[];KO.trackInfo=null;KO.lastPos={x:o.cx,y:o.cy};
   KY.o.cut='obj';kySave();KY.man=null;KY.ai=null;kyUpdate();koView();anPickEnd();anSoon()}
 /* --- zoom et déplacement de l'image du lecteur (pour viser précisément) --- */
 const ZM={z:1,ox:0,oy:0,space:false,drag:null,just:false};
@@ -5182,8 +5241,9 @@ function anResView(){$('#anRes').innerHTML=AN.out.length?'<h4 class="st-h4">Rés
 function anHtml(){return `<section class="an-s">
  <h4 class="st-h4"><span class="an-n">1</span> Choisis l'objet</h4>
  <p class="muted sm an-p">Mets la vidéo sur une image où l'objet se voit bien, choisis une façon de le désigner, puis vise dans le lecteur (une loupe t'aide ; molette = zoom).</p>
- <div class="an-tool"><div class="seg sm" id="anToolSeg"><button type="button" data-v="wand" aria-pressed="true" title="Un clic sur l'objet">🪄 Clic</button><button type="button" data-v="brush" aria-pressed="false" title="Colorier l'objet ou le symbole">🖌 Pinceau</button><button type="button" data-v="rect" aria-pressed="false" title="Encadrer l'objet">▭ Cadre</button><button type="button" data-v="sam" aria-pressed="false" title="Détourage précis par IA (SAM)">✨ IA</button></div></div>
+ <div class="an-tool"><div class="seg sm" id="anToolSeg"><button type="button" data-v="wand" aria-pressed="true" title="Un clic sur l'objet">🪄 Clic</button><button type="button" data-v="brush" aria-pressed="false" title="Colorier l'objet ou le symbole">🖌 Pinceau</button><button type="button" data-v="lasso" aria-pressed="false" title="Entourer l'objet à main levée : seul l'intérieur est pris">✏️ Lasso</button><button type="button" data-v="rect" aria-pressed="false" title="Encadrer l'objet">▭ Cadre</button><button type="button" data-v="sam" aria-pressed="false" title="Détourage précis par IA (SAM)">✨ IA</button></div></div>
  <p class="muted sm an-p" id="anToolTxt"></p>
+ <label class="mt-chk" id="anExW"><input type="checkbox" id="anExact"> 🎯 Précis : seulement ce que je colorie (rien de plus)</label>
  <label class="ky-sl" id="anBszW"><span>Taille du pinceau</span><input type="range" id="anBsz" min="2" max="40" step="1" aria-label="Taille du pinceau"><b id="anBszV"></b></label>
  <div class="an-row"><button class="btn primary" id="koPick" type="button">🪄 Choisir l'objet</button><button class="btn sm" id="koClear" type="button">Effacer</button><button class="btn sm" id="anObjPng" type="button" title="Enregistre l'objet seul, fond transparent">⬇ Image de l'objet</button></div>
  <div class="an-info" id="koInfo"></div>
@@ -5247,8 +5307,8 @@ function koView(){
   if(document.activeElement!==$('#koDef'))$('#koDef').value=KO.o.defDur;$('#koRange').value=KO.o.range;
   $('#koFixes').innerHTML=KO.fixes.map((q,i)=>`<span class="an-fixc">📍 ${mtFmt(q.t,1)} <button type="button" data-fxrm="${i}" aria-label="Retirer ce recalage">✕</button></span>`).join('');$('#anFix').disabled=!KO.obj||KO.tracking;
   $('#koTrack').disabled=!KO.obj||KO.tracking;$('#koTrackStop').hidden=!KO.tracking;$('#koClear').disabled=!KO.obj;
-  const TI={wand:'🪄',brush:'🖌',rect:'▭',sam:'✨'};setSeg('anToolSeg',AN.tool);$('#anBsz').value=AN.bsz;$('#anBszV').textContent=AN.bsz;$('#anBszW').hidden=AN.tool!=='brush';$('#anObjPng').disabled=!(KO.cur&&KO.cur.ok);
-  $('#anToolTxt').textContent={wand:"Clique sur l'objet : le contour est trouvé tout seul (la zone de même couleur).",brush:"Colorie l'objet ou juste son symbole, sans déborder : l'IA prend tout ce qui ressemble à ce que tu as colorié (même s'il y a plusieurs couleurs).",rect:"Encadre l'objet en glissant : tout ce qui se distingue du fond est pris.",sam:"Une IA (SAM) découpe l'objet avec précision : clique dessus, puis affine (Alt + clic pour retirer une partie). Elle se télécharge une fois (≈ 50 Mo) et tourne sur ton ordinateur, quelques secondes par image. Sur les autres images de la vidéo, le suivi se fait par couleur."}[AN.tool];
+  const TI={wand:'🪄',brush:'🖌',lasso:'✏️',rect:'▭',sam:'✨'};setSeg('anToolSeg',AN.tool);$('#anExact').checked=AN.exact;$('#anExW').hidden=AN.tool!=='brush';$('#anBsz').value=AN.bsz;$('#anBszV').textContent=AN.bsz;$('#anBszW').hidden=AN.tool!=='brush';$('#anObjPng').disabled=!(KO.cur&&KO.cur.ok);
+  $('#anToolTxt').textContent={wand:"Clique sur l'objet : toute la zone de même couleur est prise. Si c'est trop large ou pas ce que tu voulais, utilise 🖌 Pinceau ou ✏️ Lasso : tu choisis exactement.",brush:AN.exact?"Colorie exactement ce que tu veux animer (l'objet entier, un symbole, un détail) : seul ce que tu colories est pris, juste recalé sur les contours. Alt = retirer, Maj = ajouter.":"Colorie l'objet ou son symbole : l'IA étend à tout ce qui ressemble à ce que tu as colorié (même s'il y a plusieurs couleurs).",lasso:"Entoure l'objet à main levée (maintiens et dessine tout autour) : exactement l'intérieur du tracé est pris. Alt = retirer, Maj = ajouter.",rect:"Encadre l'objet en glissant : tout ce qui se distingue du fond est pris.",sam:"Une IA (SAM) découpe l'objet avec précision : clique dessus, puis affine (Alt + clic pour retirer une partie). Elle se télécharge une fois (≈ 50 Mo) et tourne sur ton ordinateur, quelques secondes par image. Sur les autres images de la vidéo, le suivi se fait par couleur."}[AN.tool];
   $('#koPick').textContent=AN.picking&&!KO.pickDest&&!AN.pathFor?'👆 Vise dans le lecteur… (Échap pour annuler)':KO.obj?TI[AN.tool]+' Choisir un autre objet':TI[AN.tool]+' Choisir l\'objet';
   $$('#stPAnim [data-fx]').forEach(b=>b.classList.toggle('dis',!KO.obj&&!KY.rect));
   if(!KO.tracking){const T=KO.track,i=KO.trackInfo,ob=KO.obj;
@@ -5264,6 +5324,7 @@ function anWire(){
     if(t.dataset.koc){KO.o[t.dataset.koc]=t.checked;koSave();if(['grad','outline','holes'].includes(t.dataset.koc)){KO.track=[];KO.trackInfo=null}KY.vfDirty=true;anSoon()}});
   $('#stPAnim').addEventListener('click',e=>{const b=e.target.closest('[data-fx]');if(b)anAdd(b.dataset.fx)});
   segBind('anToolSeg',v=>{AN.tool=v;try{localStorage.setItem('nova_an_tool',v)}catch(e){}koView();if(AN.picking){anPickEnd();anPickStart()}});
+  $('#anExact').addEventListener('change',e=>{AN.exact=e.target.checked;try{localStorage.setItem('nova_an_exact',AN.exact?'1':'0')}catch(_){}koView();if(AN.picking){anPickEnd();anPickStart()}});
   $('#anBsz').addEventListener('input',e=>{AN.bsz=+e.target.value;try{localStorage.setItem('nova_an_bsz',AN.bsz)}catch(e){}$('#anBszV').textContent=AN.bsz;anPaint()});
   $('#anObjPng').addEventListener('click',anObjPng);
   $('#koDef').addEventListener('change',e=>{KO.o.defDur=Math.max(0.5,Math.min(60,+e.target.value||5));koSave();koView()});
