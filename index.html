@@ -1026,6 +1026,36 @@ button.flash{animation:anflash .9s ease 2}@keyframes anflash{50%{box-shadow:0 0 
 .ma-checks{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0}
 .ma-emo{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .ma-wave{display:block;width:100%;height:70px;border-radius:10px;border:1px solid var(--line);cursor:pointer;margin:6px 0;touch-action:none}
+
+/* ---------- Fiches de paie ---------- */
+.fc-tb,.fc-tb2{flex-wrap:wrap;gap:10px;align-items:center}.fc-tb2 input[type=search]{flex:1 1 240px;max-width:420px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit}
+.fc-years{display:flex;gap:8px;flex-wrap:wrap}.fc-y{display:flex;flex-direction:column;align-items:flex-start;padding:8px 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font:inherit;min-width:104px}
+.fc-y b{font-size:17px}.fc-y small{color:var(--mut)}.fc-y.on{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand) inset;background:var(--soft)}
+.fc-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px;margin:6px 0 12px}
+.fc-st{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.fc-st span{font-size:12px;color:var(--mut)}.fc-st b{font-size:17px;overflow-wrap:anywhere}.fc-st i{font-style:normal;font-size:12px;color:var(--mut)}
+.fc-st.hero{background:linear-gradient(135deg,rgba(56,225,255,.16),rgba(255,110,199,.12));border-color:var(--brand)}.fc-st.hero b{font-size:22px}
+.fc-list{display:flex;flex-direction:column;gap:12px}
+.fc-card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.fc-card.cur{border-color:var(--warn)}
+.fc-head{width:100%;display:grid;grid-template-columns:20px minmax(150px,1.1fr) minmax(0,1.6fr) auto auto auto;gap:12px;align-items:center;padding:14px 18px;background:none;border:0;color:var(--ink);cursor:pointer;font:inherit;text-align:left}
+.fc-head:hover{background:var(--soft)}.fc-chev{transition:transform .15s;color:var(--mut)}.fc-card.open .fc-chev{transform:rotate(90deg)}
+.fc-mo{font-size:17px}.fc-sum{color:var(--mut);font-size:13px}.fc-net{color:var(--mut);font-size:13px;white-space:nowrap}.fc-tot{font-size:19px;font-weight:800;white-space:nowrap}
+.fc-b{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}.fc-b.ok{background:var(--ok-bg);color:var(--ok)}.fc-b.due{background:var(--warn-bg);color:var(--warn)}.fc-b.cur{background:var(--warn-bg);color:var(--warn)}
+.fc-body{padding:4px 18px 18px;border-top:1px solid var(--line)}
+.fc-doc{display:flex;flex-wrap:wrap;gap:6px 18px;padding:10px 0;color:var(--mut);font-size:13px}
+.fc-sec{margin-top:14px}.fc-sec h4{margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}.fc-sec h5{margin:14px 0 6px;font-size:14px}.fc-sec h5 small{color:var(--mut);font-weight:500}
+.fc-tw{overflow:auto}.fc-t td,.fc-t th{padding:7px 8px}.fc-t tr.b td{font-weight:700}.fc-t tr.tot td{font-weight:800;border-top:2px solid var(--line)}
+.fc-s{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}.fc-s.ok{background:var(--ok-bg);color:var(--ok)}.fc-s.ko{background:var(--ko-bg);color:var(--ko)}
+.fc-bar{display:inline-block}.fc-bar i{display:block;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--test),var(--corr))}
+td>.fc-bar{width:100%;min-width:60px;background:var(--soft);border-radius:4px;height:8px}
+.fc-two{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}@media(max-width:820px){.fc-two{grid-template-columns:1fr}}
+.fc-pay{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--soft)}.fc-payhead{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:center;margin-bottom:6px}
+.fc-payform{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}.fc-payform input[name]{padding:7px 9px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink);font:inherit;min-width:0}.fc-payform input[name=n]{flex:1 1 180px}.fc-payform input[name=a]{width:150px}
+.fc-facts{margin:0;padding-left:18px;line-height:1.7;font-size:14px}.fc-act{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.fc-chart{margin:8px 0 12px}.fc-yearcard .fc-t td{white-space:nowrap}
+@media(max-width:760px){.fc-head{grid-template-columns:20px 1fr auto;row-gap:4px}.fc-sum{grid-column:2/4;order:5}.fc-net{display:none}.fc-b{grid-column:2}}
+.fc-chart svg{display:block;width:100%;max-height:250px}
 </style>
 </head>
 <body>
@@ -1066,7 +1096,7 @@ button.flash{animation:anflash .9s ease 2}@keyframes anflash{50%{box-shadow:0 0 
       <button role="tab" data-tab="scorux" aria-selected="true">Noter</button>
       <button role="tab" data-tab="machines" aria-selected="false">Machines</button>
       <button role="tab" data-tab="paye" aria-selected="false">Paye<span class="bdg warn" id="bdgPay" hidden></span></button>
-      <button role="tab" data-tab="activite" aria-selected="false">Activité</button>
+      <button role="tab" data-tab="fiches" aria-selected="false">Fiches de paie</button><button role="tab" data-tab="activite" aria-selected="false">Activité</button>
     </nav>
   </div></div>
 </header>
@@ -1166,6 +1196,13 @@ button.flash{animation:anflash .9s ease 2}@keyframes anflash{50%{box-shadow:0 0 
         <div class="card"><h2>Comparaison des années</h2><div style="overflow:auto"><table class="paytable" id="yTable"></table></div></div>
       </div>
     </div>
+  </section>
+
+  <!-- ===== FICHES DE PAIE ===== -->
+  <section class="tab" id="tab-fiches">
+    <div class="monthnav fc-tb"><div class="fc-years" id="fcYears" role="tablist" aria-label="Année"></div></div>
+    <div class="monthnav fc-tb2"><input type="search" id="fcSearch" placeholder="Chercher une machine dans l'année…" aria-label="Chercher une machine"><label class="mt-chk"><input type="checkbox" id="fcEmpty"> Montrer aussi les mois vides</label><span class="sp"></span><button class="btn" id="fcAll" type="button">Tout déplier</button><button class="btn" id="fcNone" type="button">Tout replier</button><button class="btn" id="fcYearPdf" type="button">Récapitulatif (PDF)</button></div>
+    <div class="stack"><div id="fcYearBox"></div><div id="fcList" class="fc-list"></div></div>
   </section>
 
   <!-- ===== ACTIVITÉ ===== -->
@@ -1668,7 +1705,7 @@ function snapMaybe(){
   try{localStorage.setItem(SNAPKEY,JSON.stringify(L))}catch(e){L.length=Math.min(L.length,2);try{localStorage.setItem(SNAPKEY,JSON.stringify(L))}catch(_){}}}
 
 /* ---------- onglets ---------- */
-const TABS=PUBLIC?['scorux','machines','paye','activite','montage','photos','youtube']:['roblox','scorux','machines','paye','activite','montage','photos','youtube'];
+const TABS=PUBLIC?['scorux','machines','paye','fiches','activite','montage','photos','youtube']:['roblox','scorux','machines','paye','fiches','activite','montage','photos','youtube'];
 function showTab(t){
   if(!TABS.includes(t))t='scorux';
   ui.tab=t;const grp=t==='roblox'?'roblox':t==='montage'?'montage':t==='photos'?'photos':t==='youtube'?'youtube':'scorux';if(grp==='scorux')ui.lastSub=t;
@@ -2189,6 +2226,159 @@ function taxYear(y){
   return{ca,...ch,base:a.base,a,vlAmt,bar:a.ir,ir,cfe:c.cfe,netCot,net:netCot-ir-c.cfe}}
 /* cumul depuis janvier jusqu'au mois m (pour les relevés mensuels) */
 function taxYearTo(y,m){const ca=caUpTo(y,m),ch=charges(ca),ir=irOf(ca);return{ca,...ch,ir,net:ca-ch.urssaf-ir}}
+
+/* ---------- onglet « Fiches de paie » : une fiche détaillée par mois, rangées par année ---------- */
+ui.fy=ui.fy||t0.y;ui.fopen=ui.fopen||{};ui.fq=ui.fq||'';ui.fempty=!!ui.fempty;ui.finit=!!ui.finit;
+const fcDate=e=>e.day?`${pad(e.day)}/${pad(e.month+1)}/${e.year}`:'—';
+const fcDow=e=>e.day?DAYS[wd(e.year,e.month,e.day)]:'';
+const fcSign=v=>v>0.004?'+'+eur(v):v<-0.004?'− '+eur(-v):eur(0);
+const fcPct=(a,b)=>b>0?(a-b)/b*100:null;
+const fcDelta=(a,b)=>{const p=fcPct(a,b);return b>0?`${a>=b?'▲':'▼'} ${n1(Math.abs(p))} %`:'—'};
+function fcData(y,m){
+  const rows=db.entries.filter(e=>e.year===y&&e.month===m).sort(cmpAsc),T=rows.filter(e=>e.type==='test'),C=rows.filter(e=>e.type!=='test'),s=stats(y,m),k=ymKey(y,m);
+  const rate=rateFor(y,m),tx=taxMonth(y,m),pays=db.payments.filter(p=>p.month===k).sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id),settled=!!db.settled[k],rec=receivedFor(y,m),due=dueFor(y,m);
+  const prev=stats(m?y:y-1,m?m-1:11),ly=stats(y-1,m),all=Array.from({length:12},(_,i)=>stats(y,i).total).map((v,i)=>({v,i})).filter(o=>o.v>0).sort((a,b)=>b.v-a.v),rank=all.findIndex(o=>o.i===m)+1,yt=stats(y,null).total;
+  /* jour par jour */
+  const dm=new Map();rows.filter(e=>e.day).forEach(e=>{let o=dm.get(e.day);if(!o){o={d:e.day,y,m,t:0,c:0,sum:0,ko:0};dm.set(e.day,o)}e.type==='test'?o.t++:o.c++;o.sum+=e.price;if(e.status==='KO')o.ko++});
+  const days=[...dm.values()].sort((a,b)=>a.d-b.d);let run=0;days.forEach(o=>{run+=o.sum;o.cum=run});
+  /* semaines (du lundi au dimanche) */
+  const wk=new Map();days.forEach(o=>{const st=o.d-wd(y,m,o.d),w=wk.get(st)||{st,t:0,c:0,sum:0,days:0};w.t+=o.t;w.c+=o.c;w.sum+=o.sum;w.days++;wk.set(st,w)});
+  const weeks=[...wk.values()].sort((a,b)=>a.st-b.st);
+  /* jours de la semaine */
+  const dow=Array.from({length:7},()=>({n:0,sum:0,days:0}));days.forEach(o=>{const w=dow[wd(y,m,o.d)];w.n+=o.t+o.c;w.sum+=o.sum;w.days++});
+  /* machines refaites, prix */
+  const cnt=new Map();rows.forEach(e=>{const key=e.name.trim().toLowerCase(),o=cnt.get(key)||{name:e.name,t:0,c:0};e.type==='test'?o.t++:o.c++;cnt.set(key,o)});
+  const redone=[...cnt.values()].filter(o=>o.t+o.c>1).sort((a,b)=>(b.t+b.c)-(a.t+a.c));
+  const worked=days.length,best=days.slice().sort((a,b)=>b.sum-a.sum)[0],cur=(y===t0.y&&m===t0.m);
+  return{y,m,k,rows,T,C,s,rate,tx,pays,settled,rec,due,prev,ly,rank,nRank:all.length,yt,days,weeks,dow,redone,worked,best,cur,cumYear:caUpTo(y,m),legacy:db.legacy[k]}}
+const fcRange=L=>{if(!L.length)return '—';const p=L.map(e=>e.price),a=Math.min(...p),b=Math.max(...p);return a===b?eur(a):`${eur(a)} – ${eur(b)}`};
+const fcMatch=e=>{const q=ui.fq.trim().toLowerCase();return !q||e.name.toLowerCase().includes(q)||(e.note||'').toLowerCase().includes(q)};
+function fcStat(l,v,s,cls){return `<div class="fc-st ${cls||''}"><span>${l}</span><b>${v}</b>${s?`<i>${s}</i>`:''}</div>`}
+function fcLines(L,kind,nums,r,est){
+  const rows=L.filter(fcMatch);if(!rows.length)return '';
+  const tot=rows.reduce((a,e)=>a+e.price,0);
+  return `<h5>${kind==='test'?'Machines testées':'Corrections'} <small>${rows.length}${rows.length!==L.length?` sur ${L.length}`:''} ligne${rows.length>1?'s':''}</small></h5><div class="fc-tw"><table class="paytable fc-t"><thead><tr><th>N°</th><th>Date</th><th>Jour</th><th>Machine</th><th class="c">Statut</th><th class="r">Prix</th>${est?'<th class="r">Charges est.</th><th class="r">Net est.</th>':''}</tr></thead><tbody>`+
+   rows.map(e=>`<tr><td class="muted">${nums[e.id]}</td><td>${fcDate(e)}</td><td class="muted">${fcDow(e)}</td><td>${esc(e.name)}${e.note?` <span class="muted sm">— ${esc(e.note)}</span>`:''}</td><td class="c"><span class="fc-s ${e.status==='KO'?'ko':'ok'}">${esc(e.status)}</span></td><td class="pr">${eur(e.price)}</td>${est?`<td class="pr muted">− ${eur(e.price*r)}</td><td class="pr">${eur(e.price*(1-r))}</td>`:''}</tr>`).join('')+
+   `</tbody><tfoot><tr><td colspan="5">Total</td><td class="pr">${eur(tot)}</td>${est?`<td class="pr">− ${eur(tot*r)}</td><td class="pr">${eur(tot*(1-r))}</td>`:''}</tr></tfoot></table></div>`}
+function fcDecompte(d){
+  const c=taxCfg(),t=d.tx,R=(l,b,x,g,r,cls)=>`<tr class="${cls||''}"><td>${l}</td><td class="pr">${b}</td><td class="pr">${x}</td><td class="pr">${g}</td><td class="pr">${r}</td></tr>`,S=v=>v>0.004?eur(v):'';
+  let h=R("Chiffre d'affaires (prestations de test)",'','',eur(t.ca),'','b')+R(`Cotisations sociales <span class="muted sm">(${c.act==='bnc'?'BNC':'BIC services'})</span>`,eur(t.ca),n1(c.rate)+' %','',S(t.soc));
+  if(c.acre>0)h+=R('Réduction ACRE',eur(t.soc),n1(c.acre)+' %',S(t.acre),'');
+  h+=R('Formation professionnelle (CFP)',eur(t.ca),n1(c.cfp)+' %','',S(t.cfp))+R('Total à déclarer / payer à l\'URSSAF','','','',S(t.urssaf)||eur(0),'b')+R('Net après cotisations','','',eur(t.netCot),'','b');
+  h+=c.vl?R('Versement libératoire de l\'impôt',eur(t.ca),n1(c.vlRate)+' %','',eur(t.ir)):R('Impôt sur le revenu <span class="muted sm">(provision sur le cumul)</span>',eur(t.base),'barème','',eur(t.ir));
+  h+=R('Net estimé après impôt','','',eur(t.net),'','tot');
+  return `<table class="paytable fc-t"><thead><tr><th>Rubrique</th><th class="r">Base</th><th class="r">Taux</th><th class="r">Gain</th><th class="r">Retenue</th></tr></thead><tbody>${h}</tbody></table><p class="muted sm" style="margin:6px 0 0">Estimation indicative (micro-entreprise). Le cumul depuis janvier est de ${eur(d.cumYear)}.</p>`}
+function fcCard(d,open){
+  const {y,m,s}=d,est=(db.settings.profile||{}).showEstimate!==false,goal=goalMonth(),nums=numbering(),k=d.k;
+  const state=!(s.total>0)&&!(d.rec>0)?'':d.cur?'<span class="fc-b cur">En cours · provisoire</span>':d.due>0.005&&payTracking()?`<span class="fc-b due">Reste ${eur(d.due)}</span>`:payTracking()?'<span class="fc-b ok">Reçu ✓</span>':'';
+  const head=`<button type="button" class="fc-head" data-fm="${k}" aria-expanded="${open}"><span class="fc-chev">▸</span><span class="fc-mo"><b>${MONTHS[m]}</b> <span class="muted">${y}</span></span><span class="fc-sum">${s.tests} test${s.tests>1?'s':''} · ${s.corr} correction${s.corr>1?'s':''}${d.worked?` · ${d.worked} jour${d.worked>1?'s':''}`:''}</span>${state}<span class="fc-net" title="Net estimé après cotisations et impôt">${est&&s.total>0?'net ≈ '+eur(d.tx.net):''}</span><span class="fc-tot">${eur(s.total)}</span></button>`;
+  if(!open)return `<article class="fc-card ${d.cur?'cur':''}" id="fc-${k}">${head}</article>`;
+  const gp=goal?pct(s.total,goal):0,avgDay=d.worked?s.total/d.worked:0,share=d.yt>0?s.total/d.yt*100:0;
+  const stHtml=`<div class="fc-stats">`+
+   fcStat('Total du mois',eur(s.total),`${s.cnt} ligne${s.cnt>1?'s':''}`,'hero')+
+   fcStat('Machines testées',`${s.tests} × ${fcRange(d.T)}`,eur(s.pt))+
+   fcStat('Corrections',`${s.corr} × ${fcRange(d.C)}`,eur(s.pc))+
+   fcStat('Équivalent en dollars',usd(s.total*d.rate),`1 € = ${String(d.rate).replace('.',',')} $`)+
+   (est?fcStat('Net estimé',eur(d.tx.net),`après ${eur(d.tx.urssaf)} d'URSSAF et ${eur(d.tx.ir)} d'impôt`):'')+
+   fcStat('Jours travaillés',d.worked?String(d.worked):'—',d.worked?`moyenne ${eur(avgDay)} par jour`:'dates précises non renseignées')+
+   fcStat('Moyenne par ligne',s.cnt?eur(s.total/s.cnt):'—','')+
+   fcStat('Par rapport au mois d\'avant',fcDelta(s.total,d.prev.total),d.prev.total>0?`${fcSign(s.total-d.prev.total)} (avant : ${eur(d.prev.total)})`:'pas de mois précédent')+
+   (d.ly.total>0?fcStat(`Même mois en ${y-1}`,fcDelta(s.total,d.ly.total),`${eur(d.ly.total)} en ${y-1}`):'')+
+   fcStat(`Rang en ${y}`,d.rank?`${d.rank}ᵉ sur ${d.nRank}`:'—',`${n1(share)} % de l'année`)+
+   (goal?fcStat('Objectif mensuel',`${Math.round(gp)} %`,`${eur(s.total)} sur ${eur(goal)}`):'')+
+   fcStat('OK / KO',`${s.ok||0} / ${s.ko||0}`,s.cnt?`${n1(pct(s.ok||0,s.cnt))} % OK`:'')+`</div>`+(goal?`<div class="mini ${gp>=100?'hit':''}" style="margin:2px 0 4px"><i style="width:${Math.min(100,gp)}%"></i></div>`:'');
+  /* paiements */
+  const payBox=`<div class="fc-pay"><div class="fc-payhead"><span>Reçu : <b>${eur(d.rec)}</b></span><span>Reste : <b class="${d.due>0.005?'warnv':''}">${d.due>0.005?eur(d.due):eur(0)}</b></span>${d.settled?'<span class="fc-b ok">Mois soldé</span>':''}</div>`+
+   (d.pays.length?`<table class="paytable fc-t"><thead><tr><th>Date</th><th class="r">Montant</th><th>Note</th><th></th></tr></thead><tbody>${d.pays.map(p=>`<tr><td>${p.date.split('-').reverse().join('/')}</td><td class="pr">${eur(p.amount)}</td><td class="muted">${esc(p.note||'')}</td><td class="pr"><button class="btn sm" data-fcdel="${p.id}" type="button" aria-label="Supprimer ce paiement">✕</button></td></tr>`).join('')}</tbody></table>`:'<p class="muted sm" style="margin:6px 0">Aucun paiement enregistré pour ce mois.</p>')+
+   `<form class="fc-payform" data-k="${k}" autocomplete="off"><input type="date" name="d" value="${isoToday()}" aria-label="Date du paiement"><input name="a" inputmode="decimal" placeholder="Montant reçu (€)" aria-label="Montant reçu"><input name="n" placeholder="Note (facultatif)" maxlength="120" aria-label="Note"><button class="btn primary sm" type="submit">＋ Enregistrer un paiement</button>
+   <label class="mt-chk"><input type="checkbox" data-fcsettle="${k}" ${d.settled?'checked':''}> Mois entièrement reçu</label></form></div>`;
+  /* jour par jour */
+  let dayBox='';
+  if(d.days.length){const mx=Math.max(...d.days.map(o=>o.sum));
+    dayBox=`<div class="fc-tw"><table class="paytable fc-t"><thead><tr><th>Date</th><th>Jour</th><th class="r">Machines</th><th class="r">Corrections</th><th class="r">Montant</th><th class="r">Cumul du mois</th><th></th></tr></thead><tbody>`+
+    d.days.map(o=>`<tr><td>${pad(o.d)}/${pad(m+1)}/${y}</td><td class="muted">${DAYS[wd(y,m,o.d)]}</td><td class="pr">${o.t||'–'}</td><td class="pr">${o.c||'–'}</td><td class="pr"><b>${eur(o.sum)}</b></td><td class="pr muted">${eur(o.cum)}</td><td><span class="fc-bar"><i style="width:${mx?o.sum/mx*100:0}%"></i></span></td></tr>`).join('')+
+    `</tbody><tfoot><tr><td colspan="2">${d.worked} jour${d.worked>1?'s':''}</td><td class="pr">${s.tests}</td><td class="pr">${s.corr}</td><td class="pr">${eur(d.days.reduce((a,o)=>a+o.sum,0))}</td><td></td><td></td></tr></tfoot></table></div>`}
+  else dayBox='<p class="muted sm">Les dates précises n\'ont pas été notées pour ce mois : le détail jour par jour n\'est pas disponible. (Pour les nouvelles machines, la date est enregistrée automatiquement.)</p>';
+  /* semaines et jours de la semaine */
+  let wkBox='';
+  if(d.weeks.length>0){const lab=w=>{const a=new Date(y,m,w.st),b=new Date(y,m,w.st+6),f=x=>`${pad(x.getDate())}/${pad(x.getMonth()+1)}`;return `${f(a)} → ${f(b)}`},mx=Math.max(...d.weeks.map(w=>w.sum));
+    wkBox=`<div class="fc-two"><div><h5>Par semaine</h5><table class="paytable fc-t"><thead><tr><th>Semaine</th><th class="r">Jours</th><th class="r">Lignes</th><th class="r">Montant</th><th></th></tr></thead><tbody>${d.weeks.map(w=>`<tr><td>${lab(w)}</td><td class="pr">${w.days}</td><td class="pr">${w.t+w.c}</td><td class="pr"><b>${eur(w.sum)}</b></td><td><span class="fc-bar"><i style="width:${mx?w.sum/mx*100:0}%"></i></span></td></tr>`).join('')}</tbody></table></div>
+     <div><h5>Par jour de la semaine</h5><table class="paytable fc-t"><thead><tr><th>Jour</th><th class="r">Jours</th><th class="r">Lignes</th><th class="r">Montant</th></tr></thead><tbody>${d.dow.map((w,i)=>w.days?`<tr><td>${DAYS[i]}</td><td class="pr">${w.days}</td><td class="pr">${w.n}</td><td class="pr">${eur(w.sum)}</td></tr>`:'').join('')}</tbody></table></div></div>`}
+  /* repères */
+  const first=d.days[0],last=d.days[d.days.length-1];
+  const facts=[
+   d.best?`Meilleur jour : <b>${DAYS[wd(y,m,d.best.d)].toLowerCase()} ${pad(d.best.d)}/${pad(m+1)}</b> (${eur(d.best.sum)}, ${d.best.t+d.best.c} ligne${d.best.t+d.best.c>1?'s':''})`:'',
+   first?`Premier jour : ${pad(first.d)}/${pad(m+1)} · dernier jour : ${pad(last.d)}/${pad(m+1)}`:'',
+   d.redone.length?`Machines refaites ce mois-ci : ${d.redone.slice(0,8).map(o=>`${esc(o.name)} (${o.t+o.c}×)`).join(', ')}${d.redone.length>8?'…':''}`:'',
+   d.legacy?`Ancien relevé enregistré pour ce mois : ${nb(d.legacy.eur)} € · ${nb(d.legacy.usd)} $`:'']
+   .filter(Boolean).map(x=>`<li>${x}</li>`).join('');
+  const body=`<div class="fc-body">
+   <div class="fc-doc"><span>Fiche n° ${y}-${pad(m+1)}</span><span>Du 01/${pad(m+1)}/${y} au ${pad(dim(y,m))}/${pad(m+1)}/${y}</span><span>${esc((db.settings.profile||{}).client||'')}</span></div>
+   <section class="fc-sec"><h4>Résumé du mois</h4>${stHtml}</section>
+   ${est?`<section class="fc-sec"><h4>Décompte des cotisations et de l'impôt</h4>${fcDecompte(d)}</section>`:''}
+   <section class="fc-sec"><h4>Paiements</h4>${payBox}</section>
+   <section class="fc-sec"><h4>Détail jour par jour</h4>${dayBox}${wkBox}</section>
+   <section class="fc-sec"><h4>Détail des lignes</h4>${fcLines(d.T,'test',nums,slotRate(),est)||(d.T.length?'<p class="muted sm">Aucune machine ne correspond à la recherche.</p>':'')}${fcLines(d.C,'correction',nums,slotRate(),est)}${!d.rows.length?'<p class="muted sm">Aucune machine enregistrée pour ce mois.</p>':''}</section>
+   ${facts?`<section class="fc-sec"><h4>À retenir</h4><ul class="fc-facts">${facts}</ul></section>`:''}
+   <div class="fc-act"><button class="btn primary" data-fcst="${k}" type="button">🖨 Relevé à imprimer / PDF</button><button class="btn" data-fccopy="${k}" type="button">📋 Copier le résumé</button><button class="btn" data-fccsv="${k}" type="button">⬇ Lignes en CSV</button></div></div>`;
+  return `<article class="fc-card open ${d.cur?'cur':''}" id="fc-${k}">${head}${body}</article>`}
+function fcYear(y){
+  const ms=Array.from({length:12},(_,m)=>({m,...stats(y,m),rate:rateFor(y,m),rec:receivedFor(y,m),due:dueFor(y,m)})),tot=stats(y,null),tx=taxYear(y),active=ms.filter(r=>r.total>0),est=(db.settings.profile||{}).showEstimate!==false;
+  const recTot=ms.reduce((a,r)=>a+r.rec,0),dueTot=ms.reduce((a,r)=>a+(r.due>0.005?r.due:0),0),best=active.slice().sort((a,b)=>b.total-a.total)[0],ly=stats(y-1,null);
+  const days=new Set(db.entries.filter(e=>e.year===y&&e.day).map(e=>e.month+'-'+e.day)).size;
+  const kp=`<div class="fc-stats">`+fcStat(`Total ${y}`,eur(tot.total),`${tot.tests} tests · ${tot.corr} corrections`,'hero')+fcStat('Équivalent en dollars',usd(usdYear(y)),'avec le taux de chaque mois')+
+   (est?fcStat('Net estimé',eur(tx.net),`après ${eur(tx.urssaf)} d'URSSAF, ${eur(tx.ir)} d'impôt${tx.cfe>0?' et la CFE':''}`):'')+
+   fcStat('Mois actifs',String(active.length),active.length?`moyenne ${eur(tot.total/active.length)} par mois`:'')+fcStat('Meilleur mois',best?MONTHS[best.m]:'—',best?eur(best.total):'')+
+   (days?fcStat('Jours travaillés',String(days),`moyenne ${eur(tot.total/days)} par jour`):'')+
+   (payTracking()?fcStat('Reçu',eur(recTot),dueTot>0.005?`reste ${eur(dueTot)}`:'tout est soldé'):'')+(ly.total>0?fcStat(`Par rapport à ${y-1}`,fcDelta(tot.total,ly.total),`${eur(ly.total)} en ${y-1}`):'')+`</div>`;
+  const tbl=`<div class="fc-tw"><table class="paytable fc-t"><thead><tr><th>Mois</th><th class="r">Tests</th><th class="r">Corrections</th><th class="r">Total</th><th class="r">URSSAF</th><th class="r">Net est.</th><th class="r">Équivalent $</th><th class="r">Reçu</th><th class="r">Reste</th></tr></thead><tbody>`+
+   ms.filter(r=>r.cnt>0||r.rec>0).map(r=>{const t=taxMonth(y,r.m);return `<tr><td><a href="#fc-${ymKey(y,r.m)}" data-fgo="${ymKey(y,r.m)}"><b>${MONTHS[r.m]}</b></a></td><td class="pr">${r.tests||'–'}</td><td class="pr">${r.corr||'–'}</td><td class="pr"><b>${eur(r.total)}</b></td><td class="pr muted">${r.total?eur(t.urssaf):'–'}</td><td class="pr">${est&&r.total?eur(t.net):'–'}</td><td class="pr">${r.total?usd(r.total*r.rate):'–'}</td><td class="pr">${payTracking()?eur(r.rec):'–'}</td><td class="pr ${r.due>0.005?'warnv':''}">${payTracking()?(r.due>0.005?eur(r.due):'–'):'–'}</td></tr>`}).join('')+
+   `</tbody><tfoot><tr><td>Total ${y}</td><td class="pr">${tot.tests}</td><td class="pr">${tot.corr}</td><td class="pr">${eur(tot.total)}</td><td class="pr">${eur(tx.urssaf)}</td><td class="pr">${est?eur(tx.net):'–'}</td><td class="pr">${usd(usdYear(y))}</td><td class="pr">${payTracking()?eur(recTot):'–'}</td><td class="pr">${payTracking()&&dueTot>0.005?eur(dueTot):'–'}</td></tr></tfoot></table></div>`;
+  /* trimestres URSSAF */
+  let q='';for(let i=0;i<4;i++){const L=ms.slice(i*3,i*3+3),ca=L.reduce((a,r)=>a+r.total,0);if(ca>0){const c=charges(ca);q+=`<tr><td>Trimestre ${i+1} <span class="muted sm">(${MABR[i*3]} – ${MABR[i*3+2]})</span></td><td class="pr">${eur(ca)}</td><td class="pr">${eur(c.soc-c.acre)}</td><td class="pr">${eur(c.cfp)}</td><td class="pr"><b>${eur(c.urssaf)}</b></td></tr>`}}
+  const qbox=est&&q?`<h5>À déclarer à l'URSSAF, par trimestre</h5><div class="fc-tw"><table class="paytable fc-t"><thead><tr><th>Période</th><th class="r">CA à déclarer</th><th class="r">Cotisations</th><th class="r">CFP</th><th class="r">À payer</th></tr></thead><tbody>${q}</tbody></table></div>`:'';
+  return kp+`<div class="chartbox fc-chart">${barChart(ms.map(r=>({label:MABR[r.m],a:r.pt,b:r.pc,title:`${MONTHS[r.m]} ${y}`})),{goal:goalMonth()})}</div>`+tbl+qbox}
+function renderFiches(){
+  const root=$('#fcList');if(!root)return;const ys=years();if(!ys.includes(ui.fy))ui.fy=ys[ys.length-1];const y=ui.fy;
+  $('#fcYears').innerHTML=ys.slice().reverse().map(v=>`<button type="button" class="fc-y${v===y?' on':''}" data-fy="${v}"><b>${v}</b><small>${eur(stats(v,null).total)}</small></button>`).join('');
+  $('#fcYearBox').innerHTML=`<div class="card fc-yearcard"><div class="head"><h2>Année ${y}</h2><span class="sub">tous les mois, d'un coup d'œil</span></div>${fcYear(y)}</div>`;
+  /* quels mois afficher : ceux qui ont de l'activité ou un paiement ; la recherche ne garde que ceux qui contiennent la machine */
+  const q=ui.fq.trim(),list=[];
+  for(let m=11;m>=0;m--){const s=stats(y,m),rec=receivedFor(y,m);if(!(s.cnt>0||rec>0||ui.fempty))continue;
+    if(q&&!db.entries.some(e=>e.year===y&&e.month===m&&fcMatch(e)))continue;list.push(m)}
+  if(!ui.finit&&list.length){const cm=list.find(m=>stats(y,m).cnt>0);if(cm!=null)ui.fopen[ymKey(y,cm)]=true;ui.finit=true}
+  root.innerHTML=list.length?list.map(m=>{const d=fcData(y,m);return fcCard(d,!!ui.fopen[d.k]||!!q)}).join(''):`<div class="card"><div class="empty">${q?`Aucune machine « ${esc(q)} » en ${y}.`:`Aucune fiche pour ${y} : note des machines dans l'onglet Noter.`}</div></div>`;
+  $('#fcEmpty').checked=ui.fempty;$('#fcYearPdf').textContent=`Récapitulatif ${y} (PDF)`}
+/* ---------- actions ---------- */
+const fcParse=k=>({y:+k.slice(0,4),m:+k.slice(5)-1});
+function fcText(k){
+  const {y,m}=fcParse(k),d=fcData(y,m),est=(db.settings.profile||{}).showEstimate!==false;
+  let t=`Fiche de paie ${MONTHS[m]} ${y}\nTotal : ${eur(d.s.total)} (${d.s.tests} machines testées : ${eur(d.s.pt)} · ${d.s.corr} corrections : ${eur(d.s.pc)})\nÉquivalent : ${usd(d.s.total*d.rate)} (1 € = ${String(d.rate).replace('.',',')} $)\n`;
+  if(d.worked)t+=`Jours travaillés : ${d.worked} (moyenne ${eur(d.s.total/d.worked)} par jour)\n`;
+  if(est)t+=`URSSAF estimée : ${eur(d.tx.urssaf)} · impôt estimé : ${eur(d.tx.ir)} · net estimé : ${eur(d.tx.net)}\n`;
+  if(payTracking())t+=`Reçu : ${eur(d.rec)} · reste : ${eur(Math.max(0,d.due))}\n`;
+  return t.trim()}
+function fcCsv(k){
+  const {y,m}=fcParse(k),rows=db.entries.filter(e=>e.year===y&&e.month===m).sort(cmpAsc),q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const head=['Date','Jour','Type','Machine','Statut','Prix (€)','Note'].join(';'),lines=rows.map(e=>[fcDate(e),fcDow(e),e.type==='test'?'Test':'Correction',q(e.name),e.status,String(e.price).replace('.',','),q(e.note||'')].join(';'));
+  const blob=new Blob(['﻿'+[head,...lines].join('\r\n')],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`fiche-${y}-${pad(m+1)}.csv`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+$('#fcYears').addEventListener('click',e=>{const b=e.target.closest('[data-fy]');if(!b)return;ui.fy=+b.dataset.fy;ui.finit=false;renderFiches();window.scrollTo({top:0})});
+$('#fcSearch').addEventListener('input',e=>{ui.fq=e.target.value;renderFiches()});
+$('#fcEmpty').addEventListener('change',e=>{ui.fempty=e.target.checked;renderFiches()});
+$('#fcAll').addEventListener('click',()=>{for(let m=0;m<12;m++)if(stats(ui.fy,m).cnt>0||receivedFor(ui.fy,m)>0)ui.fopen[ymKey(ui.fy,m)]=true;renderFiches()});
+$('#fcNone').addEventListener('click',()=>{for(let m=0;m<12;m++)delete ui.fopen[ymKey(ui.fy,m)];ui.fq='';$('#fcSearch').value='';renderFiches()});
+$('#fcYearPdf').addEventListener('click',()=>openYearStatement(ui.fy));
+$('#fcYearBox').addEventListener('click',e=>{const a=e.target.closest('[data-fgo]');if(!a)return;e.preventDefault();ui.fopen[a.dataset.fgo]=true;renderFiches();const el=document.getElementById('fc-'+a.dataset.fgo);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})});
+$('#fcList').addEventListener('click',e=>{
+  const h=e.target.closest('[data-fm]');if(h){const k=h.dataset.fm;if(ui.fopen[k])delete ui.fopen[k];else ui.fopen[k]=true;renderFiches();const el=document.getElementById('fc-'+k);if(el&&ui.fopen[k])el.scrollIntoView({block:'nearest'});return}
+  const st=e.target.closest('[data-fcst]');if(st){const {y,m}=fcParse(st.dataset.fcst);openStatement(y,m);return}
+  const cp=e.target.closest('[data-fccopy]');if(cp){const t=fcText(cp.dataset.fccopy);(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('Résumé copié ✓'),()=>toast('Copie impossible : sélectionne le texte à la main'));return}
+  const cs=e.target.closest('[data-fccsv]');if(cs){fcCsv(cs.dataset.fccsv);return}
+  const dl=e.target.closest('[data-fcdel]');if(dl){pushUndo('suppression d\'un paiement');db.payments=db.payments.filter(p=>p.id!==+dl.dataset.fcdel);save();renderAll();toast('Paiement supprimé',{label:'Annuler',fn:undo})}});
+$('#fcList').addEventListener('change',e=>{const k=e.target.dataset.fcsettle;if(!k)return;pushUndo('mois soldé');if(e.target.checked)db.settled[k]=true;else delete db.settled[k];save();renderAll()});
+$('#fcList').addEventListener('submit',e=>{const f=e.target.closest('.fc-payform');if(!f)return;e.preventDefault();
+  const amt=parseNum(f.a.value),date=f.d.value||isoToday();if(!(amt>0)){toast('Écris un montant (ex : 1200)');f.a.focus();return}
+  pushUndo('paiement');db.payments.push({id:db.nextPay++,date,amount:amt,month:f.dataset.k,note:f.n.value.trim()});save();renderAll();toast(`Paiement de ${eur(amt)} enregistré`,{label:'Annuler',fn:undo})});
 
 /* ---------- onglet Activité ---------- */
 $('#aYear').addEventListener('change',e=>{ui.ay=+e.target.value;renderActivite()});
@@ -7316,7 +7506,7 @@ ytWire();
 if(window.__NOVA_TEST)window.__yt={YT,YL,ytCmds,YT_SCRIPT,YL_SCRIPT};
 
 /* ---------- init ---------- */
-function renderAll(){renderLive();renderLists();renderMachines();renderPaye();renderActivite();renderBanner();renderUrssaf();renderBrand();renderRoblox();renderBadges();animateNumbers()}
+function renderAll(){renderLive();renderLists();renderMachines();renderPaye();renderFiches();renderActivite();renderBanner();renderUrssaf();renderBrand();renderRoblox();renderBadges();animateNumbers()}
 $('#f-date').value=isoToday();$('#f-price').value=db.settings.prices.test;
 appReady=true;save();snapMaybe();tmRender();
 {const h=(location.hash||'').slice(1);showTab(TABS.includes(h)?h:'scorux')}
