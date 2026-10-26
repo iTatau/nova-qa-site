@@ -5416,19 +5416,19 @@ window.addEventListener('resize',()=>{if(anWant())anSoon()});
 if(window.__NOVA_TEST)window.__an={AN,anBind,anAdd,anRefresh,anPlay,anExport,anSwap};
 
 /* ---------- Montage auto : des vidéos → un montage qui RÉAGIT (son fort, mouvement) avec de vrais effets, à vérifier dans une timeline avant de valider ---------- */
-const MA={clips:[],texts:[],fx:[],opts:{style:'react',per:6,tr:'mix',trd:0.55,look:'vif',txt:'cap',title:'',size:'720',zoom:true,best:true,power:75,f:{zoom:1,shake:1,flash:1,rgb:1,pulse:1,text:1,sfx:1,grain:0,bars:0,scan:0}},sel:null,T:0,playing:false,raf:0,t0:0,T0:0,busy:false,out:null,id:0,pps:80,drag:null,edited:false,gen:0,sfxT:0};
+const MA={clips:[],texts:[],fx:[],opts:{style:'react',per:6,tr:'mix',trd:0.55,look:'vif',txt:'none',title:'',size:'720',zoom:true,best:true,power:75,f:{zoom:1,shake:1,flash:1,rgb:1,pulse:1,bloom:1,ca:1,live:1,text:1,sfx:1,grain:0,bars:0,scan:0}},sel:null,T:0,playing:false,raf:0,t0:0,T0:0,busy:false,out:null,id:0,pps:80,drag:null,edited:false,gen:0,sfxT:0};
 /* [clé, nom, durée conseillée] */
-const MA_TR=[['glitch','Glitch',0.45],['whip','Balayage rapide',0.35],['flash','Flash',0.4],['zoomthru','Plongée zoom',0.5],['spin','Rotation',0.5],['shake','Coup sec',0.3],['fade','Fondu',0.7],['fadeblack','Fondu noir',0.8],['slideleft','Glisse ←',0.6],['slideright','Glisse →',0.6],['circleopen','Cercle',0.7],['wipeleft','Volet',0.6],['cut','Coupe franche',0.1]];
-const MA_TRI={glitch:'⚡',whip:'💨',flash:'✺',zoomthru:'⤢',spin:'🌀',shake:'📳',fade:'◐',fadeblack:'●',slideleft:'⇠',slideright:'⇢',circleopen:'◯',wipeleft:'▤',cut:'│'};
+const MA_TR=[['glitch','Glitch',0.45],['whip','Balayage rapide',0.35],['flash','Flash',0.4],['zoomthru','Plongée zoom',0.5],['spin','Rotation',0.5],['crosszoom','Zoom croisé',0.55],['burn','Lumière (film brûlé)',0.7],['slices','Tranches',0.55],['shake','Coup sec',0.3],['fade','Fondu',0.7],['fadeblack','Fondu noir',0.8],['slideleft','Glisse ←',0.6],['slideright','Glisse →',0.6],['circleopen','Cercle',0.7],['wipeleft','Volet',0.6],['cut','Coupe franche',0.1]];
+const MA_TRI={glitch:'⚡',whip:'💨',flash:'✺',zoomthru:'⤢',spin:'🌀',crosszoom:'🔎',burn:'🔥',slices:'☰',shake:'📳',fade:'◐',fadeblack:'●',slideleft:'⇠',slideright:'⇢',circleopen:'◯',wipeleft:'▤',cut:'│'};
 /* [clé, nom, aperçu canvas] */
 const MA_LOOK=[['none','Aucune',''],['vif','Vif','contrast(1.1) saturate(1.4)'],['chaud','Chaud','sepia(.2) saturate(1.25) contrast(1.05)'],['froid','Froid','saturate(1.1) hue-rotate(12deg) contrast(1.05)'],['nb','Noir & blanc','grayscale(1) contrast(1.2)'],['cine','Cinéma','contrast(1.18) saturate(.85) brightness(.96)']];
 const MA_STY={
- react:{n:'🔥 Réaction gaming',d:'zoom coup de poing, tremblement, flash et glitch sur les cris et les gros moments',mix:['glitch','whip','flash','zoomthru','shake','spin'],o:{per:6,power:80,look:'vif',zoom:true,f:{zoom:1,shake:1,flash:1,rgb:1,pulse:1,text:1,sfx:1,grain:0,bars:0,scan:0}}},
- hyper:{n:'⚡ Hyper (TikTok)',d:'coupes courtes, pulsation sur le son, tout bouge tout le temps',mix:['whip','flash','zoomthru','spin','glitch'],o:{per:4,power:100,look:'vif',zoom:true,f:{zoom:1,shake:1,flash:1,rgb:1,pulse:1,text:1,sfx:1,grain:0,bars:0,scan:0}}},
- cine:{n:'🎞 Cinéma',d:'doux : fondus, zoom lent, bandes noires, léger grain',mix:['fade','fadeblack','circleopen'],o:{per:8,power:35,look:'cine',zoom:true,f:{zoom:1,shake:0,flash:0,rgb:0,pulse:1,text:1,sfx:0,grain:1,bars:1,scan:0}}},
- vhs:{n:'📼 Rétro VHS',d:'glitch, lignes, bords colorés, grain de vieille cassette',mix:['glitch','wipeleft','fade','shake'],o:{per:5,power:65,look:'chaud',zoom:false,f:{zoom:1,shake:1,flash:0,rgb:1,pulse:0,text:1,sfx:1,grain:1,bars:0,scan:1}}}};
+ react:{n:'🔥 Réaction gaming',d:'zoom coup de poing vers l\'action, lueur, flash et glitch seulement sur les vrais gros moments',mix:['whip','crosszoom','flash','slices','glitch','burn'],o:{per:6,power:75,look:'vif',zoom:true,f:{zoom:1,shake:1,flash:1,rgb:1,pulse:1,bloom:1,ca:1,live:1,text:1,sfx:1,grain:0,bars:0,scan:0}}},
+ hyper:{n:'⚡ Hyper (TikTok)',d:'coupes courtes, pulsation sur le son, ça bouge tout le temps',mix:['whip','crosszoom','slices','flash','spin','zoomthru'],o:{per:4,power:100,look:'vif',zoom:true,f:{zoom:1,shake:1,flash:1,rgb:1,pulse:1,bloom:1,ca:1,live:1,text:1,sfx:1,grain:0,bars:0,scan:0}}},
+ cine:{n:'🎞 Cinéma',d:'doux : fondus, lumière, zoom lent, bandes noires, léger grain',mix:['burn','fade','crosszoom','fadeblack'],o:{per:8,power:35,look:'cine',zoom:true,f:{zoom:1,shake:0,flash:0,rgb:0,pulse:1,bloom:1,ca:1,live:1,text:0,sfx:0,grain:1,bars:1,scan:0}}},
+ vhs:{n:'📼 Rétro VHS',d:'glitch, lignes, bords colorés, grain de vieille cassette',mix:['glitch','wipeleft','fade','slices'],o:{per:5,power:65,look:'chaud',zoom:false,f:{zoom:1,shake:1,flash:0,rgb:1,pulse:0,bloom:1,ca:1,live:0,text:0,sfx:1,grain:1,bars:0,scan:1}}}};
 const MA_COL=['#38e1ff','#ff6ec7','#ffd166','#5df0a2','#b79bff','#ff9a62'];
-const MA_LAB={hi:['OMG','😱','WTF ?!','NOOON','🔥','WOW','😭','GG'],mid:['😂','LOL','HAHA','😮','💀','🤣'],lo:['👀','!','?','😳']};
+const MA_LAB=['OMG','WTF ?!','WOW','GG','NOOON','LOL'];
 const maClamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const maTrDur=(c,n)=>c.tr.type==='cut'?0.1:Math.max(0.1,Math.min(+c.tr.dur||0.55,(c.b-c.a)*0.45,(n.b-n.a)*0.45));
 function maLayout(){
@@ -5451,13 +5451,13 @@ function maHtml(){return `<div class="card mt-page" id="mtP-auto" hidden>
    <label>Réactivité <b id="maPowV"></b><input type="range" id="maPow" min="10" max="100" step="5"></label>
    <label>Durée de chaque extrait<select id="maPer">${[3,4,5,6,8,10,15].map(v=>`<option value="${v}">${v} s</option>`).join('')}</select></label>
    <label>Ambiance<select id="maLook">${MA_LOOK.map(l=>`<option value="${l[0]}">${l[1]}</option>`).join('')}</select></label>
-   <label>Textes<select id="maTxt"><option value="cap">Légende = nom de la vidéo</option><option value="num">Partie 1, 2, 3…</option><option value="none">Aucun</option></select></label>
+   <label>Textes<select id="maTxt"><option value="none">Aucun</option><option value="cap">Légende = nom de la vidéo</option><option value="num">Partie 1, 2, 3…</option></select></label>
    <label>Titre d'intro<input type="text" id="maTitle" maxlength="60" placeholder="(facultatif)"></label>
    <label class="mt-chk"><input type="checkbox" id="maBest"> Meilleurs moments</label>
    <button class="btn primary" id="maGen" type="button" title="Refait le montage avec ces réglages (tes retouches manuelles sont perdues)">↻ Refaire le montage</button>
    <button class="btn" id="maAdd" type="button">＋ Ajouter une vidéo</button>
   </div>
-  <details class="ma-det"><summary>Choisir les effets un par un</summary><div class="ma-fxs" id="maFxs">${[['zoom','🔍 Zoom coup de poing'],['shake','📳 Tremblement'],['flash','✺ Flash'],['rgb','🌈 Glitch / couleurs décalées'],['pulse','💓 Pulsation sur le son'],['text','💬 Textes & emojis de réaction'],['sfx','🔊 Sons d\'impact'],['grain','🎞 Grain'],['bars','▬ Bandes de cinéma'],['scan','📺 Lignes de télé']].map(([k,n])=>`<label class="mt-chk"><input type="checkbox" data-fx="${k}"> ${n}</label>`).join('')}</div>
+  <details class="ma-det"><summary>Choisir les effets un par un</summary><div class="ma-fxs" id="maFxs">${[['zoom','🔍 Zoom coup de poing'],['shake','📳 Tremblement'],['flash','✺ Flash'],['rgb','🌈 Glitch / couleurs décalées'],['pulse','💓 Pulsation sur le son'],['bloom','✨ Lueur (bloom)'],['ca','🌈 Bords colorés (objectif)'],['live','🎥 Caméra vivante'],['text','💬 Mots de réaction (rares)'],['sfx','🔊 Sons d\'impact'],['grain','🎞 Grain'],['bars','▬ Bandes de cinéma'],['scan','📺 Lignes de télé']].map(([k,n])=>`<label class="mt-chk"><input type="checkbox" data-fx="${k}"> ${n}</label>`).join('')}</div>
    <label class="mt-chk"><input type="checkbox" id="maZoom"> Zoom lent sur chaque extrait</label></details>
   <div class="ma-main">
    <div class="ma-left"><div class="ma-cvw"><canvas id="maCv" width="960" height="540" aria-label="Aperçu du montage"></canvas><div class="ma-busy" id="maBusy" hidden></div></div>
@@ -5516,11 +5516,12 @@ async function maAnalyze(c,prog){
   c.an=an;return an}
 /* mouvement : échantillons de la vidéo (utile aussi sans son) */
 async function maMotion(c,prog){
-  const v=maVid(c),n=Math.min(80,Math.max(8,Math.floor(c.dur/0.7))),cv=phCv(64,36),g=cv.getContext('2d',{willReadFrequently:true});let prev=null;const E=new Float32Array(n);v.pause();
+  const v=maVid(c),n=Math.min(80,Math.max(8,Math.floor(c.dur/0.7))),cv=phCv(64,36),g=cv.getContext('2d',{willReadFrequently:true});let prev=null;const E=new Float32Array(n),CX=new Float32Array(n).fill(0.5),CY=new Float32Array(n).fill(0.5);v.pause();
   for(let k=0;k<n;k++){await kySeek(v,Math.min(c.dur-0.05,(k+0.5)*c.dur/n));g.drawImage(v,0,0,64,36);const d=g.getImageData(0,0,64,36).data,gr=new Float32Array(64*36);
     for(let i=0;i<gr.length;i++)gr[i]=0.3*d[i*4]+0.59*d[i*4+1]+0.11*d[i*4+2];
-    if(prev){let s=0;for(let i=0;i<gr.length;i++)s+=Math.abs(gr[i]-prev[i]);E[k]=s/gr.length}prev=gr;if(prog)prog(k/n)}
-  return{E,step:c.dur/n}}
+    if(prev){let s=0,sx=0,sy=0,sw=0;for(let i=0;i<gr.length;i++){const df=Math.abs(gr[i]-prev[i]);s+=df;if(df>14){sx+=(i%64)*df;sy+=Math.floor(i/64)*df;sw+=df}}E[k]=s/gr.length;if(sw>400){CX[k]=sx/sw/63;CY[k]=sy/sw/35}}
+    prev=gr;if(prog)prog(k/n)}
+  return{E,cx:CX,cy:CY,step:c.dur/n}}
 /* meilleur moment = fenêtre où il se passe le plus de choses (son + mouvement) */
 function maBestWindow(c,len,mot){
   if(c.dur<=len+0.3)return 0;const an=c.an,n=mot.E.length,st=mot.step,sc=new Float32Array(n);const mx=Math.max(1e-6,...mot.E);
@@ -5545,32 +5546,39 @@ function maAutoTexts(){
     MA.texts.push({id:++MA.id,text:o.txt==='num'?`Partie ${i+1}`:maClean(c.name),style:'band',pos:'bot',at,dur:end-at})})}
 /* les réactions : un événement par gros moment du son, avec les effets qui vont avec */
 function maAutoFx(){
-  const o=MA.opts,F=o.f,pw=o.power/100,{L}=maLayout();MA.fx=[];
+  const o=MA.opts,F=o.f,pw=o.power/100,{L,tot}=maLayout();MA.fx=[];
   MA.clips.forEach((c,i)=>{
-    const len=c.b-c.a,K=Math.max(1,Math.round(len/(2.4-1.4*pw))),an=c.an,list=[];
-    if(an&&an.ev.length){for(const e of an.ev){if(e.t<c.a+0.2||e.t>c.b-0.25)continue;if(list.some(x=>Math.abs(x.t-e.t)<0.9-0.4*pw))continue;list.push(e);if(list.length>=K)break}}
-    else if(c.mot){const E=c.mot.E,mx=Math.max(1e-6,...E),idx=Array.from(E.keys()).sort((p,q)=>E[q]-E[p]);for(const k of idx){const t=(k+0.5)*c.mot.step;if(t<c.a+0.3||t>c.b-0.3)continue;if(E[k]/mx<0.35)break;if(list.some(x=>Math.abs(x.t-t)<1.2))continue;list.push({t,I:0.4+0.5*E[k]/mx});if(list.length>=Math.max(1,K-1))break}}
-    /* au moins un temps fort par extrait, sinon le montage ne bouge pas */
-    if(!list.length&&F.zoom)list.push({t:c.a+Math.min(len*0.4,1.6),I:0.55});
-    for(const e of list){const I=maClamp(e.I*(0.55+0.55*pw),0.15,1);
-      MA.fx.push({id:++MA.id,T:L[i].s+(e.t-c.a),I,z:!!F.zoom,s:!!F.shake&&I>0.4,f:!!F.flash&&I>0.6,r:!!F.rgb&&I>0.5,sfx:!!F.sfx,label:''});}});
-  /* textes de réaction sur les plus forts */
-  if(F.text){const strong=MA.fx.filter(e=>e.I>0.62).sort((a,b)=>b.I-a.I).slice(0,Math.max(1,Math.round(MA.clips.length*1.5)));strong.forEach((e,k)=>{const r=maHash(e.id*3.1+k);e.label=(e.I>0.8?MA_LAB.hi:e.I>0.7?MA_LAB.mid:MA_LAB.lo)[Math.floor(r*(e.I>0.8?MA_LAB.hi:e.I>0.7?MA_LAB.mid:MA_LAB.lo).length)]})}
+    const len=c.b-c.a,K=Math.max(1,Math.round(len/(3.2-1.6*pw))),an=c.an,list=[];
+    if(an&&an.ev.length){for(const e of an.ev){if(e.t<c.a+0.25||e.t>c.b-0.3)continue;if(list.some(x=>Math.abs(x.t-e.t)<1.1-0.3*pw))continue;list.push(e);if(list.length>=K)break}}
+    else if(c.mot){const E=c.mot.E,mx=Math.max(1e-6,...E),idx=Array.from(E.keys()).sort((p,q)=>E[q]-E[p]);for(const k of idx){const t=(k+0.5)*c.mot.step;if(t<c.a+0.3||t>c.b-0.3)continue;if(E[k]/mx<0.4)break;if(list.some(x=>Math.abs(x.t-t)<1.4))continue;list.push({t,I:0.4+0.5*E[k]/mx});if(list.length>=Math.max(1,K-1))break}}
+    if(!list.length&&F.zoom)list.push({t:c.a+Math.min(len*0.4,1.6),I:0.5});
+    for(const e of list){const I=maClamp(e.I*(0.5+0.6*pw),0.15,1),r=maHash(i*13.7+e.t*3.1+1);
+      /* un coup = quelques effets bien choisis, pas tout à la fois : plus c'est fort, plus il y en a */
+      MA.fx.push({id:++MA.id,T:L[i].s+(e.t-c.a),I,z:!!F.zoom&&I>=0.3,s:!!F.shake&&I>0.55&&r>0.35,f:!!F.flash&&I>0.74,r:!!F.rgb&&I>0.8&&r>0.5,b:!!F.bloom&&I>0.5,i:!!F.flash&&I>0.92,sfx:!!F.sfx&&I>0.45,label:''})}});
+  /* un mot de réaction seulement sur un vrai sommet, et pas plus d'un toutes les ~12 s */
+  if(F.text){const maxN=Math.max(1,Math.round(tot/12)),cand=MA.fx.filter(e=>e.I>0.86).sort((a,b)=>b.I-a.I),got=[];for(const e of cand){if(got.length>=maxN)break;if(got.some(x=>Math.abs(x.T-e.T)<5))continue;got.push(e);e.label=MA_LAB[Math.floor(maHash(e.id*3.1)*MA_LAB.length)]}}
   MA.fx.sort((a,b)=>a.T-b.T)}
 /* ---------- rendu (le même pour l'aperçu et l'export) ---------- */
 const maCvs={};const maTmp=(k,W,H)=>{let c=maCvs[k];if(!c||c.width!==W||c.height!==H){c=document.createElement('canvas');c.width=W;c.height=H;maCvs[k]=c}return c};
 function maFxAt(T,W,H){
-  const o=MA.opts,F=o.f,pw=o.power/100,k=W/1280,P={zoom:0,dx:0,dy:0,rot:0,flash:0,rgb:0,glit:0,rings:[],parts:[],pulse:0,labels:[]};
+  const o=MA.opts,F=o.f,pw=o.power/100,k=W/1280,{L}=maLayout(),P={zoom:0,zb:0,dx:0,dy:0,rot:0,flash:0,rgb:0,glit:0,rings:[],parts:[],pulse:0,labels:[],bloomPop:0,impact:false,pvx:0.5,pvy:0.5};
+  let kk=0;for(let i=0;i<L.length;i++)if(L[i].s<=T+1e-6)kk=i;const c=MA.clips[kk];
+  /* le zoom vise l'endroit où ça bouge (centre de l'action) */
+  if(c&&c.mot&&c.mot.cx){const t=c.a+(T-L[kk].s);let sx=0,sy=0,sw=0;for(let q=0;q<c.mot.E.length;q++){const dt=Math.abs((q+0.5)*c.mot.step-t);if(dt>1.4)continue;const w=(c.mot.E[q]+0.5)*(1-dt/1.4);sx+=c.mot.cx[q]*w;sy+=c.mot.cy[q]*w;sw+=w}
+    if(sw>0){P.pvx=maClamp(0.5+(sx/sw-0.5)*0.75,0.3,0.7);P.pvy=maClamp(0.5+(sy/sw-0.5)*0.75,0.3,0.7)}}
   for(const e of MA.fx){const a=T-e.T;if(a<-0.001||a>1.6)continue;const I=e.I;
-    if(e.z){const at=Math.min(1,a/0.045);P.zoom+=0.26*I*Math.exp(-a*6.5)*at;if(I>0.6&&a<0.8)P.rings.push({r:a*1.15*W,al:(1-a/0.8)*0.55*I,w:(10-8*a)*k})}
-    if(e.s){const amp=26*I*Math.exp(-a*5.2)*k;P.dx+=amp*Math.sin(T*173.3+e.id*7.1);P.dy+=amp*0.75*Math.cos(T*211.7+e.id*3.3);P.rot+=amp*0.0007*Math.sin(T*131.9+e.id)}
-    if(e.f)P.flash=Math.max(P.flash,0.62*I*Math.exp(-a*10));
-    if(e.r){P.rgb=Math.max(P.rgb,18*I*Math.exp(-a*6.5)*k);if(a<0.3)P.glit=Math.max(P.glit,I*(1-a/0.3))}
-    if(e.label&&a>=0&&a<1.15)P.labels.push({e,a});
-    if(e.I>0.75&&e.z&&a>=0&&a<1.1){for(let q=0;q<16;q++){const ang=maHash(e.id+q*1.7)*Math.PI*2,sp=(260+360*maHash(e.id*2+q))*k;P.parts.push({x:W/2+Math.cos(ang)*sp*a*0.9,y:H/2+Math.sin(ang)*sp*a*0.9+700*k*a*a*0.5,al:1-a/1.1,s:(14+22*maHash(q+e.id))*k,c:q%4,rot:ang+a*6})}}}
-  if(F.pulse){const {L}=maLayout();let kk=0;for(let i=0;i<L.length;i++)if(L[i].s<=T+1e-6)kk=i;const c=MA.clips[kk];
-    if(c&&c.an&&c.an.sm){const t=c.a+(T-L[kk].s),i=maClamp(Math.round(t*MA_HZ),0,c.an.sm.length-1);P.pulse=c.an.sm[i]*pw}else if(c){P.pulse=0.35*pw*(0.5+0.5*Math.sin(T*Math.PI*2*2))*0.4}}
-  P.zoom+=0.045*P.pulse*P.pulse*(F.pulse?1:0)+0.03*P.pulse*(F.pulse?1:0);
+    if(e.z){const at=Math.min(1,a/0.05),ease=Math.exp(-a*5.8);P.zoom+=0.2*I*ease*at;if(I>0.55)P.zb=Math.max(P.zb,I*Math.exp(-a*11)*at);if(I>0.8&&a<0.8)P.rings.push({r:a*1.15*W,al:(1-a/0.8)*0.5*I,w:(9-7*a)*k})}
+    if(e.s){const amp=24*I*Math.exp(-a*5.5)*k;P.dx+=amp*Math.sin(T*173.3+e.id*7.1);P.dy+=amp*0.75*Math.cos(T*211.7+e.id*3.3);P.rot+=amp*0.0006*Math.sin(T*131.9+e.id)}
+    if(e.f)P.flash=Math.max(P.flash,0.55*I*Math.exp(-a*11));
+    if(e.r){P.rgb=Math.max(P.rgb,16*I*Math.exp(-a*7)*k);if(a<0.25)P.glit=Math.max(P.glit,I*(1-a/0.25))}
+    if(e.b)P.bloomPop=Math.max(P.bloomPop,I*Math.exp(-a*4.2));
+    if(e.i&&a>=0&&a<0.07)P.impact=true;
+    if(e.label&&a>=0&&a<1.1)P.labels.push({e,a});
+    if(e.I>0.88&&e.z&&a>=0&&a<1){for(let q=0;q<12;q++){const ang=maHash(e.id+q*1.7)*Math.PI*2,sp=(240+330*maHash(e.id*2+q))*k;P.parts.push({x:W/2+Math.cos(ang)*sp*a*0.9,y:H/2+Math.sin(ang)*sp*a*0.9+650*k*a*a*0.5,al:1-a/1,s:(12+18*maHash(q+e.id))*k,c:q%4,rot:ang+a*6})}}}
+  if(F.pulse&&c){if(c.an&&c.an.sm){const t=c.a+(T-L[kk].s),i=maClamp(Math.round(t*MA_HZ),0,c.an.sm.length-1);P.pulse=c.an.sm[i]*pw}else P.pulse=0.14*pw*(0.5+0.5*Math.sin(T*Math.PI*4))}
+  P.zoom+=0.03*P.pulse*P.pulse+0.018*P.pulse;
+  /* caméra vivante : une très légère dérive, pour que l'image ne soit jamais figée */
+  if(F.live){P.dx+=W*0.0035*Math.sin(T*0.9)+W*0.0015*Math.sin(T*2.3);P.dy+=H*0.004*Math.cos(T*0.7);P.rot+=0.0012*Math.sin(T*0.55);P.zoom+=0.012}
   return P}
 function maDrawClip(g,c,tl,W,H,extra){
   const v=maVid(c);if(!v.videoWidth)return;const len=c.b-c.a,pr=maClamp(tl/len,0,1),Z=(c.zoom==='in'?1+c.zamt*pr:c.zoom==='out'?1+c.zamt*(1-pr):1)*(extra||1),s=Math.min(W/v.videoWidth,H/v.videoHeight)*Z,w=v.videoWidth*s,h=v.videoHeight*s;
@@ -5599,6 +5607,12 @@ function maScene(g,W,H,T){
     const buf=maTmp('gl',W,H),bg=buf.getContext('2d');bg.setTransform(1,0,0,1,0,0);bg.globalCompositeOperation='copy';bg.drawImage(g.canvas,0,0);bg.globalCompositeOperation='source-over';
     const n=Math.round(4+10*amp);for(let q=0;q<n;q++){const y=Math.floor(maHash(sd*7+q)*H),h=Math.floor(H*(0.02+0.09*maHash(sd*5+q+3))),dx=(maHash(sd*3+q+1)-0.5)*W*0.25*amp;g.drawImage(buf,0,y,W,h,dx,y,W,h)}
     g.save();g.globalCompositeOperation='lighter';g.globalAlpha=0.55*amp;g.drawImage(buf,W*0.018*amp,0);g.restore()}
+  else if(ty==='crosszoom'){const e=p*p*(3-2*p);
+    for(let q=0;q<6;q++){const sc=1+e*0.9*(1+q*0.05);g.save();g.translate(W/2,H/2);g.scale(sc,sc);g.translate(-W/2,-H/2);g.globalAlpha=(1-e)/(q*0.7+1);base();g.restore()}
+    for(let q=0;q<6;q++){const sc=1+(1-e)*0.9*(1+q*0.05);g.save();g.translate(W/2,H/2);g.scale(sc,sc);g.translate(-W/2,-H/2);g.globalAlpha=e/(q*0.7+1);inc();g.restore()}g.globalAlpha=1}
+  else if(ty==='burn'){if(p<0.5)base();else inc();const f=Math.sin(Math.PI*p),cx=W*(0.25+0.5*p),gr=g.createRadialGradient(cx,H*0.45,0,cx,H*0.45,W*0.95);gr.addColorStop(0,`rgba(255,238,175,${0.97*f})`);gr.addColorStop(0.35,`rgba(255,140,40,${0.78*f})`);gr.addColorStop(1,'rgba(120,20,0,0)');
+    g.save();g.globalCompositeOperation='screen';g.fillStyle=gr;g.fillRect(0,0,W,H);const g2=g.createLinearGradient(0,0,W,H);g2.addColorStop(0,`rgba(255,80,40,${0.32*f})`);g2.addColorStop(1,`rgba(255,200,80,${0.32*f})`);g.fillStyle=g2;g.fillRect(0,0,W,H);g.restore()}
+  else if(ty==='slices'){const n=6,e=p*p*(3-2*p);for(let q=0;q<n;q++){const y0=Math.floor(H*q/n),h=Math.ceil(H/n),dir=q%2?1:-1;g.save();g.beginPath();g.rect(0,y0,W,h);g.clip();g.save();g.translate(dir*e*W,0);base();g.restore();g.save();g.translate(-dir*(1-e)*W,0);inc();g.restore();g.restore()}}
   else{base();g.globalAlpha=p;inc();g.globalAlpha=1}}
 /* textes */
 function maLines(g,txt,maxW){const w=txt.split(' '),out=[];let cur='';for(const x of w){const t=cur?cur+' '+x:x;if(g.measureText(t).width>maxW&&cur){out.push(cur);cur=x}else cur=t}if(cur)out.push(cur);return out.slice(0,3)}
@@ -5634,29 +5648,35 @@ function maRender(g,W,H,T){
   const F=MA.opts.f,k=W/1280,P=maFxAt(T,W,H),S=maTmp('scene',W,H),sg=S.getContext('2d');
   maScene(sg,W,H,T);
   g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.globalCompositeOperation='source-over';g.filter='none';g.fillStyle='#000';g.fillRect(0,0,W,H);
-  const look=MA_LOOK.find(l=>l[0]===MA.opts.look);
-  /* caméra : zoom coup de poing + tremblement + roulis */
-  const z=1+P.zoom+(Math.abs(P.dx)+Math.abs(P.dy))/W*2+Math.abs(P.rot)*1.2;
-  g.save();g.translate(W/2+P.dx,H/2+P.dy);g.rotate(P.rot);g.scale(z,z);g.translate(-W/2,-H/2);
-  try{g.filter=look&&look[2]?look[2]:'none'}catch(e){}
-  if(P.rgb>0.4){const R=maTmp('r',W,H),G=maTmp('g',W,H),B=maTmp('b',W,H);
+  const look=MA_LOOK.find(l=>l[0]===MA.opts.look),lk=look&&look[2]?look[2]:'none';
+  /* caméra : zoom coup de poing (vers l'action) + tremblement + léger roulis */
+  const z=1+P.zoom+(Math.abs(P.dx)+Math.abs(P.dy))/W*2+Math.abs(P.rot)*1.2,px=W*P.pvx,py=H*P.pvy;
+  g.save();g.translate(px+P.dx,py+P.dy);g.rotate(P.rot);g.scale(z,z);g.translate(-px,-py);
+  try{g.filter=lk}catch(e){}
+  const split=P.rgb>0.4||F.ca;
+  if(split){const R=maTmp('r',W,H),G=maTmp('g',W,H),B=maTmp('b',W,H),ca=(F.ca?0.0032:0)+P.rgb*0.0006;
     [[R,'#ff0000'],[G,'#00ff00'],[B,'#0000ff']].forEach(([cv,col])=>{const c=cv.getContext('2d');c.setTransform(1,0,0,1,0,0);c.filter='none';c.globalCompositeOperation='copy';c.drawImage(S,0,0);c.globalCompositeOperation='multiply';c.fillStyle=col;c.fillRect(0,0,W,H);c.globalCompositeOperation='source-over'});
-    g.globalCompositeOperation='lighter';g.drawImage(R,-P.rgb,0);g.drawImage(G,0,P.rgb*0.12);g.drawImage(B,P.rgb,0);g.globalCompositeOperation='source-over'}
+    g.globalCompositeOperation='lighter';
+    g.save();g.translate(W/2,H/2);g.scale(1+ca,1+ca);g.translate(-W/2,-H/2);g.drawImage(R,-P.rgb,0);g.restore();g.drawImage(G,0,P.rgb*0.12);g.save();g.translate(W/2,H/2);g.scale(1-ca,1-ca);g.translate(-W/2,-H/2);g.drawImage(B,P.rgb,0);g.restore();g.globalCompositeOperation='source-over'}
   else g.drawImage(S,0,0);
+  /* flou de zoom sur le coup : des copies de plus en plus grandes, de plus en plus transparentes */
+  if(P.zb>0.04){for(let q=1;q<=6;q++){g.save();g.globalAlpha=Math.min(0.5,P.zb*0.5)/(q*0.8);g.translate(px,py);const sc=1+q*0.028*P.zb*1.6;g.scale(sc,sc);g.translate(-px,-py);g.drawImage(S,0,0);g.restore()}}
   /* glitch : tranches décalées */
-  if(P.glit>0.05){const sd=Math.floor(T*30),n=Math.round(3+9*P.glit);for(let q=0;q<n;q++){const y=Math.floor(maHash(sd*7+q)*H),h=Math.floor(H*(0.015+0.07*maHash(sd*5+q+3))),dx=(maHash(sd*3+q+1)-0.5)*W*0.2*P.glit;g.drawImage(S,0,y,W,h,dx,y,W,h)}}
+  if(P.glit>0.05){const sd=Math.floor(T*30),n=Math.round(3+8*P.glit);for(let q=0;q<n;q++){const y=Math.floor(maHash(sd*7+q)*H),h=Math.floor(H*(0.015+0.07*maHash(sd*5+q+3))),dx=(maHash(sd*3+q+1)-0.5)*W*0.2*P.glit;g.drawImage(S,0,y,W,h,dx,y,W,h)}}
   g.filter='none';g.restore();
-  /* ondes de choc */
+  /* lueur : les zones claires débordent, comme une vraie optique de cinéma */
+  if(F.bloom){const bw=Math.max(2,W>>2),bh=Math.max(2,H>>2),B2=maTmp('bloom',bw,bh),bc=B2.getContext('2d');bc.setTransform(1,0,0,1,0,0);bc.globalCompositeOperation='copy';
+    try{bc.filter='brightness(1.1) contrast(1.7) saturate(1.25) blur(5px)'}catch(e){}bc.drawImage(S,0,0,bw,bh);bc.filter='none';
+    g.save();g.globalCompositeOperation='screen';g.globalAlpha=Math.min(0.8,0.2+0.55*P.bloomPop+0.25*P.pulse);g.drawImage(B2,0,0,W,H);g.restore()}
   for(const r of P.rings){g.save();g.globalAlpha=Math.max(0,r.al);g.strokeStyle='#fff';g.lineWidth=Math.max(1,r.w);g.beginPath();g.arc(W/2,H/2,Math.max(1,r.r),0,Math.PI*2);g.stroke();g.restore()}
-  /* flash */
   if(P.flash>0.01){g.fillStyle=`rgba(255,255,255,${Math.min(0.9,P.flash)})`;g.fillRect(0,0,W,H)}
-  /* vignette qui pulse */
-  {const va=(F.pulse?0.18+0.4*P.pulse:0.12)+(P.zoom>0.05?0.1:0),gr=g.createRadialGradient(W/2,H/2,H*0.35,W/2,H/2,Math.hypot(W,H)*0.58);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,`rgba(0,0,0,${Math.min(0.75,va)})`);g.fillStyle=gr;g.fillRect(0,0,W,H)}
+  /* image choc : deux images en négatif sur les très gros coups */
+  if(P.impact){g.save();g.globalCompositeOperation='difference';g.fillStyle='#fff';g.fillRect(0,0,W,H);g.restore()}
+  {const va=(F.pulse?0.16+0.34*P.pulse:0.12)+(P.zoom>0.06?0.08:0),gr=g.createRadialGradient(W/2,H/2,H*0.35,W/2,H/2,Math.hypot(W,H)*0.58);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,`rgba(0,0,0,${Math.min(0.7,va)})`);g.fillStyle=gr;g.fillRect(0,0,W,H)}
   if(F.scan){g.fillStyle='rgba(0,0,0,.16)';for(let y=0;y<H;y+=Math.max(3,Math.round(4*k)))g.fillRect(0,y,W,Math.max(1,Math.round(1.5*k)));const gl=Math.floor(T*30);g.fillStyle='rgba(255,255,255,.04)';g.fillRect(0,(maHash(gl)*H)|0,W,Math.max(2,4*k))}
-  if(F.grain){const n=maTmp('grain',256,256),ng=n.getContext('2d');if(!n._ok){const id=ng.createImageData(256,256);for(let i=0;i<id.data.length;i+=4){const v=Math.floor(Math.random()*255);id.data[i]=id.data[i+1]=id.data[i+2]=v;id.data[i+3]=26}ng.putImageData(id,0,0);n._ok=1}
+  if(F.grain){const n=maTmp('grain',256,256),ng=n.getContext('2d');if(!n._ok){const id=ng.createImageData(256,256);for(let i=0;i<id.data.length;i+=4){const v=Math.floor(maHash(i*0.13)*255);id.data[i]=id.data[i+1]=id.data[i+2]=v;id.data[i+3]=26}ng.putImageData(id,0,0);n._ok=1}
     g.save();g.globalCompositeOperation='overlay';const ox=(maHash(Math.floor(T*24))*256)|0,oy=(maHash(Math.floor(T*24)+5)*256)|0;for(let x=-ox;x<W;x+=256)for(let y=-oy;y<H;y+=256)g.drawImage(n,x,y);g.restore()}
   if(F.bars){const bh=H*0.085;g.fillStyle='#000';g.fillRect(0,0,W,bh);g.fillRect(0,H-bh,W,bh)}
-  /* particules */
   for(const p of P.parts){g.save();g.globalAlpha=Math.max(0,p.al);g.translate(p.x,p.y);g.rotate(p.rot);g.fillStyle=maPalette[p.c];g.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);g.restore()}
   for(const t of MA.texts)maTextDraw(g,W,H,t,T);
   for(const L of P.labels)maLabelDraw(g,W,H,L)}
@@ -5691,7 +5711,7 @@ function maSfxPlay(kind,vol){
 function maSfxList(){
   const out=[],{L}=maLayout();if(!MA.opts.f.sfx)return out;
   MA.fx.forEach(e=>{if(e.sfx)out.push([Math.max(0,e.T-0.01),'impact',0.35+0.5*e.I])});
-  MA.clips.forEach((c,i)=>{if(i>0&&!['cut','fade','fadeblack','wipeleft','circleopen'].includes(MA.clips[i-1].tr.type))out.push([Math.max(0,L[i].s-0.06),'whoosh',0.55])});
+  MA.clips.forEach((c,i)=>{if(i>0&&!['cut','fade','fadeblack','wipeleft','circleopen','burn'].includes(MA.clips[i-1].tr.type))out.push([Math.max(0,L[i].s-0.06),'whoosh',0.55])});
   return out.sort((a,b)=>a[0]-b[0])}
 function maPlay(){
   const {tot}=maLayout();if(!tot)return;if(MA.playing){maPause();return}
@@ -5735,7 +5755,7 @@ function maPanel(){
   else if(s&&s.k==='fx'&&MA.fx.find(e=>e.id===s.id)){const e=MA.fx.find(x=>x.id===s.id);
     p.innerHTML=`<h4 class="ma-h4">⚡ Réaction à ${mtFmt(e.T,1)}</h4><p class="muted sm">Un moment fort : les effets cochés se déclenchent ici.</p>
     <label class="ma-wide">Intensité : <b>${Math.round(e.I*100)} %</b><input type="range" min="10" max="100" step="5" value="${Math.round(e.I*100)}" data-f="I"></label>
-    <div class="ma-checks">${[['z','🔍 Zoom'],['s','📳 Tremblement'],['f','✺ Flash'],['r','🌈 Glitch'],['sfx','🔊 Son']].map(([k,n])=>`<label class="mt-chk"><input type="checkbox" data-f="${k}" ${e[k]?'checked':''}> ${n}</label>`).join('')}</div>
+    <div class="ma-checks">${[['z','🔍 Zoom'],['s','📳 Tremblement'],['f','✺ Flash'],['r','🌈 Glitch'],['b','✨ Lueur'],['i','⚫ Image choc'],['sfx','🔊 Son']].map(([k,n])=>`<label class="mt-chk"><input type="checkbox" data-f="${k}" ${e[k]?'checked':''}> ${n}</label>`).join('')}</div>
     <label class="ma-wide">Texte ou emoji<input type="text" maxlength="12" value="${esc(e.label)}" data-f="label" placeholder="OMG, 😱, LOL…"></label>
     <div class="ma-emo">${['OMG','😱','WTF ?!','🔥','😂','💀','GG','WOW'].map(x=>`<button type="button" class="btn sm" data-lab="${esc(x)}">${esc(x)}</button>`).join('')}</div>
     <div class="ma-row"><button class="btn sm" data-a="testfx" type="button">▶ Voir</button><button class="btn sm danger" data-a="delfx" type="button">🗑 Retirer</button></div>`}
@@ -5797,7 +5817,7 @@ function maWire(){
   const tl=$('#maTl');
   tl.addEventListener('click',e=>{
     if(e.target.closest('#maAddT')){MA.texts.push({id:++MA.id,text:'Mon texte',style:'band',pos:'bot',at:MA.T,dur:2.5});MA.sel={k:'txt',id:MA.id};maTouch();return}
-    if(e.target.closest('#maAddF')){const F=MA.opts.f;MA.fx.push({id:++MA.id,T:MA.T,I:0.8,z:true,s:true,f:true,r:true,sfx:!!F.sfx,label:''});MA.fx.sort((a,b)=>a.T-b.T);MA.sel={k:'fx',id:MA.id};maTouch();return}});
+    if(e.target.closest('#maAddF')){const F=MA.opts.f;MA.fx.push({id:++MA.id,T:MA.T,I:0.8,z:true,s:true,f:true,r:false,b:true,i:false,sfx:!!F.sfx,label:''});MA.fx.sort((a,b)=>a.T-b.T);MA.sel={k:'fx',id:MA.id};maTouch();return}});
   tl.addEventListener('pointerdown',e=>{
     if(e.target.closest('#maAddT,#maAddF'))return;
     const ruler=e.target.closest('#maRuler');if(ruler){const r=tl.getBoundingClientRect();maSeek((e.clientX-r.left-MA_OFF)/MA.pps);MA.drag={k:'head'};tl.setPointerCapture(e.pointerId);return}
