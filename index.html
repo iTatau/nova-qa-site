@@ -974,6 +974,44 @@ button.flash{animation:anflash .9s ease 2}@keyframes anflash{50%{box-shadow:0 0 
 .an-fixes{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}.an-fixc{display:inline-flex;gap:6px;align-items:center;padding:3px 6px 3px 10px;border-radius:99px;background:var(--soft);font-size:12px}.an-fixc button{border:0;background:none;color:var(--mut);cursor:pointer}
 
 .st-q{position:absolute;bottom:0;height:5px;background:repeating-linear-gradient(90deg,#ff4d6d 0 4px,transparent 4px 7px);pointer-events:auto;z-index:1}
+
+/* ---------- Montage auto ---------- */
+#mtP-auto .ma-drop{display:flex;flex-direction:column;align-items:center;gap:8px;padding:26px 16px;border:2px dashed var(--line);border-radius:16px;text-align:center;background:var(--soft);transition:.15s}
+#mtP-auto .ma-drop.over{border-color:var(--brand);background:rgba(56,225,255,.08)}
+#mtP-auto .ma-drop.mini{display:none}
+.ma-opts{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:end;margin:14px 0}
+.ma-opts label,.ma-exp label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mut)}
+.ma-opts label.mt-chk{flex-direction:row;align-items:center;gap:6px;color:var(--ink)}
+.ma-opts select,.ma-opts input[type=text],.ma-exp select,.ma-grid input,.ma-grid select,.ma-wide input{background:var(--soft);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:7px 9px;font:inherit;font-size:13px;min-width:0}
+.ma-main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(250px,.65fr);gap:14px;align-items:start}
+@media(max-width:900px){.ma-main{grid-template-columns:1fr}}
+.ma-cvw{position:relative;border-radius:14px;overflow:hidden;background:#000;border:1px solid var(--line)}
+.ma-cvw canvas{display:block;width:100%;aspect-ratio:16/9}
+.ma-busy{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(5,6,15,.72);color:#fff;font-weight:600;text-align:center;padding:16px}
+.ma-ctl{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}.ma-time{font-variant-numeric:tabular-nums;color:var(--mut)}
+.ma-right{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--soft);min-height:150px}
+.ma-h4{margin:0 0 6px;font-size:14px}
+.ma-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.ma-grid label,.ma-wide{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--mut)}
+.ma-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;align-items:center}
+.ma-help{margin:6px 0;padding-left:18px;font-size:13px;line-height:1.5}
+.ma-tlw{margin-top:14px;overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--soft)}
+.ma-tl{position:relative;height:236px;min-width:100%}
+.ma-ruler{position:absolute;left:0;right:0;top:0;height:22px;border-bottom:1px solid var(--line);cursor:pointer}
+.ma-ruler span{position:absolute;top:3px;font-size:11px;color:var(--mut);transform:translateX(-2px);padding-left:3px;border-left:1px solid var(--line)}
+.ma-lane{position:absolute;left:0;right:0}.ma-l1{top:28px;height:100px}.ma-l2{top:134px;height:60px;border-top:1px dashed var(--line)}
+.ma-ln{position:sticky;left:4px;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);z-index:2;display:inline-block;background:var(--solid);padding:1px 6px;border-radius:6px;opacity:.9}
+.ma-blk{position:absolute;height:34px;display:flex;align-items:center;gap:6px;border-radius:9px;padding:0 14px;color:#06131c;background:var(--c,#38e1ff);font-size:12px;font-weight:700;overflow:hidden;white-space:nowrap;cursor:grab;border:1px solid rgba(255,255,255,.4);box-shadow:0 2px 8px rgba(0,0,0,.28);user-select:none;touch-action:none}
+.ma-blk small{opacity:.75;font-weight:600}.ma-blk.sel{outline:2px solid #fff;outline-offset:1px;z-index:3}
+.ma-txt{top:22px;background:#ffd166}
+.ma-nm{overflow:hidden;text-overflow:ellipsis}
+.ma-h{position:absolute;top:0;bottom:0;width:9px;cursor:ew-resize;background:rgba(0,0,0,.22)}.ma-h.l{left:0}.ma-h.r{right:0}
+.ma-trm{position:absolute;height:26px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--solid);color:var(--ink);border:1px solid var(--brand);font-size:15px;cursor:pointer;z-index:4;overflow:hidden}
+.ma-trm.sel{background:var(--brand);color:var(--brand-ink)}
+.ma-addt{position:absolute;right:8px;top:2px}
+.ma-head{position:absolute;top:0;bottom:0;width:0;z-index:6;cursor:ew-resize}.ma-head i{position:absolute;top:0;bottom:0;left:-1px;width:2px;background:#ff6ec7}.ma-head::before{content:"";position:absolute;top:0;left:-7px;width:14px;height:14px;background:#ff6ec7;border-radius:3px 3px 8px 8px}
+.ma-exp{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-top:14px}
+.ma-prog{flex:1 1 100%;height:8px;border-radius:6px;background:var(--soft);overflow:hidden}.ma-prog div{height:100%;width:0;background:var(--brand);transition:width .25s}
+.ma-res{margin-top:14px;border:1px solid var(--ok);background:var(--ok-bg);border-radius:14px;padding:12px 14px}.ma-res video{width:100%;max-width:760px;border-radius:12px;background:#000;display:block;margin:8px 0}
 </style>
 </head>
 <body>
@@ -1132,7 +1170,7 @@ button.flash{animation:anflash .9s ease 2}@keyframes anflash{50%{box-shadow:0 0 
   <!-- ===== MONTAGE : STUDIO ===== -->
   <section class="tab" id="tab-montage">
     <div class="mt-hub st-nav" id="mtHub" role="tablist" aria-label="Outils vidéo">
-      <button type="button" data-t="cut" aria-pressed="true">🎬 Studio</button><button type="button" data-t="rec" aria-pressed="false">🎥 Enregistrer l'écran</button><button type="button" data-t="sounds" aria-pressed="false">🎵 Sons &amp; musiques</button><button type="button" data-t="join" aria-pressed="false">🔗 Assembler</button><button type="button" data-t="compress" aria-pressed="false">🗜 Compresser</button><button type="button" data-t="convert" aria-pressed="false">🔄 Convertir</button><button type="button" data-t="thumb" aria-pressed="false">🖼 Miniature</button><button type="button" data-t="keys" aria-pressed="false">🎯 Image d'un élément</button>
+      <button type="button" data-t="cut" aria-pressed="true">🎬 Studio</button><button type="button" data-t="rec" aria-pressed="false">🎥 Enregistrer l'écran</button><button type="button" data-t="sounds" aria-pressed="false">🎵 Sons &amp; musiques</button><button type="button" data-t="auto" aria-pressed="false">🎞 Montage auto</button><button type="button" data-t="join" aria-pressed="false">🔗 Assembler</button><button type="button" data-t="compress" aria-pressed="false">🗜 Compresser</button><button type="button" data-t="convert" aria-pressed="false">🔄 Convertir</button><button type="button" data-t="thumb" aria-pressed="false">🖼 Miniature</button><button type="button" data-t="keys" aria-pressed="false">🎯 Image d'un élément</button>
     </div>
     <div id="mtCutWrap">
 
@@ -1149,7 +1187,7 @@ button.flash{animation:anflash .9s ease 2}@keyframes anflash{50%{box-shadow:0 0 
           <input type="file" id="mtFile" accept="video/*,.mkv,.mov,.mp4,.webm" multiple hidden>
         </div>
         <div id="mtList"></div>
-        <div class="btns left"><button class="btn primary" id="mtGo" type="button" disabled>Ouvrir dans le studio</button><button class="btn" id="mtClear" type="button" hidden>Tout retirer</button></div>
+        <div class="btns left"><button class="btn primary" id="mtGo" type="button" disabled>Ouvrir dans le studio</button><button class="btn" id="mtAuto" type="button" hidden title="Les vidéos choisies sont montées automatiquement (transitions, textes, zoom) ; tu vérifies dans une timeline">🎞 Mini-montage auto</button><button class="btn" id="mtClear" type="button" hidden>Tout retirer</button></div>
         <ul class="st-feat"><li>✂️ Couper</li><li>🎞 GIF</li><li>⏩ Vitesse</li><li>🔊 Pistes &amp; son</li><li>📱 Format vertical</li><li>💬 Sous-titres</li><li>🎯 Objet animé</li></ul>
         <p class="muted sm" style="margin:6px 0 0">Tes vidéos ne quittent jamais ton ordinateur. La première fois, le site télécharge un petit moteur de montage (environ 30 Mo), ensuite Chrome le garde.</p>
       </div>
@@ -2420,15 +2458,16 @@ function mtAdd(list){const L=[...list].filter(mtIsVideo);if(!L.length){toast('Au
   const first=!MT.files.length,n0=MT.files.length;
   L.forEach(f=>{if(!MT.files.some(x=>x.name===f.name&&x.size===f.size&&x.lastModified===f.lastModified))MT.files.push(f)});mtRenderList();
   if(MT.files.length)mtEngine().then(()=>mtWarm(0)).catch(()=>{});
-  if(first&&MT.files.length)mtStart(0);else if(MT.files.length>n0&&!$('#mtStep2').hidden)toast(`${MT.files.length-n0} vidéo${MT.files.length-n0>1?'s':''} ajoutée${MT.files.length-n0>1?'s':''} : choisis-la en haut du studio`)}
+  if(first&&MT.files.length){mtStart(0);if(MT.files.length>=2&&typeof maFromHome==='function')toast(`${MT.files.length} vidéos choisies`,{label:'🎞 Faire un mini-montage',fn:maFromHome})}else if(MT.files.length>n0&&!$('#mtStep2').hidden)toast(`${MT.files.length-n0} vidéo${MT.files.length-n0>1?'s':''} ajoutée${MT.files.length-n0>1?'s':''} : choisis-la en haut du studio`)}
 function mtRenderList(){
   $('#mtList').innerHTML=MT.files.length?`<div class="mt-files">`+MT.files.map((f,i)=>`<div class="mt-file"><span class="nm">🎞 ${esc(f.name)}</span><span class="muted sm">${mtSize(f.size)}</span><button class="btn sm" data-rm="${i}" type="button" aria-label="Retirer">✕</button></div>`).join('')+`</div>`:'';
-  $('#mtGo').disabled=!MT.files.length;$('#mtClear').hidden=!MT.files.length;$('#mtOpts').hidden=!MT.files.length;$('#mtSet').hidden=!MT.files.length;
+  $('#mtGo').disabled=!MT.files.length;$('#mtAuto').hidden=MT.files.length<2;$('#mtClear').hidden=!MT.files.length;$('#mtOpts').hidden=!MT.files.length;$('#mtSet').hidden=!MT.files.length;
   $('#mtGo').textContent=MT.files.length>1?`Ouvrir dans le studio (${MT.files.length} vidéos)`:'Ouvrir dans le studio';
   setSeg('mtMode',MT.mode);$('#mtModeTxt').textContent=MT_TXT[MT.mode];
   $('#mtDirTxt').innerHTML=mtDirLine();$('#mtDirPick').hidden=!mtHasDir;$('#mtDirPick').textContent=MT.dir?'Changer…':'Choisir un dossier…';$('#mtDirClear').hidden=!MT.dir;
   if(document.activeElement!==$('#mtTpl'))$('#mtTpl').value=mtPrefs.tpl;if(typeof stChips==='function')stChips()}
 $('#mtPick').addEventListener('click',()=>$('#mtFile').click());
+$('#mtAuto').addEventListener('click',()=>{if(typeof maFromHome==='function')maFromHome()});
 $('#mtFile').addEventListener('change',e=>{mtAdd(e.target.files);e.target.value=''});
 const mtDrop=$('#mtDrop');
 ['dragenter','dragover'].forEach(ev=>mtDrop.addEventListener(ev,e=>{e.preventDefault();mtDrop.classList.add('over')}));
@@ -3127,7 +3166,7 @@ function hubShow(t){
   $$('#mtPages>.mt-page').forEach(p=>p.hidden=p.id!=='mtP-'+t);
   if(t==='cut')try{localStorage.setItem('nova_mt_tool','')}catch(e){}
   if(t==='thumb'&&typeof thumbShow==='function')thumbShow();
-  if(t==='subs'&&typeof subsShow==='function')subsShow();if(t==='rec'&&typeof recShow==='function')recShow();if(t==='sounds'&&typeof sndShow==='function')sndShow();if(t==='keys'&&typeof keysShow==='function')keysShow();
+  if(t==='subs'&&typeof subsShow==='function')subsShow();if(t==='rec'&&typeof recShow==='function')recShow();if(t==='sounds'&&typeof sndShow==='function')sndShow();if(t==='keys'&&typeof keysShow==='function')keysShow();if(t==='auto'&&typeof maShow==='function')maShow();
   if(['compress','convert','join'].includes(t))toolsRender(t)}
 $('#mtHub').addEventListener('click',e=>{const b=e.target.closest('button');if(b)hubShow(b.dataset.t)});
 
@@ -5363,6 +5402,292 @@ function anTab(k){if(k!=='anim'){anPickEnd();zmReset()}else zmApply();anSoon();s
 window.addEventListener('resize',()=>{if(anWant())anSoon()});
 if(window.__NOVA_TEST)window.__an={AN,anBind,anAdd,anRefresh,anPlay,anExport,anSwap};
 
+/* ---------- Montage auto : 2 ou 3 vidéos → un mini-montage (transitions, textes, zoom, ambiance) à vérifier dans une timeline avant de valider ---------- */
+const MA={clips:[],texts:[],opts:{per:6,tr:'mix',trd:0.7,look:'none',txt:'cap',title:'',size:'720',zoom:true,best:true},sel:null,T:0,playing:false,raf:0,t0:0,T0:0,busy:false,out:null,id:0,pps:80,drag:null,edited:false,gen:0};
+const MA_TR=[['fade','Fondu'],['slideleft','Glisse ←'],['slideright','Glisse →'],['zoomin','Zoom'],['circleopen','Cercle'],['wipeleft','Volet'],['fadeblack','Fondu noir'],['cut','Coupe franche']];
+const MA_TRI={fade:'◐',slideleft:'⇠',slideright:'⇢',zoomin:'⤢',circleopen:'◯',wipeleft:'▤',fadeblack:'●',cut:'│'};
+const MA_MIX=['slideleft','circleopen','zoomin','wipeleft','fade','slideright'];
+/* [clé, nom, aperçu (canvas), export (ffmpeg)] */
+const MA_LOOK=[['none','Aucune','',''],['vif','Vif','contrast(1.08) saturate(1.35)','eq=contrast=1.08:saturation=1.35'],['chaud','Chaud','sepia(.18) saturate(1.2)','colorbalance=rs=.10:gs=.02:bs=-.10,eq=saturation=1.1'],['froid','Froid','saturate(1.05) hue-rotate(10deg)','colorbalance=rs=-.08:bs=.10'],['nb','Noir & blanc','grayscale(1) contrast(1.1)','hue=s=0,eq=contrast=1.1'],['cine','Cinéma','contrast(1.15) saturate(.88) brightness(.97)','eq=contrast=1.15:saturation=0.88:brightness=-0.03']];
+const MA_COL=['#38e1ff','#ff6ec7','#ffd166','#5df0a2','#b79bff','#ff9a62'];
+const maClamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const maTrDur=(c,n)=>c.tr.type==='cut'?0.1:Math.max(0.1,Math.min(+c.tr.dur||0.7,(c.b-c.a)*0.45,(n.b-n.a)*0.45));
+function maLayout(){
+  let s=0;const L=[];
+  MA.clips.forEach((c,i)=>{const len=c.b-c.a,n=MA.clips[i+1],d=n?maTrDur(c,n):0;L.push({s,len,e:s+len,d});s+=len-d});
+  return{L,tot:L.length?L[L.length-1].e:0}}
+const maClean=n=>{let t=n.replace(/\.[a-z0-9]+$/i,'').replace(/[_\-.]+/g,' ').replace(/\s+/g,' ').trim();if(!t)t='Vidéo';t=t.charAt(0).toUpperCase()+t.slice(1);return t.length>42?t.slice(0,40)+'…':t};
+
+/* ---------- page ---------- */
+function maHtml(){return `<div class="card mt-page" id="mtP-auto" hidden>
+ <div class="head"><h2>Montage auto</h2><span class="sub">dépose 2 ou 3 vidéos : ça fait un mini-montage tout seul, tu vérifies dans la timeline, puis tu valides</span></div>
+ <div class="mt-eng" hidden></div>
+ <div class="ma-drop" id="maDrop" tabindex="0"><b>🎞 Dépose tes vidéos ici</b><span class="muted sm">2 à 6 vidéos · elles ne quittent pas ton ordinateur</span><button class="btn primary" id="maPick" type="button">Choisir des vidéos…</button><button class="btn" id="maUse" type="button" hidden></button><input type="file" id="maFile" accept="${TL_ACC}" multiple hidden></div>
+ <div id="maWork" hidden>
+  <div class="ma-opts">
+   <label>Durée de chaque extrait<select id="maPer">${[3,4,5,6,8,10,15].map(v=>`<option value="${v}">${v} s</option>`).join('')}</select></label>
+   <label>Transitions<select id="maTr"><option value="mix">Mélange dynamique</option><option value="fade">Fondu doux</option>${MA_TR.filter(t=>t[0]!=='fade').map(t=>`<option value="${t[0]}">${t[1]}</option>`).join('')}</select></label>
+   <label>Ambiance<select id="maLook">${MA_LOOK.map(l=>`<option value="${l[0]}">${l[1]}</option>`).join('')}</select></label>
+   <label>Textes<select id="maTxt"><option value="cap">Légende = nom de la vidéo</option><option value="num">Partie 1, 2, 3…</option><option value="none">Aucun</option></select></label>
+   <label>Titre d'intro<input type="text" id="maTitle" maxlength="60" placeholder="(facultatif)"></label>
+   <label class="mt-chk"><input type="checkbox" id="maZoom"> Zoom lent</label>
+   <label class="mt-chk"><input type="checkbox" id="maBest"> Meilleurs moments</label>
+   <button class="btn" id="maGen" type="button" title="Refait le montage avec ces réglages (tes retouches manuelles sont perdues)">↻ Refaire le montage</button>
+   <button class="btn" id="maAdd" type="button">＋ Ajouter une vidéo</button>
+  </div>
+  <div class="ma-main">
+   <div class="ma-left"><div class="ma-cvw"><canvas id="maCv" width="960" height="540" aria-label="Aperçu du montage"></canvas><div class="ma-busy" id="maBusy" hidden></div></div>
+    <div class="ma-ctl"><button class="btn sm" id="maTo0" type="button" aria-label="Début">⏮</button><button class="btn primary sm" id="maPlay" type="button">▶ Lire</button><span class="ma-time" id="maTime">0:00 / 0:00</span><label class="mt-chk sm"><input type="checkbox" id="maSnd" checked> Son</label></div></div>
+   <div class="ma-right" id="maPanel"></div>
+  </div>
+  <div class="ma-tlw" id="maTlw"><div class="ma-tl" id="maTl"></div></div>
+  <div class="ma-exp"><label>Qualité<select id="maSize"><option value="720">720p (rapide)</option><option value="1080">1080p</option></select></label>
+   <button class="btn primary" id="maGo" type="button">✅ Valider et exporter</button><span class="muted sm" id="maExpTxt">Rien n'est fabriqué tant que tu n'as pas validé.</span>
+   <div class="ma-prog" id="maProg" hidden><div></div></div></div>
+  <div class="ma-res" id="maRes" hidden></div>
+ </div></div>`}
+$('#mtPages').insertAdjacentHTML('beforeend',maHtml());
+
+/* ---------- vidéos ---------- */
+const maVid=c=>{if(!c.v){const v=document.createElement('video');v.preload='auto';v.playsInline=true;v.muted=true;v.src=c.url;v.addEventListener('seeked',()=>{if(!MA.playing)maDraw(MA.T)});c.v=v}return c.v};
+function maMeta(f){return new Promise((res,rej)=>{const url=URL.createObjectURL(f),v=document.createElement('video');v.preload='auto';v.muted=true;v.playsInline=true;
+  const to=setTimeout(()=>{rej(new Error('lecture'))},20000);
+  v.onloadedmetadata=()=>{clearTimeout(to);if(!isFinite(v.duration)||!v.videoWidth){rej(new Error('format'));return}res({url,dur:v.duration,w:v.videoWidth,h:v.videoHeight})};
+  v.onerror=()=>{clearTimeout(to);rej(new Error('format'))};v.src=url})}
+async function maAdd(list){
+  const L=[...list].filter(mtIsVideo);if(!L.length){toast('Aucune vidéo reconnue');return}
+  if(MA.clips.length+L.length>6){toast('6 vidéos au maximum pour un mini-montage');L.length=Math.max(0,6-MA.clips.length)}
+  maBusy('Lecture des vidéos…');
+  for(const f of L){try{const m=await maMeta(f);MA.clips.push({id:++MA.id,file:f,name:f.name,url:m.url,dur:m.dur,w:m.w,h:m.h,a:0,b:Math.min(m.dur,MA.opts.per),zoom:'none',zamt:0.12,tr:{type:'fade',dur:MA.opts.trd}})}catch(e){toast(`« ${f.name} » : cette vidéo ne peut pas être lue par le navigateur (essaie de la convertir en mp4)`)}}
+  maBusy('');if(!MA.clips.length){maView();return}
+  await maGenerate()}
+function maBusy(t){const e=$('#maBusy');if(!e)return;e.hidden=!t;e.textContent=t||''}
+/* ---------- le montage automatique ---------- */
+async function maBest(c,len,prog){
+  if(c.dur<=len+0.3)return 0;const v=maVid(c),n=Math.min(70,Math.max(8,Math.floor(c.dur/0.8))),cv=phCv(64,36),g=cv.getContext('2d',{willReadFrequently:true});let prev=null;const E=[];
+  const was=!v.paused;v.pause();
+  for(let k=0;k<n;k++){await kySeek(v,Math.min(c.dur-0.05,(k+0.5)*c.dur/n));g.drawImage(v,0,0,64,36);const d=g.getImageData(0,0,64,36).data,gr=new Float32Array(64*36);
+    for(let i=0;i<gr.length;i++)gr[i]=0.3*d[i*4]+0.59*d[i*4+1]+0.11*d[i*4+2];
+    if(prev){let s=0;for(let i=0;i<gr.length;i++)s+=Math.abs(gr[i]-prev[i]);E.push(s/gr.length)}else E.push(0);prev=gr;if(prog)prog(k/n)}
+  const w=Math.max(1,Math.round(len/(c.dur/n)));let best=0,bs=-1;
+  for(let i=0;i+w<=n;i++){let s=0;for(let j=i;j<i+w;j++)s+=E[j];if(s>bs){bs=s;best=i}}
+  return maClamp(best*c.dur/n,0,c.dur-len)}
+async function maGenerate(){
+  const o=MA.opts,my=++MA.gen;if(!MA.clips.length)return;maPause();
+  for(let i=0;i<MA.clips.length;i++){const c=MA.clips[i],len=Math.min(c.dur,o.per);let a=0;
+    if(o.best&&c.dur>len+0.3){maBusy(`Je cherche le meilleur moment de la vidéo ${i+1}/${MA.clips.length}…`);try{a=await maBest(c,len,p=>{if(my===MA.gen)maBusy(`Je cherche le meilleur moment de la vidéo ${i+1}/${MA.clips.length}… ${Math.round(p*100)} %`)})}catch(e){a=0}}
+    if(my!==MA.gen)return;c.a=a;c.b=a+len;c.zoom=o.zoom?(i%2===0?'in':'out'):'none';c.zamt=0.12;
+    c.tr={type:o.tr==='mix'?MA_MIX[i%MA_MIX.length]:o.tr,dur:o.trd}}
+  maBusy('');maAutoTexts();MA.edited=false;MA.sel=null;MA.T=0;maView();maSeekAll()}
+function maAutoTexts(){
+  const o=MA.opts,{L}=maLayout();MA.texts=[];let intro=0;
+  if(o.title.trim()){const d=Math.min(3,L[0].len-0.4);MA.texts.push({id:++MA.id,text:o.title.trim(),style:'title',pos:'mid',at:0.3,dur:d});intro=0.3+d}
+  if(o.txt!=='none')MA.clips.forEach((c,i)=>{const at=Math.max(L[i].s+0.5,i===0?intro+0.2:0),end=Math.min(L[i].e-0.3,at+2.8);if(end-at<0.8)return;
+    MA.texts.push({id:++MA.id,text:o.txt==='num'?`Partie ${i+1}`:maClean(c.name),style:'band',pos:'bot',at,dur:end-at})})}
+/* ---------- aperçu ---------- */
+function maTextDraw(g,W,H,t,alpha){
+  if(alpha<=0)return;g.save();g.globalAlpha=alpha;g.textBaseline='middle';
+  if(t.style==='title'){const fs=H*0.1,y=t.pos==='top'?H*0.16:t.pos==='bot'?H*0.84:H*0.5;g.font=`900 ${fs}px Impact,"Arial Black","Segoe UI Black",sans-serif`;g.textAlign='center';
+    let tx=t.text;while(g.measureText(tx).width>W*0.9&&tx.length>3)tx=tx.slice(0,-2);
+    g.lineJoin='round';g.lineWidth=fs*0.16;g.strokeStyle='rgba(0,0,0,.85)';g.strokeText(tx,W/2,y);g.fillStyle='#fff';g.fillText(tx,W/2,y)}
+  else{const fs=H*0.052,y=t.pos==='top'?H*0.14:t.pos==='mid'?H*0.5:H*0.84;g.font=`700 ${fs}px "Segoe UI",Arial,sans-serif`;g.textAlign='left';
+    let tx=t.text;while(g.measureText(tx).width>W*0.8&&tx.length>3)tx=tx.slice(0,-2);const w=g.measureText(tx).width,px=W*0.04,ph=fs*1.0,x=W*0.04;
+    g.fillStyle='rgba(8,12,30,.62)';const r=ph*0.5,bw=w+px*1.6+fs*0.5,bx=x,by=y-ph;g.beginPath();g.roundRect?g.roundRect(bx,by,bw,ph*2,r*0.7):g.rect(bx,by,bw,ph*2);g.fill();
+    g.fillStyle='#38e1ff';g.fillRect(bx,by+ph*0.25,fs*0.14,ph*1.5);g.fillStyle='#fff';g.fillText(tx,bx+fs*0.5+px*0.4,y)}
+  g.restore()}
+function maDrawClip(g,c,tl,W,H){
+  const v=maVid(c);if(!v.videoWidth)return;const len=c.b-c.a,pr=maClamp(tl/len,0,1),Z=c.zoom==='in'?1+c.zamt*pr:c.zoom==='out'?1+c.zamt*(1-pr):1,s=Math.min(W/v.videoWidth,H/v.videoHeight)*Z,w=v.videoWidth*s,h=v.videoHeight*s;
+  g.drawImage(v,(W-w)/2,(H-h)/2,w,h)}
+function maDraw(T){
+  const cv=$('#maCv');if(!cv)return;const g=cv.getContext('2d'),W=cv.width,H=cv.height,{L,tot}=maLayout();g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.filter='none';g.fillStyle='#000';g.fillRect(0,0,W,H);
+  if(!L.length)return;T=maClamp(T,0,tot);let k=0;for(let i=0;i<L.length;i++)if(L[i].s<=T+1e-6)k=i;
+  const look=MA_LOOK.find(l=>l[0]===MA.opts.look);try{g.filter=look&&look[2]?look[2]:'none'}catch(e){}
+  const inC=MA.clips[k];
+  if(k>0&&T<L[k-1].e){const A=MA.clips[k-1],d=Math.max(0.05,L[k-1].d),p=maClamp((T-L[k].s)/d,0,1),ta=T-L[k-1].s,tb=T-L[k].s,ty=A.tr.type;
+    const base=()=>maDrawClip(g,A,ta,W,H),inc=()=>maDrawClip(g,inC,tb,W,H);
+    if(ty==='slideleft'||ty==='slideright'){const sg=ty==='slideleft'?-1:1;g.save();g.translate(sg*p*W,0);base();g.restore();g.save();g.translate(sg*(p-1)*W,0);inc();g.restore()}
+    else if(ty==='wipeleft'){base();g.save();g.beginPath();g.rect(W*(1-p),0,W*p+1,H);g.clip();inc();g.restore()}
+    else if(ty==='circleopen'){base();g.save();g.beginPath();g.arc(W/2,H/2,p*Math.hypot(W,H)/2,0,Math.PI*2);g.clip();inc();g.restore()}
+    else if(ty==='fadeblack'){if(p<0.5){g.globalAlpha=1-2*p;base()}else{g.globalAlpha=2*p-1;inc()}g.globalAlpha=1}
+    else if(ty==='zoomin'){g.save();g.translate(W/2,H/2);g.scale(1+0.5*p,1+0.5*p);g.translate(-W/2,-H/2);g.globalAlpha=1-p;base();g.restore();g.globalAlpha=p;inc();g.globalAlpha=1}
+    else{base();g.globalAlpha=p;inc();g.globalAlpha=1}}
+  else maDrawClip(g,inC,T-L[k].s,W,H);
+  g.filter='none';
+  for(const t of MA.texts){if(T<t.at||T>t.at+t.dur)continue;const f=Math.min(0.3,t.dur/3);maTextDraw(g,W,H,t,Math.min(1,(T-t.at)/f,(t.at+t.dur-T)/f))}
+  const tm=$('#maTime');if(tm)tm.textContent=`${mtFmt(T,1)} / ${mtFmt(tot,1)}`;maHead()}
+function maWeights(){const {L}=maLayout(),w=MA.clips.map(()=>0);let k=0;for(let i=0;i<L.length;i++)if(L[i].s<=MA.T+1e-6)k=i;
+  if(k>0&&MA.T<L[k-1].e){const p=maClamp((MA.T-L[k].s)/Math.max(0.05,L[k-1].d),0,1);w[k-1]=1-p;w[k]=p}else if(L.length)w[k]=1;return w}
+function maSync(play){
+  const {L}=maLayout(),W=maWeights(),snd=$('#maSnd').checked;
+  MA.clips.forEach((c,i)=>{const v=maVid(c),act=W[i]>0||(MA.T>=L[i].s-0.02&&MA.T<L[i].e),want=c.a+maClamp(MA.T-L[i].s,0,c.b-c.a);
+    if(act){
+      if(play){if(Math.abs(v.currentTime-want)>0.3)v.currentTime=want;if(v.paused)v.play().catch(()=>{});v.muted=!snd;v.volume=maClamp(W[i]||0,0,1)}
+      else{if(!v.paused)v.pause();if(Math.abs(v.currentTime-want)>0.02)v.currentTime=want;v.muted=true}}
+    else{if(!v.paused)v.pause();v.muted=true;
+      /* le prochain extrait est préparé à l'avance pour que la transition soit fluide */
+      const pre=L[i].s-MA.T;if(play&&pre>0&&pre<1&&Math.abs(v.currentTime-c.a)>0.08)v.currentTime=c.a}})}
+function maSeekAll(){maSync(false);maDraw(MA.T)}
+function maPlay(){
+  const {tot}=maLayout();if(!tot)return;if(MA.playing){maPause();return}
+  if(MA.T>=tot-0.05)MA.T=0;MA.playing=true;MA.t0=performance.now();MA.T0=MA.T;$('#maPlay').textContent='⏸ Pause';
+  const loop=()=>{if(!MA.playing)return;const T=MA.T0+(performance.now()-MA.t0)/1000;if(T>=tot){MA.T=tot;maSync(false);maDraw(tot);maPause();return}
+    MA.T=T;maSync(true);maDraw(T);MA.raf=requestAnimationFrame(loop)};MA.raf=requestAnimationFrame(loop)}
+function maPause(){if(MA.raf)cancelAnimationFrame(MA.raf);MA.raf=0;MA.playing=false;const b=$('#maPlay');if(b)b.textContent='▶ Lire';MA.clips.forEach(c=>{if(c.v&&!c.v.paused)c.v.pause()});if(MA.clips.length)maSeekAll()}
+function maSeek(T){const {tot}=maLayout();MA.T=maClamp(T,0,tot);if(MA.playing){MA.t0=performance.now();MA.T0=MA.T;maSync(true)}else maSeekAll()}
+/* ---------- timeline ---------- */
+const MA_OFF=74,maX=t=>MA_OFF+t*MA.pps;
+function maHead(){const h=$('#maHead');if(h)h.style.left=maX(MA.T)+'px'}
+function maTl(){
+  const {L,tot}=maLayout(),el=$('#maTl');if(!el)return;const w=Math.max(el.parentElement.clientWidth-4,maX(tot)+60);el.style.width=w+'px';
+  let h=`<div class="ma-ruler" id="maRuler">`;const stp=MA.pps>=60?1:MA.pps>=30?2:5;for(let s=0;s<=Math.ceil(tot);s+=stp)h+=`<span style="left:${maX(s)}px">${mtFmt(s,0)}</span>`;h+='</div>';
+  h+=`<div class="ma-lane ma-l1"><b class="ma-ln">Vidéos</b>`;
+  MA.clips.forEach((c,i)=>{const l=L[i],sel=MA.sel&&MA.sel.k==='clip'&&MA.sel.i===i;
+    h+=`<div class="ma-blk ma-clip${sel?' sel':''}" data-i="${i}" style="left:${maX(l.s)}px;width:${Math.max(18,l.len*MA.pps)}px;top:${6+(i%2)*40}px;--c:${MA_COL[i%MA_COL.length]}"><i class="ma-h l" data-h="l"></i><span class="ma-nm">${i+1}. ${esc(maClean(c.name))}</span><small>${mtFmt(l.len,1)}${c.zoom!=='none'?' · 🔍':''}</small><i class="ma-h r" data-h="r"></i></div>`;
+    if(i<MA.clips.length-1){const n=L[i+1],ts=MA.sel&&MA.sel.k==='tr'&&MA.sel.i===i;h+=`<div class="ma-trm${ts?' sel':''}" data-tr="${i}" style="left:${maX(n.s)}px;width:${Math.max(26,l.d*MA.pps)}px;top:${24}px" title="Transition : ${esc((MA_TR.find(t=>t[0]===c.tr.type)||[0,''])[1])}"><span>${MA_TRI[c.tr.type]||'◐'}</span></div>`}});
+  h+=`</div><div class="ma-lane ma-l2"><b class="ma-ln">Textes</b>`;
+  MA.texts.forEach(t=>{const sel=MA.sel&&MA.sel.k==='txt'&&MA.sel.id===t.id;h+=`<div class="ma-blk ma-txt${sel?' sel':''}" data-t="${t.id}" style="left:${maX(t.at)}px;width:${Math.max(18,t.dur*MA.pps)}px"><i class="ma-h l" data-h="l"></i><span class="ma-nm">💬 ${esc(t.text)}</span><i class="ma-h r" data-h="r"></i></div>`});
+  h+=`<button class="btn sm ma-addt" id="maAddT" type="button">＋ Texte</button></div><div class="ma-head" id="maHead"><i></i></div>`;
+  el.innerHTML=h;maHead()}
+function maPanel(){
+  const p=$('#maPanel'),s=MA.sel,{L}=maLayout();
+  if(s&&s.k==='clip'&&MA.clips[s.i]){const c=MA.clips[s.i],i=s.i;
+    p.innerHTML=`<h4 class="ma-h4">Extrait ${i+1} · ${esc(maClean(c.name))}</h4><p class="muted sm">Durée de la vidéo : ${mtFmt(c.dur,1)} — tire les bords du bloc dans la timeline, ou règle ici.</p>
+    <div class="ma-grid"><label>Début (s)<input type="number" step="0.1" min="0" max="${(c.dur-0.6).toFixed(1)}" value="${c.a.toFixed(1)}" data-f="a"></label><label>Fin (s)<input type="number" step="0.1" min="0.6" max="${c.dur.toFixed(1)}" value="${c.b.toFixed(1)}" data-f="b"></label>
+    <label>Zoom<select data-f="zoom"><option value="none">Aucun</option><option value="in">Zoom avant lent</option><option value="out">Zoom arrière lent</option></select></label>
+    <label>Force du zoom<input type="range" min="4" max="30" step="1" value="${Math.round(c.zamt*100)}" data-f="zamt"></label></div>
+    <div class="ma-row"><button class="btn sm" data-a="best" type="button">🎯 Meilleur moment</button><button class="btn sm" data-a="left" type="button" ${i?'':'disabled'}>◀ Avant</button><button class="btn sm" data-a="right" type="button" ${i<MA.clips.length-1?'':'disabled'}>Après ▶</button><button class="btn sm danger" data-a="del" type="button">🗑 Retirer</button></div>`;
+    p.querySelector('[data-f=zoom]').value=c.zoom}
+  else if(s&&s.k==='tr'&&MA.clips[s.i+1]){const c=MA.clips[s.i];
+    p.innerHTML=`<h4 class="ma-h4">Transition ${s.i+1} → ${s.i+2}</h4><div class="ma-grid"><label>Effet<select data-f="trt">${MA_TR.map(t=>`<option value="${t[0]}">${t[1]}</option>`).join('')}</select></label><label>Durée : <b>${(+c.tr.dur).toFixed(1)} s</b><input type="range" min="0.2" max="2" step="0.1" value="${c.tr.dur}" data-f="trd"></label></div>
+    <div class="ma-row"><button class="btn sm" data-a="trall" type="button">Appliquer à toutes</button></div>`;p.querySelector('[data-f=trt]').value=c.tr.type}
+  else if(s&&s.k==='txt'&&MA.texts.find(t=>t.id===s.id)){const t=MA.texts.find(x=>x.id===s.id);
+    p.innerHTML=`<h4 class="ma-h4">Texte</h4><label class="ma-wide">Contenu<input type="text" maxlength="70" value="${esc(t.text)}" data-f="text"></label>
+    <div class="ma-grid"><label>Style<select data-f="style"><option value="band">Bandeau</option><option value="title">Gros titre</option></select></label><label>Position<select data-f="pos"><option value="top">Haut</option><option value="mid">Milieu</option><option value="bot">Bas</option></select></label>
+    <label>Début (s)<input type="number" step="0.1" min="0" value="${t.at.toFixed(1)}" data-f="at"></label><label>Durée (s)<input type="number" step="0.1" min="0.5" value="${t.dur.toFixed(1)}" data-f="dur"></label></div>
+    <div class="ma-row"><button class="btn sm danger" data-a="deltxt" type="button">🗑 Retirer ce texte</button></div>`;p.querySelector('[data-f=style]').value=t.style;p.querySelector('[data-f=pos]').value=t.pos}
+  else p.innerHTML=`<h4 class="ma-h4">Ton mini-montage</h4><p class="muted sm">${MA.clips.length} vidéo${MA.clips.length>1?'s':''} · ${mtFmt(L.length?L[L.length-1].e:0,1)}.</p>
+    <ul class="ma-help"><li>▶ Lis l'aperçu, puis clique sur un <b>bloc</b> pour le modifier.</li><li>Tire un bloc pour <b>changer l'ordre</b>, ses bords pour le <b>raccourcir</b>.</li><li>Clique sur le petit signe entre deux blocs pour changer la <b>transition</b>.</li><li>Les textes se règlent dans la ligne du bas.</li></ul><p class="muted sm">Quand c'est bon : <b>✅ Valider et exporter</b>.</p>`}
+function maView(){
+  const has=MA.clips.length>0,u=$('#maUse');u.hidden=has||!MT.files.length;u.textContent=`Utiliser mes ${MT.files.length} vidéo${MT.files.length>1?'s':''} du studio`;
+  $('#maWork').hidden=!has;$('#maDrop').classList.toggle('mini',has);
+  const o=MA.opts;$('#maPer').value=String(o.per);$('#maTr').value=o.tr;$('#maLook').value=o.look;$('#maTxt').value=o.txt;$('#maTitle').value=o.title;$('#maZoom').checked=o.zoom;$('#maBest').checked=o.best;$('#maSize').value=o.size;
+  maTl();maPanel();maDraw(MA.T)}
+function maTouch(){MA.edited=true;MA.out&&maDropRes();maTl();maPanel();maSeekAll()}
+function maDropRes(){const r=$('#maRes');if(MA.out){URL.revokeObjectURL(MA.out.url);MA.out=null}r.hidden=true;r.innerHTML=''}
+function maShow(){maView()}
+/* ---------- événements ---------- */
+function maWire(){
+  const drop=$('#maDrop'),pg=$('#mtP-auto');
+  $('#maPick').addEventListener('click',()=>$('#maFile').click());$('#maUse').addEventListener('click',()=>maAdd(MT.files.slice(0,6)));$('#maAdd').addEventListener('click',()=>$('#maFile').click());
+  $('#maFile').addEventListener('change',e=>{maAdd(e.target.files);e.target.value=''});
+  ['dragenter','dragover'].forEach(ev=>pg.addEventListener(ev,e=>{if(!e.dataTransfer||![...e.dataTransfer.types].includes('Files'))return;e.preventDefault();drop.classList.add('over')}));
+  ['dragleave','drop'].forEach(ev=>pg.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over')}));
+  pg.addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files.length)maAdd(e.dataTransfer.files)});
+  const O=MA.opts,num=v=>+v;
+  $('#maPer').addEventListener('change',e=>{O.per=num(e.target.value)});$('#maTr').addEventListener('change',e=>{O.tr=e.target.value});
+  $('#maLook').addEventListener('change',e=>{O.look=e.target.value;maSeekAll()});$('#maTxt').addEventListener('change',e=>{O.txt=e.target.value});
+  $('#maTitle').addEventListener('input',e=>{O.title=e.target.value});$('#maZoom').addEventListener('change',e=>{O.zoom=e.target.checked});$('#maBest').addEventListener('change',e=>{O.best=e.target.checked});
+  $('#maSize').addEventListener('change',e=>{O.size=e.target.value});
+  $('#maGen').addEventListener('click',()=>{if(MA.edited&&!confirm('Refaire le montage efface tes retouches. Continuer ?'))return;maDropRes();maGenerate()});
+  $('#maPlay').addEventListener('click',maPlay);$('#maTo0').addEventListener('click',()=>maSeek(0));$('#maSnd').addEventListener('change',()=>{if(MA.playing)maSync(true)});
+  $('#maGo').addEventListener('click',maExport);
+  /* panneau de droite */
+  const P=$('#maPanel');
+  P.addEventListener('input',e=>{const t=e.target,f=t.dataset.f;if(!f)return;const s=MA.sel;
+    if(s&&s.k==='clip'){const c=MA.clips[s.i];if(!c)return;
+      if(f==='zamt'){c.zamt=num(t.value)/100;MA.edited=true;maDraw(MA.T);return}
+      if(f==='a'||f==='b'){return}
+      if(f==='zoom'){c.zoom=t.value;maTouch()}}
+    else if(s&&s.k==='tr'){const c=MA.clips[s.i];if(!c)return;if(f==='trd'){c.tr.dur=num(t.value);const b=t.parentElement.querySelector('b');if(b)b.textContent=c.tr.dur.toFixed(1)+' s';MA.edited=true;maTl();maDraw(MA.T)}else if(f==='trt'){c.tr.type=t.value;maTouch()}}
+    else if(s&&s.k==='txt'){const x=MA.texts.find(q=>q.id===s.id);if(!x)return;if(f==='text'){x.text=t.value||' ';MA.edited=true;maTl();maDraw(MA.T)}else if(f==='style'||f==='pos'){x[f]=t.value;maTouch()}}});
+  P.addEventListener('change',e=>{const t=e.target,f=t.dataset.f;if(!f)return;const s=MA.sel;
+    if(s&&s.k==='clip'){const c=MA.clips[s.i];if(!c)return;let v=num(t.value);if(f==='a'){c.a=maClamp(v,0,c.b-0.6);maTouch()}else if(f==='b'){c.b=maClamp(v,c.a+0.6,c.dur);maTouch()}}
+    else if(s&&s.k==='txt'){const x=MA.texts.find(q=>q.id===s.id);if(!x)return;const v=num(t.value);if(f==='at'){x.at=Math.max(0,v);maTouch()}else if(f==='dur'){x.dur=Math.max(0.5,v);maTouch()}}});
+  P.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b||!MA.sel)return;const s=MA.sel,a=b.dataset.a;
+    if(s.k==='clip'){const i=s.i,c=MA.clips[i];
+      if(a==='del'){MA.clips.splice(i,1);MA.sel=null;maAutoTextsKeep();maTouch();return}
+      if(a==='left'&&i>0){[MA.clips[i-1],MA.clips[i]]=[MA.clips[i],MA.clips[i-1]];MA.sel={k:'clip',i:i-1};maTouch();return}
+      if(a==='right'&&i<MA.clips.length-1){[MA.clips[i+1],MA.clips[i]]=[MA.clips[i],MA.clips[i+1]];MA.sel={k:'clip',i:i+1};maTouch();return}
+      if(a==='best'){maBusy('Je cherche le meilleur moment…');maBest(c,c.b-c.a).then(x=>{c.b=x+(c.b-c.a);c.a=x;maBusy('');maTouch()}).catch(()=>maBusy(''))}}
+    else if(s.k==='tr'&&a==='trall'){const c=MA.clips[s.i];MA.clips.forEach(q=>{q.tr.type=c.tr.type;q.tr.dur=c.tr.dur});maTouch()}
+    else if(s.k==='txt'&&a==='deltxt'){MA.texts=MA.texts.filter(q=>q.id!==s.id);MA.sel=null;maTouch()}});
+  /* timeline : sélection, glisser, rogner, tête de lecture */
+  const tl=$('#maTl');
+  tl.addEventListener('click',e=>{const add=e.target.closest('#maAddT');if(add){const {L}=maLayout();MA.texts.push({id:++MA.id,text:'Mon texte',style:'band',pos:'bot',at:MA.T,dur:2.5});MA.sel={k:'txt',id:MA.id};maTouch();return}});
+  tl.addEventListener('pointerdown',e=>{
+    const ruler=e.target.closest('#maRuler');if(ruler){const r=tl.getBoundingClientRect();maSeek((e.clientX-r.left-MA_OFF)/MA.pps);MA.drag={k:'head'};tl.setPointerCapture(e.pointerId);return}
+    const hd=e.target.closest('.ma-head');if(hd){MA.drag={k:'head'};tl.setPointerCapture(e.pointerId);return}
+    const tr=e.target.closest('[data-tr]');if(tr){MA.sel={k:'tr',i:+tr.dataset.tr};maTl();maPanel();return}
+    const blk=e.target.closest('.ma-blk');if(!blk){MA.sel=null;maTl();maPanel();return}
+    const h=e.target.closest('[data-h]'),isT=blk.classList.contains('ma-txt');
+    if(isT){const x=MA.texts.find(q=>q.id===+blk.dataset.t);MA.sel={k:'txt',id:x.id};MA.drag={k:h?'th'+h.dataset.h:'tm',x0:e.clientX,at:x.at,dur:x.dur,id:x.id}}
+    else{const i=+blk.dataset.i,c=MA.clips[i];MA.sel={k:'clip',i};MA.drag={k:h?'c'+h.dataset.h:'cm',x0:e.clientX,a:c.a,b:c.b,i,moved:false}}
+    maTl();maPanel();tl.setPointerCapture(e.pointerId);e.preventDefault()});
+  tl.addEventListener('pointermove',e=>{const d=MA.drag;if(!d)return;const r=tl.getBoundingClientRect();
+    if(d.k==='head'){maSeek((e.clientX-r.left-MA_OFF)/MA.pps);return}
+    const dt=(e.clientX-d.x0)/MA.pps;
+    if(d.k==='cl'){const c=MA.clips[d.i];c.a=maClamp(d.a+dt,0,c.b-0.6);MA.edited=true;maTl();maSeekAll()}
+    else if(d.k==='cr'){const c=MA.clips[d.i];c.b=maClamp(d.b+dt,c.a+0.6,c.dur);MA.edited=true;maTl();maSeekAll()}
+    else if(d.k==='cm'){if(Math.abs(e.clientX-d.x0)<6&&!d.moved)return;d.moved=true;const {L}=maLayout(),tm=(e.clientX-r.left-MA_OFF)/MA.pps;let j=d.i;
+      /* le bloc change de place quand on dépasse le milieu du voisin */
+      if(j<MA.clips.length-1&&tm>L[j+1].s+L[j+1].len/2){[MA.clips[j+1],MA.clips[j]]=[MA.clips[j],MA.clips[j+1]];j++}
+      else if(j>0&&tm<L[j-1].s+L[j-1].len/2){[MA.clips[j-1],MA.clips[j]]=[MA.clips[j],MA.clips[j-1]];j--}
+      if(j!==d.i){d.i=j;MA.sel={k:'clip',i:j};MA.edited=true;maTl();maPanel();maSeekAll()}}
+    else if(d.k==='tm'){const x=MA.texts.find(q=>q.id===d.id);x.at=Math.max(0,d.at+dt);MA.edited=true;maTl();maDraw(MA.T)}
+    else if(d.k==='tl'){const x=MA.texts.find(q=>q.id===d.id);const na=maClamp(d.at+dt,0,d.at+d.dur-0.5);x.dur=d.dur-(na-d.at);x.at=na;MA.edited=true;maTl();maDraw(MA.T)}
+    else if(d.k==='tr'){const x=MA.texts.find(q=>q.id===d.id);x.dur=Math.max(0.5,d.dur+dt);MA.edited=true;maTl();maDraw(MA.T)}});
+  const end=()=>{const d=MA.drag;MA.drag=null;if(d&&d.k!=='head'){MA.out&&maDropRes();maPanel();maSeekAll()}};
+  tl.addEventListener('pointerup',end);tl.addEventListener('pointercancel',end);
+  document.addEventListener('keydown',e=>{if(e.code!=='Space'||$('#mtP-auto').hidden||!$('#tab-montage').classList.contains('on'))return;if(/^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test((e.target||{}).tagName||''))return;e.preventDefault();maPlay()});
+  window.addEventListener('resize',()=>{if(!$('#mtP-auto').hidden)maTl()})}
+/* après avoir retiré une vidéo, les textes qui dépassent la fin sont ramenés dedans */
+function maAutoTextsKeep(){const {tot}=maLayout();MA.texts=MA.texts.filter(t=>t.at<tot-0.3);MA.texts.forEach(t=>{t.dur=Math.min(t.dur,tot-t.at)})}
+maWire();
+/* ---------- export ---------- */
+function maTextPng(t,W,H){return new Promise(res=>{const cv=phCv(W,H),g=cv.getContext('2d');maTextDraw(g,W,H,t,1);cv.toBlob(async b=>res(new Uint8Array(await b.arrayBuffer())),'image/png')})}
+function maProg(t,p){const e=$('#maExpTxt'),b=$('#maProg');e.textContent=t||"Rien n'est fabriqué tant que tu n'as pas validé.";b.hidden=p==null;if(p!=null)b.firstElementChild.style.width=Math.round(maClamp(p,0,1)*100)+'%'}
+async function maExport(){
+  if(MA.busy||!MA.clips.length)return;maPause();maDropRes();MA.busy=true;$('#maGo').disabled=true;
+  const O=MA.opts,F=30,W=O.size==='1080'?1920:1280,H=O.size==='1080'?1080:720;let ff=null,names=[],iv=0;
+  try{
+    maProg('Chargement du moteur…',0.02);ff=await mtEngine();
+    await mtSerial(async()=>{
+      const {L,tot}=maLayout(),clips=MA.clips,N=clips.length,infos=[];
+      maProg('Lecture des vidéos…',0.04);for(const c of clips)infos.push(await mtProbe(ff,c.file));
+      const paths=await mtMountMany(ff,clips.map(c=>c.file)),args=[],fc=[];
+      clips.forEach((c,i)=>args.push('-ss',c.a.toFixed(3),'-t',(c.b-c.a).toFixed(3),'-i',paths[i]));
+      maProg('Préparation des textes…',0.06);
+      for(let k=0;k<MA.texts.length;k++){const t=MA.texts[k],nm=`tx${k}.png`;await ff.writeFile(nm,await maTextPng(t,W,H));names.push(nm);args.push('-loop','1','-framerate',String(F),'-t',(t.dur+0.2).toFixed(3),'-i',nm)}
+      clips.forEach((c,i)=>{const len=c.b-c.a,Z=c.zamt;
+        const zf=c.zoom==='in'?`,scale=w='trunc(${W}*(1+${Z}*t/${len.toFixed(3)})/2)*2':h='trunc(${H}*(1+${Z}*t/${len.toFixed(3)})/2)*2':eval=frame,crop=${W}:${H}`:c.zoom==='out'?`,scale=w='trunc(${W}*(1+${Z}*(1-t/${len.toFixed(3)}))/2)*2':h='trunc(${H}*(1+${Z}*(1-t/${len.toFixed(3)}))/2)*2':eval=frame,crop=${W}:${H}`:'';
+        fc.push(`[${i}:v]fps=${F},scale=${W}:${H}:force_original_aspect_ratio=decrease,pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2,setsar=1,format=yuv420p${zf},setpts=PTS-STARTPTS[v${i}]`);
+        const plan=mtAudioPlan(infos[i],null,{inp:i,pre:`i${i}_`,out:`r${i}`});
+        if(plan.none)fc.push(`anullsrc=r=48000:cl=stereo,atrim=0:${len.toFixed(3)}[a${i}]`);
+        else if(plan.copy)fc.push(`[${i}:a:0]aresample=48000,aformat=channel_layouts=stereo,atrim=0:${len.toFixed(3)},asetpts=PTS-STARTPTS[a${i}]`);
+        else{fc.push(...plan.fc);fc.push(`${plan.label}aresample=48000,aformat=channel_layouts=stereo,atrim=0:${len.toFixed(3)},asetpts=PTS-STARTPTS[a${i}]`)}});
+      let vl='[v0]',al='[a0]',cum=L[0].len;
+      for(let i=1;i<N;i++){const A=clips[i-1],d=L[i-1].d,off=Math.max(0,cum-d);
+        fc.push(`${vl}[v${i}]xfade=transition=${A.tr.type==='cut'?'fade':A.tr.type}:duration=${d.toFixed(3)}:offset=${off.toFixed(3)}[x${i}]`);vl=`[x${i}]`;
+        fc.push(`${al}[a${i}]acrossfade=d=${d.toFixed(3)}[y${i}]`);al=`[y${i}]`;cum+=L[i].len-d}
+      const look=MA_LOOK.find(l=>l[0]===O.look);if(look&&look[3]){fc.push(`${vl}${look[3]}[vl]`);vl='[vl]'}
+      MA.texts.forEach((t,k)=>{const f=Math.min(0.3,t.dur/3);
+        fc.push(`[${N+k}:v]format=rgba,fade=t=in:st=0:d=${f.toFixed(2)}:alpha=1,fade=t=out:st=${Math.max(0,t.dur-f).toFixed(3)}:d=${f.toFixed(2)}:alpha=1,setpts=PTS+${t.at.toFixed(3)}/TB[tx${k}]`);
+        fc.push(`${vl}[tx${k}]overlay=0:0:eof_action=pass:format=auto[vt${k}]`);vl=`[vt${k}]`});
+      fc.push(`${vl}format=yuv420p[vout]`);
+      const job=MT.cur={tot:Math.max(0.5,tot),pct:0};iv=setInterval(()=>maProg(`Fabrication du montage… ${Math.round(job.pct*100)} %`,0.08+job.pct*0.9),300);
+      names.push('ma_out.mp4');
+      const code=await ff.exec([...args,'-filter_complex',fc.join(';'),'-map','[vout]','-map',al,'-c:v','libx264','-preset','veryfast','-crf','21','-pix_fmt','yuv420p','-c:a','aac','-b:a','160k','-movflags','+faststart','-t',tot.toFixed(3),'-y','ma_out.mp4']);
+      if(code!==0)throw new Error('ffmpeg '+code);
+      const d=await ff.readFile('ma_out.mp4'),blob=new Blob([d],{type:'video/mp4'}),url=URL.createObjectURL(blob);
+      MA.out={url,blob,name:`Mini-montage (${N} vidéos).mp4`};maShowRes()});
+  }catch(e){console.warn('montage auto:',e);toast("Le montage a échoué : "+String((e&&e.message)||e).slice(0,140));if(typeof mtResetEngine==='function')mtResetEngine(e)}
+  finally{clearInterval(iv);MT.cur=null;if(ff){for(const n of names){try{await ff.deleteFile(n)}catch(_){}}try{await ff.unmount('/src')}catch(_){}}MA.busy=false;$('#maGo').disabled=false;maProg('',null)}}
+function maShowRes(){const r=$('#maRes'),o=MA.out;if(!o)return;r.hidden=false;
+  r.innerHTML=`<h4 class="ma-h4">✅ Ton mini-montage est prêt</h4><video controls playsinline src="${o.url}"></video><div class="ma-row"><a class="btn primary" href="${o.url}" download="${esc(o.name)}">⬇ Télécharger (${mtSize(o.blob.size)})</a><span class="muted sm">Pas bon ? Modifie la timeline puis valide à nouveau.</span></div>`;r.scrollIntoView({behavior:'smooth',block:'nearest'})}
+/* depuis l'accueil du studio : les vidéos déjà choisies */
+function maFromHome(){hubShow('auto');if(!MA.clips.length)maAdd(MT.files.slice(0,6))}
+if(window.__NOVA_TEST)Object.assign(window.__mt||(window.__mt={}),{MA,maAdd,maLayout,maGenerate,maExport,maDraw});
+
 /* ---------- Studio : détourage par IA (SAM, modèle « SlimSAM »), en option, dans le navigateur ---------- */
 const SAM_ID='Xenova/slimsam-77-uniform';
 const SAM={w:null,pend:null,key:'',ready:false,busy:false,pts:[],idle:0,k:1,sw:0,sh:0,frame:null};
@@ -5470,7 +5795,7 @@ async function anSamClick(p,mode){
 /* ---------- Studio : une seule fenêtre pour monter (lecteur, timeline, panneaux de réglages) ---------- */
 const STU={tab:'cut',raf:0,rulerSig:'',mute:false};
 const ST_TABS=[['cut','✂️','Découpe'],['audio','🔊','Son'],['anim','🎯','Animations'],['subs','💬','Sous-titres'],['export','📤','Export'],['more','✨','Plus']];
-const ST_TOOLS=[['rec','🎥','Enregistrer l\'écran','filmer ton écran, ton jeu et ton micro'],['sounds','🎵','Sons & musiques','chercher des sons libres de droits'],['join','🔗','Assembler','coller plusieurs vidéos bout à bout'],['compress','🗜','Compresser','rendre une vidéo assez légère pour Discord'],['convert','🔄','Convertir','changer de format ou en tirer le son'],['thumb','🖼','Miniature','créer une miniature YouTube'],['keys','🎯','Image d\'un élément','sortir un détail de la vidéo, agrandi, en image']];
+const ST_TOOLS=[['rec','🎥','Enregistrer l\'écran','filmer ton écran, ton jeu et ton micro'],['sounds','🎵','Sons & musiques','chercher des sons libres de droits'],['auto','🎞','Montage auto','2 ou 3 vidéos → un mini-montage tout seul (transitions, textes, zoom)'],['join','🔗','Assembler','coller plusieurs vidéos bout à bout'],['compress','🗜','Compresser','rendre une vidéo assez légère pour Discord'],['convert','🔄','Convertir','changer de format ou en tirer le son'],['thumb','🖼','Miniature','créer une miniature YouTube'],['keys','🎯','Image d\'un élément','sortir un détail de la vidéo, agrandi, en image']];
 function stTiles(){
   const h=ST_TOOLS.map(([k,i,n,d])=>`<button class="st-tile" type="button" data-hub="${k}"><span class="st-ti">${i}</span><b>${esc(n)}</b><span class="muted sm">${esc(d)}</span></button>`).join('');
   $('#stTiles').innerHTML=h;$('#stMore').innerHTML=ST_TOOLS.filter(t=>t[0]==='rec'||t[0]==='sounds').map(([k,i,n,d])=>`<button class="st-tile" type="button" data-hub="${k}"><span class="st-ti">${i}</span><b>${esc(n)}</b><span class="muted sm">${esc(d)}</span></button>`).join('');
