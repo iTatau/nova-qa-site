@@ -1025,6 +1025,7 @@ button.flash{animation:anflash .9s ease 2}@keyframes anflash{50%{box-shadow:0 0 
 .ma-fxm.sel{outline:2px solid #fff;outline-offset:2px}
 .ma-checks{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0}
 .ma-emo{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.ma-wave{display:block;width:100%;height:70px;border-radius:10px;border:1px solid var(--line);cursor:pointer;margin:6px 0;touch-action:none}
 </style>
 </head>
 <body>
@@ -5416,17 +5417,17 @@ window.addEventListener('resize',()=>{if(anWant())anSoon()});
 if(window.__NOVA_TEST)window.__an={AN,anBind,anAdd,anRefresh,anPlay,anExport,anSwap};
 
 /* ---------- Montage auto : des vidéos → un montage qui RÉAGIT (son fort, mouvement) avec de vrais effets, à vérifier dans une timeline avant de valider ---------- */
-const MA={clips:[],texts:[],fx:[],opts:{style:'react',per:6,tr:'mix',trd:0.55,look:'vif',txt:'none',title:'',size:'720',zoom:true,best:true,power:75,f:{zoom:1,shake:1,flash:1,rgb:1,pulse:1,bloom:1,ca:1,live:1,text:1,sfx:1,grain:0,bars:0,scan:0}},sel:null,T:0,playing:false,raf:0,t0:0,T0:0,busy:false,out:null,id:0,pps:80,drag:null,edited:false,gen:0,sfxT:0};
+const MA={clips:[],texts:[],fx:[],opts:{style:'react',per:12,tr:'mix',trd:0.55,look:'vif',txt:'none',title:'',size:'720',zoom:true,best:true,power:75,f:{zoom:1,shake:1,flash:1,rgb:1,pulse:1,bloom:1,ca:1,live:1,text:1,sfx:1,grain:0,bars:0,scan:0}},sel:null,T:0,playing:false,raf:0,t0:0,T0:0,busy:false,out:null,id:0,pps:80,drag:null,edited:false,gen:0,sfxT:0};
 /* [clé, nom, durée conseillée] */
 const MA_TR=[['glitch','Glitch',0.45],['whip','Balayage rapide',0.35],['flash','Flash',0.4],['zoomthru','Plongée zoom',0.5],['spin','Rotation',0.5],['crosszoom','Zoom croisé',0.55],['burn','Lumière (film brûlé)',0.7],['slices','Tranches',0.55],['shake','Coup sec',0.3],['fade','Fondu',0.7],['fadeblack','Fondu noir',0.8],['slideleft','Glisse ←',0.6],['slideright','Glisse →',0.6],['circleopen','Cercle',0.7],['wipeleft','Volet',0.6],['cut','Coupe franche',0.1]];
 const MA_TRI={glitch:'⚡',whip:'💨',flash:'✺',zoomthru:'⤢',spin:'🌀',crosszoom:'🔎',burn:'🔥',slices:'☰',shake:'📳',fade:'◐',fadeblack:'●',slideleft:'⇠',slideright:'⇢',circleopen:'◯',wipeleft:'▤',cut:'│'};
 /* [clé, nom, aperçu canvas] */
 const MA_LOOK=[['none','Aucune',''],['vif','Vif','contrast(1.1) saturate(1.4)'],['chaud','Chaud','sepia(.2) saturate(1.25) contrast(1.05)'],['froid','Froid','saturate(1.1) hue-rotate(12deg) contrast(1.05)'],['nb','Noir & blanc','grayscale(1) contrast(1.2)'],['cine','Cinéma','contrast(1.18) saturate(.85) brightness(.96)']];
 const MA_STY={
- react:{n:'🔥 Réaction gaming',d:'zoom coup de poing vers l\'action, lueur, flash et glitch seulement sur les vrais gros moments',mix:['whip','crosszoom','flash','slices','glitch','burn'],o:{per:6,power:75,look:'vif',zoom:true,f:{zoom:1,shake:1,flash:1,rgb:1,pulse:1,bloom:1,ca:1,live:1,text:1,sfx:1,grain:0,bars:0,scan:0}}},
- hyper:{n:'⚡ Hyper (TikTok)',d:'coupes courtes, pulsation sur le son, ça bouge tout le temps',mix:['whip','crosszoom','slices','flash','spin','zoomthru'],o:{per:4,power:100,look:'vif',zoom:true,f:{zoom:1,shake:1,flash:1,rgb:1,pulse:1,bloom:1,ca:1,live:1,text:1,sfx:1,grain:0,bars:0,scan:0}}},
- cine:{n:'🎞 Cinéma',d:'doux : fondus, lumière, zoom lent, bandes noires, léger grain',mix:['burn','fade','crosszoom','fadeblack'],o:{per:8,power:35,look:'cine',zoom:true,f:{zoom:1,shake:0,flash:0,rgb:0,pulse:1,bloom:1,ca:1,live:1,text:0,sfx:0,grain:1,bars:1,scan:0}}},
- vhs:{n:'📼 Rétro VHS',d:'glitch, lignes, bords colorés, grain de vieille cassette',mix:['glitch','wipeleft','fade','slices'],o:{per:5,power:65,look:'chaud',zoom:false,f:{zoom:1,shake:1,flash:0,rgb:1,pulse:0,bloom:1,ca:1,live:0,text:0,sfx:1,grain:1,bars:0,scan:1}}}};
+ react:{n:'🔥 Réaction gaming',d:'zoom coup de poing vers l\'action, lueur, flash et glitch seulement sur les vrais gros moments',mix:['whip','crosszoom','flash','slices','glitch','burn'],soft:['crosszoom','burn','fade'],o:{per:12,power:75,look:'vif',zoom:true,f:{zoom:1,shake:1,flash:1,rgb:1,pulse:1,bloom:1,ca:1,live:1,text:1,sfx:1,grain:0,bars:0,scan:0}}},
+ hyper:{n:'⚡ Hyper (TikTok)',d:'coupes courtes, pulsation sur le son, ça bouge tout le temps',mix:['whip','crosszoom','slices','flash','spin','zoomthru'],soft:['crosszoom','whip','fade'],o:{per:8,power:100,look:'vif',zoom:true,f:{zoom:1,shake:1,flash:1,rgb:1,pulse:1,bloom:1,ca:1,live:1,text:1,sfx:1,grain:0,bars:0,scan:0}}},
+ cine:{n:'🎞 Cinéma',d:'doux : fondus, lumière, zoom lent, bandes noires, léger grain',mix:['burn','fade','crosszoom','fadeblack'],soft:['fade','burn','fadeblack'],o:{per:15,power:35,look:'cine',zoom:true,f:{zoom:1,shake:0,flash:0,rgb:0,pulse:1,bloom:1,ca:1,live:1,text:0,sfx:0,grain:1,bars:1,scan:0}}},
+ vhs:{n:'📼 Rétro VHS',d:'glitch, lignes, bords colorés, grain de vieille cassette',mix:['glitch','wipeleft','fade','slices'],soft:['fade','wipeleft'],o:{per:8,power:65,look:'chaud',zoom:false,f:{zoom:1,shake:1,flash:0,rgb:1,pulse:0,bloom:1,ca:1,live:0,text:0,sfx:1,grain:1,bars:0,scan:1}}}};
 const MA_COL=['#38e1ff','#ff6ec7','#ffd166','#5df0a2','#b79bff','#ff9a62'];
 const MA_LAB=['OMG','WTF ?!','WOW','GG','NOOON','LOL'];
 const maClamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -5449,11 +5450,11 @@ function maHtml(){return `<div class="card mt-page" id="mtP-auto" hidden>
   <div class="ma-styles" id="maStyles">${Object.entries(MA_STY).map(([k,s])=>`<button type="button" class="ma-sty" data-s="${k}"><b>${s.n}</b><span>${s.d}</span></button>`).join('')}</div>
   <div class="ma-opts">
    <label>Réactivité <b id="maPowV"></b><input type="range" id="maPow" min="10" max="100" step="5"></label>
-   <label>Durée de chaque extrait<select id="maPer">${[3,4,5,6,8,10,15].map(v=>`<option value="${v}">${v} s</option>`).join('')}</select></label>
+   <label>Durée max d'un extrait<select id="maPer">${[6,8,10,12,15,20,30].map(v=>`<option value="${v}">${v} s</option>`).join('')}</select></label>
    <label>Ambiance<select id="maLook">${MA_LOOK.map(l=>`<option value="${l[0]}">${l[1]}</option>`).join('')}</select></label>
    <label>Textes<select id="maTxt"><option value="none">Aucun</option><option value="cap">Légende = nom de la vidéo</option><option value="num">Partie 1, 2, 3…</option></select></label>
    <label>Titre d'intro<input type="text" id="maTitle" maxlength="60" placeholder="(facultatif)"></label>
-   <label class="mt-chk"><input type="checkbox" id="maBest"> Meilleurs moments</label>
+   <label class="mt-chk"><input type="checkbox" id="maBest"> Couper autour des moments forts</label>
    <button class="btn primary" id="maGen" type="button" title="Refait le montage avec ces réglages (tes retouches manuelles sont perdues)">↻ Refaire le montage</button>
    <button class="btn" id="maAdd" type="button">＋ Ajouter une vidéo</button>
   </div>
@@ -5508,12 +5509,40 @@ async function maAnalyze(c,prog){
     /* volume en « échelle de dB » normalisée, lissé : 0 = calme, 1 = très fort */
     const e=an.env,db=Float32Array.from(e,v=>20*Math.log10(Math.max(1e-5,v))),sorted=Array.from(db).sort((a,b)=>a-b),base=sorted[Math.floor(sorted.length*0.5)],top=sorted[Math.floor(sorted.length*0.985)],rng=Math.max(6,top-base);
     const nv=Float32Array.from(db,v=>maClamp((v-base)/rng,0,1.2)),sm=new Float32Array(nv.length);for(let i=0;i<nv.length;i++){let s=0,w=0;for(let k=-2;k<=2;k++){const j=maClamp(i+k,0,nv.length-1),q=3-Math.abs(k);s+=nv[j]*q;w+=q}sm[i]=s/w}
-    an.nv=nv;an.sm=sm;
-    /* pics : maximum local qui monte vite (cri, rire, explosion), au moins 0,9 s entre deux */
-    const cand=[];for(let i=2;i<sm.length-2;i++){if(sm[i]<0.45)continue;let mx=true;for(let k=-8;k<=8;k++){const j=i+k;if(j>=0&&j<sm.length&&sm[j]>sm[i]){mx=false;break}}if(!mx)continue;
-      const before=Math.min(...Array.from(sm.slice(Math.max(0,i-10),i)));const rise=sm[i]-before;if(rise<0.2)continue;cand.push({t:i/MA_HZ,I:maClamp(0.35+0.65*(0.6*sm[i]+0.6*rise),0,1)})}
-    an.ev=cand.sort((a,b)=>b.I-a.I)}
+    an.nv=nv;an.sm=sm;an.on=maOnsets(sm)}
   c.an=an;return an}
+/* un « départ de bruit » = le son monte d'un coup par rapport à ce qui précède (cri, rire, explosion) ; un son qui reste fort longtemps n'en est pas un */
+function maOnsets(sm){
+  const n=sm.length,on=[];
+  for(let i=3;i<n-3;i++){
+    if(sm[i]<0.5)continue;let mx=true;for(let k=-6;k<=6;k++){const j=i+k;if(j>=0&&j<n&&sm[j]>sm[i]){mx=false;break}}if(!mx)continue;
+    const lo=Math.max(0,i-40),hi=Math.max(lo+1,i-8),seg=Array.from(sm.slice(lo,hi)).sort((a,b)=>a-b),base=seg[seg.length>>1]||0,rise=sm[i]-base;if(rise<0.28)continue;
+    let j=i;const half=base+0.5*rise;while(j>0&&sm[j-1]>half)j--;
+    on.push({t:j/MA_HZ,pk:i/MA_HZ,I:maClamp(0.15+0.5*Math.min(1,sm[i])+0.4*rise,0,1)})}
+  return on}
+/* ---------- les moments forts d'une vidéo, et la fenêtre qui les garde en entier ---------- */
+function maMotionOn(mot){
+  const E=mot.E,mx=Math.max(1e-6,...E),out=[];
+  for(let k=1;k<E.length-1;k++){if(E[k]/mx<0.45||E[k]<E[k-1]||E[k]<E[k+1])continue;const nb=[E[Math.max(0,k-4)],E[Math.max(0,k-3)],E[Math.max(0,k-2)]].sort((a,b)=>a-b)[1];if(E[k]<nb*1.5)continue;const t=(k+0.5)*mot.step;out.push({t,pk:t,I:0.35+0.6*E[k]/mx})}
+  return out}
+function maMoments(c){
+  const an=c.an,mot=c.mot,src=an&&an.on&&an.on.length?an.on:(c.mon||[]),g=[];
+  src.slice().sort((a,b)=>a.t-b.t).forEach(o=>{const l=g[g.length-1];if(l&&o.t-l.t1<3.5){l.t1=Math.max(l.t1,o.pk||o.t);l.sum+=o.I;l.I=Math.max(l.I,o.I)}else g.push({t0:o.t,t1:o.pk||o.t,I:o.I,sum:o.I})});
+  const mx=mot?Math.max(1e-6,...mot.E):1;
+  g.forEach(m=>{let en=0;if(an&&an.sm){for(let t=m.t0;t<m.t1+2.5;t+=1/MA_HZ)en+=an.sm[maClamp(Math.round(t*MA_HZ),0,an.sm.length-1)]/MA_HZ}let mb=0;if(mot){let s=0,n=0;mot.E.forEach((v,k)=>{const t=(k+0.5)*mot.step;if(t>=m.t0-1&&t<=m.t1+1){s+=v/mx;n++}});mb=n?s/n:0}m.score=m.I+0.35*(m.sum-m.I)+0.4*mb+0.3*Math.min(1,en/2)});
+  return g.sort((a,b)=>b.score-a.score)}
+/* début : on remonte jusqu'à un moment calme AVANT la montée (jamais au milieu d'un bruit) ; fin : quand le son retombe pour de bon APRÈS le dernier gros moment */
+function maWindow(c,m,maxLen){
+  const an=c.an,sm=an&&an.sm,mot=c.mot,mx=mot?Math.max(1e-6,...mot.E):1,dur=c.dur;
+  const lv=t=>sm?sm[maClamp(Math.round(t*MA_HZ),0,sm.length-1)]:mot?mot.E[maClamp(Math.floor(t/mot.step),0,mot.E.length-1)]/mx:0;
+  const ideal=m.t0-2.4;let a=0,bs=1e9;
+  if(m.t0>0.9){for(let t=Math.max(0,m.t0-4.8);t<=m.t0-0.9;t+=0.05){const sc=lv(t)+0.05*Math.abs(t-ideal);if(sc<bs){bs=sc;a=t}}}
+  let b=Math.min(dur,m.t1+6.4),found=false;
+  for(let t=m.t1+1.0;t<=Math.min(dur,m.t1+6);t+=0.05){let calm=true;for(let q=0;q<7;q++)if(lv(t+q*0.05)>0.3){calm=false;break}if(calm){b=Math.min(dur,t+0.45);found=true;break}}
+  if(b-a<3)b=Math.min(dur,a+3);
+  if(b-a>maxLen){a=Math.max(a,m.t0-maxLen*0.4);b=Math.min(b,a+maxLen);if(b<m.t1+0.8&&m.t1+0.8-maxLen>=0){a=Math.max(0,m.t1+0.8-maxLen);b=Math.min(dur,a+maxLen)}}
+  return{a:maClamp(a,0,Math.max(0,dur-0.6)),b:Math.min(dur,Math.max(b,a+0.6))}}
+
 /* mouvement : échantillons de la vidéo (utile aussi sans son) */
 async function maMotion(c,prog){
   const v=maVid(c),n=Math.min(80,Math.max(8,Math.floor(c.dur/0.7))),cv=phCv(64,36),g=cv.getContext('2d',{willReadFrequently:true});let prev=null;const E=new Float32Array(n),CX=new Float32Array(n).fill(0.5),CY=new Float32Array(n).fill(0.5);v.pause();
@@ -5522,22 +5551,25 @@ async function maMotion(c,prog){
     if(prev){let s=0,sx=0,sy=0,sw=0;for(let i=0;i<gr.length;i++){const df=Math.abs(gr[i]-prev[i]);s+=df;if(df>14){sx+=(i%64)*df;sy+=Math.floor(i/64)*df;sw+=df}}E[k]=s/gr.length;if(sw>400){CX[k]=sx/sw/63;CY[k]=sy/sw/35}}
     prev=gr;if(prog)prog(k/n)}
   return{E,cx:CX,cy:CY,step:c.dur/n}}
-/* meilleur moment = fenêtre où il se passe le plus de choses (son + mouvement) */
-function maBestWindow(c,len,mot){
-  if(c.dur<=len+0.3)return 0;const an=c.an,n=mot.E.length,st=mot.step,sc=new Float32Array(n);const mx=Math.max(1e-6,...mot.E);
-  for(let k=0;k<n;k++){let s=mot.E[k]/mx*0.6;if(an&&an.sm){const i=maClamp(Math.round((k+0.5)*st*MA_HZ),0,an.sm.length-1);s+=an.sm[i]}sc[k]=s}
-  const w=Math.max(1,Math.round(len/st));let best=0,bs=-1;for(let i=0;i+w<=n;i++){let s=0;for(let j=i;j<i+w;j++)s+=sc[j];if(s>bs){bs=s;best=i}}
-  return maClamp(best*st,0,c.dur-len)}
-/* ---------- le montage automatique ---------- */
 async function maGenerate(){
   const o=MA.opts,my=++MA.gen;if(!MA.clips.length)return;maPause();const sty=MA_STY[o.style]||MA_STY.react;
-  for(let i=0;i<MA.clips.length;i++){const c=MA.clips[i],len=Math.min(c.dur,o.per),tag=`vidéo ${i+1}/${MA.clips.length}`;let a=0;
-    maBusy(`J'écoute et je regarde la ${tag}…`);let mot=null;
+  for(let i=0;i<MA.clips.length;i++){const c=MA.clips[i],tag=`vidéo ${i+1}/${MA.clips.length}`;
+    maBusy(`J'écoute et je regarde la ${tag}…`);
     try{await maAnalyze(c)}catch(e){}
     if(my!==MA.gen)return;
-    if(o.best&&c.dur>len+0.3){try{mot=await maMotion(c,p=>{if(my===MA.gen)maBusy(`J'écoute et je regarde la ${tag}… ${Math.round(p*100)} %`)});a=maBestWindow(c,len,mot)}catch(e){a=0}}
-    if(my!==MA.gen)return;c.a=a;c.b=a+len;c.zoom=o.zoom?(i%2===0?'in':'out'):'none';c.zamt=0.1;
-    c.tr={type:o.tr==='mix'?sty.mix[i%sty.mix.length]:o.tr,dur:0};c.tr.dur=(MA_TR.find(t=>t[0]===c.tr.type)||[0,0,0.55])[2];c.mot=mot}
+    try{if(!c.mot)c.mot=await maMotion(c,p=>{if(my===MA.gen)maBusy(`J'écoute et je regarde la ${tag}… ${Math.round(p*100)} %`)});c.mon=maMotionOn(c.mot)}catch(e){c.mot=null;c.mon=[]}
+    if(my!==MA.gen)return;
+    c.moms=maMoments(c);c.mi=0;c.dead=[];
+    let a=0,b=Math.min(c.dur,o.per);
+    if(o.best){
+      if(c.dur<=o.per+1.5){a=0;b=c.dur}                       /* vidéo courte : on la garde en entier, rien n'est coupé */
+      else if(c.moms.length){const w=maWindow(c,c.moms[0],o.per);a=w.a;b=w.b}}
+    c.a=a;c.b=b;c.zoom=o.zoom?(i%2===0?'in':'out'):'none';c.zamt=0.1}
+  /* transitions : douces entre deux passages calmes, nerveuses quand ça tape de chaque côté */
+  const en=(c,t0,t1)=>{const sm=c.an&&c.an.sm;if(!sm)return 0;let s=0,n=0;for(let t=t0;t<t1;t+=0.05){s+=sm[maClamp(Math.round(t*MA_HZ),0,sm.length-1)];n++}return n?s/n:0};
+  MA.clips.forEach((c,i)=>{const n=MA.clips[i+1];let type=o.tr;
+    if(o.tr==='mix'){const dyn=n?(en(c,c.b-1.5,c.b)>0.45||en(n,n.a,n.a+1.5)>0.45):true,list=dyn?sty.mix:(sty.soft||sty.mix);type=list[i%list.length]}
+    c.tr={type,dur:(MA_TR.find(t=>t[0]===type)||[0,0,0.55])[2]}});
   maBusy('');maAutoTexts();maAutoFx();MA.edited=false;MA.sel=null;MA.T=0;maView();maSeekAll()}
 function maAutoTexts(){
   const o=MA.opts,{L}=maLayout();MA.texts=[];let intro=0;
@@ -5545,19 +5577,27 @@ function maAutoTexts(){
   if(o.txt!=='none')MA.clips.forEach((c,i)=>{const at=Math.max(L[i].s+0.5,i===0?intro+0.2:0),end=Math.min(L[i].e-0.3,at+2.8);if(end-at<0.8)return;
     MA.texts.push({id:++MA.id,text:o.txt==='num'?`Partie ${i+1}`:maClean(c.name),style:'band',pos:'bot',at,dur:end-at})})}
 /* les réactions : un événement par gros moment du son, avec les effets qui vont avec */
-function maAutoFx(){
-  const o=MA.opts,F=o.f,pw=o.power/100,{L,tot}=maLayout();MA.fx=[];
-  MA.clips.forEach((c,i)=>{
-    const len=c.b-c.a,K=Math.max(1,Math.round(len/(3.2-1.6*pw))),an=c.an,list=[];
-    if(an&&an.ev.length){for(const e of an.ev){if(e.t<c.a+0.25||e.t>c.b-0.3)continue;if(list.some(x=>Math.abs(x.t-e.t)<1.1-0.3*pw))continue;list.push(e);if(list.length>=K)break}}
-    else if(c.mot){const E=c.mot.E,mx=Math.max(1e-6,...E),idx=Array.from(E.keys()).sort((p,q)=>E[q]-E[p]);for(const k of idx){const t=(k+0.5)*c.mot.step;if(t<c.a+0.3||t>c.b-0.3)continue;if(E[k]/mx<0.4)break;if(list.some(x=>Math.abs(x.t-t)<1.4))continue;list.push({t,I:0.4+0.5*E[k]/mx});if(list.length>=Math.max(1,K-1))break}}
-    if(!list.length&&F.zoom)list.push({t:c.a+Math.min(len*0.4,1.6),I:0.5});
-    for(const e of list){const I=maClamp(e.I*(0.5+0.6*pw),0.15,1),r=maHash(i*13.7+e.t*3.1+1);
-      /* un coup = quelques effets bien choisis, pas tout à la fois : plus c'est fort, plus il y en a */
-      MA.fx.push({id:++MA.id,T:L[i].s+(e.t-c.a),I,z:!!F.zoom&&I>=0.3,s:!!F.shake&&I>0.55&&r>0.35,f:!!F.flash&&I>0.74,r:!!F.rgb&&I>0.8&&r>0.5,b:!!F.bloom&&I>0.5,i:!!F.flash&&I>0.92,sfx:!!F.sfx&&I>0.45,label:''})}});
-  /* un mot de réaction seulement sur un vrai sommet, et pas plus d'un toutes les ~12 s */
-  if(F.text){const maxN=Math.max(1,Math.round(tot/12)),cand=MA.fx.filter(e=>e.I>0.86).sort((a,b)=>b.I-a.I),got=[];for(const e of cand){if(got.length>=maxN)break;if(got.some(x=>Math.abs(x.T-e.T)<5))continue;got.push(e);e.label=MA_LAB[Math.floor(maHash(e.id*3.1)*MA_LAB.length)]}}
-  MA.fx.sort((a,b)=>a.T-b.T)}
+/* une réaction est attachée à un instant de la vidéo source : si on rogne ou on déplace l'extrait, elle suit (ou disparaît si elle n'est plus dans l'extrait) */
+function maEv(o){
+  const e={id:++MA.id,I:0.7,z:true,s:false,f:false,r:false,b:true,i:false,sfx:true,label:'',auto:false,edited:false,...o};
+  Object.defineProperty(e,'T',{enumerable:false,configurable:true,
+    get(){const {L}=maLayout(),i=MA.clips.findIndex(c=>c.id===e.cid);if(i<0)return -1e9;const c=MA.clips[i];if(e.tc<c.a-0.001||e.tc>c.b+0.001)return -1e9;return L[i].s+(e.tc-c.a)},
+    set(v){const {L}=maLayout();let k=0;for(let i=0;i<L.length;i++)if(L[i].s<=v+1e-6)k=i;const c=MA.clips[k];if(!c)return;e.cid=c.id;e.tc=c.a+maClamp(v-L[k].s,0,c.b-c.a)}});
+  return e}
+const maLive=e=>e.T>-1e8;
+function maFxClip(c){
+  const o=MA.opts,F=o.f,pw=o.power/100,len=c.b-c.a,K=Math.max(1,Math.round(len/(4.5-2*pw))),src=(c.an&&c.an.on&&c.an.on.length)?c.an.on:(c.mon||[]),list=[];
+  /* seulement de vrais départs de bruit / de mouvement, jamais d'effet « au hasard » */
+  for(const e of src.slice().sort((a,b)=>b.I-a.I)){if(e.t<c.a+0.2||e.t>c.b-0.3)continue;if((c.dead||[]).some(d=>Math.abs(d-e.t)<0.3))continue;if(list.some(x=>Math.abs(x.t-e.t)<1.3))continue;list.push(e);if(list.length>=K)break}
+  return list.map(e=>{const I=maClamp(e.I*(0.5+0.6*pw),0.15,1),r=maHash(c.id*13.7+e.t*3.1+1);
+    return maEv({cid:c.id,tc:e.t,I,auto:true,z:!!F.zoom&&I>=0.3,s:!!F.shake&&I>0.55&&r>0.35,f:!!F.flash&&I>0.74,r:!!F.rgb&&I>0.8&&r>0.5,b:!!F.bloom&&I>0.5,i:!!F.flash&&I>0.92,sfx:!!F.sfx&&I>0.45})})}
+function maLabels(){
+  MA.fx.forEach(e=>{if(e.auto&&!e.edited)e.label=''});if(!MA.opts.f.text)return;
+  const live=MA.fx.filter(e=>maLive(e)&&e.auto&&!e.edited),{tot}=maLayout(),maxN=Math.max(1,Math.round(tot/12)),got=[];
+  for(const e of live.filter(x=>x.I>0.86).sort((a,b)=>b.I-a.I)){if(got.length>=maxN)break;if(got.some(x=>Math.abs(x.T-e.T)<5))continue;got.push(e);e.label=MA_LAB[Math.floor(maHash(e.id*3.1)*MA_LAB.length)]}}
+function maAutoFx(){MA.fx=[];MA.clips.forEach(c=>MA.fx.push(...maFxClip(c)));maLabels();MA.fx.sort((a,b)=>a.T-b.T)}
+/* l'extrait a changé : on refait les réactions automatiques de cette vidéo (celles que tu as réglées ou ajoutées restent) */
+function maRegenFx(c){MA.fx=MA.fx.filter(e=>!(e.cid===c.id&&e.auto&&!e.edited));MA.fx.push(...maFxClip(c));maLabels()}
 /* ---------- rendu (le même pour l'aperçu et l'export) ---------- */
 const maCvs={};const maTmp=(k,W,H)=>{let c=maCvs[k];if(!c||c.width!==W||c.height!==H){c=document.createElement('canvas');c.width=W;c.height=H;maCvs[k]=c}return c};
 function maFxAt(T,W,H){
@@ -5710,7 +5750,7 @@ function maSfxPlay(kind,vol){
 /* tous les sons d'effet du montage : [temps, type, volume] */
 function maSfxList(){
   const out=[],{L}=maLayout();if(!MA.opts.f.sfx)return out;
-  MA.fx.forEach(e=>{if(e.sfx)out.push([Math.max(0,e.T-0.01),'impact',0.35+0.5*e.I])});
+  MA.fx.forEach(e=>{if(e.sfx&&maLive(e))out.push([Math.max(0,e.T-0.01),'impact',0.35+0.5*e.I])});
   MA.clips.forEach((c,i)=>{if(i>0&&!['cut','fade','fadeblack','wipeleft','circleopen','burn'].includes(MA.clips[i-1].tr.type))out.push([Math.max(0,L[i].s-0.06),'whoosh',0.55])});
   return out.sort((a,b)=>a[0]-b[0])}
 function maPlay(){
@@ -5734,21 +5774,30 @@ function maTl(){
     h+=`<div class="ma-blk ma-clip${sel?' sel':''}" data-i="${i}" style="left:${maX(l.s)}px;width:${Math.max(18,l.len*MA.pps)}px;top:${6+(i%2)*40}px;--c:${MA_COL[i%MA_COL.length]}"><i class="ma-h l" data-h="l"></i><span class="ma-nm">${i+1}. ${esc(maClean(c.name))}</span><small>${mtFmt(l.len,1)}${c.zoom!=='none'?' · 🔍':''}</small><i class="ma-h r" data-h="r"></i></div>`;
     if(i<MA.clips.length-1){const n=L[i+1],ts=MA.sel&&MA.sel.k==='tr'&&MA.sel.i===i;h+=`<div class="ma-trm${ts?' sel':''}" data-tr="${i}" style="left:${maX(n.s)}px;width:${Math.max(26,l.d*MA.pps)}px;top:24px" title="Transition : ${esc((MA_TR.find(t=>t[0]===c.tr.type)||[0,''])[1])}"><span>${MA_TRI[c.tr.type]||'◐'}</span></div>`}});
   h+=`</div><div class="ma-lane ma-l3"><b class="ma-ln">Réactions</b>`;
-  MA.fx.forEach(e=>{const sel=MA.sel&&MA.sel.k==='fx'&&MA.sel.id===e.id;h+=`<div class="ma-fxm${sel?' sel':''}" data-f="${e.id}" style="left:${maX(e.T)}px;--i:${e.I.toFixed(2)}" title="Réaction à ${mtFmt(e.T,1)}"><span>⚡</span>${e.label?`<small>${esc(e.label)}</small>`:''}</div>`});
+  MA.fx.filter(maLive).forEach(e=>{const sel=MA.sel&&MA.sel.k==='fx'&&MA.sel.id===e.id;h+=`<div class="ma-fxm${sel?' sel':''}" data-f="${e.id}" style="left:${maX(e.T)}px;--i:${e.I.toFixed(2)}" title="Réaction à ${mtFmt(e.T,1)}"><span>⚡</span>${e.label?`<small>${esc(e.label)}</small>`:''}</div>`});
   h+=`<button class="btn sm ma-addt" id="maAddF" type="button">＋ Réaction</button></div>`;
   h+=`<div class="ma-lane ma-l2"><b class="ma-ln">Textes</b>`;
   MA.texts.forEach(t=>{const sel=MA.sel&&MA.sel.k==='txt'&&MA.sel.id===t.id;h+=`<div class="ma-blk ma-txt${sel?' sel':''}" data-t="${t.id}" style="left:${maX(t.at)}px;width:${Math.max(18,t.dur*MA.pps)}px"><i class="ma-h l" data-h="l"></i><span class="ma-nm">💬 ${esc(t.text)}</span><i class="ma-h r" data-h="r"></i></div>`});
   h+=`<button class="btn sm ma-addt" id="maAddT" type="button">＋ Texte</button></div><div class="ma-head" id="maHead"><i></i></div>`;
   el.innerHTML=h;maHead()}
+function maWaveDraw(c){
+  const cv=$('#maWave');if(!cv)return;const g=cv.getContext('2d'),W=cv.width,H=cv.height,an=c.an,dur=c.dur,mx=c.mot?Math.max(1e-6,...c.mot.E):1;
+  const val=x=>{const t=x/W*dur;if(an&&an.sm)return an.sm[maClamp(Math.round(t*MA_HZ),0,an.sm.length-1)];if(c.mot)return c.mot.E[maClamp(Math.floor(t/c.mot.step),0,c.mot.E.length-1)]/mx;return 0};
+  g.clearRect(0,0,W,H);g.fillStyle='rgba(10,14,40,.55)';g.fillRect(0,0,W,H);g.fillStyle='rgba(56,225,255,.16)';g.fillRect(c.a/dur*W,0,(c.b-c.a)/dur*W,H);
+  for(let x=0;x<W;x+=2){const v=Math.min(1,val(x)),t=x/W*dur;g.fillStyle=t>=c.a&&t<=c.b?'#38e1ff':'rgba(154,163,209,.55)';g.fillRect(x,H-v*H*0.88,1.6,v*H*0.88)}
+  (c.moms||[]).slice(0,5).forEach((m,k)=>{const x=m.t0/dur*W;g.fillStyle='#ffd23f';g.fillRect(x-1,0,2,H);g.beginPath();g.arc(x,10,9,0,7);g.fill();g.fillStyle='#1b1300';g.font='700 11px sans-serif';g.textAlign='center';g.fillText(String(k+1),x,14)})}
+function maApplyMoment(c,k){const m=c.moms&&c.moms[k];if(!m)return;const w=maWindow(c,m,MA.opts.per);c.a=w.a;c.b=w.b;c.mi=k;maRegenFx(c);maTouch()}
 function maPanel(){
   const p=$('#maPanel'),s=MA.sel,{L}=maLayout();
   if(s&&s.k==='clip'&&MA.clips[s.i]){const c=MA.clips[s.i],i=s.i;
-    p.innerHTML=`<h4 class="ma-h4">Extrait ${i+1} · ${esc(maClean(c.name))}</h4><p class="muted sm">Durée de la vidéo : ${mtFmt(c.dur,1)} — tire les bords du bloc dans la timeline, ou règle ici.</p>
+    p.innerHTML=`<h4 class="ma-h4">Extrait ${i+1} · ${esc(maClean(c.name))}</h4><p class="muted sm">La vidéo dure ${mtFmt(c.dur,1)}. Le bleu = ce qui est gardé ; les ⚡ jaunes = les moments forts détectés. Clique un ⚡ pour monter sur ce moment, ou glisse le bleu.</p>
+    <canvas id="maWave" width="620" height="70" class="ma-wave" aria-label="Son de la vidéo et moments forts"></canvas>
+    <div class="ma-row">${(c.moms||[]).slice(0,5).map((m,k)=>`<button class="btn sm${c.mi===k?' primary':''}" data-mom="${k}" type="button">⚡ ${k+1} · ${mtFmt(m.t0,0)}</button>`).join('')}<button class="btn sm" data-a="whole" type="button">Garder toute la vidéo</button></div>
     <div class="ma-grid"><label>Début (s)<input type="number" step="0.1" min="0" max="${(c.dur-0.6).toFixed(1)}" value="${c.a.toFixed(1)}" data-f="a"></label><label>Fin (s)<input type="number" step="0.1" min="0.6" max="${c.dur.toFixed(1)}" value="${c.b.toFixed(1)}" data-f="b"></label>
     <label>Zoom lent<select data-f="zoom"><option value="none">Aucun</option><option value="in">Avant</option><option value="out">Arrière</option></select></label>
     <label>Force du zoom<input type="range" min="4" max="30" step="1" value="${Math.round(c.zamt*100)}" data-f="zamt"></label></div>
-    <div class="ma-row"><button class="btn sm" data-a="best" type="button">🎯 Meilleur moment</button><button class="btn sm" data-a="left" type="button" ${i?'':'disabled'}>◀ Avant</button><button class="btn sm" data-a="right" type="button" ${i<MA.clips.length-1?'':'disabled'}>Après ▶</button><button class="btn sm danger" data-a="del" type="button">🗑 Retirer</button></div>`;
-    p.querySelector('[data-f=zoom]').value=c.zoom}
+    <div class="ma-row"><button class="btn sm" data-a="best" type="button">🎯 Autre moment</button><button class="btn sm" data-a="left" type="button" ${i?'':'disabled'}>◀ Avant</button><button class="btn sm" data-a="right" type="button" ${i<MA.clips.length-1?'':'disabled'}>Après ▶</button><button class="btn sm danger" data-a="del" type="button">🗑 Retirer</button></div>`;
+    p.querySelector('[data-f=zoom]').value=c.zoom;maWaveDraw(c)}
   else if(s&&s.k==='tr'&&MA.clips[s.i+1]){const c=MA.clips[s.i];
     p.innerHTML=`<h4 class="ma-h4">Transition ${s.i+1} → ${s.i+2}</h4><div class="ma-grid"><label>Effet<select data-f="trt">${MA_TR.map(t=>`<option value="${t[0]}">${t[1]}</option>`).join('')}</select></label><label>Durée : <b>${(+c.tr.dur).toFixed(2)} s</b><input type="range" min="0.2" max="1.5" step="0.05" value="${c.tr.dur}" data-f="trd"></label></div>
     <div class="ma-row"><button class="btn sm" data-a="trall" type="button">Appliquer à toutes</button></div>`;p.querySelector('[data-f=trt]').value=c.tr.type}
@@ -5797,27 +5846,34 @@ function maWire(){
   P.addEventListener('input',e=>{const t=e.target,f=t.dataset.f;if(!f)return;const s=MA.sel;
     if(s&&s.k==='clip'){const c=MA.clips[s.i];if(!c)return;if(f==='zamt'){c.zamt=num(t.value)/100;MA.edited=true;maDraw(MA.T);return}if(f==='zoom'){c.zoom=t.value;maTouch()}}
     else if(s&&s.k==='tr'){const c=MA.clips[s.i];if(!c)return;if(f==='trd'){c.tr.dur=num(t.value);const b=t.parentElement.querySelector('b');if(b)b.textContent=c.tr.dur.toFixed(2)+' s';MA.edited=true;maTl();maDraw(MA.T)}else if(f==='trt'){c.tr.type=t.value;c.tr.dur=(MA_TR.find(x=>x[0]===t.value)||[0,0,0.55])[2];maTouch()}}
-    else if(s&&s.k==='fx'){const x=MA.fx.find(q=>q.id===s.id);if(!x)return;if(f==='I'){x.I=num(t.value)/100;const b=t.parentElement.querySelector('b');if(b)b.textContent=Math.round(x.I*100)+' %';MA.edited=true;maTl();maDraw(MA.T)}else if(f==='label'){x.label=t.value;MA.edited=true;maTl();maDraw(MA.T)}else{x[f]=t.checked;maTouch()}}
+    else if(s&&s.k==='fx'){const x=MA.fx.find(q=>q.id===s.id);if(!x)return;x.edited=true;if(f==='I'){x.I=num(t.value)/100;const b=t.parentElement.querySelector('b');if(b)b.textContent=Math.round(x.I*100)+' %';MA.edited=true;maTl();maDraw(MA.T)}else if(f==='label'){x.label=t.value;MA.edited=true;maTl();maDraw(MA.T)}else{x[f]=t.checked;maTouch()}}
     else if(s&&s.k==='txt'){const x=MA.texts.find(q=>q.id===s.id);if(!x)return;if(f==='text'){x.text=t.value||' ';MA.edited=true;maTl();maDraw(MA.T)}else if(f==='style'||f==='pos'){x[f]=t.value;maTouch()}}});
   P.addEventListener('change',e=>{const t=e.target,f=t.dataset.f;if(!f)return;const s=MA.sel,v=num(t.value);
-    if(s&&s.k==='clip'){const c=MA.clips[s.i];if(!c)return;if(f==='a'){c.a=maClamp(v,0,c.b-0.6);maTouch()}else if(f==='b'){c.b=maClamp(v,c.a+0.6,c.dur);maTouch()}}
+    if(s&&s.k==='clip'){const c=MA.clips[s.i];if(!c)return;if(f==='a'){c.a=maClamp(v,0,c.b-0.6);maRegenFx(c);maTouch()}else if(f==='b'){c.b=maClamp(v,c.a+0.6,c.dur);maRegenFx(c);maTouch()}}
     else if(s&&s.k==='txt'){const x=MA.texts.find(q=>q.id===s.id);if(!x)return;if(f==='at'){x.at=Math.max(0,v);maTouch()}else if(f==='dur'){x.dur=Math.max(0.5,v);maTouch()}}});
   P.addEventListener('click',e=>{
-    const lb=e.target.closest('[data-lab]');if(lb&&MA.sel&&MA.sel.k==='fx'){const x=MA.fx.find(q=>q.id===MA.sel.id);if(x){x.label=lb.dataset.lab;maTouch()}return}
+    const mb=e.target.closest('[data-mom]');if(mb&&MA.sel&&MA.sel.k==='clip'){maApplyMoment(MA.clips[MA.sel.i],+mb.dataset.mom);return}
+    const lb=e.target.closest('[data-lab]');if(lb&&MA.sel&&MA.sel.k==='fx'){const x=MA.fx.find(q=>q.id===MA.sel.id);if(x){x.edited=true;x.label=lb.dataset.lab;maTouch()}return}
     const b=e.target.closest('[data-a]');if(!b||!MA.sel)return;const s=MA.sel,a=b.dataset.a;
     if(s.k==='clip'){const i=s.i,c=MA.clips[i];
       if(a==='del'){MA.clips.splice(i,1);MA.sel=null;maFit();maTouch();return}
       if(a==='left'&&i>0){[MA.clips[i-1],MA.clips[i]]=[MA.clips[i],MA.clips[i-1]];MA.sel={k:'clip',i:i-1};maTouch();return}
       if(a==='right'&&i<MA.clips.length-1){[MA.clips[i+1],MA.clips[i]]=[MA.clips[i],MA.clips[i+1]];MA.sel={k:'clip',i:i+1};maTouch();return}
-      if(a==='best'){maBusy('Je cherche le meilleur moment…');(c.mot?Promise.resolve(c.mot):maMotion(c)).then(m=>{c.mot=m;const len=c.b-c.a,x=maBestWindow(c,len,m);c.a=x;c.b=x+len;maBusy('');maTouch()}).catch(()=>maBusy(''))}}
+      if(a==='best'){if(c.moms&&c.moms.length)maApplyMoment(c,((c.mi||0)+1)%c.moms.length);else toast('Aucun autre moment fort détecté dans cette vidéo')}
+      if(a==='whole'){c.a=0;c.b=c.dur;maRegenFx(c);maTouch()}}
     else if(s.k==='tr'&&a==='trall'){const c=MA.clips[s.i];MA.clips.forEach(q=>{q.tr.type=c.tr.type;q.tr.dur=c.tr.dur});maTouch()}
     else if(s.k==='txt'&&a==='deltxt'){MA.texts=MA.texts.filter(q=>q.id!==s.id);MA.sel=null;maTouch()}
-    else if(s.k==='fx'){if(a==='delfx'){MA.fx=MA.fx.filter(q=>q.id!==s.id);MA.sel=null;maTouch()}else if(a==='testfx'){const x=MA.fx.find(q=>q.id===s.id);if(x){maSeek(Math.max(0,x.T-0.5));if(!MA.playing)maPlay()}}}});
+    else if(s.k==='fx'){if(a==='delfx'){const x0=MA.fx.find(q=>q.id===s.id),c0=x0&&MA.clips.find(c=>c.id===x0.cid);if(c0&&x0.auto)(c0.dead=c0.dead||[]).push(x0.tc);MA.fx=MA.fx.filter(q=>q.id!==s.id);MA.sel=null;maTouch()}else if(a==='testfx'){const x=MA.fx.find(q=>q.id===s.id);if(x){maSeek(Math.max(0,x.T-0.5));if(!MA.playing)maPlay()}}}});
+  P.addEventListener('pointerdown',e=>{const cv=e.target.closest('#maWave');if(!cv||!MA.sel||MA.sel.k!=='clip')return;const c=MA.clips[MA.sel.i],r=cv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,t=x*c.dur;
+    const hit=(c.moms||[]).slice(0,5).findIndex(m=>Math.abs(m.t0/c.dur-x)*r.width<11);if(hit>=0){maApplyMoment(c,hit);return}
+    MA.drag={k:'wv',off:t-c.a,i:MA.sel.i};cv.setPointerCapture(e.pointerId);e.preventDefault()});
+  P.addEventListener('pointermove',e=>{const d=MA.drag;if(!d||d.k!=='wv')return;const cv=$('#maWave'),c=MA.clips[d.i];if(!cv||!c)return;const r=cv.getBoundingClientRect(),t=(e.clientX-r.left)/r.width*c.dur,len=c.b-c.a;c.a=maClamp(t-d.off,0,c.dur-len);c.b=c.a+len;MA.edited=true;maWaveDraw(c);maTl();maSeekAll()});
+  P.addEventListener('pointerup',()=>{const d=MA.drag;if(d&&d.k==='wv'){MA.drag=null;const c=MA.clips[d.i];if(c){maRegenFx(c);maTouch()}}});
   /* timeline : sélection, glisser, rogner, tête de lecture */
   const tl=$('#maTl');
   tl.addEventListener('click',e=>{
     if(e.target.closest('#maAddT')){MA.texts.push({id:++MA.id,text:'Mon texte',style:'band',pos:'bot',at:MA.T,dur:2.5});MA.sel={k:'txt',id:MA.id};maTouch();return}
-    if(e.target.closest('#maAddF')){const F=MA.opts.f;MA.fx.push({id:++MA.id,T:MA.T,I:0.8,z:true,s:true,f:true,r:false,b:true,i:false,sfx:!!F.sfx,label:''});MA.fx.sort((a,b)=>a.T-b.T);MA.sel={k:'fx',id:MA.id};maTouch();return}});
+    if(e.target.closest('#maAddF')){const F=MA.opts.f;const ne=maEv({cid:null,tc:0,I:0.8,z:true,s:true,f:true,r:false,b:true,i:false,sfx:!!F.sfx,edited:true});ne.T=MA.T;MA.fx.push(ne);MA.fx.sort((a,b)=>a.T-b.T);MA.sel={k:'fx',id:ne.id};maTouch();return}});
   tl.addEventListener('pointerdown',e=>{
     if(e.target.closest('#maAddT,#maAddF'))return;
     const ruler=e.target.closest('#maRuler');if(ruler){const r=tl.getBoundingClientRect();maSeek((e.clientX-r.left-MA_OFF)/MA.pps);MA.drag={k:'head'};tl.setPointerCapture(e.pointerId);return}
@@ -5842,12 +5898,12 @@ function maWire(){
     else if(d.k==='tm'){const x=MA.texts.find(q=>q.id===d.id);x.at=Math.max(0,d.at+dt);MA.edited=true;maTl();maDraw(MA.T)}
     else if(d.k==='tl'){const x=MA.texts.find(q=>q.id===d.id);const na=maClamp(d.at+dt,0,d.at+d.dur-0.5);x.dur=d.dur-(na-d.at);x.at=na;MA.edited=true;maTl();maDraw(MA.T)}
     else if(d.k==='tr'){const x=MA.texts.find(q=>q.id===d.id);x.dur=Math.max(0.5,d.dur+dt);MA.edited=true;maTl();maDraw(MA.T)}});
-  const end=()=>{const d=MA.drag;MA.drag=null;if(d&&d.k!=='head'){if(d.k==='fm')MA.fx.sort((a,b)=>a.T-b.T);MA.out&&maDropRes();maPanel();maSeekAll()}};
+  const end=()=>{const d=MA.drag;MA.drag=null;if(d&&(d.k==='cl'||d.k==='cr')){const c=MA.clips[d.i];if(c)maRegenFx(c)}if(d&&d.k!=='head'&&d.k!=='wv'){if(d.k==='fm')MA.fx.sort((a,b)=>a.T-b.T);MA.out&&maDropRes();maPanel();maSeekAll()}};
   tl.addEventListener('pointerup',end);tl.addEventListener('pointercancel',end);
   document.addEventListener('keydown',e=>{if(e.code!=='Space'||$('#mtP-auto').hidden||!$('#tab-montage').classList.contains('on'))return;if(/^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test((e.target||{}).tagName||''))return;e.preventDefault();maPlay()});
   window.addEventListener('resize',()=>{if(!$('#mtP-auto').hidden)maTl()})}
 /* après avoir retiré une vidéo : réactions et textes hors du montage sont retirés */
-function maFit(){const {tot}=maLayout();MA.fx=MA.fx.filter(e=>e.T<tot-0.2);MA.texts=MA.texts.filter(t=>t.at<tot-0.3);MA.texts.forEach(t=>{t.dur=Math.min(t.dur,tot-t.at)})}
+function maFit(){const {tot}=maLayout();MA.fx=MA.fx.filter(e=>MA.clips.some(c=>c.id===e.cid));MA.texts=MA.texts.filter(t=>t.at<tot-0.3);MA.texts.forEach(t=>{t.dur=Math.min(t.dur,tot-t.at)})}
 maWire();
 /* ---------- export : chaque image est dessinée comme dans l'aperçu, puis encodée ---------- */
 function maProg(t,p){const e=$('#maExpTxt'),b=$('#maProg');e.textContent=t||"Rien n'est fabriqué tant que tu n'as pas validé.";b.hidden=p==null;if(p!=null)b.firstElementChild.style.width=Math.round(maClamp(p,0,1)*100)+'%'}
