@@ -7428,7 +7428,9 @@ function stPrintPrep(){
   // l'aperçu est vidé pendant l'impression : sinon ses éléments (dégradés du logo) existeraient en double
   const pa=$('#printArea'),html=$('#stSheet').innerHTML;$('#stSheet').innerHTML='';
   pa.innerHTML=`<table class="pr-wrap"><thead><tr><td><div class="pr-sp"></div></td></tr></thead><tbody><tr><td><div class="sheet">${html}</div></td></tr></tbody><tfoot><tr><td><div class="pr-sp"></div></td></tr></tfoot></table>`;document.body.classList.add('pst');
-  return()=>{document.body.classList.remove('pst');pa.innerHTML='';renderStatement()}}
+  /* le titre de la page et l'adresse servent de nom au PDF (et seraient imprimés si le navigateur gardait ses en-têtes) : on y met le nom du relevé, sans adresse */
+  const t0_=document.title,h0_=location.hash;document.title=ST.year?`Récapitulatif ${ST.y}`:`Relevé ${MONTHS[ST.m]} ${ST.y}`;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+  return()=>{document.body.classList.remove('pst');pa.innerHTML='';document.title=t0_;try{history.replaceState(null,'',location.pathname+location.search+h0_)}catch(e){}renderStatement()}}
 $('#stPrint').addEventListener('click',()=>{
   const done=stPrintPrep();addEventListener('afterprint',done,{once:true});
   setTimeout(()=>{window.print();setTimeout(()=>{if(document.body.classList.contains('pst'))done()},500)},50)});
