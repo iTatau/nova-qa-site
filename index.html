@@ -1057,6 +1057,12 @@ td>.fc-bar{width:100%;min-width:60px;background:var(--soft);border-radius:4px;he
 .fc-chart{margin:8px 0 12px}.fc-yearcard .fc-t td{white-space:nowrap}
 @media(max-width:760px){.fc-head{grid-template-columns:20px 1fr auto;row-gap:4px}.fc-sum{grid-column:2/4;order:5}.fc-net{display:none}.fc-b{grid-column:2}}
 .fc-chart svg{display:block;width:100%;max-height:250px}
+.an-trk{margin:12px 0;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
+.an-trkh{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}.an-trk .an-p{margin:6px 0}
+.an-trkrow{display:flex;flex-wrap:wrap;gap:8px 16px;margin:6px 0;font-size:13px}.an-trkrow label{display:flex;align-items:center;gap:6px}
+.an-trkrow input{width:72px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit}
+.an-chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px}.an-chips button{padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font:inherit;font-size:12.5px}.an-chips button:hover{border-color:var(--brand)}
+.an-warn{margin:4px 0 0;font-size:12px;color:var(--warn);background:var(--warn-bg);padding:5px 8px;border-radius:8px}
 </style>
 </head>
 <body>
@@ -4570,7 +4576,7 @@ const KO_FX={
   arrow:{n:'Flèche',vl:'Taille %',v:[40,200,5,100],dest:1,col:1,defCol:'#ffd23f',destL:'Placée à :'}};
 for(const k of ['halo','shape','outline','highlight'])KO_FX[k].col=1;
 const KO={obj:null,cur:null,fixes:[],track:[],keys:[],clips:[],cid:0,pickDest:0,openId:0,tracking:false,cancel:false,lastPos:null,maskCv:null,maskFor:null,inited:false,
-  o:{loupe:true,tol:22,grad:true,outline:true,holes:true,fade:0.3,hideOrig:true,type:'highlight',range:'extract',showMask:true,showFx:true,mode:'replace',view:'vid',defDur:5}};
+  o:{loupe:true,tol:22,grad:true,outline:true,holes:true,fade:0.3,hideOrig:true,type:'highlight',range:'extract',showMask:true,showFx:true,mode:'replace',view:'vid',defDur:5,tAfter:5,tBefore:0}};
 try{Object.assign(KO.o,JSON.parse(localStorage.getItem('nova_ko_opts')||'{}'))}catch(e){}
 KO.o.view='elem';
 const koSave=()=>{try{localStorage.setItem('nova_ko_opts',JSON.stringify(KO.o))}catch(e){}};
@@ -4813,7 +4819,7 @@ async function kyVfExport(kind){
   KY.busy=true;KY.cancel=false;$$('#kyVfWebm,#kyVfZip,#kyVfMp4').forEach(b=>b.disabled=true);
   const W=KY.fw&~1,H=KY.fh&~1,N=Math.max(1,Math.round((b0-a0)*fps));let ff=null;
   try{
-    if(KO.obj&&!(KO.track.length&&KO.trackInfo&&KO.trackInfo.lo<=a0+0.35&&KO.trackInfo.hi>=b0-0.35)){anProg("Suivi de l'objet…",0.02);const ok=await koTrack();if(!ok)throw new Error('annulé')}
+    /* pas de suivi automatique : l'objet suit seulement si tu as lancé « Suivre l'objet » ; sinon l'effet reste là où tu l'as choisi */
     const zipFiles=[];if(kind!=='zip'){anProg('Chargement du moteur…',0.02);ff=await mtEngine()}
     const run=async()=>{
       const cv=kyCv(W,H),g=cv.getContext('2d'),need=!!KO.obj||C.some(c=>KO_FX[c.type].px||KO_FX[c.type].hide);let pv=null,tmp=null,empty=null;const names=[];
@@ -5057,13 +5063,16 @@ function ktPlay(pv,t0,hi,step,onFrame){
     wd=setInterval(()=>{if(performance.now()-lastAct>4000)fin(new Error('rvfc'))},500);
     pv.requestVideoFrameCallback(cb);
     pv.play().catch(e=>fin(e))})}
-async function koTrack(){
+/* opt.static : pas un vrai suivi, juste l'objet figé à l'image choisie (c'est ce qui sert quand on ne demande aucun suivi) ; opt.lo / opt.hi : plage imposée */
+async function koTrack(opt){
+  opt=opt||{};
   if(!KO.obj||KO.tracking||KY.isImg||!KY.vid)return false;
-  KO.tracking=true;KO.cancel=false;koView();
+  KO.tracking=true;KO.cancel=false;if(!opt.static)koView();
   try{
     const ob=KO.obj,C=KO.clips,vfr=Math.max(10,kyFps()),fps=vfr<=61?vfr:Math.min(60,Math.round(vfr)),step=1/fps,t0=Math.floor(ob.t0*fps+1e-6)/fps;
-    let lo=t0,hi=Math.min(KY.dur,t0+8);if(C.length){lo=Math.min(t0,...C.map(c=>c.a))-0.3;hi=Math.max(t0,...C.map(koEnd))+0.3}
-    lo=Math.max(0,lo);hi=Math.min(KY.dur,hi);
+    /* la plage suivie : depuis l'image où l'objet a été choisi, « avant » secondes en arrière et « après » secondes en avant (réglables) */
+    let lo=t0,hi=t0;if(!opt.static){const bf=Math.max(0,+KO.o.tBefore||0),af=Math.max(0,+KO.o.tAfter||5);lo=opt.lo!=null?opt.lo:t0-bf;hi=opt.hi!=null?opt.hi:t0+af}
+    lo=Math.max(0,Math.min(lo,t0));hi=Math.min(KY.dur,Math.max(hi,t0));
     const pv=await kyVideo(KY.file,true),tmp=phCv(KY.fw,KY.fh),tg=tmp.getContext('2d'),total=Math.max(1,Math.round((hi-lo)*fps));let done=0,lost=0,scoreSum=0,scoreN=0;
     /* image de départ : contour exact de l'objet à l'instant choisi */
     pv.pause();await kySeek(pv,t0+kyEps());tg.drawImage(pv,0,0);
@@ -5143,7 +5152,7 @@ async function koTrack(){
     /* sens avant : lecture continue (rapide) ; si le navigateur ne la permet pas, on se déplace image par image */
     const runPass=async perm=>{
       const FW=mkRun(1,perm);
-      try{await ktPlay(pv,t0,hi,step,(t,gap)=>{tg.drawImage(pv,0,0);FW.feed(t,gap)});PF.mode='lecture'}
+      if(hi>t0+step*0.5)try{await ktPlay(pv,t0,hi,step,(t,gap)=>{tg.drawImage(pv,0,0);FW.feed(t,gap)});PF.mode='lecture'}
       catch(e){
         if(String(e&&e.message)==='annulé')throw e;
         PF.mode='sauts';const last=FW.out.length?FW.out[FW.out.length-1].t:t0;
@@ -5178,8 +5187,8 @@ async function koTrack(){
     const sm=Sm.map((q,i)=>{const c=Math.cos(q.th),s2=Math.sin(q.th),k=q.sc||1,ox=k*(c0.x*c-c0.y*s2),oy=k*(c0.x*s2+c0.y*c);
       if(q.fixed)return{...q,ax:q.x-q.rx,ay:q.y-q.ry,rect:{x:q.x-q.rect.w/2,y:q.y-q.rect.h/2,w:q.rect.w,h:q.rect.h}};
       const nx=q.x+ox+(q.dcx||0),ny=q.y+oy+(q.dcy||0);return{...q,x:nx,y:ny,ax:nx-q.rx,ay:ny-q.ry,rect:{x:nx-sw[i]/2,y:ny-sh[i]/2,w:sw[i],h:sh[i]}}});
-    KO.track=sm;KO.trackInfo={lo,hi,lost,n:sm.length,mean:scoreSum/Math.max(1,scoreN)};return true
-  }catch(e){if(String(e&&e.message)!=='annulé'){console.warn('suivi:',e);anErr('Le suivi a échoué : '+String((e&&e.message)||e).slice(0,140))}else toast('Suivi arrêté');return false}
+    KO.track=sm;KO.trackInfo=opt.static?null:{lo,hi,lost,n:sm.length,mean:scoreSum/Math.max(1,scoreN)};return true
+  }catch(e){if(opt.static){console.warn('objet figé:',e);return false}if(String(e&&e.message)!=='annulé'){console.warn('suivi:',e);anErr('Le suivi a échoué : '+String((e&&e.message)||e).slice(0,140))}else toast('Suivi arrêté');return false}
   finally{KO.tracking=false;KY.vfDirty=true;koView();kyUpdate()}}
 /* l'objet à l'instant t d'après le suivi (positions interpolées, contour de l'image la plus proche) */
 function koTrackedAt(t){
@@ -5268,7 +5277,7 @@ const anMode=e=>e.altKey?'sub':e.shiftKey?'add':KO.o.mode;
 $('#stOv').addEventListener('pointerdown',e=>{
   if(!AN.picking||e.button!==0||ZM.space)return;e.preventDefault();e.stopPropagation();
   const r=$('#stOv').getBoundingClientRect();if(!r.width||!anBind())return;const p=anFpt(e);
-  if(AN.fixing){KO.fixes=KO.fixes.filter(q=>Math.abs(q.t-KY.t)>0.02);KO.fixes.push({t:KY.t,x:Math.round(p.fx),y:Math.round(p.fy)});KO.track=[];KO.trackInfo=null;AN.fixing=false;anPickEnd();koView();toast('Recalé ✓ : le suivi se refait tout seul');return}
+  if(AN.fixing){KO.fixes=KO.fixes.filter(q=>Math.abs(q.t-KY.t)>0.02);KO.fixes.push({t:KY.t,x:Math.round(p.fx),y:Math.round(p.fy)});const R=KO.trackInfo?{lo:KO.trackInfo.lo,hi:KO.trackInfo.hi}:null;KO.track=[];KO.trackInfo=null;AN.fixing=false;anPickEnd();koView();if(R)koTrack(R).then(anSoon);toast(R?'Recalé ✓ : je refais le suivi sur la même durée':'Recalé ✓');return}
   if(AN.pathFor){const c=KO.clips.find(x=>x.id===AN.pathFor),R=c&&koRectAt(c.a);if(c&&R){c.pts.push({x:Math.round(p.fx-(R.x+R.w/2)),y:Math.round(p.fy-(R.y+R.h/2))});KY.vfDirty=true;koView();anPaint()}return}
   if(KO.pickDest){if(koStageDown(e,p)){anPickEnd();anSoon()}return}
   if(AN.tool==='sam'){anSamClick(p,anMode(e));return}
@@ -5459,18 +5468,16 @@ function anAdd(type,at){
   anBind();const v=mtV(),t0=at!=null?at:(v.currentTime||0),d=Math.max(0.5,+KO.o.defDur||5);
   const b=Math.min(MT.dur,t0+d),c=koAddClip(type,Math.max(0,Math.min(t0,b-0.5)),b);
   KO.o.type=type;koSave();AN.sel=c.id;koView();toast(`${AN_FX[type][1]} ajouté : de ${mtFmt(c.a,1)} à ${mtFmt(c.b,1)}`);return c}
-/* le suivi se fait tout seul en arrière-plan dès qu'il y a un objet et des animations (comme un rendu d'analyse) */
-const anSig=()=>KO.obj?`${KO.fixes.length}|${KO.obj.t0}|${KO.obj.seeds.length}|${KO.obj.subs.length}|${Math.min(...KO.clips.map(c=>c.a))}|${Math.max(...KO.clips.map(koEnd))}|${KO.o.tol}`:'';
-function anAutoTrackSoon(){
-  clearTimeout(AN.at);if(!KO.obj||!KO.clips.length||KO.tracking||anTracked()||anSig()===AN.failSig)return;
-  AN.at=setTimeout(async()=>{if(!KO.obj||!KO.clips.length||KO.tracking||anTracked())return;const sg=anSig();if(!anBind())return;const ok=await koTrack();if(!ok)AN.failSig=sg;anSoon()},900)}
+/* AUCUN suivi automatique : l'objet est simplement « figé » à l'image où il a été choisi (calcul très rapide, sans barre de progression). Le vrai suivi ne démarre que si on clique sur « Suivre l'objet », pour la durée choisie. */
+const anSig=()=>KO.obj?`${KO.obj.t0}|${KO.obj.seeds.length}|${KO.obj.subs.length}|${KO.o.tol}|${+KO.o.grad}${+KO.o.outline}${+KO.o.holes}`:'';
+function anStaticSoon(){
+  clearTimeout(AN.at);if(!KO.obj||KO.tracking||KO.track.length||anSig()===AN.failSig)return;
+  AN.at=setTimeout(async()=>{if(!KO.obj||KO.tracking||KO.track.length)return;const sg=anSig();if(!anBind())return;const ok=await koTrack({static:true});if(!ok)AN.failSig=sg;anSoon()},250)}
 function anFlash(el){if(!el)return;el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')}
-const anTracked=()=>{const C=KO.clips,T=KO.trackInfo;if(!KO.obj||!C.length)return true;return!!(KO.track.length&&T&&T.lo<=Math.min(...C.map(c=>c.a))+0.35&&T.hi>=Math.max(...C.map(koEnd))-0.35)};
 async function anPlay(){
   const v=mtV();if(!v.paused){v.pause();return}
   const C=KO.clips;if(!C.length){toast("Ajoute d'abord une animation (clique sur un effet)");return}
   if(!anBind())return;
-  if(KO.obj&&!anTracked()){const ok=await koTrack();if(!ok)return}
   const a=Math.max(0,Math.min(...C.map(c=>c.a))-0.7);AN.stopAt=Math.min(MT.dur,Math.max(...C.map(koEnd))+0.7);
   await new Promise(res=>{const h=()=>{v.removeEventListener('seeked',h);res()};v.addEventListener('seeked',h);v.currentTime=a;setTimeout(h,1500)});
   v.play().catch(()=>{})}
@@ -5492,7 +5499,11 @@ function anHtml(){return `<section class="an-s">
  <div class="an-row"><button class="btn primary" id="koPick" type="button">🪄 Choisir l'objet</button><button class="btn sm" id="koClear" type="button">Effacer</button><button class="btn sm" id="anObjPng" type="button" title="Enregistre l'objet seul, fond transparent">⬇ Image de l'objet</button></div>
  <div class="an-info" id="koInfo"></div>
  <div class="an-fixes" id="koFixes"></div>
- <div class="an-row"><button class="btn sm" id="anFix" type="button" title="Si l'effet n'est pas exactement sur l'objet à cet instant : mets la vidéo sur cette image et clique sur le centre de l'objet">📍 Recaler ici</button><button class="btn sm" id="koTrack" type="button" title="Suit l'objet image par image pour que l'effet le suive">Suivre l'objet dans la vidéo</button><button class="btn sm" id="koTrackStop" type="button" hidden>Arrêter</button></div>
+ <div class="an-trk"><div class="an-trkh"><b>🎯 Suivi de l'objet</b><span class="muted sm">à lancer seulement si l'objet bouge dans la vidéo</span></div>
+  <p class="muted sm an-p" id="koTrkTxt"></p>
+  <div class="an-trkrow"><label>Après l'image choisie <input type="number" id="koTAfter" min="0" max="3600" step="1" aria-label="Secondes de suivi après l'image choisie"> s</label><label>Avant <input type="number" id="koTBefore" min="0" max="3600" step="1" aria-label="Secondes de suivi avant l'image choisie"> s</label></div>
+  <div class="an-chips" id="koTChips"><button type="button" data-t="3">3 s</button><button type="button" data-t="5">5 s</button><button type="button" data-t="10">10 s</button><button type="button" data-t="30">30 s</button><button type="button" data-t="clips" title="Du début à la fin de tes animations">Mes animations</button><button type="button" data-t="end">Jusqu'à la fin</button></div>
+  <div class="an-row"><button class="btn primary sm" id="koTrack" type="button" title="Suit l'objet image par image, seulement sur la durée réglée ci-dessus">▶ Suivre l'objet</button><button class="btn sm" id="koTrackStop" type="button" hidden>Arrêter</button><button class="btn sm" id="koTrackClear" type="button" title="Revient à l'objet figé, sans suivi">Retirer le suivi</button><button class="btn sm" id="anFix" type="button" title="Si l'effet n'est pas exactement sur l'objet à cet instant : mets la vidéo sur cette image et clique sur le centre de l'objet (après un suivi)">📍 Recaler ici</button></div></div>
  <details class="an-det"><summary>Le contour n'est pas bon ?</summary>
   <div class="an-row"><div class="seg sm" id="koModeSeg"><button type="button" data-v="replace" aria-pressed="true" title="Un clic choisit un nouvel objet">Nouvel objet</button><button type="button" data-v="add" aria-pressed="false" title="Clique sur une partie à ajouter">＋ Ajouter</button><button type="button" data-v="sub" aria-pressed="false" title="Clique sur une partie à retirer">− Retirer</button></div></div>
   <label class="ky-sl"><span>Tolérance</span><input type="range" data-kosl="tol" min="2" max="80" step="1" aria-label="Tolérance"><b data-kov="tol"></b></label>
@@ -5535,6 +5546,7 @@ function anClipHtml(c){
    <div class="an-cr"><label>de<input type="number" step="0.1" min="0" value="${n(c.a)}" data-kc="a" aria-label="Début (s)"></label><button class="btn sm" data-kcnow="a" type="button" title="Mettre l'instant du lecteur">⏱</button>
     <label>à<input type="number" step="0.1" min="0" value="${n(c.b)}" data-kc="b" aria-label="Fin (s)"></label><button class="btn sm" data-kcnow="b" type="button" title="Mettre l'instant du lecteur">⏱</button>
     <label>durée<input type="number" step="0.5" min="0.2" value="${n(c.b-c.a)}" data-kc="dur" aria-label="Durée (s)"></label></div>
+   ${KO.obj&&KO.trackInfo&&(c.a<KO.trackInfo.lo-0.05||koEnd(c)>KO.trackInfo.hi+0.05)?`<p class="an-warn">⚠ Dépasse la partie suivie (${mtFmt(KO.trackInfo.lo,1)} → ${mtFmt(KO.trackInfo.hi,1)}) : en dehors, l'effet reste figé à la dernière position.</p>`:''}
    ${F.v?`<label class="ky-sl"><span>${F.vl}</span><input type="range" data-kc="v" min="${F.v[0]}" max="${F.v[1]}" step="${F.v[2]}" value="${c.v}" aria-label="${F.vl}"><b>${c.v}</b></label>`:''}
    ${F.col?`<div class="an-cr"><label>Couleur<input type="color" class="an-col" data-kc="col" value="${c.col||'#ffd23f'}" aria-label="Couleur"></label></div>`:''}
    ${F.path?`<div class="an-cr"><button class="btn sm primary" data-kpath type="button">✏️ ${c.pts&&c.pts.length?'Redessiner':'Dessiner'} la trajectoire</button><span class="muted sm">${c.pts&&c.pts.length?c.pts.length+' point'+(c.pts.length>1?'s':''):'clique des points sur le lecteur'}</span></div>`:''}
@@ -5549,15 +5561,21 @@ function koView(){
   $$('#stPAnim [data-kosl]').forEach(i=>{if(document.activeElement!==i)i.value=KO.o[i.dataset.kosl]});$$('#stPAnim [data-kov]').forEach(b=>b.textContent=KO.o[b.dataset.kov]);
   $$('#stPAnim [data-koc]').forEach(i=>i.checked=!!KO.o[i.dataset.koc]);setSeg('koModeSeg',KO.o.mode);
   if(document.activeElement!==$('#koDef'))$('#koDef').value=KO.o.defDur;$('#koRange').value=KO.o.range;
-  $('#koFixes').innerHTML=KO.fixes.map((q,i)=>`<span class="an-fixc">📍 ${mtFmt(q.t,1)} <button type="button" data-fxrm="${i}" aria-label="Retirer ce recalage">✕</button></span>`).join('');$('#anFix').disabled=!KO.obj||KO.tracking;
-  $('#koTrack').disabled=!KO.obj||KO.tracking;$('#koTrackStop').hidden=!KO.tracking;$('#koClear').disabled=!KO.obj;
+  $('#koFixes').innerHTML=KO.fixes.map((q,i)=>`<span class="an-fixc">📍 ${mtFmt(q.t,1)} <button type="button" data-fxrm="${i}" aria-label="Retirer ce recalage">✕</button></span>`).join('');$('#anFix').disabled=!KO.obj||KO.tracking||!KO.trackInfo;
+  $('#koTrack').disabled=!KO.obj||KO.tracking;$('#koTrackStop').hidden=!KO.tracking;$('#koClear').disabled=!KO.obj;$('#koTrackClear').disabled=!KO.trackInfo||KO.tracking;
+  if(document.activeElement!==$('#koTAfter'))$('#koTAfter').value=KO.o.tAfter;if(document.activeElement!==$('#koTBefore'))$('#koTBefore').value=KO.o.tBefore;
+  {const ob=KO.obj,ti=KO.trackInfo;let tx;
+   if(!ob)tx="Choisis d'abord l'objet. Sans suivi, l'effet reste là où tu l'as choisi : c'est ce qu'il faut si l'objet ne bouge pas.";
+   else{const lo=Math.max(0,ob.t0-(+KO.o.tBefore||0)),hi=Math.min(MT.dur,ob.t0+(+KO.o.tAfter||0));
+    tx=(ti?`<b>Suivi fait</b> : de ${mtFmt(ti.lo,1)} à ${mtFmt(ti.hi,1)} (${n1(ti.hi-ti.lo)} s). `:`<b>Pas de suivi</b> : l'effet reste là où tu as choisi l'objet (à ${mtFmt(ob.t0,1)}). `)+`Un nouveau suivi irait de <b>${mtFmt(lo,1)}</b> à <b>${mtFmt(hi,1)}</b> (${n1(hi-lo)} s).`}
+   $('#koTrkTxt').innerHTML=tx}
   const TI={wand:'🪄',brush:'🖌',lasso:'✏️',rect:'▭',sam:'✨'};setSeg('anToolSeg',AN.tool);$('#anExact').checked=AN.exact;$('#anExW').hidden=AN.tool!=='brush';$('#anBsz').value=AN.bsz;$('#anBszV').textContent=AN.bsz;$('#anBszW').hidden=AN.tool!=='brush';$('#anObjPng').disabled=!(KO.cur&&KO.cur.ok);
   $('#anToolTxt').textContent={wand:"Clique sur l'objet : toute la zone de même couleur est prise. Si c'est trop large ou pas ce que tu voulais, utilise 🖌 Pinceau ou ✏️ Lasso : tu choisis exactement.",brush:AN.exact?"Colorie exactement ce que tu veux animer (l'objet entier, un symbole, un détail) : seul ce que tu colories est pris, juste recalé sur les contours. Alt = retirer, Maj = ajouter.":"Colorie l'objet ou son symbole : l'IA étend à tout ce qui ressemble à ce que tu as colorié (même s'il y a plusieurs couleurs).",lasso:"Entoure l'objet à main levée (maintiens et dessine tout autour) : exactement l'intérieur du tracé est pris. Alt = retirer, Maj = ajouter.",rect:"Encadre l'objet en glissant : tout ce qui se distingue du fond est pris.",sam:"Une IA (SAM) découpe l'objet avec précision : clique dessus, puis affine (Alt + clic pour retirer une partie). Elle se télécharge une fois (≈ 50 Mo) et tourne sur ton ordinateur, quelques secondes par image. Sur les autres images de la vidéo, le suivi se fait par couleur."}[AN.tool];
   $('#koPick').textContent=AN.picking&&!KO.pickDest&&!AN.pathFor?'👆 Vise dans le lecteur… (Échap pour annuler)':KO.obj?TI[AN.tool]+' Choisir un autre objet':TI[AN.tool]+' Choisir l\'objet';
   $$('#stPAnim [data-fx]').forEach(b=>b.classList.toggle('dis',!KO.obj&&!KY.rect));
   if(!KO.tracking){const T=KO.track,i=KO.trackInfo,ob=KO.obj;
-    $('#koInfo').innerHTML=!ob?"<b>Aucun objet choisi</b> : clique sur 🪄 puis sur l'objet dans le lecteur.":`<b>Objet choisi</b> (${ob.size.w} × ${ob.size.h} px, vu à ${mtFmt(ob.t0,1)}). ${T.length&&i?`Suivi : de ${mtFmt(i.lo,1)} à ${mtFmt(i.hi,1)}${i.lost?` (${i.lost} image${i.lost>1?'s':''} où il est perdu${i.lost/i.n>0.15?' : cache-t-il derrière autre chose ? essaie de le choisir sur une image où il est bien visible':''})`:' Tout est retrouvé.'}`:"Le suivi se fait tout seul quand tu regardes ou enregistres."}`}
-  KY.vfDirty=true;stLanes();anSoon();anAutoTrackSoon()}
+    $('#koInfo').innerHTML=!ob?"<b>Aucun objet choisi</b> : clique sur 🪄 puis sur l'objet dans le lecteur.":`<b>Objet choisi</b> (${ob.size.w} × ${ob.size.h} px, vu à ${mtFmt(ob.t0,1)}). ${T.length&&i?`Suivi : de ${mtFmt(i.lo,1)} à ${mtFmt(i.hi,1)}${i.lost?` (${i.lost} image${i.lost>1?'s':''} où il est perdu${i.lost/i.n>0.15?' : cache-t-il derrière autre chose ? essaie de le choisir sur une image où il est bien visible':''})`:' Tout est retrouvé.'}`:"Pas de suivi : l'effet reste là où tu as choisi l'objet. S'il bouge, règle la durée dans « Suivi de l'objet » puis clique sur « Suivre l'objet »."}`}
+  KY.vfDirty=true;stLanes();anSoon();anStaticSoon()}
 function anWire(){
   $('#stPAnim').innerHTML=anHtml();
   $('#koPick').addEventListener('click',()=>{if(AN.picking){anPickEnd();return}if(!anBind()){toast('La vidéo se charge…');return}anPickStart()});
@@ -5591,8 +5609,16 @@ function anWire(){
     if(e.target.closest('[data-kpick]')){KO.pickDest=c.id;anPickStart("Clique là où l'objet doit arriver (Échap pour annuler)");return}
     if(!e.target.closest('input,select,button')||e.target.closest('.an-ch')){AN.sel=c.id;mtV().currentTime=c.a;koView()}});
   $('#anFix').addEventListener('click',()=>{if(!KO.obj){toast("Choisis d'abord l'objet");return}if(!anBind())return;AN.fixing=true;anPickStart("Clique sur le CENTRE de l'objet, tel qu'il est sur cette image — Échap pour annuler");AN.fixing=true});
-  $('#koFixes').addEventListener('click',e=>{const b=e.target.closest('[data-fxrm]');if(!b)return;KO.fixes.splice(+b.dataset.fxrm,1);KO.track=[];KO.trackInfo=null;koView()});
-  $('#koTrack').addEventListener('click',async()=>{if(!anBind())return;await koTrack();anSoon()});$('#koTrackStop').addEventListener('click',()=>{KO.cancel=true});
+  $('#koFixes').addEventListener('click',e=>{const b=e.target.closest('[data-fxrm]');if(!b)return;KO.fixes.splice(+b.dataset.fxrm,1);const R=KO.trackInfo?{lo:KO.trackInfo.lo,hi:KO.trackInfo.hi}:null;KO.track=[];KO.trackInfo=null;koView();if(R)koTrack(R).then(anSoon)});
+  $('#koTrack').addEventListener('click',async()=>{if(!anBind())return;if(!KO.obj){toast("Choisis d'abord l'objet");return}KO.track=[];KO.trackInfo=null;await koTrack();anSoon()});
+  $('#koTrackClear').addEventListener('click',()=>{KO.track=[];KO.trackInfo=null;KY.vfDirty=true;koView();anSoon()});
+  const trkNum=(k)=>e=>{KO.o[k]=Math.max(0,Math.min(3600,+e.target.value||0));koSave();koView()};
+  $('#koTAfter').addEventListener('change',trkNum('tAfter'));$('#koTBefore').addEventListener('change',trkNum('tBefore'));
+  $('#koTChips').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;const v=b.dataset.t,ob=KO.obj;
+    if(v==='end'){if(!ob){toast("Choisis d'abord l'objet");return}KO.o.tAfter=Math.max(1,Math.ceil(MT.dur-ob.t0))}
+    else if(v==='clips'){if(!ob||!KO.clips.length){toast("Choisis l'objet et ajoute une animation d'abord");return}const a=Math.min(...KO.clips.map(c=>c.a)),z=Math.max(...KO.clips.map(koEnd));KO.o.tBefore=Math.max(0,Math.ceil((ob.t0-a)*10)/10);KO.o.tAfter=Math.max(0,Math.ceil((z-ob.t0)*10)/10)}
+    else{KO.o.tAfter=+v;KO.o.tBefore=0}
+    koSave();koView()});$('#koTrackStop').addEventListener('click',()=>{KO.cancel=true});
   $('#kyVfPlay').addEventListener('click',anPlay);
   $('#kyVfWebm').addEventListener('click',()=>anExport('webm'));$('#kyVfZip').addEventListener('click',()=>anExport('zip'));$('#kyVfMp4').addEventListener('click',()=>anExport('mp4'));
   $('#anCancel').addEventListener('click',()=>{KY.cancel=true});
