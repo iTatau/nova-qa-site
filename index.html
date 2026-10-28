@@ -1063,6 +1063,12 @@ td>.fc-bar{width:100%;min-width:60px;background:var(--soft);border-radius:4px;he
 .an-trkrow input{width:72px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit}
 .an-chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px}.an-chips button{padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font:inherit;font-size:12.5px}.an-chips button:hover{border-color:var(--brand)}
 .an-warn{margin:4px 0 0;font-size:12px;color:var(--warn);background:var(--warn-bg);padding:5px 8px;border-radius:8px}
+.an-objh{display:flex;flex-direction:column;gap:2px;margin:10px 0 6px}
+.an-objl{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.an-obj{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.an-obj.on{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand) inset;background:var(--soft)}
+.an-obj button{background:none;border:0;color:var(--ink);padding:6px 10px;font:inherit;font-size:13px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:1px}
+.an-obj button small{color:var(--mut);font-size:11px}.an-obj button.x{padding:6px 9px;color:var(--mut);justify-content:center}.an-obj button.x:hover{color:var(--ko)}
 </style>
 </head>
 <body>
@@ -4575,7 +4581,7 @@ const KO_FX={
   ring:{n:'Cercle qui se dessine',vl:'Épaisseur',v:[2,20,1,6],col:1,defCol:'#ffd23f'},
   arrow:{n:'Flèche',vl:'Taille %',v:[40,200,5,100],dest:1,col:1,defCol:'#ffd23f',destL:'Placée à :'}};
 for(const k of ['halo','shape','outline','highlight'])KO_FX[k].col=1;
-const KO={obj:null,cur:null,fixes:[],track:[],keys:[],clips:[],cid:0,pickDest:0,openId:0,tracking:false,cancel:false,lastPos:null,maskCv:null,maskFor:null,inited:false,
+const KO={obj:null,cur:null,fixes:[],track:[],keys:[],clips:[],objs:[],aid:0,oidN:0,cid:0,pickDest:0,openId:0,tracking:false,cancel:false,lastPos:null,maskCv:null,maskFor:null,inited:false,
   o:{loupe:true,tol:22,grad:true,outline:true,holes:true,fade:0.3,hideOrig:true,type:'highlight',range:'extract',showMask:true,showFx:true,mode:'replace',view:'vid',defDur:5,tAfter:5,tBefore:0}};
 try{Object.assign(KO.o,JSON.parse(localStorage.getItem('nova_ko_opts')||'{}'))}catch(e){}
 KO.o.view='elem';
@@ -4647,7 +4653,7 @@ function koPick(x,y,mode){
   const fr=KY.fc;if(!fr)return;x=Math.max(0,Math.min(fr.width-1,x));y=Math.max(0,Math.min(fr.height-1,y));
   const px=fr.getContext('2d').getImageData(x,y,1,1).data,s={x,y,c:[px[0],px[1],px[2]],rx:0,ry:0};
   if(mode==='replace'||!KO.obj){
-    KO.obj={seeds:[s],subs:[],t0:KY.t,c0:{x,y},size:{w:60,h:60},area0:0};KO.track=[];KO.lastPos={x,y};
+    koBeginObject();KO.obj={seeds:[s],subs:[],t0:KY.t,c0:{x,y},size:{w:60,h:60},area0:0};KO.track=[];KO.lastPos={x,y};
     const r=koObjAt(fr,KY.t,{pick:true,abs:true,pred:{x,y}});
     if(!r||!r.ok){KO.obj=null;toast("Je n'ai rien trouvé à cet endroit : essaie un autre point ou augmente la tolérance");koView();return}
     s.rx=x-r.cx;s.ry=y-r.cy;KO.obj.c0={x:r.cx,y:r.cy};KO.obj.size={w:r.rect.w,h:r.rect.h};KO.obj.area0=r.area;KO.lastPos={x:r.cx,y:r.cy}}
@@ -4678,9 +4684,9 @@ function koDrop(){if(!KO.obj)return;KO.obj=null;KO.cur=null;KO.track=[];KO.track
 
 /* ---------- les animations ---------- */
 const koEase=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2,koEnv=(t,a,b,f)=>kySmooth(0,1,Math.max(0,Math.min(1,(t-a)/f,(b-t)/f)));
-function koPose(t,size,force){
+function koPose(t,size,force,clipsArg){
   const P={dx:0,dy:0,s:1,sx:1,sy:1,rot:0,a:1,haloE:0,haloS:70,shapeE:0,shapeV:60,outE:0,outV:2,dim:0,hide:false,px:false,fr:false,active:false,cam:1,camE:0,ring:0,ringV:6,ringE:0,ringT:0,arrow:0,arrowV:100,arrowD:{x:1,y:0},arrowT:0};
-  let clips=KO.clips;if(!clips.length&&force){const F=KO_FX[KO.o.type];clips=[{type:KO.o.type,a:t-0.7,b:t+999,v:F.v?F.v[3]:0,dx:0,dy:0,hold:false,until:0}]}
+  let clips=clipsArg||KO.clips;if(!clips.length&&force){const F=KO_FX[KO.o.type];clips=[{type:KO.o.type,a:t-0.7,b:t+999,v:F.v?F.v[3]:0,dx:0,dy:0,hold:false,until:0}]}
   const f=Math.max(0.05,+KO.o.fade||0.3);
   for(const c of clips){
     const F=KO_FX[c.type],end=koEnd(c);if(t<c.a||t>end)continue;
@@ -4763,9 +4769,38 @@ function koPatch(frame,ob){
   ag.globalCompositeOperation='source-over';
   const mc=kyCv(pw,ph);mc.getContext('2d').putImageData(mk,0,0);
   const out=kyCv(pw,ph),og=out.getContext('2d');og.drawImage(acc,0,0);og.globalCompositeOperation='destination-in';og.drawImage(mc,0,0);return{c:out,x:x0,y:y0}}
+/* ---------- plusieurs objets : chaque animation a son objet (l'objet « actif » est celui du panneau, les autres sont rangés dans KO.objs) ---------- */
+function koSync(){if(!KO.aid)return;const r=KO.objs.find(x=>x.id===KO.aid);if(r){r.obj=KO.obj;r.track=KO.track;r.trackInfo=KO.trackInfo;r.fixes=KO.fixes;r.lastPos=KO.lastPos}}
+/* un objet choisi pour la première fois reçoit un numéro (appelé à chaque mise à jour du panneau) */
+function koEnsureReg(){
+  if(KO.obj&&!KO.aid){const id=++KO.oidN;KO.aid=id;KO.objs.push({id,obj:KO.obj,track:KO.track,trackInfo:KO.trackInfo,fixes:KO.fixes,lastPos:KO.lastPos})}
+  else if(!KO.obj&&KO.aid){KO.objs=KO.objs.filter(r=>r.id!==KO.aid);KO.aid=0}
+  else koSync()}
+/* on va choisir un NOUVEL objet : si celui d'avant a déjà des animations, il les garde (et son suivi) ; sinon on le remplace */
+function koBeginObject(){koSync();if(KO.obj&&KO.aid&&KO.clips.some(c=>c.oid===KO.aid)){KO.aid=0;KO.track=[];KO.trackInfo=null;KO.fixes=[];KO.lastPos=null;KO.cur=null}}
+function koActivate(id){
+  const r=KO.objs.find(x=>x.id===id);if(!r||KO.tracking)return;koSync();
+  KO.aid=id;KO.obj=r.obj;KO.track=r.track;KO.trackInfo=r.trackInfo;KO.fixes=r.fixes;KO.lastPos=r.lastPos;KO.cur=null;KO.maskCv=null;KO.maskFor=null}
+const koObjNo=id=>{const i=KO.objs.findIndex(r=>r.id===id);return i<0?0:i+1};
+function koRemoveObject(id){
+  koSync();const n=KO.clips.filter(c=>c.oid===id).length;if(n&&!confirm(`Retirer cet objet et ses ${n} animation${n>1?'s':''} ?`))return false;
+  KO.clips=KO.clips.filter(c=>c.oid!==id);KO.objs=KO.objs.filter(r=>r.id!==id);
+  if(KO.aid===id){const nx=KO.objs[KO.objs.length-1];KO.aid=0;KO.obj=null;KO.cur=null;KO.track=[];KO.trackInfo=null;KO.fixes=[];KO.lastPos=null;if(nx)koActivate(nx.id)}
+  return true}
+/* les animations regroupées par objet */
+function koGroups(force){
+  const m=new Map();for(const c of KO.clips){const k=KO.objs.some(r=>r.id===c.oid)?c.oid:KO.aid;if(!m.has(k))m.set(k,[]);m.get(k).push(c)}
+  if(!m.size&&force)m.set(KO.aid,[]);return m}
+function koWithObj(oid,fn){
+  if(!oid||oid===KO.aid)return fn();const r=KO.objs.find(x=>x.id===oid);if(!r)return fn();
+  const sv={obj:KO.obj,track:KO.track,trackInfo:KO.trackInfo,fixes:KO.fixes,lastPos:KO.lastPos,cur:KO.cur};
+  KO.obj=r.obj;KO.track=r.track;KO.trackInfo=r.trackInfo;KO.fixes=r.fixes;KO.lastPos=r.lastPos;
+  try{return fn()}finally{r.lastPos=KO.lastPos;Object.assign(KO,sv)}}
 function koDraw(g,W,H,t,frame,force){
+  let any=false;for(const [oid,cl] of koGroups(force)){if(koWithObj(oid,()=>koDrawOne(g,W,H,t,frame,force,cl)))any=true}return any}
+function koDrawOne(g,W,H,t,frame,force,cl){
   if(!KY.rect&&!KO.obj)return false;
-  const R0=koRectAt(t);if(!R0)return false;const size0=Math.max(R0.w,R0.h,8),P=koPose(t,size0,force);if(!P.active)return false;
+  const R0=koRectAt(t);if(!R0)return false;const size0=Math.max(R0.w,R0.h,8),P=koPose(t,size0,force,cl);if(!P.active)return false;
   const needOb=(P.px||P.hide||P.fr)&&(frame||KO.track.length>0),ob=needOb?koObFrame(frame,t):null,R=ob?ob.rect:R0,cx=ob&&ob.spr?ob.cx:R.x+R.w/2,cy=ob&&ob.spr?ob.cy:R.y+R.h/2,size=Math.max(R.w,R.h,8),px=cx+P.dx,py=cy+P.dy;
   const o=KY.o,cam=P.cam>1.001&&frame;
   g.save();
@@ -4804,13 +4839,13 @@ function kyVfLayer(){
   if(KY.vfLay&&!KY.vfDirty&&KY.vfLayT===KY.t&&KY.vfLay.width===W&&KY.vfLay.height===H)return KY.vfLay;
   const lay=KY.vfLay&&KY.vfLay.width===W&&KY.vfLay.height===H?KY.vfLay:(KY.vfLay=kyCv(W,H)),lg=lay.getContext('2d');lg.clearRect(0,0,W,H);
   KY.vfOn=koDraw(lg,W,H,KY.t,KY.fc,false);KY.vfLayT=KY.t;KY.vfDirty=false;return lay}
-function koAddClip(type,a,b){const F=KO_FX[type],c={id:++KO.cid,type,a,b,v:F.v?F.v[3]:0,dx:Math.round(KY.fw*0.25),dy:0,hold:!!F.path,until:b+3,col:F.col?(F.defCol||KY.o.glowCol):'',pts:[]};KO.clips.push(c);return c}
+function koAddClip(type,a,b){const F=KO_FX[type],c={id:++KO.cid,oid:KO.aid,type,a,b,v:F.v?F.v[3]:0,dx:Math.round(KY.fw*0.25),dy:0,hold:!!F.path,until:b+3,col:F.col?(F.defCol||KY.o.glowCol):'',pts:[]};KO.clips.push(c);return c}
 
 /* ---------- export : calque transparent, images, vidéo finie ---------- */
 async function kyVfExport(kind){
   if(KY.busy)return;anErr('');const C=KO.clips;
   if(KY.isImg||!KY.vid){anErr("Cette fonction demande une vidéo.");return}
-  if(!KY.rect&&!KO.obj){anErr("Choisis d'abord l'objet (outil 🪄 Objet).");return}
+  if(!KY.rect&&!KO.obj&&!KO.objs.length){anErr("Choisis d'abord l'objet (outil 🪄 Objet).");return}
   if(!C.length){anErr("Ajoute au moins une animation.");return}
   const vfr=kyFps(),fps=vfr<=61?vfr:Math.min(60,Math.round(vfr)),a0=Math.floor(Math.max(0,Math.min(...C.map(c=>c.a)))*fps+1e-6)/fps,b0=Math.min(KY.dur,Math.max(...C.map(koEnd)));
   if(b0-a0<0.1){anErr("La durée est trop courte.");return}
@@ -4822,7 +4857,7 @@ async function kyVfExport(kind){
     /* pas de suivi automatique : l'objet suit seulement si tu as lancé « Suivre l'objet » ; sinon l'effet reste là où tu l'as choisi */
     const zipFiles=[];if(kind!=='zip'){anProg('Chargement du moteur…',0.02);ff=await mtEngine()}
     const run=async()=>{
-      const cv=kyCv(W,H),g=cv.getContext('2d'),need=!!KO.obj||C.some(c=>KO_FX[c.type].px||KO_FX[c.type].hide);let pv=null,tmp=null,empty=null;const names=[];
+      const cv=kyCv(W,H),g=cv.getContext('2d'),need=!!KO.obj||KO.objs.length>0||C.some(c=>KO_FX[c.type].px||KO_FX[c.type].hide);let pv=null,tmp=null,empty=null;const names=[];
       if(need){pv=await kyVideo(KY.file,true);tmp=phCv(KY.fw,KY.fh)}
       try{
         for(let i=0;i<N;i++){
@@ -5211,14 +5246,14 @@ const AN_GROUPS=[['Mouvement',['slide','path','bounce','float','shake','wiggle',
 const AN={file:null,sel:0,picking:false,stopAt:null,out:[],nid:0,raf:0,last:0,soon:0,store:new Map(),tool:'brush',exact:true,bsz:12,stroke:null,rectD:null,hov:null,hovT:0,pathFor:0,mx:null};
 try{const t=localStorage.getItem('nova_an_tool');if(t)AN.tool=t;AN.bsz=+localStorage.getItem('nova_an_bsz')||12;if(localStorage.getItem('nova_an_exact')==='0')AN.exact=false}catch(e){}
 /* chaque vidéo garde son objet et ses animations */
-const AN_KEYS=['obj','cur','fixes','track','trackInfo','keys','clips','openId','lastPos','maskCv','maskFor'];
+const AN_KEYS=['obj','cur','fixes','track','trackInfo','keys','clips','objs','aid','oidN','openId','lastPos','maskCv','maskFor'];
 const anOn=()=>!$('#mtStep2').hidden&&$('#tab-montage').classList.contains('on')&&MT.dur>0;
 const anWant=()=>anOn()&&(STU.tab==='anim'||(KO.clips.length>0&&!!(KO.obj||KY.rect)));
 function anSwap(f){
   if(AN.file===f)return;
-  if(AN.file){const o={};AN_KEYS.forEach(k=>o[k]=KO[k]);AN.store.set(AN.file,o)}
+  if(AN.file){koSync();const o={};AN_KEYS.forEach(k=>o[k]=KO[k]);AN.store.set(AN.file,o)}
   const n=AN.store.get(f);
-  if(n)AN_KEYS.forEach(k=>KO[k]=n[k]);else{KO.obj=null;KO.cur=null;KO.fixes=[];KO.track=[];KO.trackInfo=null;KO.keys=[];KO.clips=[];KO.openId=0;KO.lastPos=null;KO.maskCv=null;KO.maskFor=null}
+  if(n)AN_KEYS.forEach(k=>KO[k]=n[k]);else{KO.obj=null;KO.cur=null;KO.fixes=[];KO.track=[];KO.trackInfo=null;KO.keys=[];KO.clips=[];KO.objs=[];KO.aid=0;KO.oidN=0;KO.openId=0;KO.lastPos=null;KO.maskCv=null;KO.maskFor=null}
   AN.file=f;AN.sel=0;KY.file=null;anPickEnd();koView()}
 
 /* --- on relie le moteur d'objets à l'image affichée dans le lecteur --- */
@@ -5245,7 +5280,7 @@ function anPaint(t,vid){
     if(sc){const R=koRectAt(sc.a);if(R){const x0=(R.x+R.w/2)*k,y0=(R.y+R.h/2)*k,x1=x0+sc.dx*k,y1=y0+sc.dy*k;
       g.save();g.strokeStyle='#ffd166';g.fillStyle='#ffd166';g.lineWidth=Math.max(2,cw/300);g.setLineDash([cw/60,cw/90]);g.beginPath();g.moveTo(x0,y0);g.lineTo(x1,y1);g.stroke();g.setLineDash([]);
       g.beginPath();g.arc(x1,y1,Math.max(5,cw/130),0,Math.PI*2);g.fill();g.restore()}}}
-  if(KO.o.showFx&&KO.clips.length&&(KO.obj||KY.rect)){g.save();g.scale(k,k);g.imageSmoothingEnabled=true;KY.vfOn=koDraw(g,KY.fw,KY.fh,t,KO.track.length?(vid||mtV()):KY.fc,false);g.restore()}
+  if(KO.o.showFx&&KO.clips.length&&(KO.obj||KO.objs.length||KY.rect)){g.save();g.scale(k,k);g.imageSmoothingEnabled=true;KY.vfOn=koDraw(g,KY.fw,KY.fh,t,(KO.track.length||KO.objs.some(r=>r.track.length))?(vid||mtV()):KY.fc,false);g.restore()}
   anPaintTools(g,k,cw)}
 /* trajectoire, aperçu du contour sous la souris, pinceau, cadre */
 function anPaintTools(g,k,cw){
@@ -5332,7 +5367,7 @@ function anSetObj(adds,subs,mode){
   else if(mode==='add'&&KO.obj){const P=KO.cur?{x:KO.cur.cx,y:KO.cur.cy}:KO.lastPos||KO.obj.c0;adds.forEach(s=>KO.obj.seeds.push({x:s.x,y:s.y,c:s.c,rx:s.x-P.x,ry:s.y-P.y}));KO.track=[];KO.trackInfo=null}
   else{
     const cx=adds.reduce((a,s)=>a+s.x,0)/adds.length,cy=adds.reduce((a,s)=>a+s.y,0)/adds.length,seeds=adds.map(s=>({x:s.x,y:s.y,c:s.c,rx:0,ry:0}));
-    KO.obj={seeds,subs:[],t0:KY.t,c0:{x:cx,y:cy},size:{w:60,h:60},area0:0,grad:seeds.length<3};KO.track=[];KO.trackInfo=null;KO.lastPos={x:cx,y:cy};
+    koBeginObject();KO.obj={seeds,subs:[],t0:KY.t,c0:{x:cx,y:cy},size:{w:60,h:60},area0:0,grad:seeds.length<3};KO.track=[];KO.trackInfo=null;KO.lastPos={x:cx,y:cy};
     const r=koObjAt(fr,KY.t,{pick:true,abs:true,pred:{x:cx,y:cy}});
     if(!r||!r.ok){KO.obj=null;toast("Je n'ai rien trouvé là : essaie de colorier un peu plus l'objet ou d'augmenter la tolérance");koView();return}
     seeds.forEach(s=>{s.rx=s.x-r.cx;s.ry=s.y-r.cy});KO.obj.c0={x:r.cx,y:r.cy};KO.obj.size={w:r.rect.w,h:r.rect.h};KO.obj.area0=r.area;KO.lastPos={x:r.cx,y:r.cy}}
@@ -5441,7 +5476,7 @@ function anRectPick(r,mode){
 /* objet défini par un masque exact (cadre, IA) */
 function anSetFromMask(o){
   const seeds=samSeeds(o);seeds.forEach(s=>{s.rx=s.x-o.cx;s.ry=s.y-o.cy});
-  KO.obj={seeds,subs:[],t0:KY.t,c0:{x:o.cx,y:o.cy},size:{w:o.rect.w,h:o.rect.h},area0:o.area,grad:false,sam:o,exact:!!o.exact};KO.track=[];KO.trackInfo=null;KO.lastPos={x:o.cx,y:o.cy};
+  koBeginObject();KO.obj={seeds,subs:[],t0:KY.t,c0:{x:o.cx,y:o.cy},size:{w:o.rect.w,h:o.rect.h},area0:o.area,grad:false,sam:o,exact:!!o.exact};KO.track=[];KO.trackInfo=null;KO.lastPos={x:o.cx,y:o.cy};
   KY.o.cut='obj';kySave();KY.man=null;KY.ai=null;kyUpdate();koView();anPickEnd();anSoon()}
 /* --- zoom et déplacement de l'image du lecteur (pour viser précisément) --- */
 const ZM={z:1,ox:0,oy:0,space:false,drag:null,just:false};
@@ -5496,6 +5531,7 @@ function anHtml(){return `<section class="an-s">
  <p class="muted sm an-p" id="anToolTxt"></p>
  <label class="mt-chk" id="anExW"><input type="checkbox" id="anExact"> 🎯 Précis : seulement ce que je colorie (rien de plus)</label>
  <label class="ky-sl" id="anBszW"><span>Taille du pinceau</span><input type="range" id="anBsz" min="2" max="40" step="1" aria-label="Taille du pinceau"><b id="anBszV"></b></label>
+ <div class="an-objs" id="anObjs"></div>
  <div class="an-row"><button class="btn primary" id="koPick" type="button">🪄 Choisir l'objet</button><button class="btn sm" id="koClear" type="button">Effacer</button><button class="btn sm" id="anObjPng" type="button" title="Enregistre l'objet seul, fond transparent">⬇ Image de l'objet</button></div>
  <div class="an-info" id="koInfo"></div>
  <div class="an-fixes" id="koFixes"></div>
@@ -5542,7 +5578,7 @@ function anHtml(){return `<section class="an-s">
 function anClipHtml(c){
   const F=KO_FX[c.type],n=x=>(+x).toFixed(2),ic=(AN_FX[c.type]||['✨'])[0];
   return `<div class="an-clip${c.id===AN.sel?' on':''}" data-cid="${c.id}">
-   <div class="an-ch"><span class="an-ic" aria-hidden="true">${ic}</span><select data-kc="type" aria-label="Type d'animation">${Object.keys(KO_FX).map(k=>`<option value="${k}"${k===c.type?' selected':''}>${AN_FX[k][1]}</option>`).join('')}</select><button class="btn sm" data-kcrm type="button" aria-label="Retirer cette animation">✕</button></div>
+   <div class="an-ch"><span class="an-ic" aria-hidden="true">${ic}</span><select data-kc="type" aria-label="Type d'animation">${Object.keys(KO_FX).map(k=>`<option value="${k}"${k===c.type?' selected':''}>${AN_FX[k][1]}</option>`).join('')}</select>${KO.objs.length>1?`<select data-kc="oid" aria-label="Objet de cette animation">${KO.objs.map((r,i)=>`<option value="${r.id}"${r.id===c.oid?' selected':''}>Objet ${i+1}</option>`).join('')}</select>`:''}<button class="btn sm" data-kcrm type="button" aria-label="Retirer cette animation">✕</button></div>
    <div class="an-cr"><label>de<input type="number" step="0.1" min="0" value="${n(c.a)}" data-kc="a" aria-label="Début (s)"></label><button class="btn sm" data-kcnow="a" type="button" title="Mettre l'instant du lecteur">⏱</button>
     <label>à<input type="number" step="0.1" min="0" value="${n(c.b)}" data-kc="b" aria-label="Fin (s)"></label><button class="btn sm" data-kcnow="b" type="button" title="Mettre l'instant du lecteur">⏱</button>
     <label>durée<input type="number" step="0.5" min="0.2" value="${n(c.b-c.a)}" data-kc="dur" aria-label="Durée (s)"></label></div>
@@ -5553,8 +5589,11 @@ function anClipHtml(c){
    ${F.dest?`<div class="an-cr"><span class="muted sm">${F.destL||'Vers :'}</span><button class="btn sm" data-kdir="l" type="button" aria-label="Vers la gauche">←</button><button class="btn sm" data-kdir="u" type="button" aria-label="Vers le haut">↑</button><button class="btn sm" data-kdir="d" type="button" aria-label="Vers le bas">↓</button><button class="btn sm" data-kdir="r" type="button" aria-label="Vers la droite">→</button>${F.destL?'':'<button class="btn sm" data-kpick type="button">📍 Choisir sur la vidéo</button>'}</div>`:''}
    ${F.hold?`<label class="mt-chk"><input type="checkbox" data-kc="hold"${c.hold?' checked':''}> Rester ensuite jusqu'à <input type="number" step="0.5" min="0" value="${n(c.until)}" data-kc="until" aria-label="Rester jusqu'à (s)" style="width:74px"> s</label>`:''}
   </div>`}
+function anObjsView(){
+  const box=$('#anObjs');if(!box)return;
+  box.innerHTML=KO.objs.length?`<div class="an-objh"><b>Objets</b><span class="muted sm">chaque objet garde ses animations ; les nouvelles vont sur l'objet en surbrillance</span></div><div class="an-objl">`+KO.objs.map((r,i)=>{const n=KO.clips.filter(c=>c.oid===r.id).length;return `<span class="an-obj${r.id===KO.aid?' on':''}"><button type="button" data-oid="${r.id}" title="Revenir à cet objet (pour le modifier ou le suivre)">${i+1}. Objet à ${mtFmt(r.obj?r.obj.t0:0,1)}<small>${n} animation${n>1?'s':''}${r.trackInfo?' · suivi':''}</small></button><button type="button" class="x" data-ordel="${r.id}" aria-label="Retirer cet objet">✕</button></span>`}).join('')+`</div>`:'';}
 function koView(){
-  const box=$('#koClips');if(!box)return;
+  const box=$('#koClips');if(!box)return;koEnsureReg();anObjsView();
   const L=KO.clips.slice().sort((a,b)=>a.a-b.a),keep=document.activeElement&&box.contains(document.activeElement)?[document.activeElement.closest('.an-clip').dataset.cid,document.activeElement.dataset.kc]:null;
   box.innerHTML=L.length?L.map(anClipHtml).join(''):'<p class="muted sm an-empty">Aucune animation pour le moment : choisis un effet ci-dessus.</p>';
   if(keep){const el=box.querySelector(`.an-clip[data-cid="${keep[0]}"] [data-kc="${keep[1]}"]`);if(el&&el.type!=='range')el.focus()}
@@ -5571,7 +5610,7 @@ function koView(){
    $('#koTrkTxt').innerHTML=tx}
   const TI={wand:'🪄',brush:'🖌',lasso:'✏️',rect:'▭',sam:'✨'};setSeg('anToolSeg',AN.tool);$('#anExact').checked=AN.exact;$('#anExW').hidden=AN.tool!=='brush';$('#anBsz').value=AN.bsz;$('#anBszV').textContent=AN.bsz;$('#anBszW').hidden=AN.tool!=='brush';$('#anObjPng').disabled=!(KO.cur&&KO.cur.ok);
   $('#anToolTxt').textContent={wand:"Clique sur l'objet : toute la zone de même couleur est prise. Si c'est trop large ou pas ce que tu voulais, utilise 🖌 Pinceau ou ✏️ Lasso : tu choisis exactement.",brush:AN.exact?"Colorie exactement ce que tu veux animer (l'objet entier, un symbole, un détail) : seul ce que tu colories est pris, juste recalé sur les contours. Alt = retirer, Maj = ajouter.":"Colorie l'objet ou son symbole : l'IA étend à tout ce qui ressemble à ce que tu as colorié (même s'il y a plusieurs couleurs).",lasso:"Entoure l'objet à main levée (maintiens et dessine tout autour) : exactement l'intérieur du tracé est pris. Alt = retirer, Maj = ajouter.",rect:"Encadre l'objet en glissant : tout ce qui se distingue du fond est pris.",sam:"Une IA (SAM) découpe l'objet avec précision : clique dessus, puis affine (Alt + clic pour retirer une partie). Elle se télécharge une fois (≈ 50 Mo) et tourne sur ton ordinateur, quelques secondes par image. Sur les autres images de la vidéo, le suivi se fait par couleur."}[AN.tool];
-  $('#koPick').textContent=AN.picking&&!KO.pickDest&&!AN.pathFor?'👆 Vise dans le lecteur… (Échap pour annuler)':KO.obj?TI[AN.tool]+' Choisir un autre objet':TI[AN.tool]+' Choisir l\'objet';
+  $('#koPick').textContent=AN.picking&&!KO.pickDest&&!AN.pathFor?'👆 Vise dans le lecteur… (Échap pour annuler)':KO.obj?TI[AN.tool]+(KO.clips.some(c=>c.oid===KO.aid)?' ＋ Un autre objet (garde les effets déjà posés)':' Choisir un autre objet'):TI[AN.tool]+' Choisir l\'objet';
   $$('#stPAnim [data-fx]').forEach(b=>b.classList.toggle('dis',!KO.obj&&!KY.rect));
   if(!KO.tracking){const T=KO.track,i=KO.trackInfo,ob=KO.obj;
     $('#koInfo').innerHTML=!ob?"<b>Aucun objet choisi</b> : clique sur 🪄 puis sur l'objet dans le lecteur.":`<b>Objet choisi</b> (${ob.size.w} × ${ob.size.h} px, vu à ${mtFmt(ob.t0,1)}). ${T.length&&i?`Suivi : de ${mtFmt(i.lo,1)} à ${mtFmt(i.hi,1)}${i.lost?` (${i.lost} image${i.lost>1?'s':''} où il est perdu${i.lost/i.n>0.15?' : cache-t-il derrière autre chose ? essaie de le choisir sur une image où il est bien visible':''})`:' Tout est retrouvé.'}`:"Pas de suivi : l'effet reste là où tu as choisi l'objet. S'il bouge, règle la durée dans « Suivi de l'objet » puis clique sur « Suivre l'objet »."}`}
@@ -5580,7 +5619,8 @@ function anWire(){
   $('#stPAnim').innerHTML=anHtml();
   $('#koPick').addEventListener('click',()=>{if(AN.picking){anPickEnd();return}if(!anBind()){toast('La vidéo se charge…');return}anPickStart()});
   segBind('koModeSeg',v=>{KO.o.mode=v;koSave();if(!AN.picking)anPickStart(v==='sub'?'Clique sur la partie à retirer (Échap pour annuler)':v==='add'?"Clique sur la partie à ajouter à l'objet (Échap pour annuler)":null);else koView()});
-  $('#koClear').addEventListener('click',()=>{KO.obj=null;KO.cur=null;KO.track=[];KO.trackInfo=null;anPickEnd();koView();anSoon()});
+  $('#koClear').addEventListener('click',()=>{if(KO.aid){if(!koRemoveObject(KO.aid))return}else{KO.obj=null;KO.cur=null;KO.track=[];KO.trackInfo=null}anPickEnd();KY.vfDirty=true;koView();anSoon()});
+  $('#anObjs').addEventListener('click',e=>{const d=e.target.closest('[data-ordel]');if(d){if(koRemoveObject(+d.dataset.ordel)){KY.vfDirty=true;koView();anSoon()}return}const b=e.target.closest('[data-oid]');if(!b||KO.tracking)return;koActivate(+b.dataset.oid);if(anBind()&&KO.obj){const v=mtV();v.currentTime=KO.obj.t0}KY.vfDirty=true;koView();anSoon()});
   $('#stPAnim').addEventListener('input',e=>{const t=e.target;
     if(t.dataset.kosl){const k=t.dataset.kosl;KO.o[k]=+t.value;koSave();$$('#stPAnim [data-kov]').forEach(b=>b.textContent=KO.o[b.dataset.kov]);if(k==='tol'){KO.track=[];KO.trackInfo=null;anSoon()}KY.vfDirty=true;anSoon()}
     if(t.dataset.koc){KO.o[t.dataset.koc]=t.checked;koSave();if(['grad','outline','holes'].includes(t.dataset.koc)){KO.track=[];KO.trackInfo=null}KY.vfDirty=true;anSoon()}});
@@ -5594,7 +5634,8 @@ function anWire(){
   const clip=t=>{const r=t.closest('.an-clip');return r?KO.clips.find(x=>x.id===+r.dataset.cid):null};
   $('#koClips').addEventListener('input',e=>{const t=e.target,k=t.dataset&&t.dataset.kc;if(k!=='v')return;const c=clip(t);if(!c)return;c.v=+t.value;t.nextElementSibling.textContent=c.v;KY.vfDirty=true;anSoon()});
   $('#koClips').addEventListener('change',e=>{const t=e.target,k=t.dataset&&t.dataset.kc;if(!k)return;const c=clip(t);if(!c)return;
-    if(k==='type'){c.type=t.value;const F=KO_FX[c.type];c.v=F.v?F.v[3]:0;if(F.dest&&!c.dx&&!c.dy)c.dx=Math.round(KY.fw*0.25)}
+    if(k==='oid'){c.oid=+t.value;KY.vfDirty=true}
+    else if(k==='type'){c.type=t.value;const F=KO_FX[c.type];c.v=F.v?F.v[3]:0;if(F.dest&&!c.dx&&!c.dy)c.dx=Math.round(KY.fw*0.25)}
     else if(k==='dur'){c.b=Math.min(MT.dur,c.a+Math.max(0.2,+t.value||0.2));if(c.until<c.b)c.until=c.b+3}
     else if(k==='col')c.col=t.value;
     else if(k==='hold')c.hold=t.checked;else if(k==='v')c.v=+t.value;
@@ -6264,7 +6305,7 @@ async function anSamClick(p,mode){
     const r=await samCall({t:'decode',pts:SAM.pts.map(q=>({x:q.x*SAM.k,y:q.y*SAM.k,l:q.l}))}),o=samToObj(r);
     if(!o){SAM.pts.pop();toast("L'IA n'a rien trouvé à cet endroit : clique plus au milieu de l'objet");anHint(SAM_TIP);return}
     const seeds=samSeeds(o);seeds.forEach(s=>{s.rx=s.x-o.cx;s.ry=s.y-o.cy});
-    KO.obj={seeds,subs:[],t0:KY.t,c0:{x:o.cx,y:o.cy},size:{w:o.rect.w,h:o.rect.h},area0:o.area,grad:false,sam:o};KO.track=[];KO.trackInfo=null;KO.lastPos={x:o.cx,y:o.cy};
+    if(SAM.pts.length<=1)koBeginObject();KO.obj={seeds,subs:[],t0:KY.t,c0:{x:o.cx,y:o.cy},size:{w:o.rect.w,h:o.rect.h},area0:o.area,grad:false,sam:o};KO.track=[];KO.trackInfo=null;KO.lastPos={x:o.cx,y:o.cy};
     KY.o.cut='obj';kySave();KY.man=null;KY.ai=null;kyUpdate();koView();anSoon();anHint(SAM_TIP)
   }catch(e){
     SAM.pts.pop();console.warn('SAM:',e);const m=String((e&&e.message)||e);
@@ -6363,14 +6404,14 @@ STU.fitSig='';
 const stRows=items=>{const ends=[];for(const it of items){let r=ends.findIndex(e=>e<=it.a+1e-6);if(r<0){r=ends.length;ends.push(0)}ends[r]=Math.max(it.b,it.hold||0);it.row=r}return Math.max(1,ends.length)};
 const stClamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 function stLaneItems(kind){
-  if(kind==='an')return KO.clips.map(c=>({id:c.id,a:c.a,b:c.b,hold:c.hold&&c.until>c.b?c.until:0,cls:'an',txt:`${(AN_FX[c.type]||['✨'])[0]} ${(AN_FX[c.type]||['','Animation'])[1]}`,on:c.id===AN.sel})).sort((x,y)=>x.a-y.a);
+  if(kind==='an')return KO.clips.map(c=>({id:c.id,a:c.a,b:c.b,hold:c.hold&&c.until>c.b?c.until:0,cls:'an',txt:`${(AN_FX[c.type]||['✨'])[0]} ${(AN_FX[c.type]||['','Animation'])[1]}${KO.objs.length>1&&koObjNo(c.oid)?' · obj. '+koObjNo(c.oid):''}`,on:c.id===AN.sel})).sort((x,y)=>x.a-y.a);
   return SU.lines.map((l,i)=>({id:i,a:l.s,b:l.e,hold:0,cls:'su',txt:l.t.trim()||'…',on:i===STU.subSel})).sort((x,y)=>x.a-y.a)}
 function stLaneFill(L,kind){
   const items=stLaneItems(kind),rows=stRows(items),s=MT.view.s,sp=mtSpan();
   L.style.height=(rows*34+6)+'px';
   const hint=!items.length?`<div class="st-lane-h">${kind==='an'?(KO.obj?'Double-clique ici ou clique sur un effet pour ajouter une animation':"Choisis d'abord l'objet (onglet Animations)"):(SU.file?'Double-clique ici pour ajouter une ligne de sous-titre':'')}</div>`:'';
   /* qualité du suivi : bande rouge là où l'objet est perdu (à recaler) */
-  let qs='';if(kind==='an'&&KO.track.length){const T=KO.track;let i=0;while(i<T.length){if(T[i].ok===false){let j=i;while(j+1<T.length&&T[j+1].ok===false)j++;if(j>=i){const a=T[Math.max(0,i-1)].t,b=T[Math.min(T.length-1,j+1)].t,x0=(a-s)/sp*100,w=Math.max(0.3,(b-a)/sp*100);qs+=`<i class="st-q" style="left:${x0}%;width:${w}%" title="Objet perdu ici : mets la vidéo sur cette image et clique sur 📍 Recaler ici"></i>`}i=j+1}else i++}}
+  let qs='';if(kind==='an')for(const T of [KO.track,...KO.objs.filter(r=>r.id!==KO.aid).map(r=>r.track)]){if(!T.length)continue;let i=0;while(i<T.length){if(T[i].ok===false){let j=i;while(j+1<T.length&&T[j+1].ok===false)j++;if(j>=i){const a=T[Math.max(0,i-1)].t,b=T[Math.min(T.length-1,j+1)].t,x0=(a-s)/sp*100,w=Math.max(0.3,(b-a)/sp*100);qs+=`<i class="st-q" style="left:${x0}%;width:${w}%" title="Objet perdu ici : mets la vidéo sur cette image et clique sur 📍 Recaler ici"></i>`}i=j+1}else i++}}
   L.innerHTML=qs+hint+items.filter(it=>Math.max(it.b,it.hold)>=s&&it.a<=MT.view.e).map(it=>{
     const x0=(it.a-s)/sp*100,w=Math.max(0.35,(it.b-it.a)/sp*100),hw=it.hold?(it.hold-it.b)/sp*100:0;
     return `<div class="st-blk ${it.cls}${it.on?' on':''}" data-id="${it.id}" style="left:${x0}%;width:${w}%;top:${it.row*34+3}px" title="${esc(it.txt)}"><i class="h l"></i><span class="st-bt">${esc(it.txt)}</span><i class="h r"></i></div>${hw>0?`<div class="st-hold" style="left:${x0+w}%;width:${hw}%;top:${it.row*34+3}px"></div>`:''}`}).join('')}
