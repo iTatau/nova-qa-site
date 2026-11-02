@@ -1077,6 +1077,15 @@ td>.fc-bar{width:100%;min-width:60px;background:var(--soft);border-radius:4px;he
 .fc-st.prime{border-color:#e0a516;background:linear-gradient(135deg,rgba(255,200,60,.14),rgba(255,140,60,.08))}
 .fc-payform select[name=k]{padding:7px 9px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink);font:inherit}
 .ps-t tr.ps-pr td{font-weight:700;color:#1b7f3b}
+/* impression : un peu plus serré pour que le document tienne sur 2 pages (récap, puis détail des machines) */
+@media print{
+  .ps-top{padding-bottom:9px}.ps-logo svg{width:56px;height:56px}
+  .ps-parties{margin:10px 0}.ps-parties>div{padding:6px 12px}
+  .ps-t td{padding:3.5px 8px}.ps-t th{padding:5px 8px}.ps-t tfoot td{padding:5px 8px}
+  .ps-part{margin-top:13px}.ps-part h2{margin-bottom:5px}
+  .ps-sum{margin-top:12px}.ps-box,.ps-net{padding:8px 12px}.ps-foot{margin-top:12px}
+}
+.stbar{flex-wrap:wrap;row-gap:8px}#stDaysW{white-space:nowrap;display:inline-flex;align-items:center;gap:6px;font-size:13px}#stDaysW .muted{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -1528,7 +1537,7 @@ td>.fc-bar{width:100%;min-width:60px;background:var(--soft);border-radius:4px;he
 </dialog>
 
 <dialog id="dlgSt" class="wide stm">
-  <div class="stbar"><b id="stTitle">Relevé d'activité</b><div class="seg" id="stTabs"><button data-v="all" aria-pressed="true" type="button">Document complet</button><button data-v="recap" aria-pressed="false" type="button">Récapitulatif</button><button data-v="machines" aria-pressed="false" type="button">Machines</button><button data-v="corrections" aria-pressed="false" type="button">Corrections</button></div><span class="sp"></span><button class="btn primary" id="stPrint" type="button" title="Dans la fenêtre qui s'ouvre, choisis « Enregistrer au format PDF » comme destination">Imprimer / enregistrer en PDF</button><button class="btn" id="stClose" type="button">Fermer</button></div>
+  <div class="stbar"><b id="stTitle">Relevé d'activité</b><div class="seg" id="stTabs"><button data-v="all" aria-pressed="true" type="button">Document complet</button><button data-v="recap" aria-pressed="false" type="button">Récapitulatif</button><button data-v="machines" aria-pressed="false" type="button">Machines</button><button data-v="corrections" aria-pressed="false" type="button">Corrections</button></div><label class="mt-chk" id="stDaysW" title="Ajoute le tableau jour par jour à la fin du document (souvent une page de plus)"><input type="checkbox" id="stDays"> Détail par jour <span class="muted sm">(+1 page)</span></label><span class="sp"></span><button class="btn primary" id="stPrint" type="button" title="Dans la fenêtre qui s'ouvre, choisis « Enregistrer au format PDF » comme destination">Imprimer / enregistrer en PDF</button><button class="btn" id="stClose" type="button">Fermer</button></div>
   <div class="sthint">Pour enregistrer en PDF : dans la fenêtre qui s'ouvre, choisis <b>« Enregistrer au format PDF »</b> dans <b>Destination</b>, puis clique sur <b>Enregistrer</b>.</div>
   <div class="sheet" id="stSheet"></div>
 </dialog>
@@ -7402,7 +7411,8 @@ if(window.__NOVA_TEST)window.__oc={OC,ocAdd,ocPrep};
 
 /* ---------- relevés d'activité (à imprimer ou enregistrer en PDF) ---------- */
 const JOURS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
-const ST={y:0,m:0,part:'all',year:false};
+const ST={y:0,m:0,part:'all',year:false,days:false};
+try{ST.days=localStorage.getItem('nova_st_days')==='1'}catch(e){}
 const docBrand=()=>{const pf=db.settings.profile||{};return{name:pf.docName||'NOVA-QA',tag:pf.tagline||'Tests & contrôle qualité de jeux'}};
 const stDate=e=>e.day?`${pad(e.day)}/${pad(e.month+1)}/${e.year}`:'—';
 const stDay=e=>e.day?JOURS[wd(e.year,e.month,e.day)]:'';
@@ -7482,16 +7492,16 @@ function statementHtml(y,m,part='all'){
     <tfoot><tr><td>Total des prestations</td><td class="r">${s.cnt}</td><td></td><td class="r">${eur(s.total)}</td></tr>${pr>0.005?`<tr class="ps-pr"><td>Prime reçue en plus du salaire</td><td></td><td></td><td class="r">+ ${eur(pr)}</td></tr>`:''}</tfoot></table>`;
   const est=pf.showEstimate!==false,tx=taxMonth(y,m),txc=est?taxYearTo(y,m):null;
   const sum=`<section class="ps-sum"><div class="ps-est"><div class="ps-box"><span>Équivalent en dollars</span><b>${usd(s.total*rate)}</b><i>1 € = ${String(rate).replace('.',',')} $</i></div></div>
-    <div class="ps-net"><span>Total à percevoir</span><b>${eur(s.total)}</b><i>${s.cnt} ligne${s.cnt>1?'s':''} · ${MONTHS[m].toLowerCase()} ${y}</i>${est?`<em>Net estimé après cotisations et impôt : <b>${eur(tx.net)}</b></em>`:''}${pr>0.005?`<em>Prime reçue en plus du salaire : <b>+ ${eur(pr)}</b>${est?` · Net estimé + prime : <b>${eur(tx.net+pr)}</b>`:''}</em>`:''}</div></section>`;
+    <div class="ps-net"><span>Total à percevoir</span><b>${eur(s.total)}</b><i>${s.cnt} ligne${s.cnt>1?'s':''} · ${MONTHS[m].toLowerCase()} ${y}${pr>0.005?` · prime en plus : <b style="display:inline;font-size:11px;margin:0">${eur(pr)}</b>`:''}</i>${est?`<em>Net estimé après cotisations et impôt : <b>${eur(tx.net)}</b></em>`:''}</div></section>`;
   const cumul=`<section class="ps-part"><h2>Cumuls depuis le 1er janvier ${y}</h2><table class="ps-t"><thead><tr><th>Cumul</th><th class="r">Quantité</th><th class="r">Montant</th></tr></thead><tbody>
     <tr><td>Machines testées</td><td class="r">${cu.tests}</td><td class="r">${eur(cu.pt)}</td></tr><tr><td>Corrections effectuées</td><td class="r">${cu.corr}</td><td class="r">${eur(cu.pc)}</td></tr>
     ${jd?`<tr><td>Jours travaillés (dates précises)</td><td class="r">${jd}</td><td></td></tr>`:''}${est?`<tr><td>Cotisations et contributions estimées</td><td></td><td class="r">${mneg(txc.urssaf)}</td></tr><tr><td>Impôt sur le revenu estimé (cumul)</td><td></td><td class="r">${mneg(txc.ir)}</td></tr>`:''}</tbody><tfoot><tr><td>Total cumulé${est?' (brut)':''}</td><td class="r">${cu.tests+cu.corr}</td><td class="r">${eur(cuT)}</td></tr>${est?`<tr><td>Net cumulé estimé</td><td></td><td class="r">${eur(txc.net)}</td></tr>`:''}</tfoot></table></section>`;
   let body='';
   if(!rows.length)body='<p class="ps-none">Aucune machine enregistrée pour ce mois.</p>';
-  else if(part==='recap')body=lines+(est?psDecompte(tx,{}):'')+sum+cumul+psDays(rows);
+  else if(part==='recap')body=lines+(est?psDecompte(tx,{}):'')+sum+cumul+(ST.days?psDays(rows):'');
   else if(part==='machines')body=psTable(T,'test',nums);
   else if(part==='corrections')body=psTable(C,'correction',nums);
-  else body=lines+(est?psDecompte(tx,{}):'')+sum+cumul+psDays(rows)+psFoot()+psTable(T,'test',nums,!C.length)+(C.length?psTable(C,'correction',nums):'');
+  else body=lines+(est?psDecompte(tx,{}):'')+sum+cumul+psFoot()+psTable(T,'test',nums,!C.length)+(C.length?psTable(C,'correction',nums):'')+(ST.days?psDays(rows):'');
   return `<div class="ps ${part==='all'?'ps-breaks':''}">${top}${body}${part==='all'&&rows.length?'':psFoot()}</div>`}
 function yearStatementHtml(y){
   const tot=stats(y,null),u=usdYear(y),mc=db.settings.micro,pf=db.settings.profile||{};
@@ -7505,11 +7515,12 @@ function yearStatementHtml(y){
   return `<div class="ps">${psTop('Récapitulatif annuel',String(y),`Du 01/01/${y} au 31/12/${y}`,'')}${psParties(`Année ${y}`)}<section class="ps-part"><h2>Mois par mois<small>${rows.length} mois d'activité</small></h2>${tbl}</section>${est?psDecompte(tx,{year:true}):''}${sum}${est?`<div class="ps-pg">${psUrssaf(y)}${psIrDetail(y,tx)}${psRepere(y,tx)}</div>`:''}${psFoot()}</div>`}
 function renderStatement(){
   $('#stSheet').innerHTML=ST.year?yearStatementHtml(ST.y):statementHtml(ST.y,ST.m,ST.part);
-  $('#stTabs').hidden=ST.year;setSeg('stTabs',ST.part);
+  $('#stTabs').hidden=ST.year;$('#stDaysW').hidden=ST.year||ST.part==='machines'||ST.part==='corrections';$('#stDays').checked=ST.days;setSeg('stTabs',ST.part);
   $('#stTitle').textContent=ST.year?`Récapitulatif annuel ${ST.y}`:`Relevé de ${MONTHS[ST.m].toLowerCase()} ${ST.y}`}
 function openStatement(y,m){ST.y=y;ST.m=m;ST.part='all';ST.year=false;renderStatement();openDlg('#dlgSt')}
 function openYearStatement(y){ST.y=y;ST.year=true;renderStatement();openDlg('#dlgSt')}
 segBind('stTabs',v=>{ST.part=v;renderStatement();$('#dlgSt').scrollTop=0});
+$('#stDays').addEventListener('change',e=>{ST.days=e.target.checked;try{localStorage.setItem('nova_st_days',ST.days?'1':'0')}catch(_){}renderStatement()});
 $('#stClose').addEventListener('click',()=>$('#dlgSt').close());
 /* Impression : la marge de page est à 0 (c'est ce qui empêche le navigateur d'écrire la date, le titre, l'adresse du site et le numéro de page dans les marges) ; les marges du haut et du bas sont recréées sur chaque page par un en-tête et un pied de tableau vides, qui se répètent */
 function stPrintPrep(){
