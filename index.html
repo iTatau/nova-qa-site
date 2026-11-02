@@ -390,7 +390,7 @@ td.tgc{width:90px}
 .mini{display:inline-block;width:70px;height:8px;border-radius:99px;background:var(--soft);overflow:hidden;vertical-align:middle;margin-right:6px}
 .mini i{display:block;height:100%;background:linear-gradient(90deg,var(--lg1),var(--lg2))}
 .mini.hit i{background:linear-gradient(90deg,#5df0a2,#38e1ff)}
-.payform{display:grid;grid-template-columns:150px 150px 190px 1fr auto;gap:12px;align-items:end;margin-bottom:16px}
+.payform{display:grid;grid-template-columns:150px 150px 190px 150px 1fr auto;gap:12px;align-items:end;margin-bottom:16px}
 .payform .fld input,.payform .fld select{width:100%;height:40px}
 .pay{display:grid;grid-template-columns:90px 1fr auto 34px;gap:10px;align-items:center;padding:8px 2px;border-bottom:1px solid var(--line);font-size:14px}
 .pay .d{color:var(--mut);font-variant-numeric:tabular-nums}
@@ -1069,6 +1069,14 @@ td>.fc-bar{width:100%;min-width:60px;background:var(--soft);border-radius:4px;he
 .an-obj.on{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand) inset;background:var(--soft)}
 .an-obj button{background:none;border:0;color:var(--ink);padding:6px 10px;font:inherit;font-size:13px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:1px}
 .an-obj button small{color:var(--mut);font-size:11px}.an-obj button.x{padding:6px 9px;color:var(--mut);justify-content:center}.an-obj button.x:hover{color:var(--ko)}
+/* ---------- primes ---------- */
+.primev{color:#2fbf71;font-weight:700}:root[data-theme=light] .primev{color:#1b7f3b}
+.primetag{display:inline-block;font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;background:rgba(255,200,60,.18);color:#e0a516;margin-left:6px}
+.fc-b.prime{background:rgba(255,200,60,.18);color:#e0a516}
+.fc-chips{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.fc-st.prime{border-color:#e0a516;background:linear-gradient(135deg,rgba(255,200,60,.14),rgba(255,140,60,.08))}
+.fc-payform select[name=k]{padding:7px 9px;border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink);font:inherit}
+.ps-t tr.ps-pr td{font-weight:700;color:#1b7f3b}
 </style>
 </head>
 <body>
@@ -1198,6 +1206,7 @@ td>.fc-bar{width:100%;min-width:60px;background:var(--soft);border-radius:4px;he
           <div class="fld"><label for="pay-date">Date</label><input id="pay-date" type="date"></div>
           <div class="fld"><label for="pay-amt">Montant reçu (€)</label><input id="pay-amt" inputmode="decimal" placeholder="ex : 1200"></div>
           <div class="fld"><label for="pay-month">Pour le mois de</label><select id="pay-month"></select></div>
+          <div class="fld"><label for="pay-kind">Type</label><select id="pay-kind"><option value="pay">Salaire</option><option value="prime">Prime (en plus)</option></select></div>
           <div class="fld grow"><label for="pay-note">Note (facultatif)</label><input id="pay-note" placeholder="ex : virement du client" maxlength="120"></div>
           <div class="fld"><label>&nbsp;</label><button class="btn primary" type="submit" style="height:40px">Enregistrer</button></div>
         </form>
@@ -1692,8 +1701,15 @@ function numbering(){const map={},cnt={};[...db.entries].sort(cmpAsc).forEach(e=
 const rateFor=(y,m)=>db.settings.rates[ymKey(y,m)]??db.settings.defaultRate;
 function stats(y,m){const r={tests:0,corr:0,pt:0,pc:0,ok:0,ko:0};for(const e of db.entries){if(e.year!==y||(m!==null&&e.month!==m))continue;if(e.type==='test'){r.tests++;r.pt+=e.price}else{r.corr++;r.pc+=e.price}if(e.status==='KO')r.ko++;else r.ok++}r.cnt=r.tests+r.corr;r.total=r.pt+r.pc;return r}
 function usdYear(y){let u=0;for(let m=0;m<12;m++)u+=stats(y,m).total*rateFor(y,m);return u}
-function receivedFor(y,m){const k=ymKey(y,m),earned=stats(y,m).total;if(db.settled[k])return earned;return db.payments.filter(p=>p.month===k).reduce((a,p)=>a+p.amount,0)}
-function dueFor(y,m){return stats(y,m).total-receivedFor(y,m)}
+/* paiements du salaire (hors primes saisies à part) */
+const isPrime=p=>p.kind==='prime';
+function receivedFor(y,m){const k=ymKey(y,m),earned=stats(y,m).total;if(db.settled[k])return earned;return db.payments.filter(p=>p.month===k&&!isPrime(p)).reduce((a,p)=>a+p.amount,0)}
+function dueFor(y,m){return Math.max(0,stats(y,m).total-receivedFor(y,m))}
+/* prime = ce qui est reçu EN PLUS du salaire du mois : l'excédent des paiements (1 800 € reçus pour 1 700 € dus = 100 € de prime) + les primes notées comme telles */
+const primeExtra=(y,m)=>Math.max(0,receivedFor(y,m)-stats(y,m).total);
+const primeNoted=(y,m)=>{const k=ymKey(y,m);return db.payments.filter(p=>p.month===k&&isPrime(p)).reduce((a,p)=>a+p.amount,0)};
+const primeFor=(y,m)=>primeExtra(y,m)+primeNoted(y,m);
+const primeYear=y=>{let s=0;for(let m=0;m<12;m++)s+=primeFor(y,m);return s}
 const dateLabel=e=>e.day?`${e.day} ${MABR[e.month]} ${e.year}`:`${MONTHS[e.month]} ${e.year}`;
 const dateShort=e=>e.day?`${pad(e.day)}/${pad(e.month+1)}/${e.year}`:`${MABR[e.month]} ${e.year}`;
 const years=()=>{const s=new Set(db.entries.map(e=>e.year));s.add(nowD().y);db.payments.forEach(p=>s.add(+p.month.slice(0,4)));return [...s].sort((a,b)=>a-b)};
@@ -2065,7 +2081,7 @@ function renderMachines(){
      <div><div class="muted sm">Total ${MONTHS[ui.mm].toLowerCase()} ${ui.my}</div><div class="bigv">${eur(s.total)}</div></div>
      <div class="rate"><label for="mRate" class="muted sm">Taux ($ pour 1 €)</label><input id="mRate" inputmode="decimal" value="${String(rate).replace('.',',')}"></div>
      <div><div class="muted sm">Équivalent en dollars</div><div class="bigv">${usd(s.total*rate)}</div></div>
-     <div><div class="muted sm">Reçu / reste</div><div class="bigv">${eur(receivedFor(ui.my,ui.mm))} <span class="muted sm">/ ${eur(dueFor(ui.my,ui.mm))}</span></div></div>`;
+     <div><div class="muted sm">Reçu / reste</div><div class="bigv">${eur(receivedFor(ui.my,ui.mm))} <span class="muted sm">/ ${eur(dueFor(ui.my,ui.mm))}</span></div>${primeFor(ui.my,ui.mm)>0.005?`<div class="muted sm">dont prime : <b class="primev">+${eur(primeFor(ui.my,ui.mm))}</b></div>`:''}</div>`;
     $('#mRate').addEventListener('change',e=>{const v=parseNum(e.target.value);if(v>0){db.settings.rates[ymKey(ui.my,ui.mm)]=v;save();renderAll()}else renderMachines()})}
   else $('#mBilan').innerHTML=`<div><span class="tag">${ui.scope==='year'?`Bilan ${ui.my}`:'Bilan global'}</span></div>
      <div><div class="muted sm">Total</div><div class="bigv">${eur(s.total)}</div></div>
@@ -2163,12 +2179,12 @@ function renderPaye(){
   const pref=months.find(r=>r.due>0.005&&r.total>0);mSel.value=[...mSel.options].some(o=>o.value===keepM&&keepM.startsWith(String(y)))?keepM:(cm?ymKey(y,t0.m):(pref?ymKey(y,pref.m):ymKey(y,11)));
   if(!$('#pay-date').value)$('#pay-date').value=isoToday();
   const pays=db.payments.filter(p=>p.month.startsWith(String(y))).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
-  $('#pPaySub').textContent=!trk?'pas encore suivi':dueTot>0.005?`reste à recevoir : ${eur(dueTot)}`:'tout est soldé';
+  $('#pPaySub').textContent=(!trk?'pas encore suivi':dueTot>0.005?`reste à recevoir : ${eur(dueTot)}`:'tout est soldé')+(primeYear(y)>0.005?` · primes ${y} : +${eur(primeYear(y))}`:'');
   const pastN=months.filter(r=>r.total>0&&(y<t0.y||(y===t0.y&&r.m<t0.m))&&!db.settled[ymKey(y,r.m)]).length;
-  $('#pPay').innerHTML=(pastN?`<div class="btns left" style="margin:0 0 12px"><button class="btn" id="settlePast" type="button">Marquer les ${pastN} mois passés comme déjà reçus</button></div>`:'')+`<div style="overflow:auto"><table class="paytable"><thead><tr><th>Mois</th><th class="r">Gagné</th><th class="r">Reçu</th><th class="r">Reste</th><th class="r">Soldé</th></tr></thead><tbody>`+
-    months.filter(r=>r.total>0||r.rec>0).map(r=>{const st=!!db.settled[ymKey(y,r.m)];return `<tr class="${r.due>0.005?'':'okrow'}"><td><b>${r.n}</b></td><td class="pr">${eur(r.total)}</td><td class="pr">${eur(r.rec)}${st?' <span class="muted sm">(soldé)</span>':''}</td><td class="pr ${r.due>0.005?'warnv':''}">${Math.abs(r.due)<0.005?'–':eur(r.due)}</td><td class="pr"><input type="checkbox" data-settle="${ymKey(y,r.m)}" ${st?'checked':''} aria-label="Mois soldé" title="Coche quand tout le mois est reçu"></td></tr>`}).join('')+
+  $('#pPay').innerHTML=(pastN?`<div class="btns left" style="margin:0 0 12px"><button class="btn" id="settlePast" type="button">Marquer les ${pastN} mois passés comme déjà reçus</button></div>`:'')+`<div style="overflow:auto"><table class="paytable"><thead><tr><th>Mois</th><th class="r">Gagné</th><th class="r">Reçu</th><th class="r">Reste</th><th class="r">Prime</th><th class="r">Soldé</th></tr></thead><tbody>`+
+    months.filter(r=>r.total>0||r.rec>0||primeNoted(y,r.m)>0).map(r=>{const st=!!db.settled[ymKey(y,r.m)];return `<tr class="${r.due>0.005?'':'okrow'}"><td><b>${r.n}</b></td><td class="pr">${eur(r.total)}</td><td class="pr">${eur(r.rec)}${st?' <span class="muted sm">(soldé)</span>':''}</td><td class="pr ${r.due>0.005?'warnv':''}">${r.due>0.005?eur(r.due):'–'}</td><td class="pr">${primeFor(y,r.m)>0.005?`<b class="primev">+${eur(primeFor(y,r.m))}</b>`:'–'}</td><td class="pr"><input type="checkbox" data-settle="${ymKey(y,r.m)}" ${st?'checked':''} aria-label="Mois soldé" title="Coche quand tout le mois est reçu"></td></tr>`}).join('')+
     `</tbody></table></div><p class="muted sm" style="margin:10px 0 0">Coche « Soldé » pour un mois déjà payé en entier (par exemple les anciens mois). Sinon, enregistre chaque virement reçu ci-dessus.</p>`+
-    (pays.length?`<h3 class="h3">Historique des paiements ${y}</h3><div>`+pays.map(p=>`<div class="pay"><span class="d">${p.date.split('-').reverse().join('/')}</span><span>${esc(MONTHS[+p.month.slice(5)-1])}${p.note?` · <span class="muted">${esc(p.note)}</span>`:''}</span><b>${eur(p.amount)}</b><button class="ib" data-delpay="${p.id}" title="Supprimer ce paiement">✕</button></div>`).join('')+`</div>`:'');
+    (pays.length?`<h3 class="h3">Historique des paiements ${y}</h3><div>`+pays.map(p=>`<div class="pay"><span class="d">${p.date.split('-').reverse().join('/')}</span><span>${esc(MONTHS[+p.month.slice(5)-1])}${p.kind==='prime'?' <span class="primetag">Prime</span>':''}${p.note?` · <span class="muted">${esc(p.note)}</span>`:''}</span><b>${eur(p.amount)}</b><button class="ib" data-delpay="${p.id}" title="Supprimer ce paiement">✕</button></div>`).join('')+`</div>`:'');
 
   /* micro-entreprise */
   const pctC=pct(tot.total,mc.ceiling),left=mc.ceiling-tot.total;
@@ -2202,8 +2218,8 @@ $('#pMicro').addEventListener('change',e=>{
 $('#payForm').addEventListener('submit',e=>{
   e.preventDefault();const amt=parseNum($('#pay-amt').value),date=$('#pay-date').value||isoToday(),month=$('#pay-month').value;
   if(!(amt>0)){toast('Écris un montant (ex : 1200)');$('#pay-amt').focus();return}
-  pushUndo('paiement');db.payments.push({id:db.nextPay++,date,amount:amt,month,note:$('#pay-note').value.trim()});
-  $('#pay-amt').value='';$('#pay-note').value='';save();renderAll();toast(`Paiement de ${eur(amt)} enregistré`,{label:'Annuler',fn:undo})});
+  pushUndo('paiement');db.payments.push({id:db.nextPay++,date,amount:amt,month,note:$('#pay-note').value.trim(),kind:$('#pay-kind').value==='prime'?'prime':'pay'});
+  const wasPrime=$('#pay-kind').value==='prime';$('#pay-amt').value='';$('#pay-note').value='';$('#pay-kind').value='pay';save();renderAll();toast(wasPrime?`Prime de ${eur(amt)} enregistrée`:`Paiement de ${eur(amt)} enregistré`,{label:'Annuler',fn:undo})});
 $('#pPay').addEventListener('click',e=>{
   if(e.target.id==='settlePast'){pushUndo('mois passés soldés');const y=ui.py;for(let m=0;m<12;m++){if(stats(y,m).total>0&&(y<t0.y||(y===t0.y&&m<t0.m)))db.settled[ymKey(y,m)]=true}save();renderAll();toast('Mois passés marqués comme reçus',{label:'Annuler',fn:undo});return}
   const b=e.target.closest('[data-delpay]');if(!b)return;pushUndo('suppression d\'un paiement');db.payments=db.payments.filter(p=>p.id!==+b.dataset.delpay);save();renderAll();toast('Paiement supprimé',{label:'Annuler',fn:undo})});
@@ -2249,7 +2265,7 @@ const fcPct=(a,b)=>b>0?(a-b)/b*100:null;
 const fcDelta=(a,b)=>{const p=fcPct(a,b);return b>0?`${a>=b?'▲':'▼'} ${n1(Math.abs(p))} %`:'—'};
 function fcData(y,m){
   const rows=db.entries.filter(e=>e.year===y&&e.month===m).sort(cmpAsc),T=rows.filter(e=>e.type==='test'),C=rows.filter(e=>e.type!=='test'),s=stats(y,m),k=ymKey(y,m);
-  const rate=rateFor(y,m),tx=taxMonth(y,m),pays=db.payments.filter(p=>p.month===k).sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id),settled=!!db.settled[k],rec=receivedFor(y,m),due=dueFor(y,m);
+  const rate=rateFor(y,m),tx=taxMonth(y,m),prime=primeFor(y,m),primeX=primeExtra(y,m),primeE=primeNoted(y,m),pays=db.payments.filter(p=>p.month===k).sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id),settled=!!db.settled[k],rec=receivedFor(y,m),due=dueFor(y,m);
   const prev=stats(m?y:y-1,m?m-1:11),ly=stats(y-1,m),all=Array.from({length:12},(_,i)=>stats(y,i).total).map((v,i)=>({v,i})).filter(o=>o.v>0).sort((a,b)=>b.v-a.v),rank=all.findIndex(o=>o.i===m)+1,yt=stats(y,null).total;
   /* jour par jour */
   const dm=new Map();rows.filter(e=>e.day).forEach(e=>{let o=dm.get(e.day);if(!o){o={d:e.day,y,m,t:0,c:0,sum:0,ko:0};dm.set(e.day,o)}e.type==='test'?o.t++:o.c++;o.sum+=e.price;if(e.status==='KO')o.ko++});
@@ -2263,7 +2279,7 @@ function fcData(y,m){
   const cnt=new Map();rows.forEach(e=>{const key=e.name.trim().toLowerCase(),o=cnt.get(key)||{name:e.name,t:0,c:0};e.type==='test'?o.t++:o.c++;cnt.set(key,o)});
   const redone=[...cnt.values()].filter(o=>o.t+o.c>1).sort((a,b)=>(b.t+b.c)-(a.t+a.c));
   const worked=days.length,best=days.slice().sort((a,b)=>b.sum-a.sum)[0],cur=(y===t0.y&&m===t0.m);
-  return{y,m,k,rows,T,C,s,rate,tx,pays,settled,rec,due,prev,ly,rank,nRank:all.length,yt,days,weeks,dow,redone,worked,best,cur,cumYear:caUpTo(y,m),legacy:db.legacy[k]}}
+  return{y,m,k,rows,T,C,s,rate,tx,prime,primeX,primeE,pays,settled,rec,due,prev,ly,rank,nRank:all.length,yt,days,weeks,dow,redone,worked,best,cur,cumYear:caUpTo(y,m),legacy:db.legacy[k]}}
 const fcRange=L=>{if(!L.length)return '—';const p=L.map(e=>e.price),a=Math.min(...p),b=Math.max(...p);return a===b?eur(a):`${eur(a)} – ${eur(b)}`};
 const fcMatch=e=>{const q=ui.fq.trim().toLowerCase();return !q||e.name.toLowerCase().includes(q)||(e.note||'').toLowerCase().includes(q)};
 function fcStat(l,v,s,cls){return `<div class="fc-st ${cls||''}"><span>${l}</span><b>${v}</b>${s?`<i>${s}</i>`:''}</div>`}
@@ -2280,10 +2296,12 @@ function fcDecompte(d){
   h+=R('Formation professionnelle (CFP)',eur(t.ca),n1(c.cfp)+' %','',S(t.cfp))+R('Total à déclarer / payer à l\'URSSAF','','','',S(t.urssaf)||eur(0),'b')+R('Net après cotisations','','',eur(t.netCot),'','b');
   h+=c.vl?R('Versement libératoire de l\'impôt',eur(t.ca),n1(c.vlRate)+' %','',eur(t.ir)):R('Impôt sur le revenu <span class="muted sm">(provision sur le cumul)</span>',eur(t.base),'barème','',eur(t.ir));
   h+=R('Net estimé après impôt','','',eur(t.net),'','tot');
-  return `<table class="paytable fc-t"><thead><tr><th>Rubrique</th><th class="r">Base</th><th class="r">Taux</th><th class="r">Gain</th><th class="r">Retenue</th></tr></thead><tbody>${h}</tbody></table><p class="muted sm" style="margin:6px 0 0">Estimation indicative (micro-entreprise). Le cumul depuis janvier est de ${eur(d.cumYear)}.</p>`}
+  if(d.prime>0.005)h+=R('Prime reçue en plus du salaire','','',`+${eur(d.prime)}`,'','b')+R('Net estimé + prime','','',eur(t.net+d.prime),'','tot');
+  return `<table class="paytable fc-t"><thead><tr><th>Rubrique</th><th class="r">Base</th><th class="r">Taux</th><th class="r">Gain</th><th class="r">Retenue</th></tr></thead><tbody>${h}</tbody></table><p class="muted sm" style="margin:6px 0 0">Estimation indicative (micro-entreprise). Le cumul depuis janvier est de ${eur(d.cumYear)}.${d.prime>0.005?' <b>La prime n\'est pas comprise dans les cotisations et l\'impôt ci-dessus</b> : si elle vient de ton client, elle fait partie de ton chiffre d\'affaires et est à déclarer.':''}</p>`}
 function fcCard(d,open){
   const {y,m,s}=d,est=(db.settings.profile||{}).showEstimate!==false,goal=goalMonth(),nums=numbering(),k=d.k;
-  const state=!(s.total>0)&&!(d.rec>0)?'':d.cur?'<span class="fc-b cur">En cours · provisoire</span>':d.due>0.005&&payTracking()?`<span class="fc-b due">Reste ${eur(d.due)}</span>`:payTracking()?'<span class="fc-b ok">Reçu ✓</span>':'';
+  const primeChip=d.prime>0.005?`<span class="fc-b prime">Prime +${eur(d.prime)}</span>`:'';
+  const state='<span class="fc-chips">'+primeChip+(!(s.total>0)&&!(d.rec>0)?'':d.cur?'<span class="fc-b cur">En cours · provisoire</span>':d.due>0.005&&payTracking()?`<span class="fc-b due">Reste ${eur(d.due)}</span>`:payTracking()?'<span class="fc-b ok">Reçu ✓</span>':'')+'</span>';
   const head=`<button type="button" class="fc-head" data-fm="${k}" aria-expanded="${open}"><span class="fc-chev">▸</span><span class="fc-mo"><b>${MONTHS[m]}</b> <span class="muted">${y}</span></span><span class="fc-sum">${s.tests} test${s.tests>1?'s':''} · ${s.corr} correction${s.corr>1?'s':''}${d.worked?` · ${d.worked} jour${d.worked>1?'s':''}`:''}</span>${state}<span class="fc-net" title="Net estimé après cotisations et impôt">${est&&s.total>0?'net ≈ '+eur(d.tx.net):''}</span><span class="fc-tot">${eur(s.total)}</span></button>`;
   if(!open)return `<article class="fc-card ${d.cur?'cur':''}" id="fc-${k}">${head}</article>`;
   const gp=goal?pct(s.total,goal):0,avgDay=d.worked?s.total/d.worked:0,share=d.yt>0?s.total/d.yt*100:0;
@@ -2292,6 +2310,7 @@ function fcCard(d,open){
    fcStat('Machines testées',`${s.tests} × ${fcRange(d.T)}`,eur(s.pt))+
    fcStat('Corrections',`${s.corr} × ${fcRange(d.C)}`,eur(s.pc))+
    fcStat('Équivalent en dollars',usd(s.total*d.rate),`1 € = ${String(d.rate).replace('.',',')} $`)+
+   (d.prime>0.005?fcStat('Prime',`+${eur(d.prime)}`,`reçu en plus · total perçu ${eur(d.rec+d.primeE)}`,'prime'):'')+
    (est?fcStat('Net estimé',eur(d.tx.net),`après ${eur(d.tx.urssaf)} d'URSSAF et ${eur(d.tx.ir)} d'impôt`):'')+
    fcStat('Jours travaillés',d.worked?String(d.worked):'—',d.worked?`moyenne ${eur(avgDay)} par jour`:'dates précises non renseignées')+
    fcStat('Moyenne par ligne',s.cnt?eur(s.total/s.cnt):'—','')+
@@ -2301,9 +2320,9 @@ function fcCard(d,open){
    (goal?fcStat('Objectif mensuel',`${Math.round(gp)} %`,`${eur(s.total)} sur ${eur(goal)}`):'')+
    fcStat('OK / KO',`${s.ok||0} / ${s.ko||0}`,s.cnt?`${n1(pct(s.ok||0,s.cnt))} % OK`:'')+`</div>`+(goal?`<div class="mini ${gp>=100?'hit':''}" style="margin:2px 0 4px"><i style="width:${Math.min(100,gp)}%"></i></div>`:'');
   /* paiements */
-  const payBox=`<div class="fc-pay"><div class="fc-payhead"><span>Reçu : <b>${eur(d.rec)}</b></span><span>Reste : <b class="${d.due>0.005?'warnv':''}">${d.due>0.005?eur(d.due):eur(0)}</b></span>${d.settled?'<span class="fc-b ok">Mois soldé</span>':''}</div>`+
-   (d.pays.length?`<table class="paytable fc-t"><thead><tr><th>Date</th><th class="r">Montant</th><th>Note</th><th></th></tr></thead><tbody>${d.pays.map(p=>`<tr><td>${p.date.split('-').reverse().join('/')}</td><td class="pr">${eur(p.amount)}</td><td class="muted">${esc(p.note||'')}</td><td class="pr"><button class="btn sm" data-fcdel="${p.id}" type="button" aria-label="Supprimer ce paiement">✕</button></td></tr>`).join('')}</tbody></table>`:'<p class="muted sm" style="margin:6px 0">Aucun paiement enregistré pour ce mois.</p>')+
-   `<form class="fc-payform" data-k="${k}" autocomplete="off"><input type="date" name="d" value="${isoToday()}" aria-label="Date du paiement"><input name="a" inputmode="decimal" placeholder="Montant reçu (€)" aria-label="Montant reçu"><input name="n" placeholder="Note (facultatif)" maxlength="120" aria-label="Note"><button class="btn primary sm" type="submit">＋ Enregistrer un paiement</button>
+  const payBox=`<div class="fc-pay"><div class="fc-payhead"><span>Reçu : <b>${eur(d.rec)}</b></span><span>Reste : <b class="${d.due>0.005?'warnv':''}">${d.due>0.005?eur(d.due):eur(0)}</b></span>${d.prime>0.005?`<span>Prime : <b class="primev">+${eur(d.prime)}</b></span>`:''}${d.settled?'<span class="fc-b ok">Mois soldé</span>':''}</div>${d.primeX>0.005?`<p class="muted sm" style="margin:0 0 6px">Tu as reçu ${eur(d.primeX)} de plus que le salaire du mois (${eur(s.total)}) : ces ${eur(d.primeX)} comptent comme prime.</p>`:''}`+
+   (d.pays.length?`<table class="paytable fc-t"><thead><tr><th>Date</th><th class="r">Montant</th><th>Note</th><th></th></tr></thead><tbody>${d.pays.map(p=>`<tr><td>${p.date.split('-').reverse().join('/')}${p.kind==='prime'?' <span class="primetag">Prime</span>':''}</td><td class="pr">${eur(p.amount)}</td><td class="muted">${esc(p.note||'')}</td><td class="pr"><button class="btn sm" data-fcdel="${p.id}" type="button" aria-label="Supprimer ce paiement">✕</button></td></tr>`).join('')}</tbody></table>`:'<p class="muted sm" style="margin:6px 0">Aucun paiement enregistré pour ce mois.</p>')+
+   `<form class="fc-payform" data-k="${k}" autocomplete="off"><input type="date" name="d" value="${isoToday()}" aria-label="Date du paiement"><select name="k" aria-label="Type"><option value="pay">Salaire reçu</option><option value="prime">Prime (en plus)</option></select><input name="a" inputmode="decimal" placeholder="Montant reçu (€)" aria-label="Montant reçu"><input name="n" placeholder="Note (facultatif)" maxlength="120" aria-label="Note"><button class="btn primary sm" type="submit">＋ Enregistrer un paiement</button>
    <label class="mt-chk"><input type="checkbox" data-fcsettle="${k}" ${d.settled?'checked':''}> Mois entièrement reçu</label></form></div>`;
   /* jour par jour */
   let dayBox='';
@@ -2343,10 +2362,10 @@ function fcYear(y){
    (est?fcStat('Net estimé',eur(tx.net),`après ${eur(tx.urssaf)} d'URSSAF, ${eur(tx.ir)} d'impôt${tx.cfe>0?' et la CFE':''}`):'')+
    fcStat('Mois actifs',String(active.length),active.length?`moyenne ${eur(tot.total/active.length)} par mois`:'')+fcStat('Meilleur mois',best?MONTHS[best.m]:'—',best?eur(best.total):'')+
    (days?fcStat('Jours travaillés',String(days),`moyenne ${eur(tot.total/days)} par jour`):'')+
-   (payTracking()?fcStat('Reçu',eur(recTot),dueTot>0.005?`reste ${eur(dueTot)}`:'tout est soldé'):'')+(ly.total>0?fcStat(`Par rapport à ${y-1}`,fcDelta(tot.total,ly.total),`${eur(ly.total)} en ${y-1}`):'')+`</div>`;
-  const tbl=`<div class="fc-tw"><table class="paytable fc-t"><thead><tr><th>Mois</th><th class="r">Tests</th><th class="r">Corrections</th><th class="r">Total</th><th class="r">URSSAF</th><th class="r">Net est.</th><th class="r">Équivalent $</th><th class="r">Reçu</th><th class="r">Reste</th></tr></thead><tbody>`+
-   ms.filter(r=>r.cnt>0||r.rec>0).map(r=>{const t=taxMonth(y,r.m);return `<tr><td><a href="#fc-${ymKey(y,r.m)}" data-fgo="${ymKey(y,r.m)}"><b>${MONTHS[r.m]}</b></a></td><td class="pr">${r.tests||'–'}</td><td class="pr">${r.corr||'–'}</td><td class="pr"><b>${eur(r.total)}</b></td><td class="pr muted">${r.total?eur(t.urssaf):'–'}</td><td class="pr">${est&&r.total?eur(t.net):'–'}</td><td class="pr">${r.total?usd(r.total*r.rate):'–'}</td><td class="pr">${payTracking()?eur(r.rec):'–'}</td><td class="pr ${r.due>0.005?'warnv':''}">${payTracking()?(r.due>0.005?eur(r.due):'–'):'–'}</td></tr>`}).join('')+
-   `</tbody><tfoot><tr><td>Total ${y}</td><td class="pr">${tot.tests}</td><td class="pr">${tot.corr}</td><td class="pr">${eur(tot.total)}</td><td class="pr">${eur(tx.urssaf)}</td><td class="pr">${est?eur(tx.net):'–'}</td><td class="pr">${usd(usdYear(y))}</td><td class="pr">${payTracking()?eur(recTot):'–'}</td><td class="pr">${payTracking()&&dueTot>0.005?eur(dueTot):'–'}</td></tr></tfoot></table></div>`;
+   (payTracking()?fcStat('Reçu',eur(recTot),dueTot>0.005?`reste ${eur(dueTot)}`:'tout est soldé'):'')+(primeYear(y)>0.005?fcStat('Primes',`+${eur(primeYear(y))}`,'reçu en plus du salaire','prime'):'')+(ly.total>0?fcStat(`Par rapport à ${y-1}`,fcDelta(tot.total,ly.total),`${eur(ly.total)} en ${y-1}`):'')+`</div>`;
+  const tbl=`<div class="fc-tw"><table class="paytable fc-t"><thead><tr><th>Mois</th><th class="r">Tests</th><th class="r">Corrections</th><th class="r">Total</th><th class="r">URSSAF</th><th class="r">Net est.</th><th class="r">Équivalent $</th><th class="r">Reçu</th><th class="r">Reste</th><th class="r">Prime</th></tr></thead><tbody>`+
+   ms.filter(r=>r.cnt>0||r.rec>0||primeNoted(y,r.m)>0).map(r=>{const t=taxMonth(y,r.m);return `<tr><td><a href="#fc-${ymKey(y,r.m)}" data-fgo="${ymKey(y,r.m)}"><b>${MONTHS[r.m]}</b></a></td><td class="pr">${r.tests||'–'}</td><td class="pr">${r.corr||'–'}</td><td class="pr"><b>${eur(r.total)}</b></td><td class="pr muted">${r.total?eur(t.urssaf):'–'}</td><td class="pr">${est&&r.total?eur(t.net):'–'}</td><td class="pr">${r.total?usd(r.total*r.rate):'–'}</td><td class="pr">${payTracking()?eur(r.rec):'–'}</td><td class="pr ${r.due>0.005?'warnv':''}">${payTracking()?(r.due>0.005?eur(r.due):'–'):'–'}</td><td class="pr">${primeFor(y,r.m)>0.005?`<b class="primev">+${eur(primeFor(y,r.m))}</b>`:'–'}</td></tr>`}).join('')+
+   `</tbody><tfoot><tr><td>Total ${y}</td><td class="pr">${tot.tests}</td><td class="pr">${tot.corr}</td><td class="pr">${eur(tot.total)}</td><td class="pr">${eur(tx.urssaf)}</td><td class="pr">${est?eur(tx.net):'–'}</td><td class="pr">${usd(usdYear(y))}</td><td class="pr">${payTracking()?eur(recTot):'–'}</td><td class="pr">${payTracking()&&dueTot>0.005?eur(dueTot):'–'}</td><td class="pr">${primeYear(y)>0.005?'+'+eur(primeYear(y)):'–'}</td></tr></tfoot></table></div>`;
   /* trimestres URSSAF */
   let q='';for(let i=0;i<4;i++){const L=ms.slice(i*3,i*3+3),ca=L.reduce((a,r)=>a+r.total,0);if(ca>0){const c=charges(ca);q+=`<tr><td>Trimestre ${i+1} <span class="muted sm">(${MABR[i*3]} – ${MABR[i*3+2]})</span></td><td class="pr">${eur(ca)}</td><td class="pr">${eur(c.soc-c.acre)}</td><td class="pr">${eur(c.cfp)}</td><td class="pr"><b>${eur(c.urssaf)}</b></td></tr>`}}
   const qbox=est&&q?`<h5>À déclarer à l'URSSAF, par trimestre</h5><div class="fc-tw"><table class="paytable fc-t"><thead><tr><th>Période</th><th class="r">CA à déclarer</th><th class="r">Cotisations</th><th class="r">CFP</th><th class="r">À payer</th></tr></thead><tbody>${q}</tbody></table></div>`:'';
@@ -2357,7 +2376,7 @@ function renderFiches(){
   $('#fcYearBox').innerHTML=`<div class="card fc-yearcard"><div class="head"><h2>Année ${y}</h2><span class="sub">tous les mois, d'un coup d'œil</span></div>${fcYear(y)}</div>`;
   /* quels mois afficher : ceux qui ont de l'activité ou un paiement ; la recherche ne garde que ceux qui contiennent la machine */
   const q=ui.fq.trim(),list=[];
-  for(let m=11;m>=0;m--){const s=stats(y,m),rec=receivedFor(y,m);if(!(s.cnt>0||rec>0||ui.fempty))continue;
+  for(let m=11;m>=0;m--){const s=stats(y,m),rec=receivedFor(y,m);if(!(s.cnt>0||rec>0||primeNoted(y,m)>0||ui.fempty))continue;
     if(q&&!db.entries.some(e=>e.year===y&&e.month===m&&fcMatch(e)))continue;list.push(m)}
   if(!ui.finit&&list.length){const cm=list.find(m=>stats(y,m).cnt>0);if(cm!=null)ui.fopen[ymKey(y,cm)]=true;ui.finit=true}
   root.innerHTML=list.length?list.map(m=>{const d=fcData(y,m);return fcCard(d,!!ui.fopen[d.k]||!!q)}).join(''):`<div class="card"><div class="empty">${q?`Aucune machine « ${esc(q)} » en ${y}.`:`Aucune fiche pour ${y} : note des machines dans l'onglet Noter.`}</div></div>`;
@@ -2370,6 +2389,7 @@ function fcText(k){
   if(d.worked)t+=`Jours travaillés : ${d.worked} (moyenne ${eur(d.s.total/d.worked)} par jour)\n`;
   if(est)t+=`URSSAF estimée : ${eur(d.tx.urssaf)} · impôt estimé : ${eur(d.tx.ir)} · net estimé : ${eur(d.tx.net)}\n`;
   if(payTracking())t+=`Reçu : ${eur(d.rec)} · reste : ${eur(Math.max(0,d.due))}\n`;
+  if(d.prime>0.005)t+=`Prime : +${eur(d.prime)} (reçu en plus du salaire)\n`;
   return t.trim()}
 function fcCsv(k){
   const {y,m}=fcParse(k),rows=db.entries.filter(e=>e.year===y&&e.month===m).sort(cmpAsc),q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
@@ -2391,7 +2411,7 @@ $('#fcList').addEventListener('click',e=>{
 $('#fcList').addEventListener('change',e=>{const k=e.target.dataset.fcsettle;if(!k)return;pushUndo('mois soldé');if(e.target.checked)db.settled[k]=true;else delete db.settled[k];save();renderAll()});
 $('#fcList').addEventListener('submit',e=>{const f=e.target.closest('.fc-payform');if(!f)return;e.preventDefault();
   const amt=parseNum(f.a.value),date=f.d.value||isoToday();if(!(amt>0)){toast('Écris un montant (ex : 1200)');f.a.focus();return}
-  pushUndo('paiement');db.payments.push({id:db.nextPay++,date,amount:amt,month:f.dataset.k,note:f.n.value.trim()});save();renderAll();toast(`Paiement de ${eur(amt)} enregistré`,{label:'Annuler',fn:undo})});
+  pushUndo('paiement');const pr=f.k.value==='prime';db.payments.push({id:db.nextPay++,date,amount:amt,month:f.dataset.k,note:f.n.value.trim(),kind:pr?'prime':'pay'});save();renderAll();toast(pr?`Prime de ${eur(amt)} enregistrée`:`Paiement de ${eur(amt)} enregistré`,{label:'Annuler',fn:undo})});
 
 /* ---------- onglet Activité ---------- */
 $('#aYear').addEventListener('change',e=>{ui.ay=+e.target.value;renderActivite()});
@@ -6743,6 +6763,7 @@ function exportXlsx(y){
     rows1.push({c:[T(n),T(s.tests,7),T(s.corr,7),N(s.pt),N(s.pc),N(s.total,3,`D${r}+E${r}`),N(tx.urssaf),N(tx.netCot,3,`F${r}-G${r}`),N(tx.ir),N(tx.net,3,`H${r}-I${r}`),N(s.total*rateFor(y,m),8)]})});
   const last=first+11,sm=c=>`SUM(${c}${first}:${c}${last})`,ty=taxYear(y);
   rows1.push({c:[T('Total '+y,5),{v:stats(y,null).tests,f:sm('B'),s:5},{v:stats(y,null).corr,f:sm('C'),s:5},N(stats(y,null).pt,4,sm('D')),N(stats(y,null).pc,4,sm('E')),N(ty.ca,4,sm('F')),N(ty.urssaf,4,sm('G')),N(ty.netCot,4,sm('H')),N(ty.ir,4,sm('I')),N(ty.ir!==undefined?ty.netCot-ty.ir:0,4,sm('J')),N(usdYear(y),9,sm('K'))]});
+  if(primeYear(y)>0.005)rows1.push({c:[T('Primes reçues en plus du salaire',5),T('',5),T('',5),T('',5),T('',5),N(primeYear(y),4)]});
   rows1.push({c:[]},{c:[{v:`Estimation indicative (cotisations ${n1(taxCfg().rate)} %, CFP ${n1(taxCfg().cfp)} %). L'impôt d'un mois est la part de l'impôt de l'année qui correspond à ce mois. Sans valeur officielle.`}]});
   const nums=numbering(),detail=type=>{
     const L=db.entries.filter(e=>e.year===y&&e.type===type).sort(cmpAsc),rr=[{h:26,c:[{v:`${type==='test'?'Machines testées':'Corrections effectuées'} — ${y}`,s:6}]},{c:[]},H('Mois','N°','Date','Jour','Machine','Statut','Prix','Charges est.','Net est.','Note')];
@@ -7452,16 +7473,16 @@ function statementHtml(y,m,part='all'){
   const s=stats(y,m),rate=rateFor(y,m),nums=numbering(),mc=db.settings.micro,pf=db.settings.profile||{};
   const rows=db.entries.filter(e=>e.year===y&&e.month===m).sort(cmpAsc),T=rows.filter(e=>e.type==='test'),C=rows.filter(e=>e.type==='correction');
   const cu={tests:0,corr:0,pt:0,pc:0};for(let k=0;k<=m;k++){const q=stats(y,k);cu.tests+=q.tests;cu.corr+=q.corr;cu.pt+=q.pt;cu.pc+=q.pc}
-  const cuT=cu.pt+cu.pc,jd=monthDays(y,m);
+  const cuT=cu.pt+cu.pc,jd=monthDays(y,m),pr=primeFor(y,m);
   const top=psTop('Relevé d\'activité',`${MONTHS[m]} ${y}`,`Du 01/${pad(m+1)}/${y} au ${pad(dim(y,m))}/${pad(m+1)}/${y}`,`Relevé n° ${y}-${pad(m+1)}`)+psParties(`${MONTHS[m]} ${y}`);
   const lines=`<table class="ps-t ps-lines"><thead><tr><th>Désignation</th><th class="r">Quantité</th><th class="r">Prix par slot</th><th class="r">Montant</th></tr></thead><tbody>
     <tr><td>Machines testées</td><td class="r">${s.tests}</td><td class="r">${stPrice(T)}</td><td class="r">${eur(s.pt)}</td></tr>
     <tr><td>Corrections effectuées</td><td class="r">${s.corr}</td><td class="r">${stPrice(C)}</td><td class="r">${eur(s.pc)}</td></tr>
     </tbody>
-    <tfoot><tr><td>Total des prestations</td><td class="r">${s.cnt}</td><td></td><td class="r">${eur(s.total)}</td></tr></tfoot></table>`;
+    <tfoot><tr><td>Total des prestations</td><td class="r">${s.cnt}</td><td></td><td class="r">${eur(s.total)}</td></tr>${pr>0.005?`<tr class="ps-pr"><td>Prime reçue en plus du salaire</td><td></td><td></td><td class="r">+ ${eur(pr)}</td></tr>`:''}</tfoot></table>`;
   const est=pf.showEstimate!==false,tx=taxMonth(y,m),txc=est?taxYearTo(y,m):null;
   const sum=`<section class="ps-sum"><div class="ps-est"><div class="ps-box"><span>Équivalent en dollars</span><b>${usd(s.total*rate)}</b><i>1 € = ${String(rate).replace('.',',')} $</i></div></div>
-    <div class="ps-net"><span>Total à percevoir</span><b>${eur(s.total)}</b><i>${s.cnt} ligne${s.cnt>1?'s':''} · ${MONTHS[m].toLowerCase()} ${y}</i>${est?`<em>Net estimé après cotisations et impôt : <b>${eur(tx.net)}</b></em>`:''}</div></section>`;
+    <div class="ps-net"><span>Total à percevoir</span><b>${eur(s.total)}</b><i>${s.cnt} ligne${s.cnt>1?'s':''} · ${MONTHS[m].toLowerCase()} ${y}</i>${est?`<em>Net estimé après cotisations et impôt : <b>${eur(tx.net)}</b></em>`:''}${pr>0.005?`<em>Prime reçue en plus du salaire : <b>+ ${eur(pr)}</b>${est?` · Net estimé + prime : <b>${eur(tx.net+pr)}</b>`:''}</em>`:''}</div></section>`;
   const cumul=`<section class="ps-part"><h2>Cumuls depuis le 1er janvier ${y}</h2><table class="ps-t"><thead><tr><th>Cumul</th><th class="r">Quantité</th><th class="r">Montant</th></tr></thead><tbody>
     <tr><td>Machines testées</td><td class="r">${cu.tests}</td><td class="r">${eur(cu.pt)}</td></tr><tr><td>Corrections effectuées</td><td class="r">${cu.corr}</td><td class="r">${eur(cu.pc)}</td></tr>
     ${jd?`<tr><td>Jours travaillés (dates précises)</td><td class="r">${jd}</td><td></td></tr>`:''}${est?`<tr><td>Cotisations et contributions estimées</td><td></td><td class="r">${mneg(txc.urssaf)}</td></tr><tr><td>Impôt sur le revenu estimé (cumul)</td><td></td><td class="r">${mneg(txc.ir)}</td></tr>`:''}</tbody><tfoot><tr><td>Total cumulé${est?' (brut)':''}</td><td class="r">${cu.tests+cu.corr}</td><td class="r">${eur(cuT)}</td></tr>${est?`<tr><td>Net cumulé estimé</td><td></td><td class="r">${eur(txc.net)}</td></tr>`:''}</tfoot></table></section>`;
@@ -7480,7 +7501,7 @@ function yearStatementHtml(y){
    `</tbody><tfoot><tr><td>Total ${y}</td><td class="r">${tot.tests}</td><td class="r">${tot.corr}</td><td class="r">${eur(tot.pt)}</td><td class="r">${eur(tot.pc)}</td><td class="r">${eur(tot.total)}</td><td class="r">${usd(u)}</td></tr></tfoot></table>`;
   const est=pf.showEstimate!==false,tx=taxYear(y);
   const sum=`<section class="ps-sum"><div class="ps-est"><div class="ps-box"><span>Équivalent en dollars</span><b>${usd(u)}</b><i>total ${y}</i></div></div>
-    <div class="ps-net"><span>Total ${y}</span><b>${eur(tot.total)}</b><i>${tot.cnt} lignes · ${rows.length} mois d'activité</i>${est?`<em>Net estimé après cotisations, impôt${tx.cfe>0?' et CFE':''} : <b>${eur(tx.net)}</b></em>`:''}</div></section>`;
+    <div class="ps-net"><span>Total ${y}</span><b>${eur(tot.total)}</b><i>${tot.cnt} lignes · ${rows.length} mois d'activité</i>${est?`<em>Net estimé après cotisations, impôt${tx.cfe>0?' et CFE':''} : <b>${eur(tx.net)}</b></em>`:''}${primeYear(y)>0.005?`<em>Primes reçues en plus du salaire : <b>+ ${eur(primeYear(y))}</b></em>`:''}</div></section>`;
   return `<div class="ps">${psTop('Récapitulatif annuel',String(y),`Du 01/01/${y} au 31/12/${y}`,'')}${psParties(`Année ${y}`)}<section class="ps-part"><h2>Mois par mois<small>${rows.length} mois d'activité</small></h2>${tbl}</section>${est?psDecompte(tx,{year:true}):''}${sum}${est?`<div class="ps-pg">${psUrssaf(y)}${psIrDetail(y,tx)}${psRepere(y,tx)}</div>`:''}${psFoot()}</div>`}
 function renderStatement(){
   $('#stSheet').innerHTML=ST.year?yearStatementHtml(ST.y):statementHtml(ST.y,ST.m,ST.part);
