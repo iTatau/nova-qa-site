@@ -1145,6 +1145,8 @@ body.bd-open .wrap{max-width:1700px}
 .bd-dbody{padding:14px 18px;display:flex;flex-direction:column;gap:12px}.bd-df{padding:12px 18px 16px;display:flex;justify-content:flex-end}
 .bd-exmsg{margin:0;font-weight:600;min-height:1.2em}
 @media(max-width:1100px){.bd{height:auto}.bd-main{grid-template-columns:100px minmax(0,1fr)}.bd-right{grid-column:1/-1}.bd-stage{min-height:60vh}}
+
+.bd-stat{font-size:12px;color:var(--mut);white-space:nowrap;margin-right:4px}.bd-stat.ok{color:var(--ok)}.bd-stat.ko{color:var(--ko);font-weight:700}
 </style>
 </head>
 <body>
@@ -7896,9 +7898,21 @@ function bdUndo(){if(!BD.hist.length)return;BD.fut.push(BD.snap);BD.snap=BD.hist
 function bdRedo(){if(!BD.fut.length)return;BD.hist.push(BD.snap);BD.snap=BD.fut.pop();bdRestore(BD.snap);bdSaveSoon()}
 function bdUndoUi(){const u=$('#bdUndo'),r=$('#bdRedo');if(u)u.disabled=!BD.hist.length;if(r)r.disabled=!BD.fut.length}
 const BD_DB='nova_bd';
-function bdIdb(){return new Promise((res,rej)=>{const r=indexedDB.open(BD_DB,1);r.onupgradeneeded=()=>r.result.createObjectStore('p');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
-function bdProject(){return{v:1,pages:BD.pages.map(p=>({...p,_p:undefined,_pk:undefined})),cur:BD.cur,nid:BD.nid,assets:[...BD.assets.values()].map(a=>({id:a.id,url:a.url}))}}
-function bdSaveSoon(){clearTimeout(BD.saveT);BD.saveT=setTimeout(async()=>{try{const db=await bdIdb();db.transaction('p','readwrite').objectStore('p').put(JSON.stringify(bdProject()),'cur')}catch(e){}},1200)}
+function bdIdb(){if(BD.db)return Promise.resolve(BD.db);return new Promise((res,rej)=>{const r=indexedDB.open(BD_DB,1);r.onupgradeneeded=()=>r.result.createObjectStore('p');r.onsuccess=()=>{BD.db=r.result;BD.db.onclose=()=>{BD.db=null};res(r.result)};r.onerror=()=>rej(r.error)})}
+function bdProject(){return{v:1,pages:BD.pages.map(p=>({...p,_p:undefined,_pk:undefined})),cur:BD.cur,nid:BD.nid,assets:[...BD.assets.values()].map(a=>({id:a.id,url:a.url})),saved:Date.now()}}
+function bdStat(t,cls){const e=$('#bdStat');if(e){e.textContent=t;e.className='bd-stat '+(cls||'')}}
+const bdHM=d=>new Date(d).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+/* écrit tout de suite (la poignée de la base est gardée ouverte, pour que ça parte même si on ferme la page) */
+async function bdSaveNow(){
+  clearTimeout(BD.saveT);if(!BD.inited||!BD.pages.length)return;
+  try{const db=await bdIdb(),json=JSON.stringify(bdProject());
+    await new Promise((res,rej)=>{const tx=db.transaction('p','readwrite');tx.objectStore('p').put(json,'cur');tx.oncomplete=res;tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error)});
+    BD.lastSave=Date.now();BD.dirty=false;bdStat('✓ Enregistré à '+bdHM(BD.lastSave),'ok')}
+  catch(e){console.warn('bd save',e);bdStat('⚠ Pas enregistré dans le navigateur','ko');if(!BD.warned){BD.warned=true;toast("Impossible d'enregistrer dans le navigateur (espace plein ou navigation privée ?). Utilise 💾 pour garder un fichier.")}}}
+function bdSaveSoon(){BD.dirty=true;bdStat('Enregistrement…','');clearTimeout(BD.saveT);BD.saveT=setTimeout(bdSaveNow,250)}
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&BD.dirty)bdSaveNow()});
+window.addEventListener('pagehide',()=>{if(BD.dirty)bdSaveNow()});
 async function bdLoadProject(o){
   BD.assets.clear();for(const a of o.assets||[]){try{const im=await bdLoadImg(a.url);BD.assets.set(a.id,{id:a.id,url:a.url,img:im,w:im.naturalWidth,h:im.naturalHeight,proc:{}})}catch(e){}}
   BD.pages=(o.pages&&o.pages.length?o.pages:[bdNewPage()]).map(p=>bdNewPage(p));BD.nid=Math.max(o.nid||1,...BD.pages.map(p=>p.id||0),...BD.pages.flatMap(p=>p.items.map(i=>i.id||0)),...BD.assets.keys())+1;BD.cur=Math.min(o.cur||0,BD.pages.length-1);BD.sel=null;BD.hist=[];BD.fut=[];BD.snap='';bdCommit();bdRefresh()}
@@ -8153,7 +8167,7 @@ const BD_HTML=`<div class="bd" id="bdRoot">
   <button class="btn sm" id="bdUndo" type="button" title="Annuler (Ctrl+Z)">↶</button><button class="btn sm" id="bdRedo" type="button" title="Rétablir (Ctrl+Y)">↷</button>
   <span class="bd-sep"></span>
   <span class="bd-add"><b>Ajouter</b>${BD_KIND.map(k=>`<button class="btn sm" data-add="${k[0]}" type="button" title="${k[2]}">${k[1]} ${k[2]}</button>`).join('')}</span>
-  <span class="sp"></span>
+  <span class="sp"></span><span class="bd-stat" id="bdStat" title="Ton projet est enregistré automatiquement dans ce navigateur : tu peux fermer et revenir plus tard."></span>
   <span class="bd-zoom"><button class="btn sm" id="bdZm" type="button" aria-label="Réduire">−</button><button class="btn sm" id="bdZf" type="button" title="Ajuster à l'écran"><span id="bdZ">100 %</span></button><button class="btn sm" id="bdZp" type="button" aria-label="Agrandir">＋</button></span>
   <span class="bd-sep"></span>
   <button class="btn sm" id="bdOpen" type="button" title="Ouvrir un projet enregistré (fichier .bd.json)">📂</button><button class="btn sm" id="bdSave" type="button" title="Enregistrer le projet dans un fichier (.bd.json)">💾</button><button class="btn sm" id="bdNew" type="button">Nouveau</button>
@@ -8168,7 +8182,7 @@ async function bdShow(){
   const root=$('#bdHost');if(!root)return;
   if(!BD.inited){BD.inited=true;root.innerHTML=BD_HTML;bdWire();
     const ok=await bdRestoreAuto();
-    if(!ok){BD.pages=[bdNewPage()];BD.snap='';bdCommit();bdRefresh()}else toast('Ton projet BD a été repris')}
+    if(!ok){BD.pages=[bdNewPage()];BD.snap='';bdCommit();bdRefresh()}else{toast('Ton projet BD a été repris');bdStat('✓ Projet repris','ok')}}
   setTimeout(()=>{bdRender();bdThumbs()},30)}
 if(window.__NOVA_TEST)window.__bd={BD,bdNewPage,bdPolys,bdAddItem,bdDrawPage,bdRenderToCanvas,bdPdf,bdAddAsset,bdSetImage,bdCell,bdUndo,bdRedo,bdRefresh};
 
