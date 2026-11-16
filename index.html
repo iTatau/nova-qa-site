@@ -7830,7 +7830,7 @@ function bdBubbleShapes(it){
     const p=new Path2D();V.forEach((v,i)=>i?p.lineTo(v.x,v.y):p.moveTo(v.x,v.y));p.closePath();out.push(p)}
   else if(it.kind==='box'){const p=new Path2D();p.roundRect?p.roundRect(-hw,-hh,it.w,it.h,Math.min(2,hh*0.3)):p.rect(-hw,-hh,it.w,it.h);out.push(p)}
   return out}
-function bdDrawItem(g,it,ui){
+function bdDrawItem(g,it,ui,ph){
   g.save();g.translate(it.x+it.w/2,it.y+it.h/2);g.rotate((it.rot||0)*Math.PI/180);
   const fontOf=bdFontOf(it);let txt=it.caps?String(it.text||'').toUpperCase():String(it.text||'');
   if(it.kind==='sfx'||it.kind==='text'){
@@ -7842,8 +7842,10 @@ function bdDrawItem(g,it,ui){
       g.fillStyle=it.col;g.fillText(l,0,y)});
     g.restore();return}
   const shapes=bdBubbleShapes(it),sw=it.sw;
-  if(it.kind==='whisper'){g.fillStyle=it.fill;shapes.forEach(s=>g.fill(s));g.setLineDash([sw*2.2,sw*1.6]);g.lineWidth=sw;g.strokeStyle=it.stroke;shapes.forEach(s=>g.stroke(s));g.setLineDash([])}
-  else{g.lineJoin='round';g.lineWidth=sw*2;g.strokeStyle=it.stroke;shapes.forEach(s=>g.stroke(s));g.fillStyle=it.fill;shapes.forEach(s=>g.fill(s))}
+  const doS=!ph||ph==='s',doF=!ph||ph==='f',doT=!ph||ph==='t';
+  if(it.kind==='whisper'){if(doF){g.fillStyle=it.fill;shapes.forEach(s=>g.fill(s));g.setLineDash([sw*2.2,sw*1.6]);g.lineWidth=sw;g.strokeStyle=it.stroke;shapes.forEach(s=>g.stroke(s));g.setLineDash([])}}
+  else{if(doS){g.lineJoin='round';g.lineWidth=sw*2;g.strokeStyle=it.stroke;shapes.forEach(s=>g.stroke(s))}if(doF){g.fillStyle=it.fill;shapes.forEach(s=>g.fill(s))}}
+  if(!doT){g.restore();return}
   const iw=it.kind==='box'?it.w-3:it.kind==='shout'?it.w*0.72:it.kind==='thought'?it.w*0.68:it.w*0.74,ih=it.kind==='box'?it.h-2.4:it.kind==='shout'?it.h*0.6:it.kind==='thought'?it.h*0.58:it.h*0.62;
   g.textAlign='center';g.textBaseline='middle';const f=bdFit(g,txt,fontOf,iw,ih,it.size),lh=f.size*1.12,y0=-(f.lines.length-1)*lh/2;g.font=fontOf(f.size);g.fillStyle=it.col;
   f.lines.forEach((l,i)=>g.fillText(l,0,y0+i*lh));
@@ -7852,7 +7854,10 @@ function bdDrawPage(g,pg,o){
   o=o||{};const polys=bdPolys(pg);
   g.save();g.fillStyle=pg.bg;g.fillRect(0,0,pg.w,pg.h);
   polys.forEach((poly,i)=>bdDrawCell(g,pg,poly,bdCell(pg,i),o.ui));
-  pg.items.forEach(it=>bdDrawItem(g,it,o.ui));
+  const bdone=new Set();
+  pg.items.forEach((it,idx)=>{
+    if(it.link&&bdIsBub(it)){const mem=pg.items.filter(x=>x.link===it.link&&bdIsBub(x));if(mem.length>1){if(pg.items.indexOf(mem[mem.length-1])!==idx)return;mem.forEach(m=>bdDrawItem(g,m,o.ui,'s'));mem.forEach(m=>bdDrawItem(g,m,o.ui,'f'));mem.forEach(m=>bdDrawItem(g,m,o.ui,'t'));return}}
+    bdDrawItem(g,it,o.ui)});
   if(pg.num){g.fillStyle='#333';g.font=`${Math.min(pg.w,pg.h)*0.028}px ${(BD_FONT.find(x=>x[0]===pg.numFont)||BD_FONT[3])[2]}`;g.textAlign='center';g.textBaseline='middle';g.fillText(String(BD.pages.indexOf(pg)+1),pg.w/2,pg.h-pg.margin*0.45)}
   g.restore()}
 function bdRenderToCanvas(pg,dpi,maxPx){
@@ -7907,6 +7912,13 @@ function bdHit(x,y){
   const polys=bdPolys(pg);for(let i=polys.length-1;i>=0;i--)if(bdInPoly(polys[i],x,y))return{k:'panel',i};
   return null}
 
+/* ---------- bulles liées / agrandies ---------- */
+const bdIsBub=it=>['speech','thought','shout','whisper','box'].includes(it.kind);
+function bdAddLinked(it){const pg=bdPg(),S=bdSafe(pg),w=it.w*0.85,h=it.h*0.75;it.link=it.link||bdId();
+  const x=bdClamp(it.x+it.w*0.42,S.x0,S.x1-w),y=bdClamp(it.y+it.h*0.8,S.y0,S.y1-h);
+  const c={...it,id:bdId(),x,y,w,h,text:'…',tx:w*0.25,ty:h*0.95,tail:['speech','thought','shout','whisper'].includes(it.kind)};
+  pg.items.push(c);BD.sel={k:'item',id:c.id};bdCommit();bdRefresh();setTimeout(()=>{const t=$('#bdTxt');if(t){t.focus();t.select()}},30)}
+function bdScaleItem(it,k){const pg=bdPg(),S=bdSafe(pg),cx=it.x+it.w/2,cy=it.y+it.h/2;it.w=Math.max(8,Math.min(it.w*k,S.x1-S.x0));it.h=Math.max(6,Math.min(it.h*k,S.y1-S.y0));it.tx*=k;it.ty*=k;it.x=bdClamp(cx-it.w/2,S.x0,S.x1-it.w);it.y=bdClamp(cy-it.h/2,S.y0,S.y1-it.h);bdCommit();bdRefresh()}
 /* ---------- marges : tout reste dans la zone de sécurité de la page ---------- */
 const bdSafe=pg=>{const m=Math.max(BD_MINM,+pg.margin||0);return{x0:m,y0:m,x1:pg.w-m,y1:pg.h-m}};
 const bdMapBox=(po,bb,nb)=>po.map(p=>[nb.x+(p[0]-bb.x)*nb.w/(bb.w||1),nb.y+(p[1]-bb.y)*nb.h/(bb.h||1)]);
@@ -8002,6 +8014,9 @@ function bdInspector(){
     const sp=['speech','thought','shout','whisper'].includes(it.kind),isT=it.kind==='text',isS=it.kind==='sfx';
     h=`<div class="bd-ih"><b>${(BD_KIND.find(k=>k[0]===it.kind)||[0,'','Bulle'])[1]} ${(BD_KIND.find(k=>k[0]===it.kind)||[0,'','Bulle'])[2]}</b><span class="bd-ia"><button class="btn sm" data-a="dup" type="button" title="Dupliquer (Ctrl+D)">⧉</button><button class="btn sm" data-a="front" type="button" title="Mettre devant">⬆</button><button class="btn sm" data-a="back" type="button" title="Mettre derrière">⬇</button><button class="btn sm danger" data-a="del" type="button" title="Supprimer (Suppr)">🗑</button></span></div>
      <div class="bd-kinds">${BD_KIND.map(k=>`<button type="button" class="${k[0]===it.kind?'on':''}" data-kind="${k[0]}" title="${k[2]}">${k[1]}<small>${k[2]}</small></button>`).join('')}</div>
+     ${['text','sfx'].includes(it.kind)?'':`<div class="bd-chips"><button class="btn sm" data-a="addlink" type="button" title="Crée une 2e bulle collée à celle-ci, fusionnée avec elle (une seule bulle)">🔗 Bulle liée dessous</button><button class="btn sm" data-a="linkto" type="button" title="Puis clique sur l'autre bulle pour les fusionner">🔗 Lier à…</button>${it.link&&pg.items.filter(x=>x.link===it.link).length>1?'<button class="btn sm" data-a="unlink" type="button">⛓ Délier</button>':''}</div>`}
+     <div class="bd-xy">${bdNum('Largeur (mm)','w',8,600,1)}${bdNum('Hauteur (mm)','h',6,600,1)}</div>
+     <div class="bd-chips"><button class="btn sm" data-a="shrink" type="button">－ Plus petite</button><button class="btn sm" data-a="grow" type="button">＋ Plus grosse</button></div>
      <label class="bd-f"><span>Texte</span><textarea id="bdTxt" data-p="text" data-t="s" rows="3" maxlength="400"></textarea></label>
      ${bdSel('Police','font',BD_FONT.map(f=>[f[0],f[1]]))}
      <div class="bd-chks">${bdChk('MAJUSCULES','caps')}${bdChk('Gras','bold')}${bdChk('Italique','it')}${sp?bdChk('Queue','tail'):''}</div>
@@ -8010,7 +8025,7 @@ function bdInspector(){
      ${isS?bdRng('Penché','skew',-1,1,0.05):''}
      <div class="bd-cols">${bdCol(isT||isS?'Couleur du texte':'Couleur du texte','col')}${isT?'':(isS?bdCol('Contour','stroke'):bdCol('Fond','fill')+bdCol('Contour','stroke'))}</div>
      ${isT?'':bdRng(isS?'Épaisseur du contour':'Épaisseur du trait','sw',0.2,3,0.1)}
-     <p class="muted sm bd-help">Glisse la bulle pour la déplacer ; ⚪ les coins pour la taille, 🟡 pour la tourner${sp?', 🩷 pour orienter la queue':''}.</p>`}
+     <p class="muted sm bd-help">Glisse la bulle pour la déplacer (liées : elles bougent ensemble, Alt = une seule) ; ⚪ les coins pour la taille, 🟡 pour la tourner${sp?', 🩷 pour orienter la queue':''}.</p>`}
   else if(sel&&sel.k==='panel'){
     const c=bdCell(pg,sel.i),n=bdPolys(pg).length;
     h=`<div class="bd-ih"><b>Case ${sel.i+1} <span class="muted sm">sur ${n}</span></b><span class="bd-ia"><button class="btn sm" data-a="pick" type="button">${c.a?'Changer l\'image':'Choisir une image'}</button>${c.a?'<button class="btn sm danger" data-a="rmimg" type="button" title="Retirer l\'image">🗑</button>':''}</span></div>
@@ -8037,7 +8052,7 @@ function bdInspector(){
   box.innerHTML=h;
   /* valeurs */
   const target=k=>k==='item'?it:k==='cell'?(sel&&sel.k==='panel'?bdCell(pg,sel.i):null):pg;
-  $$('#bdInsp [data-p]').forEach(el=>{const t=it?it:(sel&&sel.k==='panel'?bdCell(pg,sel.i):pg),v=t[el.dataset.p];if(el.type==='checkbox')el.checked=!!v;else el.value=v==null?'':v;
+  $$('#bdInsp [data-p]').forEach(el=>{const t=it?it:(sel&&sel.k==='panel'?bdCell(pg,sel.i):pg),v=t[el.dataset.p];if(el.type==='checkbox')el.checked=!!v;else el.value=v==null?'':(el.dataset.t==='n'&&typeof v==='number'?+v.toFixed(2):v);
     const b=$(`#bdInsp [data-v="${el.dataset.p}"]`);if(b)b.textContent=el.dataset.p==='slant'?Math.round(v*100)+' %':(+v).toFixed(el.step&&el.step<1?(el.step<0.1?2:1):0)});
   if(sel&&sel.k==='panel'&&pg.tpl==='free'&&pg.free[sel.i]){const bb=bdBBox(pg.free[sel.i]),m={x:bb.x,y:bb.y,w:bb.w,h:bb.h};$$('#bdInsp [data-q]').forEach(el=>{el.value=+m[el.dataset.q].toFixed(1)})}
   if(!it&&!(sel&&sel.k==='panel')){
@@ -8131,10 +8146,12 @@ function bdWire(){
   const cv=$('#bdCv'),st=$('#bdStage');
   cv.addEventListener('pointerdown',e=>{
     if(e.button!==0)return;const [x,y]=bdPt(e),pg=bdPg(),h=BD.draw?null:bdHit(x,y);cv.setPointerCapture(e.pointerId);
+    if(BD.linking!=null){const hh=bdHit(x,y),a=pg.items.find(v=>v.id===BD.linking);BD.linking=null;
+      if(hh&&hh.it&&a&&hh.it!==a&&bdIsBub(hh.it)&&bdIsBub(a)){const L=a.link||hh.it.link||bdId(),G=[a.link,hh.it.link].filter(Boolean);pg.items.forEach(v=>{if(v===a||v===hh.it||(v.link&&G.includes(v.link)))v.link=L});BD.sel={k:'item',id:a.id};bdCommit();bdRefresh();toast('Bulles liées : elles forment une seule bulle')}else toast('Liaison annulée');return}
     if(BD.draw){const S0=bdSafe(pg),[sx0,sy0]=bdSnapPt(pg,x,y,-1),sx=bdClamp(sx0,S0.x0,S0.x1),sy=bdClamp(sy0,S0.y0,S0.y1);BD.drag={k:'draw',x0:sx,y0:sy,x1:sx,y1:sy};bdRender();return}
     if(!h){BD.sel=null;bdInspector();bdRender();return}
     if(h.k==='panel'){BD.sel={k:'panel',i:h.i};const c=bdCell(pg,h.i);BD.drag={k:'img',i:h.i,x0:x,y0:y,ox:c.ox,oy:c.oy,moved:false};bdInspector();bdRender();return}
-    if(h.k==='item'){BD.sel={k:'item',id:h.it.id};BD.drag={k:'move',it:h.it,dx:x-h.it.x,dy:y-h.it.y,moved:false};bdInspector();bdRender();return}
+    if(h.k==='item'){BD.sel={k:'item',id:h.it.id};BD.drag={k:'move',it:h.it,x0:x,y0:y,moved:false,mem:(h.it.link&&!e.altKey?pg.items.filter(v=>v.link===h.it.link):[h.it]).map(v=>({it:v,x:v.x,y:v.y}))};bdInspector();bdRender();return}
     if(h.k==='pv'||h.k==='pe'||h.k==='pm'){BD.drag={k:h.k,i:h.i,idx:h.idx,x0:x,y0:y,orig:JSON.parse(JSON.stringify(pg.free[h.i]))};return}
     BD.sel={k:'item',id:h.it.id};
     if(h.k==='rot')BD.drag={k:'rot',it:h.it};
@@ -8159,7 +8176,7 @@ function bdWire(){
     else if(d.k==='pe'){const S0=bdSafe(pg),bb=bdBBox(d.orig),[nx0,ny0]=bdSnapPt(pg,x,y,d.i),nx=bdClamp(nx0,S0.x0,S0.x1),ny=bdClamp(ny0,S0.y0,S0.y1),MIN=15;let x0=bb.x,x1=bb.x+bb.w,y0=bb.y,y1=bb.y+bb.h;
       if(d.idx===0)y0=Math.min(ny,y1-MIN);else if(d.idx===1)x1=Math.max(nx,x0+MIN);else if(d.idx===2)y1=Math.max(ny,y0+MIN);else x0=Math.min(nx,x1-MIN);
       pg.free[d.i]=bdMkRect(x0,y0,x1,y1);bdRender()}
-    else if(d.k==='move'){d.moved=true;const S0=bdSafe(pg);d.it.x=bdClamp(x-d.dx,S0.x0,S0.x1-d.it.w);d.it.y=bdClamp(y-d.dy,S0.y0,S0.y1-d.it.h);bdRender()}
+    else if(d.k==='move'){d.moved=true;const S0=bdSafe(pg);let dx=x-d.x0,dy=y-d.y0;const bx0=Math.min(...d.mem.map(m=>m.x)),by0=Math.min(...d.mem.map(m=>m.y)),bx1=Math.max(...d.mem.map(m=>m.x+m.it.w)),by1=Math.max(...d.mem.map(m=>m.y+m.it.h));dx=bdClamp(dx,S0.x0-bx0,S0.x1-bx1);dy=bdClamp(dy,S0.y0-by0,S0.y1-by1);d.mem.forEach(m=>{m.it.x=m.x+dx;m.it.y=m.y+dy});bdRender()}
     else if(d.k==='img'){d.moved=true;const c=bdCell(pg,d.i);c.ox=d.ox+(x-d.x0);c.oy=d.oy+(y-d.y0);bdRender()}
     else if(d.k==='rot'){const it=d.it,a=Math.atan2(y-(it.y+it.h/2),x-(it.x+it.w/2))*180/Math.PI+90;it.rot=Math.round((a>180?a-360:a)*(e.shiftKey?0.2:1))/(e.shiftKey?0.2:1);if(!e.altKey&&Math.abs(it.rot)<3)it.rot=0;bdRender();bdInspector()}
     else if(d.k==='tail'){const [lx,ly]=bdToLocal(d.it,x,y);d.it.tx=lx;d.it.ty=ly;bdRender()}
@@ -8185,13 +8202,18 @@ function bdWire(){
   /* le panneau de droite */
   const insp=$('#bdInsp');
   insp.addEventListener('input',e=>{const el=e.target;if(el.dataset&&el.dataset.p)bdSetProp(el);else if(el.dataset&&el.dataset.q)bdSetQ(el)});
-  insp.addEventListener('change',e=>{const el=e.target;if(el.dataset&&el.dataset.q){bdCommit();return}if(el.dataset&&el.dataset.p){bdSetProp(el);if(['w','h','margin','gutter','slant'].includes(el.dataset.p)){const px0=bdPg(),o0=BD.wh0&&BD.wh0.id===px0.id?BD.wh0:null;px0._p=null;bdFitPage(px0,o0&&o0.w,o0&&o0.h);BD.wh0=null;bdInspector()}if(el.dataset.p==='fl'||el.dataset.p==='fit'||el.dataset.p==='flip'||el.dataset.p==='tail'||el.dataset.p==='num')bdInspector();bdCommit();bdRefresh();return}
+  insp.addEventListener('change',e=>{const el=e.target;if(el.dataset&&el.dataset.q){bdCommit();return}if(el.dataset&&el.dataset.p){bdSetProp(el);{const itx=bdItem();if(itx&&el.dataset.t==='n'){const pgx=bdPg(),S0=bdSafe(pgx);itx.w=bdClamp(itx.w,8,S0.x1-S0.x0);itx.h=bdClamp(itx.h,6,S0.y1-S0.y0);itx.x=bdClamp(itx.x,S0.x0,S0.x1-itx.w);itx.y=bdClamp(itx.y,S0.y0,S0.y1-itx.h);bdCommit();bdRender();return}}if(['w','h','margin','gutter','slant'].includes(el.dataset.p)){const px0=bdPg(),o0=BD.wh0&&BD.wh0.id===px0.id?BD.wh0:null;px0._p=null;bdFitPage(px0,o0&&o0.w,o0&&o0.h);BD.wh0=null;bdInspector()}if(el.dataset.p==='fl'||el.dataset.p==='fit'||el.dataset.p==='flip'||el.dataset.p==='tail'||el.dataset.p==='num')bdInspector();bdCommit();bdRefresh();return}
     if(el.id==='bdFmt'){const pg=bdPg();if(el.value==='custom'){BD.fmtCustom=true}else{BD.fmtCustom=false;const f=BD_FMT.find(x=>x[0]===el.value);const apply=$('#bdAllFmt').checked?BD.pages:[pg];apply.forEach(p=>{const ow=p.w,oh=p.h;p.w=f[2];p.h=f[3];p._p=null;bdFitPage(p,ow,oh)});bdCommit()}bdRefresh()}});
   insp.addEventListener('click',e=>{
     const pg=bdPg(),b=e.target.closest('button');if(!b)return;
     if(b.dataset.tpl){const T=BD_TPL.find(t=>t.k===b.dataset.tpl);if(T.k==='free'&&pg.tpl!=='free'){pg.free=[];pg.cells=[]}pg.tpl=T.k;pg.slant=T.slant!=null?T.slant:0;pg._p=null;BD.sel=null;bdCommit();bdRefresh();return}
     if(b.dataset.kind){const it=bdItem();if(it){it.kind=b.dataset.kind;it.tail=['speech','thought','shout','whisper'].includes(it.kind);if(it.kind==='sfx'){it.font='impact';it.col='#ffd23f';it.stroke='#b3141b'}bdCommit();bdRefresh()}return}
     const a=b.dataset.a;if(!a)return;const it=bdItem();
+    if(a==='addlink'&&it){bdAddLinked(it);return}
+    if(a==='linkto'&&it){BD.linking=it.id;toast('Clique sur la bulle à lier avec celle-ci (Échap pour annuler)');return}
+    if(a==='unlink'&&it){it.link=undefined;bdCommit();bdRefresh();return}
+    if(a==='grow'&&it){bdScaleItem(it,1.18);return}
+    if(a==='shrink'&&it){bdScaleItem(it,1/1.18);return}
     if(a==='draw'){bdDrawMode(true);return}
     if(a==='fitm'){bdFitPage(pg);bdCommit();bdRefresh();toast('Tout est dans les marges');return}
     if(a==='sz'&&BD.sel&&BD.sel.k==='panel'){bdSizeCase(BD.sel.i,b.dataset.v);return}
@@ -8202,7 +8224,7 @@ function bdWire(){
     if(a==='cfront'&&BD.sel&&BD.sel.k==='panel'&&pg.tpl==='free'){const i=BD.sel.i,po=pg.free.splice(i,1)[0],c=bdCell(pg,i);pg.cells.splice(i,1);while(pg.cells.length<pg.free.length)pg.cells.push(bdCell({cells:[]},0));pg.free.push(po);pg.cells[pg.free.length-1]=c;BD.sel={k:'panel',i:pg.free.length-1};bdCommit();bdRefresh();return}
     if(a==='swap'){const ow=pg.w,oh=pg.h,t=pg.w;pg.w=pg.h;pg.h=t;pg._p=null;bdFitPage(pg,ow,oh);BD.fmtCustom=!BD_FMT.some(f=>f[2]===pg.w&&f[3]===pg.h);bdCommit();bdRefresh();return}
     if(a==='del'){bdDelSel();return}
-    if(a==='dup'&&it){const c={...it,id:bdId(),x:it.x+4,y:it.y+4};pg.items.push(c);BD.sel={k:'item',id:c.id};bdCommit();bdRefresh();return}
+    if(a==='dup'&&it){const c={...it,id:bdId(),link:undefined,x:it.x+4,y:it.y+4};pg.items.push(c);BD.sel={k:'item',id:c.id};bdCommit();bdRefresh();return}
     if(a==='front'&&it){pg.items=pg.items.filter(x=>x!==it).concat(it);bdCommit();bdRender();return}
     if(a==='back'&&it){pg.items=[it].concat(pg.items.filter(x=>x!==it));bdCommit();bdRender();return}
     if(a==='pick'&&BD.sel&&BD.sel.k==='panel'){bdPickImage(BD.sel.i);return}
@@ -8234,8 +8256,8 @@ function bdWire(){
     if(typing)return;
     const it=bdItem();
     if((k==='Delete'||k==='Backspace')&&(it||BD.sel)){e.preventDefault();bdDelSel();return}
-    if(ctrl&&k.toLowerCase()==='d'&&it){e.preventDefault();const pg=bdPg(),c={...it,id:bdId(),x:it.x+4,y:it.y+4};pg.items.push(c);BD.sel={k:'item',id:c.id};bdCommit();bdRefresh();return}
-    if(k==='Escape'){if(BD.draw){bdDrawMode(false);return}BD.sel=null;bdRefresh();return}
+    if(ctrl&&k.toLowerCase()==='d'&&it){e.preventDefault();const pg=bdPg(),c={...it,id:bdId(),link:undefined,x:it.x+4,y:it.y+4};pg.items.push(c);BD.sel={k:'item',id:c.id};bdCommit();bdRefresh();return}
+    if(k==='Escape'){if(BD.linking!=null){BD.linking=null;toast('Liaison annulée');return}if(BD.draw){bdDrawMode(false);return}BD.sel=null;bdRefresh();return}
     {const pg=bdPg();if(BD.sel&&BD.sel.k==='panel'&&pg.tpl==='free'&&k.startsWith('Arrow')){e.preventDefault();const st=e.shiftKey?5:0.5,bb=bdBBox(pg.free[BD.sel.i]);let dx=k==='ArrowLeft'?-st:k==='ArrowRight'?st:0,dy=k==='ArrowUp'?-st:k==='ArrowDown'?st:0;const S0=bdSafe(pg);dx=bdClamp(dx,S0.x0-bb.x,S0.x1-bb.x-bb.w);dy=bdClamp(dy,S0.y0-bb.y,S0.y1-bb.y-bb.h);pg.free[BD.sel.i]=pg.free[BD.sel.i].map(p=>[p[0]+dx,p[1]+dy]);bdRender();bdInspector();clearTimeout(BD.kT);BD.kT=setTimeout(bdCommit,400);return}}
     if(it&&k.startsWith('Arrow')){e.preventDefault();const s=e.shiftKey?5:1;if(k==='ArrowLeft')it.x-=s;if(k==='ArrowRight')it.x+=s;if(k==='ArrowUp')it.y-=s;if(k==='ArrowDown')it.y+=s;{const S0=bdSafe(bdPg());it.x=bdClamp(it.x,S0.x0,S0.x1-it.w);it.y=bdClamp(it.y,S0.y0,S0.y1-it.h)}bdRender();clearTimeout(BD.kT);BD.kT=setTimeout(bdCommit,400)}},true);
   document.addEventListener('paste',e=>{if(!$('#tab-bd').classList.contains('on'))return;const f=[...(e.clipboardData&&e.clipboardData.files||[])].filter(x=>/^image\//.test(x.type));if(!f.length)return;e.preventDefault();
