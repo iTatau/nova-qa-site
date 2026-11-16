@@ -7794,19 +7794,19 @@ function bdDrawCell(g,pg,poly,cell,ui){
   if(pg.border>0){bdPolyPath(g,poly,pg.radius);g.lineWidth=pg.border;g.strokeStyle=pg.bcol;g.lineJoin='miter';g.miterLimit=3;g.stroke()}}
 /* découpe du texte en lignes + taille maximale qui rentre dans le cadre */
 function bdWrap(g,text,maxW){
-  const lines=[];for(const para of String(text).split('\n')){const words=para.split(/\s+/).filter(Boolean);let cur='';
+  const lines=[];let broken=false;for(const para of String(text).split('\n')){const words=[];para.split(/\s+/).filter(Boolean).forEach(w=>{if(/^[!?.…:;]+$/.test(w)&&words.length)words[words.length-1]+='\u00a0'+w;else words.push(w)});let cur='';
     if(!words.length){lines.push('');continue}
     for(let w of words){
-      while(g.measureText(w).width>maxW&&w.length>1){let k=w.length;while(k>1&&g.measureText(w.slice(0,k)).width>maxW)k--;if(cur){lines.push(cur);cur=''}lines.push(w.slice(0,k));w=w.slice(k)}
+      while(g.measureText(w).width>maxW&&w.length>1){broken=true;let k=w.length;while(k>1&&g.measureText(w.slice(0,k)).width>maxW)k--;if(cur){lines.push(cur);cur=''}lines.push(w.slice(0,k));w=w.slice(k)}
       const t=cur?cur+' '+w:w;if(g.measureText(t).width>maxW&&cur){lines.push(cur);cur=w}else cur=t}
     lines.push(cur)}
-  return lines}
+  lines.broken=broken;return lines}
 function bdFit(g,text,fontOf,maxW,maxH,fixed){
   const LH=1.12;
   if(fixed>0){g.font=fontOf(fixed);return{size:fixed,lines:bdWrap(g,text,maxW)}}
   let lo=1.2,hi=Math.max(2,maxH),best=null;
   for(let it=0;it<14;it++){const s=(lo+hi)/2;g.font=fontOf(s);const ls=bdWrap(g,text,maxW);const mw=Math.max(...ls.map(l=>g.measureText(l).width),0);
-    if(ls.length*s*LH<=maxH&&mw<=maxW){best={size:s,lines:ls};lo=s}else hi=s}
+    if(ls.length*s*LH<=maxH&&mw<=maxW&&!ls.broken){best={size:s,lines:ls};lo=s}else hi=s}
   if(!best){g.font=fontOf(lo);best={size:lo,lines:bdWrap(g,text,maxW)}}
   return best}
 const bdFontOf=it=>{const f=(BD_FONT.find(x=>x[0]===it.font)||BD_FONT[0])[2];return s=>`${it.it?'italic ':''}${it.bold?'bold ':''}${s}px ${f}`};
@@ -7822,8 +7822,12 @@ function bdBubbleShapes(it){
     for(let i=0;i<n;i++){const a=i/n*Math.PI*2,p=new Path2D();p.arc((hw-r*0.62)*Math.cos(a),(hh-r*0.62)*Math.sin(a),r,0,Math.PI*2);out.push(p)}
     if(tip&&!inside){const ang=Math.atan2(tip[1]/hh,tip[0]/hw),sx=hw*Math.cos(ang),sy=hh*Math.sin(ang);for(let k=1;k<=3;k++){const t=k/3.4,p=new Path2D();p.arc(sx+(tip[0]-sx)*t*0.95,sy+(tip[1]-sy)*t*0.95,Math.min(hw,hh)*0.16*(1-t*0.62),0,Math.PI*2);out.push(p)}}}
   else if(it.kind==='shout'){
-    const n=15,p=new Path2D();for(let i=0;i<n*2;i++){const a=i/(n*2)*Math.PI*2-Math.PI/2,o=(i%2===0),j=0.88+0.2*Math.abs(Math.sin(i*12.9898+it.id)),rx=hw*(o?1.04*j:0.76),ry=hh*(o?1.04*j:0.76);i?p.lineTo(rx*Math.cos(a),ry*Math.sin(a)):p.moveTo(rx*Math.cos(a),ry*Math.sin(a))}p.closePath();out.push(p);
-    if(tip&&!inside)out.push(tailPath())}
+    const n=Math.max(9,Math.min(22,Math.round((hw+hh)/4.2))),N=n*2,V=[];
+    for(let i=0;i<N;i++){const a=i/N*Math.PI*2-Math.PI/2,o=i%2===0,j=0.94+0.1*Math.abs(Math.sin(i*12.9898+it.id*3.1)),k=o?1.06*j:0.74;V.push({a,o,x:hw*k*Math.cos(a),y:hh*k*Math.sin(a)})}
+    /* la pointe la plus proche du personnage s'allonge jusqu'à la queue */
+    if(tip&&!inside){const ta=Math.atan2(tip[1]/hh,tip[0]/hw);let bi=-1,bd=9;V.forEach((v,i)=>{if(!v.o)return;const d=Math.abs(Math.atan2(Math.sin(v.a-ta),Math.cos(v.a-ta)));if(d<bd){bd=d;bi=i}});
+      if(bi>=0){V[bi].x=tip[0];V[bi].y=tip[1];for(const d of [-1,1]){const v=V[(bi+d+N)%N];v.x*=0.86;v.y*=0.86}}}
+    const p=new Path2D();V.forEach((v,i)=>i?p.lineTo(v.x,v.y):p.moveTo(v.x,v.y));p.closePath();out.push(p)}
   else if(it.kind==='box'){const p=new Path2D();p.roundRect?p.roundRect(-hw,-hh,it.w,it.h,Math.min(2,hh*0.3)):p.rect(-hw,-hh,it.w,it.h);out.push(p)}
   return out}
 function bdDrawItem(g,it,ui){
@@ -7840,7 +7844,7 @@ function bdDrawItem(g,it,ui){
   const shapes=bdBubbleShapes(it),sw=it.sw;
   if(it.kind==='whisper'){g.fillStyle=it.fill;shapes.forEach(s=>g.fill(s));g.setLineDash([sw*2.2,sw*1.6]);g.lineWidth=sw;g.strokeStyle=it.stroke;shapes.forEach(s=>g.stroke(s));g.setLineDash([])}
   else{g.lineJoin='round';g.lineWidth=sw*2;g.strokeStyle=it.stroke;shapes.forEach(s=>g.stroke(s));g.fillStyle=it.fill;shapes.forEach(s=>g.fill(s))}
-  const iw=it.kind==='box'?it.w-3:it.kind==='shout'?it.w*0.66:it.kind==='thought'?it.w*0.68:it.w*0.74,ih=it.kind==='box'?it.h-2.4:it.kind==='shout'?it.h*0.56:it.kind==='thought'?it.h*0.58:it.h*0.62;
+  const iw=it.kind==='box'?it.w-3:it.kind==='shout'?it.w*0.72:it.kind==='thought'?it.w*0.68:it.w*0.74,ih=it.kind==='box'?it.h-2.4:it.kind==='shout'?it.h*0.6:it.kind==='thought'?it.h*0.58:it.h*0.62;
   g.textAlign='center';g.textBaseline='middle';const f=bdFit(g,txt,fontOf,iw,ih,it.size),lh=f.size*1.12,y0=-(f.lines.length-1)*lh/2;g.font=fontOf(f.size);g.fillStyle=it.col;
   f.lines.forEach((l,i)=>g.fillText(l,0,y0+i*lh));
   g.restore()}
