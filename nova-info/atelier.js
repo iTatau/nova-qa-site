@@ -189,6 +189,10 @@
       const v = S.vids.get(shot.src);
       if (v && v.readyState >= 2) { x.filter = shot.dim ? `brightness(${1 - shot.dim})` : 'none'; x.drawImage(v, 0, 0, W, H); x.filter = 'none'; }
     }
+    if (shot.fade) {  // luminosité animée
+      const f = shot.fade, m = lerp(f.m[0], f.m[1], E.io((lt - f.t[0]) / Math.max(f.t[1] - f.t[0], 1e-6)));
+      x.fillStyle = `rgba(0,0,0,${(1 - m).toFixed(3)})`; x.fillRect(0, 0, W, H);
+    }
     effects(R, x, shot, lt);
     x.restore();
   }
