@@ -1522,6 +1522,7 @@ body[data-tab=bd] .site-foot{display:none}
       <button role="tab" data-grp="photos" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m4 18 5.5-5.5L13 16l3-3 4 4.5"/></svg><span>Photos</span></button>
       <button role="tab" data-grp="youtube" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="4.5"/><path d="m10 9.3 4.8 2.7-4.8 2.7z" fill="currentColor" stroke="none"/></svg><span>YouTube</span></button>
       <button role="tab" data-grp="bd" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="10" rx="2"/><rect x="13" y="3" width="8" height="6" rx="2"/><rect x="13" y="11" width="8" height="10" rx="2"/><rect x="3" y="15" width="8" height="6" rx="2"/></svg><span>BD</span></button>
+      <button role="tab" data-grp="atelier" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="3"/><path d="m10 8.2 4.6 2.8-4.6 2.8z" fill="currentColor" stroke="none"/><path d="M8 21h8M12 17v4"/></svg><span>Nova-Info</span></button>
       <button role="tab" data-grp="scorux" id="navAdmin" class="adm" aria-selected="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="3"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg><span>Admin</span></button>
     </nav>
     <div class="sp"></div>
@@ -2009,6 +2010,7 @@ body[data-tab=bd] .site-foot{display:none}
 
   <!-- ===== BD (planches de bande dessinée) ===== -->
   <section class="tab" id="tab-bd"><div id="bdHost"></div></section>
+  <section class="tab" id="tab-atelier"><div id="atHost"></div></section>
 </main>
 <footer class="site-foot">
   <div class="wrap">
@@ -2278,7 +2280,7 @@ function snapMaybe(){
 
 /* ---------- onglets ---------- */
 const ADMIN_TABS=['scorux','machines','paye','fiches','activite','roblox'];
-const TABS=['home','montage','photos','youtube','bd'].concat(PUBLIC?[]:['roblox']).concat(['scorux','machines','paye','fiches','activite']);
+const TABS=['home','montage','photos','youtube','bd','atelier'].concat(PUBLIC?[]:['roblox']).concat(['scorux','machines','paye','fiches','activite']);
 const ADM_HINT='nova_admin_hint';
 /* Espace admin : visible seulement pour le propriétaire (mot de passe déjà créé sur cet appareil) ou en ouvrant l'adresse …/#admin */
 function adminKnown(){let h=false;try{h=sessionStorage.getItem(ADM_HINT)==='1'}catch(e){}return !!lockCfg()||h}
@@ -2299,7 +2301,13 @@ function showTab(t){
   if(t==='youtube'&&typeof ytShow==='function')ytShow();
   document.body.classList.toggle('bd-open',t==='bd');
   if(t==='bd'&&typeof bdShow==='function')bdShow();
+  if(t==='atelier')atelierShow();
   if(typeof animateNumbers==='function'){const sec=$('#tab-'+t);$$('[data-key]',sec).forEach(el=>delete lastNum[el.dataset.key]);animateNumbers(sec)}}
+/* Atelier Nova-Info : module chargé à la demande (nova-info/atelier.js + atelier.css) */
+function atelierShow(){const host=$('#atHost');if(window.NovaAtelier){window.NovaAtelier.mount(host);return}
+  if(!$('#atCss')){const l=document.createElement('link');l.id='atCss';l.rel='stylesheet';l.href='nova-info/atelier.css';document.head.appendChild(l)}
+  if($('#atJs'))return;const sc=document.createElement('script');sc.id='atJs';sc.src='nova-info/atelier.js';sc.onload=()=>window.NovaAtelier.mount(host);
+  sc.onerror=()=>{host.innerHTML='<p class="muted">Impossible de charger l\'Atelier Nova-Info (réseau ?). Recharge la page.</p>'};document.head.appendChild(sc)}
 $$('#subBar button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
 $$('#topTabs button').forEach(b=>b.addEventListener('click',()=>{showTab(b.dataset.grp==='scorux'?(ui.lastSub||'scorux'):b.dataset.grp);window.scrollTo({top:0,behavior:'smooth'})}));
 function renderBadges(){
