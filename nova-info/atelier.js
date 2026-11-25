@@ -336,6 +336,39 @@
     if (P.brand.outro_title) text(x, P.brand.outro_title, W / 2 - 20, 1000 + 24, 'extrabold', 50, rgb(c.amber), { align: 'center', spacing: 5, alpha: E.out((tl - .95) / .5) });
   }
 
+  /* mode « dark » (basculement) : coupure, rafale de glitch, image sombre/désaturée bleu-noir, vignette lourde, scintillement, lignes de balayage */
+  function darkPost(R, x, t) {
+    const D = S.P.meta.dark; if (!D) return;
+    const [t0, t1] = D, cw = R.cw, ch = R.ch, fr = Math.floor(t * 30), rnd = mulberry(fr * 7919 + 13);
+    x.setTransform(1, 0, 0, 1, 0, 0); x.globalAlpha = 1;
+    if (t >= t0 - .40 && t < t0 + .12) {  // coupure : l'image tombe au noir juste avant le basculement
+      let m = 0; if (t < t0) { m = Math.pow(1 - (1 - (t0 - t) / .40), 1.6); if (Math.floor(t * 50) % 7 === 0) m = Math.min(1, m + .35); }
+      x.fillStyle = `rgba(0,0,0,${(1 - m * .9).toFixed(3)})`; x.fillRect(0, 0, cw, ch); return;
+    }
+    const d = t < t0 || t > t1 + 1.6 ? 0 : Math.max(0, Math.min(Math.min((t - t0) / .9, 1), t <= t1 ? 1 : 1 - (t - t1) / 1.6));
+    if (d <= 0) return;
+    x.globalCompositeOperation = 'saturation'; x.fillStyle = `rgba(128,128,128,${(.45 * d).toFixed(3)})`; x.fillRect(0, 0, cw, ch);
+    x.globalCompositeOperation = 'multiply'; x.fillStyle = `rgba(205,235,255,${d.toFixed(3)})`; x.fillRect(0, 0, cw, ch);
+    x.globalCompositeOperation = 'source-over';
+    const fl = d * (.05 + .06 * Math.max(Math.sin(t * 7.3) * Math.sin(t * 2.9 + 1), 0)) + (Math.floor(t * 60) % 41 === 0 ? .22 * d : 0);
+    x.fillStyle = `rgba(0,0,0,${(.26 * d + fl).toFixed(3)})`; x.fillRect(0, 0, cw, ch);
+    const g = x.createRadialGradient(cw / 2, ch * .48, cw * .2, cw / 2, ch * .48, ch * .62);
+    g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(0,0,0,${(.6 * d).toFixed(3)})`); x.fillStyle = g; x.fillRect(0, 0, cw, ch);
+    x.fillStyle = `rgba(0,0,0,${(.07 * d).toFixed(3)})`; for (let y = 0; y < ch; y += 2 * R.s * 2) x.fillRect(0, y, cw, R.s);
+    const tb = t - (t0 + .12), burst = tb >= 0 && tb < 1.1, micro = d > .95 && ((t % 4.3) < .12);
+    if (burst || micro) {  // tranches déplacées + barres claires + grain
+      const k = burst ? Math.pow(1 - tb / 1.1, 1.5) : .28, n = Math.round(3 + 10 * k);
+      const snap = x.getImageData(0, 0, cw, ch);
+      const tmp = R.mk(); tmp.getContext('2d').putImageData(snap, 0, 0);
+      for (let i = 0; i < n; i++) {
+        const y = Math.floor(rnd() * (ch - 20 * R.s)), h = Math.floor((8 + rnd() * (40 + 160 * k)) * R.s), dx = Math.floor((rnd() < .5 ? -1 : 1) * (20 + rnd() * (40 + 260 * k)) * R.s);
+        x.drawImage(tmp, 0, y, cw, h, dx, y, cw, h);
+      }
+      for (let i = 0; i < 2 + 4 * k; i++) { x.fillStyle = `rgba(255,255,255,${(.15 + rnd() * .25).toFixed(2)})`; x.fillRect(0, Math.floor(rnd() * ch), cw, Math.max(1, Math.floor((2 + rnd() * 6) * R.s))); }
+      for (let i = 0; i < 90 * k; i++) { x.fillStyle = `rgba(${150 + rnd() * 105 | 0},${150 + rnd() * 105 | 0},${150 + rnd() * 105 | 0},${(.2 + rnd() * .4).toFixed(2)})`; x.fillRect(rnd() * cw, rnd() * ch, 4 * R.s, 4 * R.s); }
+    }
+  }
+
   /* un instant complet de la vidéo */
   function renderFrame(R, t, o = {}) {
     const P = S.P, sh = P.shots, i = shotAt(P, t), s = sh[i], lt = t - s.t0, x = R.mctx;
@@ -350,6 +383,7 @@
       else if (kind === 'whip') { const sx = Math.round(R.cw * .5 * k); x.drawImage(R.B, -sx, 0); x.drawImage(R.A, R.cw - sx, 0); }
       else if (kind === 'flash') { x.fillStyle = `rgba(255,255,255,${(0.6 * (1 - k)).toFixed(3)})`; x.fillRect(0, 0, R.cw, R.ch); }
     }
+    darkPost(R, x, t);
     x.setTransform(1, 0, 0, 1, 0, 0); x.drawImage(R.vignette(), 0, 0);
     x.save(); x.globalAlpha = .07; x.globalCompositeOperation = 'overlay'; const g = R.grainTile(); const ox = (Math.random() * 256) | 0, oy = (Math.random() * 256) | 0;
     x.fillStyle = x.createPattern(g, 'repeat'); x.translate(-ox, -oy); x.fillRect(ox, oy, R.cw, R.ch); x.restore();
