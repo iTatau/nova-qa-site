@@ -595,8 +595,11 @@
     const texts = V.segments.map((s, j) => spokenText(segTokens(V, j === i ? text : s.text)));
     const tokens = segTokens(V, text), body = { text: texts[i], model_id: V.model_id || 'eleven_multilingual_v2', language_code: 'fr', voice_settings: V.settings };
     if (i > 0) body.previous_text = texts[i - 1]; if (i + 1 < texts.length) body.next_text = texts[i + 1];
-    const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${V.voice_id}/with-timestamps?output_format=mp3_44100_128`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'xi-api-key': key }, body: JSON.stringify(body) });
-    if (!r.ok) { let m = ''; try { m = (await r.json()).detail?.message || ''; } catch (e) { } throw new Error(r.status === 401 ? 'Clé ElevenLabs refusée (401).' : r.status === 429 ? 'Trop de requêtes ou quota atteint (429).' : `ElevenLabs a répondu ${r.status}. ${m}`); }
+    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 120000); let r;
+    try { r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${V.voice_id}/with-timestamps?output_format=mp3_44100_128`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'xi-api-key': key }, body: JSON.stringify(body), signal: ctl.signal }); }
+    catch (e) { throw new Error(e.name === 'AbortError' ? 'ElevenLabs ne répond pas (délai de 2 minutes dépassé).' : 'Impossible de joindre ElevenLabs (réseau, bloqueur de publicités ou extension du navigateur ?). Détail : ' + e.message); }
+    finally { clearTimeout(to); }
+    if (!r.ok) { let m = ''; try { m = (await r.json()).detail?.message || ''; } catch (e) { } throw new Error(r.status === 401 ? 'Clé ElevenLabs refusée (401) : vérifie la clé et qu’elle a bien la permission « Text to Speech ». ' + m : r.status === 429 ? 'Trop de requêtes ou quota de caractères atteint (429).' : `ElevenLabs a répondu ${r.status}. ${m}`); }
     const resp = await r.json(), bin = atob(resp.audio_base64), bytes = new Uint8Array(bin.length); for (let k = 0; k < bin.length; k++) bytes[k] = bin.charCodeAt(k);
     const dec = await decodeCtx().decodeAudioData(bytes.buffer), pcm = mono(dec), sr = dec.sampleRate;
     const [a0, a1] = trimBounds(pcm, sr); let clip = Float32Array.from(pcm.subarray(a0, a1));
@@ -634,29 +637,37 @@
     return shift;
   }
 
+  function setVox(kind, msg) {  // message d'état PERSISTANT dans l'onglet Voix (les « toasts » disparaissent en 2 s)
+    S.vox = { kind, msg }; const el = $('#atVoxStatus'); if (!el) return;
+    el.hidden = !msg; el.className = 'at-vstat ' + kind; el.textContent = msg || ''; if (msg) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    $$('[data-gen],[data-rev]').forEach(b => b.disabled = kind === 'busy');
+  }
   async function regenerate(i, text) {
-    const V = S.P.voice; text = text.trim(); if (!text) throw new Error('Le texte est vide.');
-    busy('Génération de la voix…'); await nextTick(20);
+    const V = S.P.voice; text = text.trim();
+    if (!text) return setVox('err', '✖ Le texte de la phrase est vide.');
+    if (!S.elevenKey) return setVox('err', '✖ Colle d’abord ta clé ElevenLabs dans le champ « Ta clé API » en haut de cet onglet.');
+    setVox('busy', `⏳ Génération de la voix de la phrase ${V.segments[i].id} en cours (quelques secondes)…`); busy('Génération de la voix…'); await nextTick(20);
     try {
       const t = await synthesize(i, text); const path = `voix/edit_${V.segments[i].id}_${Date.now().toString(36)}.wav`;
       const blob = encodeWav([t.clip], t.sr); S.files.set(path, blob); (S.abuf ||= new Map()).set(path, await decodeCtx().decodeAudioData(await blob.arrayBuffer()));
       commit('voix'); const shift = applyTake(i, { text, file: path, dur: t.dur, rel: t.rel });
       buildTimeline(); refreshDuration(); await syncMix(); renderNow(); buildInspector();
-      toast(`Voix régénérée (${t.chars} caractères facturés par ElevenLabs) · durée de la vidéo ${shift >= 0 ? '+' : ''}${shift.toFixed(2)} s`);
-    } catch (e) { console.error(e); toast(e.message || String(e)); }
-    busy('');
+      const msg = `✔ Voix régénérée pour ${V.segments[i].id} : ${t.chars} caractères facturés par ElevenLabs · durée de la vidéo ${shift >= 0 ? '+' : ''}${shift.toFixed(2)} s. Clique « ▶ Écouter » pour vérifier ; sous-titres, plans et musique ont été recalés.`;
+      toast('Voix régénérée'); busy(''); setVox('ok', msg); return;
+    } catch (e) { console.error(e); busy(''); setVox('err', '✖ ' + (e.message || String(e))); return; }
   }
   async function revertSeg(i) {
     const seg = S.P.voice.segments[i]; if (!seg.orig) return; busy('Retour à la voix d’origine…'); await nextTick(20);
     commit('voix'); applyTake(i, { text: seg.orig.text, file: seg.orig.file, dur: seg.orig.dur, rel: seg.orig.rel });
-    buildTimeline(); refreshDuration(); await syncMix(); renderNow(); buildInspector(); busy('');
+    buildTimeline(); refreshDuration(); await syncMix(); renderNow(); buildInspector(); busy(''); setVox('ok', `✔ Phrase ${seg.id} restaurée (voix d’origine).`);
   }
 
   function inspVoice(insp) {
     const P = S.P, V = P.voice;
     if (!V || !V.segments?.length) { insp.innerHTML = `<div class="at-sec"><h3>Voix</h3><p class="muted sm">Ce projet a été exporté sans les pièces vocales : relance l'export avec la dernière version de la chaîne Nova-Info (il crée le dossier <code>voix/</code>) pour pouvoir réécrire une phrase.</p></div>`; return; }
     if (S.elevenKey === undefined) S.elevenKey = localStorage.getItem(KEY_STORE) || '';
-    insp.innerHTML = `<div class="at-sec"><h3>Clé ElevenLabs <span class="muted sm">voix : ${esc(V.voice_name || V.voice_id)}</span></h3>
+    insp.innerHTML = `<div class="at-vstat" id="atVoxStatus" hidden></div>
+      <div class="at-sec"><h3>Clé ElevenLabs <span class="muted sm">voix : ${esc(V.voice_name || V.voice_id)}</span></h3>
         <div class="at-row"><label class="at-f"><span>Ta clé API (reste dans ton navigateur ; envoyée uniquement à api.elevenlabs.io)</span><input type="password" id="atKey" autocomplete="off" placeholder="sk_…" value="${esc(S.elevenKey)}"></label></div>
         <div class="at-row"><label class="at-chkl"><input type="checkbox" id="atKeyKeep" ${localStorage.getItem(KEY_STORE) ? 'checked' : ''}> Mémoriser sur cet ordinateur</label></div>
         <p class="muted sm">Conseil : crée dans ElevenLabs une clé réservée à l'Atelier (permission « Text to Speech » seulement), que tu pourras révoquer sans toucher à tes autres usages. Chaque régénération consomme des caractères de ton abonnement (le nombre est affiché).</p></div>
@@ -666,6 +677,7 @@
           <div class="at-ovh"><b>${esc(s.id)} <span class="muted sm">${fmt(s.start)} → ${fmt(s.speech_end)}${s.edited ? ' · <span style="color:var(--brand)">modifiée</span>' : ''}</span></b><span><button class="btn sm" data-play="${i}" type="button">▶ Écouter</button> ${s.edited ? `<button class="btn sm" data-rev="${i}" type="button">↺ Version d'origine</button>` : ''}</span></div>
           <textarea rows="2" data-txt="${i}">${esc(s.text)}</textarea>
           <div class="at-row"><button class="btn primary sm" data-gen="${i}" type="button">🎙 Régénérer la voix</button><span class="muted sm" data-cnt="${i}">${fr(s.text).length} caractères</span></div></div>`).join('')}</div></div>`;
+    if (S.vox?.msg && S.vox.kind !== 'busy') setVox(S.vox.kind, S.vox.msg);
     const kb = $('#atKey'); kb.oninput = () => { S.elevenKey = kb.value.trim(); if ($('#atKeyKeep').checked) localStorage.setItem(KEY_STORE, S.elevenKey); };
     $('#atKeyKeep').onchange = e => { if (e.target.checked) localStorage.setItem(KEY_STORE, S.elevenKey || ''); else localStorage.removeItem(KEY_STORE); };
     $$('[data-play]', insp).forEach(b => b.onclick = () => { pause(); seek(V.segments[+b.dataset.play].start); play(); });
