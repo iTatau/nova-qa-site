@@ -51,6 +51,7 @@
   async function loadVideo(path) {
     if (S.vids.has(path)) return S.vids.get(path);
     const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.src = await urlOf(path);
+    v.addEventListener('seeked', () => { if (!S.exporting && !S.playing) requestAnimationFrame(renderNow); });
     await new Promise(r => { v.onloadeddata = r; v.onerror = r; setTimeout(r, 4000); });
     S.vids.set(path, v); return v;
   }
