@@ -249,7 +249,7 @@
     if (o.type === 'card') {
       if (lt < 0 || lt > dur) return; const tail = cl((lt - (dur - 0.35)) / 0.35), a = E.out(lt / 0.35) * (1 - tail), y = o.y ?? 560, size = o.size ?? 96;
       const top = Math.max(y - 70, 0), bot = Math.min(y + size * 1.5 + 120, H), g = x.createLinearGradient(0, top, 0, bot);
-      for (let i = 0; i <= 8; i++) g.addColorStop(i / 8, `rgba(0,0,0,${(0.62 * Math.pow(Math.max(Math.sin(Math.PI * i / 8), 0), .7) * a).toFixed(3)})`);
+      for (let i = 0; i <= 12; i++) g.addColorStop(i / 12, `rgba(0,0,0,${(0.6 * Math.pow(Math.max(Math.sin(Math.PI * i / 12), 0), 1.15) * a).toFixed(3)})`);
       x.fillStyle = g; x.fillRect(0, top, W, bot - top);
       text(x, o.text || '', sf.left - (1 - E.out(lt / .45)) * 60, y + 24, 'black', size, rgb(bone), { shadow: true, alpha: a, spacing: 1 });
       const lw = E.out((lt - .1) / .5) * Math.min(measure(x, o.text || '', 'black', size, 1), 640);
@@ -381,41 +381,111 @@
   function seek(t) { S.t = cl(t, 0, S.P.meta.duration - 0.02); if (S.audio) S.audio.currentTime = S.t; renderNow(); setTimeout(renderNow, 120); }
 
   /* ------------------------------------------------------------------ export vidéo */
+  const nextTick = (ms = 0) => new Promise(r => setTimeout(r, ms));
+  async function loadScript(src) {
+    if (window.Mp4Muxer) return;
+    await new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('bibliothèque mp4-muxer introuvable')); document.head.appendChild(s); });
+  }
+  /* codecs disponibles pour l'export précis : H.264 + AAC si possible (compatible TikTok / Shorts / Reels), sinon VP9 / Opus */
+  async function pickCodecs(w, h) {
+    if (!('VideoEncoder' in window) || !('AudioEncoder' in window) || !('VideoFrame' in window)) return null;
+    let v = null, a = null;
+    for (const [n, c] of [['avc', 'avc1.640028'], ['avc', 'avc1.4d0028'], ['vp9', 'vp09.00.40.08']]) {
+      try { if ((await VideoEncoder.isConfigSupported({ codec: c, width: w, height: h, bitrate: 8e6, framerate: 30 })).supported) { v = [n, c]; break; } } catch (e) { }
+    }
+    for (const [n, c] of [['aac', 'mp4a.40.2'], ['opus', 'opus']]) {
+      try { if ((await AudioEncoder.isConfigSupported({ codec: c, sampleRate: 48000, numberOfChannels: 2, bitrate: 192000 })).supported) { a = [n, c]; break; } } catch (e) { }
+    }
+    return v && a ? { v, a } : null;
+  }
+  /* place les clips pré-rendus exactement à l'instant t (le plan courant et, pendant une transition, le précédent) */
+  async function seekClips(t) {
+    const sh = S.P.shots, i = shotAt(S.P, t), ids = [i]; if (i > 0 && t - sh[i].t0 < 0.5) ids.push(i - 1);
+    await Promise.all(ids.map(async j => {
+      const s = sh[j]; if (s.kind !== 'clip') return; const v = S.vids.get(s.src); if (!v) return;
+      const want = cl(t - s.t0, 0, Math.max((v.duration || 0) - 0.001, 0)); if (Math.abs(v.currentTime - want) < 0.004) return;
+      await new Promise(res => { const done = () => { v.removeEventListener('seeked', done); res(); }; v.addEventListener('seeked', done); v.currentTime = want; setTimeout(res, 1500); });
+    }));
+  }
+
+  /* export précis, image par image (WebCodecs + mp4-muxer) : indépendant de la vitesse de l'ordinateur */
+  async function exportFrames(R, from, to, big, codecs, ui) {
+    await loadScript('nova-info/mp4-muxer.js');
+    const P = S.P, fps = P.meta.fps || 30, w = R.cw & ~1, h = R.ch & ~1;
+    const AC = window.AudioContext || window.webkitAudioContext, ac = new AC({ sampleRate: 48000 });
+    const buf = await ac.decodeAudioData(await (await fetch(S.urls.get(P.audio))).arrayBuffer()); ac.close().catch(() => { });
+    const sr = buf.sampleRate, L = buf.getChannelData(0), Rc = buf.numberOfChannels > 1 ? buf.getChannelData(1) : L;
+    const muxer = new Mp4Muxer.Muxer({ target: new Mp4Muxer.ArrayBufferTarget(), video: { codec: codecs.v[0], width: w, height: h, frameRate: fps }, audio: { codec: codecs.a[0], numberOfChannels: 2, sampleRate: sr }, fastStart: 'in-memory' });
+    let err = null;
+    const venc = new VideoEncoder({ output: (c, m) => muxer.addVideoChunk(c, m), error: e => { err = e; } });
+    venc.configure({ codec: codecs.v[1], width: w, height: h, bitrate: big ? 14e6 : 8e6, framerate: fps });
+    const aenc = new AudioEncoder({ output: (c, m) => muxer.addAudioChunk(c, m), error: e => { err = e; } });
+    aenc.configure({ codec: codecs.a[1], sampleRate: sr, numberOfChannels: 2, bitrate: 192e3 });
+    const a0 = Math.floor(from * sr), a1 = Math.min(Math.floor(to * sr), L.length), CH = 4096;
+    for (let i = a0; i < a1; i += CH) {
+      const n = Math.min(CH, a1 - i), data = new Float32Array(n * 2); data.set(L.subarray(i, i + n), 0); data.set(Rc.subarray(i, i + n), n);
+      aenc.encode(new AudioData({ format: 'f32-planar', sampleRate: sr, numberOfFrames: n, numberOfChannels: 2, timestamp: Math.round((i - a0) / sr * 1e6), data }));
+      if (aenc.encodeQueueSize > 40) await nextTick(1);
+    }
+    for (const v of S.vids.values()) v.pause();
+    const N = Math.round((to - from) * fps), t0 = performance.now();
+    for (let k = 0; k < N; k++) {
+      if (!S.exporting) throw new Error('export annulé'); if (err) throw err;
+      const t = from + k / fps; await seekClips(t); renderFrame(R, t);
+      const vf = new VideoFrame(R.main, { timestamp: Math.round(k / fps * 1e6), duration: Math.round(1e6 / fps) });
+      venc.encode(vf, { keyFrame: k % (fps * 2) === 0 }); vf.close();
+      while (venc.encodeQueueSize > 8) await nextTick(2);
+      if (k % 4 === 0) { const el = (performance.now() - t0) / 1000; ui(k / N, `Encodage image ${k}/${N} · reste environ ${Math.max(0, Math.round(el / Math.max(k, 1) * (N - k)))} s`); await nextTick(0); }
+    }
+    await venc.flush(); await aenc.flush(); if (err) throw err; muxer.finalize();
+    return new Blob([muxer.target.buffer], { type: 'video/mp4' });
+  }
+
+  /* secours : enregistrement du canvas en temps réel (MediaRecorder), uniquement en H.264 pour rester compatible */
+  async function exportRealtime(R, from, to, big, ui) {
+    const mimes = ['video/mp4;codecs=avc1.640028,mp4a.40.2', 'video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+    const mime = mimes.find(m => window.MediaRecorder && MediaRecorder.isTypeSupported(m));
+    if (!mime) throw new Error('ce navigateur ne sait pas enregistrer la vidéo : utilise Chrome ou Edge');
+    if (S.graphFor !== S.audio) {  // createMediaElementSource ne peut être appelé qu'une fois par élément audio
+      const AC = window.AudioContext || window.webkitAudioContext; S.ac = new AC(); S.node = S.ac.createMediaElementSource(S.audio);
+      S.dest = S.ac.createMediaStreamDestination(); S.node.connect(S.dest); S.node.connect(S.ac.destination); S.graphFor = S.audio;
+    }
+    await S.ac.resume();
+    const stream = R.main.captureStream(30); S.dest.stream.getAudioTracks().forEach(t => stream.addTrack(t));
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: big ? 14e6 : 8e6, audioBitsPerSecond: 192e3 }), chunks = [];
+    rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+    const done = new Promise(r => rec.onstop = r);
+    S.audio.currentTime = from; await new Promise(r => { S.audio.onseeked = r; setTimeout(r, 400); });
+    for (const v of S.vids.values()) v.pause();
+    rec.start(500); S.audio.play();
+    await new Promise(res => {
+      const tick = () => {
+        const t = S.audio.currentTime; if (t >= to - 0.02 || S.audio.ended || !S.exporting) return res();
+        syncClips(t, true); renderFrame(R, t); ui((t - from) / (to - from), `Enregistrement en temps réel… ${fmt(t - from)} / ${fmt(to - from)}`); requestAnimationFrame(tick);
+      }; tick();
+    });
+    S.audio.pause(); rec.stop(); await done;
+    return new Blob(chunks, { type: mime.split(';')[0] });
+  }
+
   async function exportVideo(from, to, big) {
     if (!S.ready || S.exporting) return;
-    pause(); S.exporting = true; const P = S.P, scale = big ? 1 : 2 / 3;
-    const R = new Renderer(scale), dur = to - from;
-    const mimes = ['video/mp4;codecs=avc1.640028,mp4a.40.2', 'video/mp4;codecs=avc1,mp4a', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
-    const mime = mimes.find(m => window.MediaRecorder && MediaRecorder.isTypeSupported(m));
-    if (!mime) { toast('Ce navigateur ne sait pas enregistrer la vidéo : utilise Chrome ou Edge.'); S.exporting = false; return; }
-    const bar = $('#atExpBar'), msg = $('#atExpMsg'); $('#atExp').hidden = false;
+    pause(); S.exporting = true; const P = S.P, scale = big ? 1 : 2 / 3, R = new Renderer(scale);
+    const bar = $('#atExpBar'), msg = $('#atExpMsg'), box = $('#atExp'), ui = (p, m) => { bar.value = p; msg.textContent = m; };
+    box.hidden = false; ui(0, 'Préparation…');
     try {
-      if (S.graphFor !== S.audio) {  // createMediaElementSource ne peut être appelé qu'une fois par élément audio
-        const AC = window.AudioContext || window.webkitAudioContext; S.ac = new AC(); S.node = S.ac.createMediaElementSource(S.audio);
-        S.dest = S.ac.createMediaStreamDestination(); S.node.connect(S.dest); S.node.connect(S.ac.destination); S.graphFor = S.audio;
+      const codecs = await pickCodecs(R.cw & ~1, R.ch & ~1);
+      let blob, ext = 'mp4', note = '';
+      if (codecs) {
+        blob = await exportFrames(R, from, to, big, codecs, ui);
+        if (codecs.v[0] !== 'avc') note = ' (codec VP9 : lisible dans Chrome ; pour TikTok / Shorts / Reels, convertis-la en H.264 avec Montage → Convertir)';
+      } else {
+        blob = await exportRealtime(R, from, to, big, ui); ext = blob.type === 'video/mp4' ? 'mp4' : 'webm';
+        note = ' (enregistrement en temps réel' + (ext === 'webm' ? ', format .webm : convertible en .mp4 avec Montage → Convertir)' : ')');
       }
-      await S.ac.resume(); const ac = S.ac, dest = S.dest;
-      const stream = R.main.captureStream(30); dest.stream.getAudioTracks().forEach(t => stream.addTrack(t));
-      const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: big ? 14e6 : 8e6, audioBitsPerSecond: 192e3 }), chunks = [];
-      rec.ondataavailable = e => e.data.size && chunks.push(e.data);
-      const done = new Promise(r => rec.onstop = r);
-      S.audio.currentTime = from; await new Promise(r => { S.audio.onseeked = r; setTimeout(r, 400); });
-      for (const v of S.vids.values()) v.pause();
-      rec.start(500); S.audio.play();
-      let t = from;
-      await new Promise(res => {
-        const tick = () => {
-          t = S.audio.currentTime; if (t >= to - 0.02 || S.audio.ended || !S.exporting) return res();
-          syncClips(t, true); renderFrame(R, t); bar.value = (t - from) / dur; msg.textContent = `Enregistrement… ${fmt(t - from)} / ${fmt(dur)}`;
-          requestAnimationFrame(tick);
-        }; tick();
-      });
-      S.audio.pause(); rec.stop(); await done;
-      const ext = mime.startsWith('video/mp4') ? 'mp4' : 'webm', blob = new Blob(chunks, { type: mime.split(';')[0] });
-      download(blob, `${P.meta.slug}_${P.meta.version}_atelier.${ext}`);
-      toast(ext === 'webm' ? 'Vidéo exportée en .webm (convertible en .mp4 dans l’onglet Montage → Convertir)' : 'Vidéo exportée (.mp4)');
+      download(blob, `${P.meta.slug}_${P.meta.version}_atelier.${ext}`); toast('Vidéo exportée' + note);
     } catch (e) { console.error(e); toast('Export impossible : ' + e.message); }
-    S.exporting = false; $('#atExp').hidden = true; S.t = from; renderNow();
+    S.exporting = false; box.hidden = true; S.t = from; renderNow();
   }
 
   /* ------------------------------------------------------------------ interface */
@@ -539,7 +609,7 @@
     renderOverlayList(s);
     $$('[data-addov]', insp).forEach(b => b.onclick = () => set(() => {
       const t = b.dataset.addov, base = { type: t, at: 0.2, dur: Math.min(3, s.t1 - s.t0) };
-      (s.overlays ||= []).push(t === 'card' ? { ...base, text: 'TEXTE', sub: 'sous-titre', y: 470, size: 88 } : t === 'bigword' ? { ...base, text: 'MOT', y: 640, size: 150 } : t === 'stamp' ? { type: t, at: 0.4, text: 'TAMPON', x: 520, y: 800, rot: -7, size: 112 } : { type: t, at: 0, items: ['UN', 'DEUX', 'TROIS'], times: [0.1, 0.9, 1.7], y: 600, size: 58 });
+      (s.overlays ||= []).push(t === 'card' ? { ...base, text: 'TEXTE', sub: 'sous-titre', y: 760, size: 88 } : t === 'bigword' ? { ...base, text: 'MOT', y: 640, size: 150 } : t === 'stamp' ? { type: t, at: 0.4, text: 'TAMPON', x: 520, y: 800, rot: -7, size: 112 } : { type: t, at: 0, items: ['UN', 'DEUX', 'TROIS'], times: [0.1, 0.9, 1.7], y: 600, size: 58 });
       renderOverlayList(s); seek(s.t0 + .6);
     }));
   }
