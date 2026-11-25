@@ -51,6 +51,7 @@
   async function loadVideo(path) {
     if (S.vids.has(path)) return S.vids.get(path);
     const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.src = await urlOf(path);
+    v.addEventListener('seeked', () => { if (!S.exporting && !S.playing) requestAnimationFrame(renderNow); });
     await new Promise(r => { v.onloadeddata = r; v.onerror = r; setTimeout(r, 4000); });
     S.vids.set(path, v); return v;
   }
@@ -78,6 +79,8 @@
       if (S.audio) { S.audio.pause(); }
       S.audio = new Audio(await urlOf(proj.audio)); S.audio.preload = 'auto';
       await new Promise(r => { S.audio.onloadeddata = r; S.audio.onerror = r; setTimeout(r, 5000); });
+      S.mixSig = null; S.mixKey = null; S.abuf = new Map();
+      if (hasVoiceEdits()) await syncMix();
       // médias
       let n = 0;
       for (const s of proj.shots) { busy(`Chargement des médias… ${++n}/${proj.shots.length}`); await (s.kind === 'image' ? loadImage(s.src) : loadVideo(s.src)); }
@@ -91,7 +94,7 @@
     const P = JSON.parse(JSON.stringify(S.P)); delete P.embedded;
     if (S.dir) {
       try {
-        for (const [p, f] of S.files) if (/^images\/custom_/.test(p) && !S.saved?.has(p)) {
+        for (const [p, f] of S.files) if (/^(images\/custom_|voix\/edit_)/.test(p) && !S.saved?.has(p) && usedFile(p)) {
           const parts = p.split('/'); const d = await S.dir.getDirectoryHandle(parts[0], { create: true });
           const w = await (await d.getFileHandle(parts[1], { create: true })).createWritable(); await w.write(f); await w.close();
           (S.saved ||= new Set()).add(p);
@@ -102,10 +105,14 @@
       } catch (e) { toast('Enregistrement impossible : ' + e.message); }
     } else {
       P.embedded = {};
-      for (const [p, f] of S.files) if (/^images\/custom_/.test(p)) P.embedded[p] = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(f); });
+      for (const [p, f] of S.files) if (/^(images\/custom_|voix\/edit_)/.test(p) && usedFile(p)) P.embedded[p] = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(f); });
       download(new Blob([JSON.stringify(P)], { type: 'application/json' }), 'project.nova.json');
       S.dirty = false; refreshTop(); toast('project.nova.json téléchargé (remplace l’ancien dans ton dossier de projet)');
     }
+  }
+  function usedFile(p) {  // une prise vocale n'est enregistrée que si le projet l'utilise encore
+    if (!/^voix\//.test(p)) return true;
+    return !!S.P.voice?.segments?.some(s => s.file === p || s.orig?.file === p);
   }
   function download(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
 
@@ -114,8 +121,8 @@
   function commit(label) {
     S.hist.push(snap()); if (S.hist.length > 120) S.hist.shift(); S.fut = []; S.dirty = true; refreshTop();
   }
-  async function undo() { if (!S.hist.length) return; S.fut.push(snap()); S.P = JSON.parse(S.hist.pop()); await ensureMedia(); S.dirty = true; buildInspector(); buildTimeline(); renderNow(); refreshTop(); }
-  async function redo() { if (!S.fut.length) return; S.hist.push(snap()); S.P = JSON.parse(S.fut.pop()); await ensureMedia(); S.dirty = true; buildInspector(); buildTimeline(); renderNow(); refreshTop(); }
+  async function undo() { if (!S.hist.length) return; S.fut.push(snap()); S.P = JSON.parse(S.hist.pop()); await ensureMedia(); await syncMix(); refreshDuration(); S.dirty = true; buildInspector(); buildTimeline(); renderNow(); refreshTop(); }
+  async function redo() { if (!S.fut.length) return; S.hist.push(snap()); S.P = JSON.parse(S.fut.pop()); await ensureMedia(); await syncMix(); refreshDuration(); S.dirty = true; buildInspector(); buildTimeline(); renderNow(); refreshTop(); }
   async function ensureMedia() { for (const s of S.P.shots) { if (s.kind === 'image') await loadImage(s.src); else await loadVideo(s.src); } }
 
   /* ------------------------------------------------------------------ moteur de rendu */
@@ -171,7 +178,11 @@
         const shake = [0.0016 * Math.sin(lt * 1.3 + 1), 0.0012 * Math.cos(lt * 1.7)];
         let ch = h * ih, cw = ch * W / H; if (cw > iw) { cw = iw; ch = cw * H / W; }
         const x0 = cl(cx * iw - cw / 2 + shake[0] * cw, 0, iw - cw), y0 = cl(cy * ih - ch / 2 + shake[1] * ch, 0, ih - ch);
-        if (shot.split) {
+        if (shot.contain) {  // image entière sur fond flouté
+          const c = shot.contain, z = lerp((c.zoom || [1, 1.08])[0], (c.zoom || [1, 1.08])[1], E.io(lt / Math.max(shot.t1 - shot.t0, .05)));
+          const f = filterFor(P, shot.grade, shot.dim); x.filter = `blur(28px) ${f === 'none' ? '' : f} brightness(${c.bg ?? .35})`; x.drawImage(im, 0, 0, iw, ih, -80, -80, W + 160, H + 160);
+          const tw = W * (c.scale ?? .94) * z, th = tw * ih / iw; x.filter = f; x.drawImage(im, 0, 0, iw, ih, (W - tw) / 2, (c.y ?? .46) * H - th / 2, tw, th); x.filter = 'none'; tint(x, P, shot.grade);
+        } else if (shot.split) {
           const sp = shot.split, xd = lerp(sp.div[0], sp.div[1], E.io(lt / Math.max(shot.t1 - shot.t0, .05))) * W;
           x.save(); x.beginPath(); x.rect(0, 0, xd, H); x.clip(); x.filter = filterFor(P, sp.left, shot.dim); x.drawImage(im, x0, y0, cw, ch, 0, 0, W, H); tint(x, P, sp.left); x.restore();
           x.save(); x.beginPath(); x.rect(xd, 0, W - xd, H); x.clip(); x.filter = filterFor(P, sp.right, shot.dim); x.drawImage(im, x0, y0, cw, ch, 0, 0, W, H); tint(x, P, sp.right); x.restore();
@@ -183,6 +194,10 @@
     } else {
       const v = S.vids.get(shot.src);
       if (v && v.readyState >= 2) { x.filter = shot.dim ? `brightness(${1 - shot.dim})` : 'none'; x.drawImage(v, 0, 0, W, H); x.filter = 'none'; }
+    }
+    if (shot.fade) {  // luminosité animée
+      const f = shot.fade, m = lerp(f.m[0], f.m[1], E.io((lt - f.t[0]) / Math.max(f.t[1] - f.t[0], 1e-6)));
+      x.fillStyle = `rgba(0,0,0,${(1 - m).toFixed(3)})`; x.fillRect(0, 0, W, H);
     }
     effects(R, x, shot, lt);
     x.restore();
@@ -216,6 +231,15 @@
         x.restore();
       } else if (name === 'flicker') {
         const k = 0.93 + 0.07 * Math.sin(lt * 9) * Math.sin(lt * 3.1 + 1.3); x.fillStyle = `rgba(0,0,0,${(1 - k).toFixed(3)})`; x.fillRect(0, 0, W, H);
+      } else if (name === 'streak') {
+        const k = (lt - (a.t0 ?? 0)) / (a.dur ?? 1); if (k > 0 && k < 1.6) {
+          const [x0, y0] = a.from, [x1, y1] = a.to, kk = Math.pow(Math.min(k, 1), 1.7), hx = lerp(x0, x1, kk) * W, hy = lerp(y0, y1, kk) * H;
+          const dx = (x0 - x1) * W, dy = (y0 - y1) * H; x.save(); x.globalCompositeOperation = 'lighter'; x.shadowColor = 'rgba(255,190,100,.9)'; x.shadowBlur = 36;
+          for (let q = 0; q < 28; q++) { const f = q / 28, px = hx + dx * .22 * f * Math.min(kk * 3, 1), py = hy + dy * .22 * f * Math.min(kk * 3, 1);
+            x.fillStyle = `rgba(255,${Math.round(200 * Math.pow(1 - f, 1.6))},${Math.round(110 * Math.pow(1 - f, 2.2))},${Math.pow(1 - f, 1.2).toFixed(3)})`; x.beginPath(); x.arc(px, py, Math.max(11 * (1 - f) + 2, 2), 0, 7); x.fill(); }
+          if (k < 1) { x.fillStyle = 'rgba(255,250,235,1)'; x.beginPath(); x.arc(hx, hy, 14, 0, 7); x.fill(); }
+          else { const fk = (k - 1) / .6; x.fillStyle = `rgba(255,${Math.round(210 * (1 - fk))},${Math.round(120 * (1 - fk))},${Math.pow(1 - fk, 1.3).toFixed(3)})`; x.beginPath(); x.arc(x1 * W, y1 * H, 30 + 260 * fk, 0, 7); x.fill(); }
+          x.restore(); }
       } else if (name === 'redpulse') {
         const k = 0.10 + 0.08 * Math.sin(lt * 2.4); x.fillStyle = `rgba(255,0,0,${k.toFixed(3)})`; x.fillRect(0, 0, W, H);
       }
@@ -318,6 +342,39 @@
     if (P.brand.outro_title) text(x, P.brand.outro_title, W / 2 - 20, 1000 + 24, 'extrabold', 50, rgb(c.amber), { align: 'center', spacing: 5, alpha: E.out((tl - .95) / .5) });
   }
 
+  /* mode « dark » (basculement) : coupure, rafale de glitch, image sombre/désaturée bleu-noir, vignette lourde, scintillement, lignes de balayage */
+  function darkPost(R, x, t) {
+    const D = S.P.meta.dark; if (!D) return;
+    const [t0, t1] = D, cw = R.cw, ch = R.ch, fr = Math.floor(t * 30), rnd = mulberry(fr * 7919 + 13);
+    x.setTransform(1, 0, 0, 1, 0, 0); x.globalAlpha = 1;
+    if (t >= t0 - .40 && t < t0 + .12) {  // coupure : l'image tombe au noir juste avant le basculement
+      let m = 0; if (t < t0) { m = Math.pow(1 - (1 - (t0 - t) / .40), 1.6); if (Math.floor(t * 50) % 7 === 0) m = Math.min(1, m + .35); }
+      x.fillStyle = `rgba(0,0,0,${(1 - m * .9).toFixed(3)})`; x.fillRect(0, 0, cw, ch); return;
+    }
+    const d = t < t0 || t > t1 + 1.6 ? 0 : Math.max(0, Math.min(Math.min((t - t0) / .9, 1), t <= t1 ? 1 : 1 - (t - t1) / 1.6));
+    if (d <= 0) return;
+    x.globalCompositeOperation = 'saturation'; x.fillStyle = `rgba(128,128,128,${(.45 * d).toFixed(3)})`; x.fillRect(0, 0, cw, ch);
+    x.globalCompositeOperation = 'multiply'; x.fillStyle = `rgba(205,235,255,${d.toFixed(3)})`; x.fillRect(0, 0, cw, ch);
+    x.globalCompositeOperation = 'source-over';
+    const fl = d * (.05 + .06 * Math.max(Math.sin(t * 7.3) * Math.sin(t * 2.9 + 1), 0)) + (Math.floor(t * 60) % 41 === 0 ? .22 * d : 0);
+    x.fillStyle = `rgba(0,0,0,${(.26 * d + fl).toFixed(3)})`; x.fillRect(0, 0, cw, ch);
+    const g = x.createRadialGradient(cw / 2, ch * .48, cw * .2, cw / 2, ch * .48, ch * .62);
+    g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(0,0,0,${(.6 * d).toFixed(3)})`); x.fillStyle = g; x.fillRect(0, 0, cw, ch);
+    x.fillStyle = `rgba(0,0,0,${(.07 * d).toFixed(3)})`; for (let y = 0; y < ch; y += 2 * R.s * 2) x.fillRect(0, y, cw, R.s);
+    const tb = t - (t0 + .12), burst = tb >= 0 && tb < 1.1, micro = d > .95 && ((t % 4.3) < .12);
+    if (burst || micro) {  // tranches déplacées + barres claires + grain
+      const k = burst ? Math.pow(1 - tb / 1.1, 1.5) : .28, n = Math.round(3 + 10 * k);
+      const snap = x.getImageData(0, 0, cw, ch);
+      const tmp = R.mk(); tmp.getContext('2d').putImageData(snap, 0, 0);
+      for (let i = 0; i < n; i++) {
+        const y = Math.floor(rnd() * (ch - 20 * R.s)), h = Math.floor((8 + rnd() * (40 + 160 * k)) * R.s), dx = Math.floor((rnd() < .5 ? -1 : 1) * (20 + rnd() * (40 + 260 * k)) * R.s);
+        x.drawImage(tmp, 0, y, cw, h, dx, y, cw, h);
+      }
+      for (let i = 0; i < 2 + 4 * k; i++) { x.fillStyle = `rgba(255,255,255,${(.15 + rnd() * .25).toFixed(2)})`; x.fillRect(0, Math.floor(rnd() * ch), cw, Math.max(1, Math.floor((2 + rnd() * 6) * R.s))); }
+      for (let i = 0; i < 90 * k; i++) { x.fillStyle = `rgba(${150 + rnd() * 105 | 0},${150 + rnd() * 105 | 0},${150 + rnd() * 105 | 0},${(.2 + rnd() * .4).toFixed(2)})`; x.fillRect(rnd() * cw, rnd() * ch, 4 * R.s, 4 * R.s); }
+    }
+  }
+
   /* un instant complet de la vidéo */
   function renderFrame(R, t, o = {}) {
     const P = S.P, sh = P.shots, i = shotAt(P, t), s = sh[i], lt = t - s.t0, x = R.mctx;
@@ -332,6 +389,7 @@
       else if (kind === 'whip') { const sx = Math.round(R.cw * .5 * k); x.drawImage(R.B, -sx, 0); x.drawImage(R.A, R.cw - sx, 0); }
       else if (kind === 'flash') { x.fillStyle = `rgba(255,255,255,${(0.6 * (1 - k)).toFixed(3)})`; x.fillRect(0, 0, R.cw, R.ch); }
     }
+    darkPost(R, x, t);
     x.setTransform(1, 0, 0, 1, 0, 0); x.drawImage(R.vignette(), 0, 0);
     x.save(); x.globalAlpha = .07; x.globalCompositeOperation = 'overlay'; const g = R.grainTile(); const ox = (Math.random() * 256) | 0, oy = (Math.random() * 256) | 0;
     x.fillStyle = x.createPattern(g, 'repeat'); x.translate(-ox, -oy); x.fillRect(ox, oy, R.cw, R.ch); x.restore();
@@ -380,6 +438,242 @@
   function pause() { S.playing = false; S.audio?.pause(); $('#atPlay') && ($('#atPlay').textContent = '▶ Lecture'); syncClips(S.t, false); }
   function seek(t) { S.t = cl(t, 0, S.P.meta.duration - 0.02); if (S.audio) S.audio.currentTime = S.t; renderNow(); setTimeout(renderNow, 120); }
 
+  /* ------------------------------------------------------------------ onglet « Voix » : réécrire une phrase, régénérer la voix, remixer
+   * La voix est régénérée par l'API ElevenLabs DEPUIS TON NAVIGATEUR avec TA clé (jamais envoyée ailleurs ; mémorisée seulement si tu coches la case).
+   * Le projet contient la voix phrase par phrase, le lit musical et les bruitages SANS ducking : quand une phrase change,
+   * on recale sous-titres / plans / mode dark, puis on refait le mixage (ducking, niveaux) comme la chaîne de production. */
+  const MIX_SR = 48000;
+  const KEY_STORE = 'novaAtelier.elevenKey';
+  const TOKEN_RE = /\{[^|}]+\|[^}]+\}\S*|\S+/g, END_RE = /[,;:.?!…]+$/;
+  function parseTokens(text) {
+    const toks = [];
+    for (const raw of text.match(TOKEN_RE) || []) {
+      if (['?', '!', ':', ';'].includes(raw) && toks.length) { const t = toks[toks.length - 1]; t.display += ' ' + raw; t.spoken += raw; t.punct = raw; continue; }
+      const m = raw.match(/^\{([^|}]+)\|([^}]+)\}(.*)$/); let display, spoken;
+      if (m) { display = m[1] + m[3]; spoken = m[2] + m[3]; } else display = spoken = raw;
+      const p = display.match(END_RE); toks.push({ display, spoken, punct: p ? p[0].slice(-1) : '' });
+    }
+    return toks;
+  }
+  function applyPron(tokens, pron) {
+    const low = {}; for (const [k, v] of Object.entries(pron || {})) low[k.toLowerCase()] = v;
+    for (const t of tokens) { const m = t.spoken.match(/^([^\wÀ-ÿ]*)([\wÀ-ÿ'’-]+)(.*)$/); if (m && low[m[2].toLowerCase()] !== undefined) t.spoken = m[1] + low[m[2].toLowerCase()] + m[3]; }
+    return tokens;
+  }
+  const fr = s => s.replace(/(?<=\S)([?!:;])$/, ' $1');
+  const spokenText = tokens => tokens.map(t => fr(t.spoken)).join(' ');
+  const tokenSpans = tokens => { let pos = 0; return tokens.map(t => { const n = fr(t.spoken).length, r = [pos, pos + n]; pos += n + 1; return r; }); };
+  const segTokens = (V, text) => applyPron(parseTokens(text), V.pronounce);
+
+  function makeChunks(words, keywords) {
+    const out = []; let cur = [];
+    const flush = () => { if (cur.length) { out.push({ words: cur, start: cur[0].start, end: cur[cur.length - 1].end }); cur = []; } };
+    for (const w of words) {
+      cur.push(w); const chars = cur.reduce((a, x) => a + x.w.length + 1, 0), endP = /[.?!:]$/.test(w.w), soft = /[,;]$/.test(w.w);
+      if (endP || (soft && cur.length >= 2) || cur.length >= 4 || chars >= 26) flush();
+    }
+    flush();
+    for (const c of out) for (const w of c.words) w.key = keywords.has(w.w.toLowerCase().replace(/[^\wÀ-ÿ'-]/g, ''));
+    return out;
+  }
+
+  function encodeWav(chs, sr) {
+    const n = chs[0].length, nc = chs.length, buf = new ArrayBuffer(44 + n * nc * 2), dv = new DataView(buf);
+    const str = (o, s) => { for (let i = 0; i < s.length; i++) dv.setUint8(o + i, s.charCodeAt(i)); };
+    str(0, 'RIFF'); dv.setUint32(4, 36 + n * nc * 2, true); str(8, 'WAVE'); str(12, 'fmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, nc, true);
+    dv.setUint32(24, sr, true); dv.setUint32(28, sr * nc * 2, true); dv.setUint16(32, nc * 2, true); dv.setUint16(34, 16, true); str(36, 'data'); dv.setUint32(40, n * nc * 2, true);
+    let o = 44; for (let i = 0; i < n; i++) for (let c = 0; c < nc; c++) { const v = Math.max(-1, Math.min(1, chs[c][i])); dv.setInt16(o, v < 0 ? v * 32768 : v * 32767, true); o += 2; }
+    return new Blob([buf], { type: 'audio/wav' });
+  }
+  const decodeCtx = () => (S.dctx ||= new OfflineAudioContext(2, 1, MIX_SR));
+  async function audioBuf(path) {
+    const c = (S.abuf ||= new Map()); if (c.has(path)) return c.get(path);
+    const ab = await (await getFile(path)).arrayBuffer(); const b = await decodeCtx().decodeAudioData(ab); c.set(path, b); return b;
+  }
+  const mono = b => { if (b.numberOfChannels < 2) return b.getChannelData(0); const l = b.getChannelData(0), r = b.getChannelData(1), o = new Float32Array(l.length); for (let i = 0; i < l.length; i++) o[i] = (l[i] + r[i]) / 2; return o; };
+
+  /* ducking : même suivi d'enveloppe que audio.py (moyenne 60 ms, normalisation au 95e centile, attaque 50 ms / relâchement 450 ms) */
+  function duckCurve(voice, depth, sr) {
+    const n = voice.length, k = Math.round(0.06 * sr), env = new Float32Array(n);
+    let acc = 0; const half = k >> 1;
+    const absAt = i => (i < 0 || i >= n ? 0 : Math.abs(voice[i]));
+    for (let i = -half; i < k - half; i++) acc += absAt(i);
+    for (let i = 0; i < n; i++) { env[i] = acc / k; acc += absAt(i + k - half) - absAt(i - half); }
+    const dec = []; for (let i = 0; i < n; i += 16) dec.push(env[i]); dec.sort((a, b) => a - b);
+    const p95 = dec[Math.floor(dec.length * 0.95)] + 1e-6;
+    const aAtt = 1 - Math.exp(-1 / (0.05 * sr)), aRel = 1 - Math.exp(-1 / (0.45 * sr)), step = 64, out = new Float32Array(n); let s = 0;
+    for (let i = 0; i < n; i += step) {
+      let tgt = 0; const e = Math.min(i + step, n); for (let j = i; j < e; j++) tgt = Math.max(tgt, Math.min(env[j] / p95, 1));
+      s += (tgt > s ? aAtt : aRel) * (tgt - s) * 64; s = Math.min(Math.max(s, 0), 1);
+      for (let j = i; j < e; j++) out[j] = 1 - depth * s;
+    }
+    return out;
+  }
+
+  /* pièce détachée (lit ou effets) recalée sur la nouvelle chronologie : chaque phrase garde sa « fenêtre » d'origine ; si la fenêtre s'allonge,
+     le lit musical répète sa fin (fondu 40 ms), les effets se taisent ; si elle raccourcit, on tronque (fondu 30 ms) */
+  function warpStem(src, V, oldDur, newDur, loop) {
+    const sr = MIX_SR, N = Math.ceil(newDur * sr), out = [new Float32Array(N), new Float32Array(N)], segs = V.segments;
+    const wins = [[0, segs[0].orig_start, 0, segs[0].start]];
+    segs.forEach(s => wins.push([s.orig_start, s.orig_end, s.start, s.end]));
+    const last = segs[segs.length - 1]; wins.push([last.orig_end, oldDur, last.end, newDur]);
+    for (const [oa, ob, na, nb] of wins) {
+      const a0 = Math.round(oa * sr), a1 = Math.min(Math.round(ob * sr), src[0].length), b0 = Math.round(na * sr), b1 = Math.min(Math.round(nb * sr), N), lo = a1 - a0, ln = b1 - b0;
+      if (lo <= 0 || ln <= 0) continue; const same = Math.abs(lo - ln) < 2, c = Math.min(ln, lo);
+      for (let ch = 0; ch < 2; ch++) {
+        const s = src[ch], o = out[ch]; for (let i = 0; i < c; i++) o[b0 + i] = s[a0 + i];
+        if (same) continue;
+        if (ln < lo) { const f = Math.min(Math.round(0.03 * sr), ln); for (let i = 0; i < f; i++) o[b1 - 1 - i] *= i / f; }  // tronqué : fondu de sortie
+        else if (loop) {  // allongé : le lit répète sa fin
+          const ext = ln - lo, f = Math.round(0.04 * sr); let pos = b0 + lo, from = Math.max(a1 - ext, a0);
+          for (let i = 0; i < ext; i++) { const srcI = from + (i % Math.max(a1 - from, 1)); let g = 1; if (i < f) g = i / f; if (ext - i < f) g = Math.min(g, (ext - i) / f); o[pos + i] += s[srcI] * g; }
+        }
+      }
+    }
+    return out;
+  }
+
+  async function buildMix() {
+    const P = S.P, V = P.voice, sr = MIX_SR, dur = P.meta.duration, N = Math.ceil(dur * sr), oldDur = V.orig_duration || dur - V.segments.reduce((a, s) => a + ((s.end - s.start) - (s.orig_end - s.orig_start)), 0);
+    const voice = new Float32Array(N);
+    for (const s of V.segments) { const m = mono(await audioBuf(s.file)), o = Math.round(s.start * sr); for (let i = 0; i < m.length && o + i < N; i++) voice[o + i] += m[i]; }
+    const loadStem = async p => { const b = await audioBuf(p); return [b.getChannelData(0), b.numberOfChannels > 1 ? b.getChannelData(1) : b.getChannelData(0)]; };
+    const lit = warpStem(await loadStem(V.mix.lit), V, oldDur, dur, true), fx = warpStem(await loadStem(V.mix.effets), V, oldDur, dur, false);
+    const dM = duckCurve(voice, V.mix.duck_music, sr), dS = duckCurve(voice, V.mix.duck_sfx, sr), g = Math.pow(10, V.mix.master_db / 20), out = [new Float32Array(N), new Float32Array(N)];
+    let peak = 0;
+    for (let c = 0; c < 2; c++) for (let i = 0; i < N; i++) { const v = (voice[i] + lit[c][i] * dM[i] + fx[c][i] * dS[i]) * g; out[c][i] = v; if (Math.abs(v) > peak) peak = Math.abs(v); }
+    const lim = peak > 0.89 ? 0.89 / peak : 1; if (lim < 1) for (let c = 0; c < 2; c++) for (let i = 0; i < N; i++) out[c][i] *= lim;
+    return { blob: encodeWav(out, sr), peak, limited: lim < 1 };
+  }
+  const voiceSig = () => JSON.stringify((S.P.voice?.segments || []).map(s => [s.file, +s.start.toFixed(3), +s.end.toFixed(3)])) + S.P.meta.duration.toFixed(3);
+  const hasVoiceEdits = () => !!S.P?.voice?.segments?.some(s => s.edited);
+
+  async function useAudio(src) {  // remplace la source audio de lecture / d'export en gardant la position
+    const t = S.t, was = S.playing; if (was) pause();
+    if (S.audio) S.audio.pause();
+    S.audio = new Audio(src); S.audio.preload = 'auto';
+    await new Promise(r => { S.audio.onloadeddata = r; S.audio.onerror = r; setTimeout(r, 5000); });
+    S.audio.currentTime = t;
+  }
+  async function syncMix() {
+    if (!S.P?.voice) return;
+    if (!hasVoiceEdits()) { if (S.mixSig) { S.mixSig = null; S.mixKey = null; await useAudio(await urlOf(S.P.audio)); } return; }
+    const sig = voiceSig(); if (sig === S.mixSig) return;
+    busy('Remixage de la voix, de la musique et des bruitages…'); await nextTick(30);
+    try {
+      const r = await buildMix(); const old = S.urls.get('__mix__'); if (old) URL.revokeObjectURL(old);
+      const url = URL.createObjectURL(r.blob); S.urls.set('__mix__', url); S.mixKey = '__mix__'; S.mixSig = sig; S.mixInfo = r;
+      await useAudio(url);
+    } catch (e) { console.error(e); toast('Remixage impossible : ' + e.message); }
+    busy('');
+  }
+  function refreshDuration() {
+    const D = S.P.meta.duration; const sc = $('#atScrub'); if (sc) sc.max = D; const to = $('#atTo'); if (to) to.value = D.toFixed(1);
+  }
+
+  /* --- génération (ElevenLabs, depuis le navigateur) --- */
+  function trimBounds(x, sr, leadKeep = 0.03, tailKeep = 0.14, db = -46) {
+    const thr = Math.pow(10, db / 20); let a = -1, b = -1;
+    for (let i = 0; i < x.length; i++) if (Math.abs(x[i]) > thr) { a = i; break; }
+    for (let i = x.length - 1; i >= 0; i--) if (Math.abs(x[i]) > thr) { b = i; break; }
+    if (a < 0) return [0, x.length];
+    return [Math.max(Math.round(a - leadKeep * sr), 0), Math.min(Math.round(b + tailKeep * sr), x.length)];
+  }
+  async function voiceFilters(x, sr) {  // mêmes réglages que la chaîne : coupe-bas 75 Hz, présence, compresseur doux (équivalent WebAudio)
+    const ctx = new OfflineAudioContext(1, x.length, sr), b = ctx.createBuffer(1, x.length, sr); b.copyToChannel(x, 0);
+    const src = ctx.createBufferSource(); src.buffer = b;
+    const bq = (type, f, q, g) => { const n = ctx.createBiquadFilter(); n.type = type; n.frequency.value = f; n.Q.value = q; if (g !== undefined) n.gain.value = g; return n; };
+    const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -20; comp.ratio.value = 2.2; comp.knee.value = 0; comp.attack.value = 0.01; comp.release.value = 0.12;
+    const mk = ctx.createGain(); mk.gain.value = Math.pow(10, 3 / 20);
+    let node = src; for (const n of [bq('highpass', 75, 0.707), bq('peaking', 150, 1.0, 2.0), bq('peaking', 3200, 1.2, 1.5), bq('peaking', 7200, 2.0, -2.0), comp, mk]) { node.connect(n); node = n; }
+    node.connect(ctx.destination); src.start(); return (await ctx.startRendering()).getChannelData(0);
+  }
+  const rmsOf = x => { let a = 0; for (let i = 0; i < x.length; i++) a += x[i] * x[i]; return Math.sqrt(a / Math.max(x.length, 1)); };
+
+  async function synthesize(i, text) {
+    const V = S.P.voice, key = S.elevenKey; if (!key) throw new Error('Colle d’abord ta clé ElevenLabs (en haut de l’onglet).');
+    const texts = V.segments.map((s, j) => spokenText(segTokens(V, j === i ? text : s.text)));
+    const tokens = segTokens(V, text), body = { text: texts[i], model_id: V.model_id || 'eleven_multilingual_v2', language_code: 'fr', voice_settings: V.settings };
+    if (i > 0) body.previous_text = texts[i - 1]; if (i + 1 < texts.length) body.next_text = texts[i + 1];
+    const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${V.voice_id}/with-timestamps?output_format=mp3_44100_128`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'xi-api-key': key }, body: JSON.stringify(body) });
+    if (!r.ok) { let m = ''; try { m = (await r.json()).detail?.message || ''; } catch (e) { } throw new Error(r.status === 401 ? 'Clé ElevenLabs refusée (401).' : r.status === 429 ? 'Trop de requêtes ou quota atteint (429).' : `ElevenLabs a répondu ${r.status}. ${m}`); }
+    const resp = await r.json(), bin = atob(resp.audio_base64), bytes = new Uint8Array(bin.length); for (let k = 0; k < bin.length; k++) bytes[k] = bin.charCodeAt(k);
+    const dec = await decodeCtx().decodeAudioData(bytes.buffer), pcm = mono(dec), sr = dec.sampleRate;
+    const [a0, a1] = trimBounds(pcm, sr); let clip = Float32Array.from(pcm.subarray(a0, a1));
+    const fi = Math.round(0.012 * sr), fo = Math.round(0.07 * sr); for (let k = 0; k < fi && k < clip.length; k++) clip[k] *= k / fi; for (let k = 0; k < fo && k < clip.length; k++) clip[clip.length - 1 - k] *= k / fo;
+    clip = await voiceFilters(clip, sr);
+    const target = V.segments[i].rms || 0.1, cur = rmsOf(clip) || 1; let gain = Math.min(target / cur, 4), pk = 0; for (let k = 0; k < clip.length; k++) pk = Math.max(pk, Math.abs(clip[k]));
+    if (pk * gain > 0.95) gain = 0.95 / pk; for (let k = 0; k < clip.length; k++) clip[k] *= gain;
+    const al = resp.alignment, off = a0 / sr, rel = [];
+    tokenSpans(tokens).forEach(([c0, c1], k) => {
+      c1 = Math.min(c1, al.character_start_times_seconds.length); let last = c1 - 1; while (last > c0 && ' ?!:;,.…'.includes(al.characters[last])) last--;
+      rel.push({ w: tokens[k].display, s: Math.max(al.character_start_times_seconds[c0] - off, 0), e: Math.max(al.character_end_times_seconds[last] - off, 0) });
+    });
+    return { clip, sr, rel, dur: clip.length / sr, chars: texts[i].length };
+  }
+
+  /* applique une nouvelle prise (ou l'originale) à la phrase i : recale tout le reste de la vidéo */
+  function applyTake(i, take) {
+    const P = S.P, V = P.voice, seg = V.segments[i], oStart = seg.start, oEnd = seg.end, gap = seg.end - seg.speech_end;
+    const nSpeechEnd = seg.start + take.dur, nEnd = nSpeechEnd + gap, shift = nEnd - oEnd, scale = (nEnd - oStart) / Math.max(oEnd - oStart, 1e-6);
+    const warp = t => (t < oStart ? t : t >= oEnd ? t + shift : oStart + (t - oStart) * scale), r3 = x => +x.toFixed(3);
+    if (!seg.orig) seg.orig = { text: seg.text, file: seg.file, dur: seg.speech_end - seg.start, rms: seg.rms, rel: seg.words.map(w => ({ w: w.w, s: w.start - seg.start, e: w.end - seg.start })) };
+    // plans
+    for (const s of P.shots) { s.t0 = r3(warp(s.t0)); s.t1 = r3(warp(s.t1)); if (s.tag_t0 !== undefined) s.tag_t0 = r3(warp(s.tag_t0)); }
+    if (P.meta.dark) P.meta.dark = P.meta.dark.map(t => r3(warp(t)));
+    P.meta.duration = r3(P.meta.duration + shift);
+    // sous-titres : ceux de la phrase sont refaits, les autres suivent
+    const inSeg = c => c.start >= oStart - 0.01 && c.start < oEnd, keep = P.subtitles.filter(c => !inSeg(c));
+    for (const c of keep) { c.start = r3(warp(c.start)); c.end = r3(warp(c.end)); for (const w of c.words) { w.start = r3(warp(w.start)); w.end = r3(warp(w.end)); } }
+    const words = take.rel.map(w => ({ w: w.w, start: r3(seg.start + w.s), end: r3(seg.start + w.e) })), kw = new Set((V.keywords || []).map(k => k.toLowerCase()));
+    const ch = makeChunks(words, kw).map((c, ci, arr) => { const nxt = ci + 1 < arr.length ? arr[ci + 1].start : c.end + 0.5; return { id: 'x', start: r3(c.start), end: r3(Math.min(nxt, c.end + 0.28)), words: c.words.map(w => ({ w: w.w, start: w.start, end: w.end, key: w.key })) }; });
+    P.subtitles = [...keep, ...ch].sort((a, b) => a.start - b.start); P.subtitles.forEach((c, k) => c.id = 'c' + String(k + 1).padStart(3, '0'));
+    // segments suivants
+    for (let j = i + 1; j < V.segments.length; j++) { const s = V.segments[j]; for (const k of ['start', 'speech_end', 'end']) s[k] = r3(s[k] + shift); for (const w of s.words) { w.start = r3(w.start + shift); w.end = r3(w.end + shift); } }
+    seg.words = words; seg.speech_end = r3(nSpeechEnd); seg.end = r3(nEnd); seg.text = take.text; seg.file = take.file; seg.edited = take.file !== seg.orig.file;
+    return shift;
+  }
+
+  async function regenerate(i, text) {
+    const V = S.P.voice; text = text.trim(); if (!text) throw new Error('Le texte est vide.');
+    busy('Génération de la voix…'); await nextTick(20);
+    try {
+      const t = await synthesize(i, text); const path = `voix/edit_${V.segments[i].id}_${Date.now().toString(36)}.wav`;
+      const blob = encodeWav([t.clip], t.sr); S.files.set(path, blob); (S.abuf ||= new Map()).set(path, await decodeCtx().decodeAudioData(await blob.arrayBuffer()));
+      commit('voix'); const shift = applyTake(i, { text, file: path, dur: t.dur, rel: t.rel });
+      buildTimeline(); refreshDuration(); await syncMix(); renderNow(); buildInspector();
+      toast(`Voix régénérée (${t.chars} caractères facturés par ElevenLabs) · durée de la vidéo ${shift >= 0 ? '+' : ''}${shift.toFixed(2)} s`);
+    } catch (e) { console.error(e); toast(e.message || String(e)); }
+    busy('');
+  }
+  async function revertSeg(i) {
+    const seg = S.P.voice.segments[i]; if (!seg.orig) return; busy('Retour à la voix d’origine…'); await nextTick(20);
+    commit('voix'); applyTake(i, { text: seg.orig.text, file: seg.orig.file, dur: seg.orig.dur, rel: seg.orig.rel });
+    buildTimeline(); refreshDuration(); await syncMix(); renderNow(); buildInspector(); busy('');
+  }
+
+  function inspVoice(insp) {
+    const P = S.P, V = P.voice;
+    if (!V || !V.segments?.length) { insp.innerHTML = `<div class="at-sec"><h3>Voix</h3><p class="muted sm">Ce projet a été exporté sans les pièces vocales : relance l'export avec la dernière version de la chaîne Nova-Info (il crée le dossier <code>voix/</code>) pour pouvoir réécrire une phrase.</p></div>`; return; }
+    if (S.elevenKey === undefined) S.elevenKey = localStorage.getItem(KEY_STORE) || '';
+    insp.innerHTML = `<div class="at-sec"><h3>Clé ElevenLabs <span class="muted sm">voix : ${esc(V.voice_name || V.voice_id)}</span></h3>
+        <div class="at-row"><label class="at-f"><span>Ta clé API (reste dans ton navigateur ; envoyée uniquement à api.elevenlabs.io)</span><input type="password" id="atKey" autocomplete="off" placeholder="sk_…" value="${esc(S.elevenKey)}"></label></div>
+        <div class="at-row"><label class="at-chkl"><input type="checkbox" id="atKeyKeep" ${localStorage.getItem(KEY_STORE) ? 'checked' : ''}> Mémoriser sur cet ordinateur</label></div>
+        <p class="muted sm">Conseil : crée dans ElevenLabs une clé réservée à l'Atelier (permission « Text to Speech » seulement), que tu pourras révoquer sans toucher à tes autres usages. Chaque régénération consomme des caractères de ton abonnement (le nombre est affiché).</p></div>
+      <div class="at-sec"><h3>Phrases <span class="muted sm">réécris puis « Régénérer » : sous-titres, plans, mode dark et musique sont recalés</span></h3>
+        <p class="muted sm">Syntaxe <code>{2022|deux mille vingt-deux}</code> : ce qui est affiché | ce qui est prononcé.</p>
+        <div id="atVoix">${V.segments.map((s, i) => `<div class="at-ov" data-i="${i}">
+          <div class="at-ovh"><b>${esc(s.id)} <span class="muted sm">${fmt(s.start)} → ${fmt(s.speech_end)}${s.edited ? ' · <span style="color:var(--brand)">modifiée</span>' : ''}</span></b><span><button class="btn sm" data-play="${i}" type="button">▶ Écouter</button> ${s.edited ? `<button class="btn sm" data-rev="${i}" type="button">↺ Version d'origine</button>` : ''}</span></div>
+          <textarea rows="2" data-txt="${i}">${esc(s.text)}</textarea>
+          <div class="at-row"><button class="btn primary sm" data-gen="${i}" type="button">🎙 Régénérer la voix</button><span class="muted sm" data-cnt="${i}">${fr(s.text).length} caractères</span></div></div>`).join('')}</div></div>`;
+    const kb = $('#atKey'); kb.oninput = () => { S.elevenKey = kb.value.trim(); if ($('#atKeyKeep').checked) localStorage.setItem(KEY_STORE, S.elevenKey); };
+    $('#atKeyKeep').onchange = e => { if (e.target.checked) localStorage.setItem(KEY_STORE, S.elevenKey || ''); else localStorage.removeItem(KEY_STORE); };
+    $$('[data-play]', insp).forEach(b => b.onclick = () => { pause(); seek(V.segments[+b.dataset.play].start); play(); });
+    $$('[data-rev]', insp).forEach(b => b.onclick = () => revertSeg(+b.dataset.rev));
+    $$('[data-txt]', insp).forEach(t => t.oninput = () => { const n = spokenText(segTokens(V, t.value || '')).length; $(`[data-cnt="${t.dataset.txt}"]`, insp).textContent = `${n} caractères`; });
+    $$('[data-gen]', insp).forEach(b => b.onclick = () => regenerate(+b.dataset.gen, $(`[data-txt="${b.dataset.gen}"]`, insp).value));
+  }
+
   /* ------------------------------------------------------------------ export vidéo */
   const nextTick = (ms = 0) => new Promise(r => setTimeout(r, ms));
   async function loadScript(src) {
@@ -413,7 +707,7 @@
     await loadScript('nova-info/mp4-muxer.js');
     const P = S.P, fps = P.meta.fps || 30, w = R.cw & ~1, h = R.ch & ~1;
     const AC = window.AudioContext || window.webkitAudioContext, ac = new AC({ sampleRate: 48000 });
-    const buf = await ac.decodeAudioData(await (await fetch(S.urls.get(P.audio))).arrayBuffer()); ac.close().catch(() => { });
+    const buf = await ac.decodeAudioData(await (await fetch(S.urls.get(S.mixKey || P.audio))).arrayBuffer()); ac.close().catch(() => { });
     const sr = buf.sampleRate, L = buf.getChannelData(0), Rc = buf.numberOfChannels > 1 ? buf.getChannelData(1) : L;
     const muxer = new Mp4Muxer.Muxer({ target: new Mp4Muxer.ArrayBufferTarget(), video: { codec: codecs.v[0], width: w, height: h, frameRate: fps }, audio: { codec: codecs.a[0], numberOfChannels: 2, sampleRate: sr }, fastStart: 'in-memory' });
     let err = null;
@@ -538,7 +832,7 @@
       </div>
       <div class="at-right">
         <div class="at-timeline" id="atTL"></div>
-        <div class="at-tabs"><button data-tab="plans" type="button">🎞 Plans</button><button data-tab="subs" type="button">💬 Sous-titres</button><button data-tab="global" type="button">✨ Habillage</button></div>
+        <div class="at-tabs"><button data-tab="plans" type="button">🎞 Plans</button><button data-tab="subs" type="button">💬 Sous-titres</button><button data-tab="global" type="button">✨ Habillage</button><button data-tab="voice" type="button">🎙 Voix</button></div>
         <div class="at-insp" id="atInsp"></div>
       </div>
     </div>`;
@@ -566,7 +860,7 @@
   const field = (label, html) => `<label class="at-f"><span>${label}</span>${html}</label>`;
   function buildInspector() {
     const insp = $('#atInsp'); if (!insp) return; $$('.at-tabs button').forEach(b => b.setAttribute('aria-pressed', b.dataset.tab === S.tab));
-    if (S.tab === 'plans') inspPlans(insp); else if (S.tab === 'subs') inspSubs(insp); else inspGlobal(insp);
+    if (S.tab === 'plans') inspPlans(insp); else if (S.tab === 'subs') inspSubs(insp); else if (S.tab === 'voice') inspVoice(insp); else inspGlobal(insp);
   }
 
   function inspPlans(insp) {
@@ -697,7 +991,7 @@
         ${field('Position verticale', `<input type="range" id="atSubY" min="900" max="1500" step="10" value="${o.subY || st.y_center}">`)}</div>
         <p class="muted sm">Zones de sécurité : garde les sous-titres au-dessus d'environ y = 1450 et à gauche de x = 930 pour rester visibles sous l'interface de TikTok, Shorts et Reels.</p></div>
       <div class="at-sec"><h3>Projet</h3><p class="muted sm"><b>${esc(P.meta.title)}</b><br>${P.meta.slug} · ${P.meta.version} · ${fmt(P.meta.duration)} · ${P.shots.length} plans · ${P.subtitles.length} blocs de sous-titres</p>
-        <p class="muted sm">La voix et la musique sont celles de l'<code>audio.mp3</code> du projet : si tu changes un texte, il ne sera plus synchronisé avec la voix.</p></div>`;
+        <p class="muted sm">La voix et la musique sont celles de l'<code>audio.mp3</code> du projet. Pour changer ce que dit la voix, utilise l'onglet « Voix » (sinon un texte modifié n'est plus synchronisé avec la voix).</p></div>`;
     const bind = (id, fn) => { const el = $(id); el.oninput = () => { if (!el.dataset.pushed) { commit('g'); el.dataset.pushed = 1; el.onchange = () => delete el.dataset.pushed; } fn(el); seek(S.t); }; };
     bind('#atBrand', el => P.brand.name = el.value); bind('#atOutro', el => { P.brand.outro_title = el.value; if (S.t < P.meta.duration - P.meta.end_card) seek(P.meta.duration - 0.6); });
     bind('#atSubSize', el => o.subSize = +el.value); bind('#atSubY', el => o.subY = +el.value);

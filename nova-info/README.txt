@@ -14,8 +14,18 @@ Fonctionnement
 - Export : image par image avec WebCodecs (H.264 + AAC si le navigateur les propose, sinon VP9 + Opus), via mp4-muxer ;
   en secours, enregistrement du canvas en temps réel (MediaRecorder).
 
+Onglet « Voix » (réécrire ce que dit la voix)
+- Le projet contient dans voix/ la voix phrase par phrase, le lit musical et les bruitages SANS ducking (créés par export_project.py).
+- On colle SA clé ElevenLabs (champ en haut de l'onglet) : elle reste dans le navigateur, n'est envoyée qu'à api.elevenlabs.io,
+  et n'est mémorisée (localStorage) que si on coche « Mémoriser ». Conseil : une clé dédiée, limitée à « Text to Speech ».
+- On réécrit une phrase, « Régénérer la voix » : l'Atelier appelle l'API (ElevenLabs, voix et réglages du projet, avec le contexte des phrases voisines),
+  recale sous-titres, plans, mode dark et durée, puis refait le mixage dans le navigateur (ducking, niveaux, limiteur) ; l'export vidéo utilise ce son.
+- « Version d'origine » restaure la phrase ; annuler / rétablir fonctionnent aussi. Les nouvelles prises sont enregistrées dans voix/edit_*.wav.
+- Non fait par l'Atelier : vérification des mots sautés (écouter la phrase avant d'exporter), normalisation fine du volume (le mixage vise le niveau de la phrase
+  d'origine et plafonne à -1 dBFS) ; un allongement de phrase fait répéter la fin du lit musical, un raccourcissement le tronque.
+
 Limites
-- La voix et la musique sont figées (audio.mp3). Modifier un texte ne les resynchronise pas.
+- La voix et la musique d'origine sont celles de audio.mp3 ; seul l'onglet « Voix » les refait.
 - Les plans « carte », « anneau » et « courbe » sont des clips pré-rendus : leurs textes d'habillage sont modifiables, pas leur contenu graphique
   (on peut les remplacer par une image).
 - L'étalonnage et les effets de l'aperçu approchent le rendu de la chaîne Python sans être identiques pixel pour pixel.
