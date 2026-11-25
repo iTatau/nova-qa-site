@@ -646,6 +646,7 @@
     const V = S.P.voice; text = text.trim();
     if (!text) return setVox('err', '✖ Le texte de la phrase est vide.');
     if (!S.elevenKey) return setVox('err', '✖ Colle d’abord ta clé ElevenLabs dans le champ « Ta clé API » en haut de cet onglet.');
+    if (!/^sk_/.test(S.elevenKey)) return setVox('err', '✖ Ce n’est pas une clé API : elle commence par « sk_ ». Tu as sans doute collé l’ID de la clé. Dans ElevenLabs (Developers → API Keys), crée une nouvelle clé : elle n’est affichée qu’une seule fois, à la création. Copie-la alors tout de suite.');
     setVox('busy', `⏳ Génération de la voix de la phrase ${V.segments[i].id} en cours (quelques secondes)…`); busy('Génération de la voix…'); await nextTick(20);
     try {
       const t = await synthesize(i, text); const path = `voix/edit_${V.segments[i].id}_${Date.now().toString(36)}.wav`;
@@ -668,7 +669,7 @@
     if (S.elevenKey === undefined) S.elevenKey = localStorage.getItem(KEY_STORE) || '';
     insp.innerHTML = `<div class="at-vstat" id="atVoxStatus" hidden></div>
       <div class="at-sec"><h3>Clé ElevenLabs <span class="muted sm">voix : ${esc(V.voice_name || V.voice_id)}</span></h3>
-        <div class="at-row"><label class="at-f"><span>Ta clé API (reste dans ton navigateur ; envoyée uniquement à api.elevenlabs.io)</span><input type="password" id="atKey" autocomplete="off" placeholder="sk_…" value="${esc(S.elevenKey)}"></label></div>
+        <div class="at-row"><label class="at-f"><span>Ta clé API (reste dans ton navigateur ; envoyée uniquement à api.elevenlabs.io)</span><input type="password" id="atKey" autocomplete="off" placeholder="sk_… (la clé, pas son ID)" value="${esc(S.elevenKey)}"></label></div>
         <div class="at-row"><label class="at-chkl"><input type="checkbox" id="atKeyKeep" ${localStorage.getItem(KEY_STORE) ? 'checked' : ''}> Mémoriser sur cet ordinateur</label></div>
         <p class="muted sm">Conseil : crée dans ElevenLabs une clé réservée à l'Atelier (permission « Text to Speech » seulement), que tu pourras révoquer sans toucher à tes autres usages. Chaque régénération consomme des caractères de ton abonnement (le nombre est affiché).</p></div>
       <div class="at-sec"><h3>Phrases <span class="muted sm">réécris puis « Régénérer » : sous-titres, plans, mode dark et musique sont recalés</span></h3>
