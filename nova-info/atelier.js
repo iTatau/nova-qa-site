@@ -171,7 +171,11 @@
         const shake = [0.0016 * Math.sin(lt * 1.3 + 1), 0.0012 * Math.cos(lt * 1.7)];
         let ch = h * ih, cw = ch * W / H; if (cw > iw) { cw = iw; ch = cw * H / W; }
         const x0 = cl(cx * iw - cw / 2 + shake[0] * cw, 0, iw - cw), y0 = cl(cy * ih - ch / 2 + shake[1] * ch, 0, ih - ch);
-        if (shot.split) {
+        if (shot.contain) {  // image entière sur fond flouté
+          const c = shot.contain, z = lerp((c.zoom || [1, 1.08])[0], (c.zoom || [1, 1.08])[1], E.io(lt / Math.max(shot.t1 - shot.t0, .05)));
+          const f = filterFor(P, shot.grade, shot.dim); x.filter = `blur(28px) ${f === 'none' ? '' : f} brightness(${c.bg ?? .35})`; x.drawImage(im, 0, 0, iw, ih, -80, -80, W + 160, H + 160);
+          const tw = W * (c.scale ?? .94) * z, th = tw * ih / iw; x.filter = f; x.drawImage(im, 0, 0, iw, ih, (W - tw) / 2, (c.y ?? .46) * H - th / 2, tw, th); x.filter = 'none'; tint(x, P, shot.grade);
+        } else if (shot.split) {
           const sp = shot.split, xd = lerp(sp.div[0], sp.div[1], E.io(lt / Math.max(shot.t1 - shot.t0, .05))) * W;
           x.save(); x.beginPath(); x.rect(0, 0, xd, H); x.clip(); x.filter = filterFor(P, sp.left, shot.dim); x.drawImage(im, x0, y0, cw, ch, 0, 0, W, H); tint(x, P, sp.left); x.restore();
           x.save(); x.beginPath(); x.rect(xd, 0, W - xd, H); x.clip(); x.filter = filterFor(P, sp.right, shot.dim); x.drawImage(im, x0, y0, cw, ch, 0, 0, W, H); tint(x, P, sp.right); x.restore();
@@ -216,6 +220,15 @@
         x.restore();
       } else if (name === 'flicker') {
         const k = 0.93 + 0.07 * Math.sin(lt * 9) * Math.sin(lt * 3.1 + 1.3); x.fillStyle = `rgba(0,0,0,${(1 - k).toFixed(3)})`; x.fillRect(0, 0, W, H);
+      } else if (name === 'streak') {
+        const k = (lt - (a.t0 ?? 0)) / (a.dur ?? 1); if (k > 0 && k < 1.6) {
+          const [x0, y0] = a.from, [x1, y1] = a.to, kk = Math.pow(Math.min(k, 1), 1.7), hx = lerp(x0, x1, kk) * W, hy = lerp(y0, y1, kk) * H;
+          const dx = (x0 - x1) * W, dy = (y0 - y1) * H; x.save(); x.globalCompositeOperation = 'lighter'; x.shadowColor = 'rgba(255,190,100,.9)'; x.shadowBlur = 36;
+          for (let q = 0; q < 28; q++) { const f = q / 28, px = hx + dx * .22 * f * Math.min(kk * 3, 1), py = hy + dy * .22 * f * Math.min(kk * 3, 1);
+            x.fillStyle = `rgba(255,${Math.round(200 * Math.pow(1 - f, 1.6))},${Math.round(110 * Math.pow(1 - f, 2.2))},${Math.pow(1 - f, 1.2).toFixed(3)})`; x.beginPath(); x.arc(px, py, Math.max(11 * (1 - f) + 2, 2), 0, 7); x.fill(); }
+          if (k < 1) { x.fillStyle = 'rgba(255,250,235,1)'; x.beginPath(); x.arc(hx, hy, 14, 0, 7); x.fill(); }
+          else { const fk = (k - 1) / .6; x.fillStyle = `rgba(255,${Math.round(210 * (1 - fk))},${Math.round(120 * (1 - fk))},${Math.pow(1 - fk, 1.3).toFixed(3)})`; x.beginPath(); x.arc(x1 * W, y1 * H, 30 + 260 * fk, 0, 7); x.fill(); }
+          x.restore(); }
       } else if (name === 'redpulse') {
         const k = 0.10 + 0.08 * Math.sin(lt * 2.4); x.fillStyle = `rgba(255,0,0,${k.toFixed(3)})`; x.fillRect(0, 0, W, H);
       }
