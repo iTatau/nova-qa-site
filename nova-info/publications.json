@@ -1,6 +1,31 @@
 {
  "videos": [
   {
+   "slug": "zombies",
+   "title": "Et si les zombies existaient vraiment ?",
+   "yt_title": "Et si les zombies existaient vraiment ? 🧟 Ce que dit la science",
+   "yt_description": "Et si les zombies existaient vraiment ?\n\nIl existe déjà de vrais « zombies » : un champignon (Ophiocordyceps) prend le contrôle du corps d'une fourmi, la force à grimper et à mordre une feuille, puis la tue. La rage, elle, passe par une morsure et reste quasi toujours mortelle dès les premiers symptômes. Si un virus transformait les humains en zombies (scénario fictif) : une morsure suffit à la première heure, un modèle mathématique de 2009 conclut que sans réaction rapide la civilisation s'effondre, les hôpitaux sont débordés, puis les zombies pourrissent. Mais un mort ne peut pas revenir : sans cerveau qui fonctionne, aucun virus ne ferait marcher un cadavre. En 2011, le CDC américain s'est même servi des zombies pour apprendre aux gens à se préparer aux catastrophes.\n\nSources :\n• National Geographic, Penn State, UC Davis — le champignon Ophiocordyceps qui contrôle les fourmis\n• OMS — fiche « Rage » (transmission par morsure, mortelle une fois les symptômes apparus)\n• Munz, Hudea, Imad, Smith (2009) — « When Zombies Attack! Mathematical Modelling of an Outbreak of Zombie Infection » (modèle humoristique, contesté)\n• CDC — billet « Preparedness 101: Zombie Apocalypse » (mai 2011) ; NPR (20/05/2011)\n\nVoix de synthèse (ElevenLabs). Images : NASA, NOAA et autres œuvres du domaine public ; schémas générés par ordinateur. Scénarios hypothétiques : les faits, études et hypothèses sont signalés à l'écran.\n\n#EtSi #Zombies #Science #Horreur #Shorts",
+   "tt_caption": "Et si les zombies existaient vraiment ? 🧟 Des zombies réels existent… chez les fourmis. Quel serait votre plan de survie ? #etsi #zombies #science #apocalypse #apprendresurtiktok",
+   "pinned_comment": "Quel serait votre plan de survie face aux zombies ? 🧟",
+   "hashtags_yt": [
+    "#EtSi",
+    "#Zombies",
+    "#Science",
+    "#Horreur",
+    "#Shorts"
+   ],
+   "hashtags_tt": [
+    "#etsi",
+    "#zombies",
+    "#science",
+    "#apocalypse",
+    "#apprendresurtiktok"
+   ],
+   "cover": "nova-info/covers/zombies.jpg",
+   "duration_s": 76.502,
+   "status": "à valider"
+  },
+  {
    "slug": "tactile",
    "title": "Et si les téléphones tactiles n'avaient jamais vu le jour ?",
    "yt_title": "Et si les téléphones tactiles n'avaient jamais existé ? 📱",
