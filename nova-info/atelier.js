@@ -80,6 +80,7 @@
       S.audio = new Audio(await urlOf(proj.audio)); S.audio.preload = 'auto';
       await new Promise(r => { S.audio.onloadeddata = r; S.audio.onerror = r; setTimeout(r, 5000); });
       S.mixSig = null; S.mixKey = null; S.abuf = new Map();
+      if (proj.publish?.cover) { try { await urlOf(proj.publish.cover); } catch (e) { } }
       if (hasVoiceEdits()) await syncMix();
       // médias
       let n = 0;
@@ -687,6 +688,35 @@
     $$('[data-gen]', insp).forEach(b => b.onclick = () => regenerate(+b.dataset.gen, $(`[data-txt="${b.dataset.gen}"]`, insp).value));
   }
 
+  /* ------------------------------------------------------------------ onglet « Publier » : titre, description, légende, commentaire épinglé (à copier-coller) */
+  const PUB_LIMITS = { yt_title: 100, yt_description: 5000, tt_caption: 2200 };
+  async function copyText(txt) {
+    try { await navigator.clipboard.writeText(txt); return true; }
+    catch (e) { const ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (e2) { } ta.remove(); return ok; }
+  }
+  function publicationMd(pb, title) {
+    return `# Pack de publication — ${title}\n\n> Textes à copier-coller dans YouTube Studio (Shorts) et TikTok Studio. Aucune publication automatique : à valider par vous.\n> Active l'étiquette « contenu généré / modifié par IA » sur les deux plateformes (voix de synthèse).\n\n## YouTube Short\n**Titre** :\n\`\`\`\n${pb.yt_title}\n\`\`\`\n**Description** :\n\`\`\`\n${pb.yt_description}\n\`\`\`\n\n## TikTok\n**Légende** :\n\`\`\`\n${pb.tt_caption}\n\`\`\`\n\n## Commentaire à épingler\n\`\`\`\n${pb.pinned_comment}\n\`\`\`\n`;
+  }
+  function inspPublish(insp) {
+    const P = S.P, pb = P.publish;
+    if (!pb) { insp.innerHTML = `<div class="at-sec"><h3>Publier</h3><p class="muted sm">Ce projet ne contient pas de pack de publication. Il est créé par la chaîne Nova-Info (<code>tools/publish_pack.py</code>) puis exporté avec le projet.</p></div>`; return; }
+    const fields = [['yt_title', 'Titre YouTube Short', 2], ['yt_description', 'Description YouTube', 10], ['tt_caption', 'Légende TikTok', 4], ['pinned_comment', 'Commentaire à épingler (les deux plateformes)', 2]];
+    insp.innerHTML = `<div class="at-sec"><h3>Publier <span class="muted sm">textes à coller dans YouTube Studio et TikTok Studio — aucune publication automatique</span></h3>
+      <p class="muted sm">Active l'étiquette « contenu généré / modifié par IA » sur les deux plateformes (voix de synthèse). Tu peux modifier les textes ici : ils sont enregistrés avec le projet.</p>
+      <div class="at-row"><button class="btn sm" id="atPubMd" type="button">⬇ Télécharger publication.md</button>${pb.cover ? '<button class="btn sm" id="atPubCover" type="button">⬇ Télécharger la couverture</button>' : ''}</div></div>
+      ${pb.cover && S.urls.get(pb.cover) ? `<div class="at-sec"><h3>Couverture</h3><div class="at-thumb" style="height:260px;background-size:contain;background-repeat:no-repeat;background-image:url(${S.urls.get(pb.cover)})"></div><p class="muted sm">YouTube Shorts : choisis l'image dans le studio ; TikTok : « Choisir une couverture » puis importer.</p></div>` : ''}
+      ${fields.map(([k, lab, rows]) => `<div class="at-sec"><h3>${lab} <span class="muted sm" data-cnt="${k}"></span></h3>
+        <textarea rows="${rows}" data-pub="${k}" style="width:100%;box-sizing:border-box">${esc(pb[k] || '')}</textarea>
+        <div class="at-row"><button class="btn primary sm" data-copy="${k}" type="button">📋 Copier</button></div></div>`).join('')}
+      <div class="at-sec"><h3>Hashtags</h3><p class="muted sm"><b>YouTube :</b> ${esc((pb.hashtags_yt || []).join(' '))}<br><b>TikTok :</b> ${esc((pb.hashtags_tt || []).join(' '))}</p></div>`;
+    const cnt = k => { const el = $(`[data-cnt="${k}"]`, insp); if (!el) return; const lim = PUB_LIMITS[k], n = (pb[k] || '').length; el.textContent = lim ? `${n}/${lim}` : `${n} caractères`; el.style.color = lim && n > lim ? '#ef4444' : ''; };
+    fields.forEach(([k]) => cnt(k));
+    $$('[data-pub]', insp).forEach(t => t.oninput = () => { if (!t.dataset.pushed) { commit('pub'); t.dataset.pushed = 1; t.onchange = () => delete t.dataset.pushed; } pb[t.dataset.pub] = t.value; cnt(t.dataset.pub); });
+    $$('[data-copy]', insp).forEach(b => b.onclick = async () => { const ok = await copyText(pb[b.dataset.copy] || ''); toast(ok ? 'Copié dans le presse-papiers' : 'Copie impossible : sélectionne le texte à la main'); });
+    $('#atPubMd').onclick = () => download(new Blob([publicationMd(pb, P.meta.title)], { type: 'text/markdown' }), 'publication.md');
+    if ($('#atPubCover')) $('#atPubCover').onclick = async () => download(await getFile(pb.cover), 'couverture.jpg');
+  }
+
   /* ------------------------------------------------------------------ export vidéo */
   const nextTick = (ms = 0) => new Promise(r => setTimeout(r, ms));
   async function loadScript(src) {
@@ -845,7 +875,7 @@
       </div>
       <div class="at-right">
         <div class="at-timeline" id="atTL"></div>
-        <div class="at-tabs"><button data-tab="plans" type="button">🎞 Plans</button><button data-tab="subs" type="button">💬 Sous-titres</button><button data-tab="global" type="button">✨ Habillage</button><button data-tab="voice" type="button">🎙 Voix</button></div>
+        <div class="at-tabs"><button data-tab="plans" type="button">🎞 Plans</button><button data-tab="subs" type="button">💬 Sous-titres</button><button data-tab="global" type="button">✨ Habillage</button><button data-tab="voice" type="button">🎙 Voix</button><button data-tab="publish" type="button">📤 Publier</button></div>
         <div class="at-insp" id="atInsp"></div>
       </div>
     </div>`;
@@ -873,7 +903,7 @@
   const field = (label, html) => `<label class="at-f"><span>${label}</span>${html}</label>`;
   function buildInspector() {
     const insp = $('#atInsp'); if (!insp) return; $$('.at-tabs button').forEach(b => b.setAttribute('aria-pressed', b.dataset.tab === S.tab));
-    if (S.tab === 'plans') inspPlans(insp); else if (S.tab === 'subs') inspSubs(insp); else if (S.tab === 'voice') inspVoice(insp); else inspGlobal(insp);
+    if (S.tab === 'plans') inspPlans(insp); else if (S.tab === 'subs') inspSubs(insp); else if (S.tab === 'voice') inspVoice(insp); else if (S.tab === 'publish') inspPublish(insp); else inspGlobal(insp);
   }
 
   function inspPlans(insp) {
