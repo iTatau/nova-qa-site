@@ -59,3 +59,21 @@
 .at-words{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
 .at-words button{border:1px solid var(--line);background:transparent;color:inherit;border-radius:8px;padding:2px 8px;font:600 12px system-ui;cursor:pointer}
 .at-words button.key{background:#cc3226;border-color:#cc3226;color:#fff}
+.at-vstat{border-radius:12px;padding:10px 14px;font-weight:600;line-height:1.4;position:sticky;top:70px;z-index:5;border:1px solid var(--line)}
+.at-vstat.busy{background:#2a3358;color:#fff}
+.at-vstat.ok{background:#14532d;color:#d1fae5;border-color:#22c55e}
+.at-vstat.err{background:#7f1d1d;color:#fee2e2;border-color:#ef4444}
+.at-ov .btn:disabled{opacity:.5;cursor:progress}
+
+.at-modes{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 16px}
+.at-modes .btn{padding:12px 18px;font-size:15px}
+.at-pub h2{margin:0 0 6px}
+.at-chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 16px}
+.at-chip{border:1px solid var(--line);background:var(--card);color:inherit;border-radius:999px;padding:8px 14px;cursor:pointer;font:inherit;font-size:14px}
+.at-chip.on{background:var(--brand);color:#fff;border-color:transparent}
+.at-pubhead{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;margin-bottom:14px}
+.at-pubcover{width:150px;border-radius:12px;border:1px solid var(--line)}
+.at-pubcols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.at-pubcols{grid-template-columns:1fr}}
+.at-pubh{margin:0 0 8px;font-size:18px}
+.at-pub textarea[readonly]{cursor:text}

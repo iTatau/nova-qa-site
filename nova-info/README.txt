@@ -24,6 +24,17 @@ Onglet « Voix » (réécrire ce que dit la voix)
 - Non fait par l'Atelier : vérification des mots sautés (écouter la phrase avant d'exporter), normalisation fine du volume (le mixage vise le niveau de la phrase
   d'origine et plafonne à -1 dBFS) ; un allongement de phrase fait répéter la fin du lit musical, un raccourcissement le tronque.
 
+« Publication rapide » (bouton en haut de l'onglet Nova-Info, sans ouvrir de projet)
+- On tape le nom de la vidéo (« soleil ») : titre YouTube, description, légende TikTok, commentaire à épingler, hashtags et couverture apparaissent, avec un bouton « Copier » par champ.
+- Les données viennent de nova-info/publications.json et nova-info/covers/*.jpg (textes et couvertures seulement), générés par tools/publish_site.py de la chaîne Nova-Info
+  après chaque nouvelle vidéo, puis commités dans ce dépôt. ATTENTION : le dépôt est public, ces textes le deviennent aussi.
+
+Onglet « Publier » (pack de publication, dans un projet ouvert)
+- Le projet peut contenir un pack de publication (créé par tools/publish_pack.py, exporté avec le projet) : titre YouTube Short, description,
+  légende TikTok, commentaire à épingler, hashtags, sources, mention « voix de synthèse », couverture.
+- L'onglet affiche chaque champ (modifiable, compteur de caractères), un bouton « Copier » par champ, « Télécharger publication.md » et la couverture.
+- Aucune publication automatique : on colle les textes dans YouTube Studio / TikTok Studio. Les modifications sont enregistrées avec le projet.
+
 Limites
 - La voix et la musique d'origine sont celles de audio.mp3 ; seul l'onglet « Voix » les refait.
 - Les plans « carte », « anneau » et « courbe » sont des clips pré-rendus : leurs textes d'habillage sont modifiables, pas leur contenu graphique

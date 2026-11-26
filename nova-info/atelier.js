@@ -80,6 +80,7 @@
       S.audio = new Audio(await urlOf(proj.audio)); S.audio.preload = 'auto';
       await new Promise(r => { S.audio.onloadeddata = r; S.audio.onerror = r; setTimeout(r, 5000); });
       S.mixSig = null; S.mixKey = null; S.abuf = new Map();
+      if (proj.publish?.cover) { try { await urlOf(proj.publish.cover); } catch (e) { } }
       if (hasVoiceEdits()) await syncMix();
       // médias
       let n = 0;
@@ -595,8 +596,11 @@
     const texts = V.segments.map((s, j) => spokenText(segTokens(V, j === i ? text : s.text)));
     const tokens = segTokens(V, text), body = { text: texts[i], model_id: V.model_id || 'eleven_multilingual_v2', language_code: 'fr', voice_settings: V.settings };
     if (i > 0) body.previous_text = texts[i - 1]; if (i + 1 < texts.length) body.next_text = texts[i + 1];
-    const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${V.voice_id}/with-timestamps?output_format=mp3_44100_128`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'xi-api-key': key }, body: JSON.stringify(body) });
-    if (!r.ok) { let m = ''; try { m = (await r.json()).detail?.message || ''; } catch (e) { } throw new Error(r.status === 401 ? 'Clé ElevenLabs refusée (401).' : r.status === 429 ? 'Trop de requêtes ou quota atteint (429).' : `ElevenLabs a répondu ${r.status}. ${m}`); }
+    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 120000); let r;
+    try { r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${V.voice_id}/with-timestamps?output_format=mp3_44100_128`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'xi-api-key': key }, body: JSON.stringify(body), signal: ctl.signal }); }
+    catch (e) { throw new Error(e.name === 'AbortError' ? 'ElevenLabs ne répond pas (délai de 2 minutes dépassé).' : 'Impossible de joindre ElevenLabs (réseau, bloqueur de publicités ou extension du navigateur ?). Détail : ' + e.message); }
+    finally { clearTimeout(to); }
+    if (!r.ok) { let m = ''; try { m = (await r.json()).detail?.message || ''; } catch (e) { } throw new Error(r.status === 401 ? 'Clé ElevenLabs refusée (401) : vérifie la clé et qu’elle a bien la permission « Text to Speech ». ' + m : r.status === 429 ? 'Trop de requêtes ou quota de caractères atteint (429).' : `ElevenLabs a répondu ${r.status}. ${m}`); }
     const resp = await r.json(), bin = atob(resp.audio_base64), bytes = new Uint8Array(bin.length); for (let k = 0; k < bin.length; k++) bytes[k] = bin.charCodeAt(k);
     const dec = await decodeCtx().decodeAudioData(bytes.buffer), pcm = mono(dec), sr = dec.sampleRate;
     const [a0, a1] = trimBounds(pcm, sr); let clip = Float32Array.from(pcm.subarray(a0, a1));
@@ -634,30 +638,39 @@
     return shift;
   }
 
+  function setVox(kind, msg) {  // message d'état PERSISTANT dans l'onglet Voix (les « toasts » disparaissent en 2 s)
+    S.vox = { kind, msg }; const el = $('#atVoxStatus'); if (!el) return;
+    el.hidden = !msg; el.className = 'at-vstat ' + kind; el.textContent = msg || ''; if (msg) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    $$('[data-gen],[data-rev]').forEach(b => b.disabled = kind === 'busy');
+  }
   async function regenerate(i, text) {
-    const V = S.P.voice; text = text.trim(); if (!text) throw new Error('Le texte est vide.');
-    busy('Génération de la voix…'); await nextTick(20);
+    const V = S.P.voice; text = text.trim();
+    if (!text) return setVox('err', '✖ Le texte de la phrase est vide.');
+    if (!S.elevenKey) return setVox('err', '✖ Colle d’abord ta clé ElevenLabs dans le champ « Ta clé API » en haut de cet onglet.');
+    if (!/^sk_/.test(S.elevenKey)) return setVox('err', '✖ Ce n’est pas une clé API : elle commence par « sk_ ». Tu as sans doute collé l’ID de la clé. Dans ElevenLabs (Developers → API Keys), crée une nouvelle clé : elle n’est affichée qu’une seule fois, à la création. Copie-la alors tout de suite.');
+    setVox('busy', `⏳ Génération de la voix de la phrase ${V.segments[i].id} en cours (quelques secondes)…`); busy('Génération de la voix…'); await nextTick(20);
     try {
       const t = await synthesize(i, text); const path = `voix/edit_${V.segments[i].id}_${Date.now().toString(36)}.wav`;
       const blob = encodeWav([t.clip], t.sr); S.files.set(path, blob); (S.abuf ||= new Map()).set(path, await decodeCtx().decodeAudioData(await blob.arrayBuffer()));
       commit('voix'); const shift = applyTake(i, { text, file: path, dur: t.dur, rel: t.rel });
       buildTimeline(); refreshDuration(); await syncMix(); renderNow(); buildInspector();
-      toast(`Voix régénérée (${t.chars} caractères facturés par ElevenLabs) · durée de la vidéo ${shift >= 0 ? '+' : ''}${shift.toFixed(2)} s`);
-    } catch (e) { console.error(e); toast(e.message || String(e)); }
-    busy('');
+      const msg = `✔ Voix régénérée pour ${V.segments[i].id} : ${t.chars} caractères facturés par ElevenLabs · durée de la vidéo ${shift >= 0 ? '+' : ''}${shift.toFixed(2)} s. Clique « ▶ Écouter » pour vérifier ; sous-titres, plans et musique ont été recalés.`;
+      toast('Voix régénérée'); busy(''); setVox('ok', msg); return;
+    } catch (e) { console.error(e); busy(''); setVox('err', '✖ ' + (e.message || String(e))); return; }
   }
   async function revertSeg(i) {
     const seg = S.P.voice.segments[i]; if (!seg.orig) return; busy('Retour à la voix d’origine…'); await nextTick(20);
     commit('voix'); applyTake(i, { text: seg.orig.text, file: seg.orig.file, dur: seg.orig.dur, rel: seg.orig.rel });
-    buildTimeline(); refreshDuration(); await syncMix(); renderNow(); buildInspector(); busy('');
+    buildTimeline(); refreshDuration(); await syncMix(); renderNow(); buildInspector(); busy(''); setVox('ok', `✔ Phrase ${seg.id} restaurée (voix d’origine).`);
   }
 
   function inspVoice(insp) {
     const P = S.P, V = P.voice;
     if (!V || !V.segments?.length) { insp.innerHTML = `<div class="at-sec"><h3>Voix</h3><p class="muted sm">Ce projet a été exporté sans les pièces vocales : relance l'export avec la dernière version de la chaîne Nova-Info (il crée le dossier <code>voix/</code>) pour pouvoir réécrire une phrase.</p></div>`; return; }
     if (S.elevenKey === undefined) S.elevenKey = localStorage.getItem(KEY_STORE) || '';
-    insp.innerHTML = `<div class="at-sec"><h3>Clé ElevenLabs <span class="muted sm">voix : ${esc(V.voice_name || V.voice_id)}</span></h3>
-        <div class="at-row"><label class="at-f"><span>Ta clé API (reste dans ton navigateur ; envoyée uniquement à api.elevenlabs.io)</span><input type="password" id="atKey" autocomplete="off" placeholder="sk_…" value="${esc(S.elevenKey)}"></label></div>
+    insp.innerHTML = `<div class="at-vstat" id="atVoxStatus" hidden></div>
+      <div class="at-sec"><h3>Clé ElevenLabs <span class="muted sm">voix : ${esc(V.voice_name || V.voice_id)}</span></h3>
+        <div class="at-row"><label class="at-f"><span>Ta clé API (reste dans ton navigateur ; envoyée uniquement à api.elevenlabs.io)</span><input type="password" id="atKey" autocomplete="off" placeholder="sk_… (la clé, pas son ID)" value="${esc(S.elevenKey)}"></label></div>
         <div class="at-row"><label class="at-chkl"><input type="checkbox" id="atKeyKeep" ${localStorage.getItem(KEY_STORE) ? 'checked' : ''}> Mémoriser sur cet ordinateur</label></div>
         <p class="muted sm">Conseil : crée dans ElevenLabs une clé réservée à l'Atelier (permission « Text to Speech » seulement), que tu pourras révoquer sans toucher à tes autres usages. Chaque régénération consomme des caractères de ton abonnement (le nombre est affiché).</p></div>
       <div class="at-sec"><h3>Phrases <span class="muted sm">réécris puis « Régénérer » : sous-titres, plans, mode dark et musique sont recalés</span></h3>
@@ -666,12 +679,104 @@
           <div class="at-ovh"><b>${esc(s.id)} <span class="muted sm">${fmt(s.start)} → ${fmt(s.speech_end)}${s.edited ? ' · <span style="color:var(--brand)">modifiée</span>' : ''}</span></b><span><button class="btn sm" data-play="${i}" type="button">▶ Écouter</button> ${s.edited ? `<button class="btn sm" data-rev="${i}" type="button">↺ Version d'origine</button>` : ''}</span></div>
           <textarea rows="2" data-txt="${i}">${esc(s.text)}</textarea>
           <div class="at-row"><button class="btn primary sm" data-gen="${i}" type="button">🎙 Régénérer la voix</button><span class="muted sm" data-cnt="${i}">${fr(s.text).length} caractères</span></div></div>`).join('')}</div></div>`;
+    if (S.vox?.msg && S.vox.kind !== 'busy') setVox(S.vox.kind, S.vox.msg);
     const kb = $('#atKey'); kb.oninput = () => { S.elevenKey = kb.value.trim(); if ($('#atKeyKeep').checked) localStorage.setItem(KEY_STORE, S.elevenKey); };
     $('#atKeyKeep').onchange = e => { if (e.target.checked) localStorage.setItem(KEY_STORE, S.elevenKey || ''); else localStorage.removeItem(KEY_STORE); };
     $$('[data-play]', insp).forEach(b => b.onclick = () => { pause(); seek(V.segments[+b.dataset.play].start); play(); });
     $$('[data-rev]', insp).forEach(b => b.onclick = () => revertSeg(+b.dataset.rev));
     $$('[data-txt]', insp).forEach(t => t.oninput = () => { const n = spokenText(segTokens(V, t.value || '')).length; $(`[data-cnt="${t.dataset.txt}"]`, insp).textContent = `${n} caractères`; });
     $$('[data-gen]', insp).forEach(b => b.onclick = () => regenerate(+b.dataset.gen, $(`[data-txt="${b.dataset.gen}"]`, insp).value));
+  }
+
+  /* ------------------------------------------------------------------ onglet « Publier » : titre, description, légende, commentaire épinglé (à copier-coller) */
+  const PUB_LIMITS = { yt_title: 100, yt_description: 5000, tt_caption: 2200 };
+  async function copyText(txt) {
+    try { await navigator.clipboard.writeText(txt); return true; }
+    catch (e) { const ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (e2) { } ta.remove(); return ok; }
+  }
+  function publicationMd(pb, title) {
+    return `# Pack de publication — ${title}\n\n> Textes à copier-coller dans YouTube Studio (Shorts) et TikTok Studio. Aucune publication automatique : à valider par vous.\n> Active l'étiquette « contenu généré / modifié par IA » sur les deux plateformes (voix de synthèse).\n\n## YouTube Short\n**Titre** :\n\`\`\`\n${pb.yt_title}\n\`\`\`\n**Description** :\n\`\`\`\n${pb.yt_description}\n\`\`\`\n\n## TikTok\n**Légende** :\n\`\`\`\n${pb.tt_caption}\n\`\`\`\n\n## Commentaire à épingler\n\`\`\`\n${pb.pinned_comment}\n\`\`\`\n`;
+  }
+  function inspPublish(insp) {
+    const P = S.P, pb = P.publish;
+    if (!pb) { insp.innerHTML = `<div class="at-sec"><h3>Publier</h3><p class="muted sm">Ce projet ne contient pas de pack de publication. Il est créé par la chaîne Nova-Info (<code>tools/publish_pack.py</code>) puis exporté avec le projet.</p></div>`; return; }
+    const fields = [['yt_title', 'Titre YouTube Short', 2], ['yt_description', 'Description YouTube', 10], ['tt_caption', 'Légende TikTok', 4], ['pinned_comment', 'Commentaire à épingler (les deux plateformes)', 2]];
+    insp.innerHTML = `<div class="at-sec"><h3>Publier <span class="muted sm">textes à coller dans YouTube Studio et TikTok Studio — aucune publication automatique</span></h3>
+      <p class="muted sm">Active l'étiquette « contenu généré / modifié par IA » sur les deux plateformes (voix de synthèse). Tu peux modifier les textes ici : ils sont enregistrés avec le projet.</p>
+      <div class="at-row"><button class="btn sm" id="atPubMd" type="button">⬇ Télécharger publication.md</button>${pb.cover ? '<button class="btn sm" id="atPubCover" type="button">⬇ Télécharger la couverture</button>' : ''}</div></div>
+      ${pb.cover && S.urls.get(pb.cover) ? `<div class="at-sec"><h3>Couverture</h3><div class="at-thumb" style="height:260px;background-size:contain;background-repeat:no-repeat;background-image:url(${S.urls.get(pb.cover)})"></div><p class="muted sm">YouTube Shorts : choisis l'image dans le studio ; TikTok : « Choisir une couverture » puis importer.</p></div>` : ''}
+      ${fields.map(([k, lab, rows]) => `<div class="at-sec"><h3>${lab} <span class="muted sm" data-cnt="${k}"></span></h3>
+        <textarea rows="${rows}" data-pub="${k}" style="width:100%;box-sizing:border-box">${esc(pb[k] || '')}</textarea>
+        <div class="at-row"><button class="btn primary sm" data-copy="${k}" type="button">📋 Copier</button></div></div>`).join('')}
+      <div class="at-sec"><h3>Hashtags</h3><p class="muted sm"><b>YouTube :</b> ${esc((pb.hashtags_yt || []).join(' '))}<br><b>TikTok :</b> ${esc((pb.hashtags_tt || []).join(' '))}</p></div>`;
+    const cnt = k => { const el = $(`[data-cnt="${k}"]`, insp); if (!el) return; const lim = PUB_LIMITS[k], n = (pb[k] || '').length; el.textContent = lim ? `${n}/${lim}` : `${n} caractères`; el.style.color = lim && n > lim ? '#ef4444' : ''; };
+    fields.forEach(([k]) => cnt(k));
+    $$('[data-pub]', insp).forEach(t => t.oninput = () => { if (!t.dataset.pushed) { commit('pub'); t.dataset.pushed = 1; t.onchange = () => delete t.dataset.pushed; } pb[t.dataset.pub] = t.value; cnt(t.dataset.pub); });
+    $$('[data-copy]', insp).forEach(b => b.onclick = async () => { const ok = await copyText(pb[b.dataset.copy] || ''); toast(ok ? 'Copié dans le presse-papiers' : 'Copie impossible : sélectionne le texte à la main'); });
+    $('#atPubMd').onclick = () => download(new Blob([publicationMd(pb, P.meta.title)], { type: 'text/markdown' }), 'publication.md');
+    if ($('#atPubCover')) $('#atPubCover').onclick = async () => download(await getFile(pb.cover), 'couverture.jpg');
+  }
+
+  /* ------------------------------------------------------------------ « Publication rapide » : sans ouvrir de projet — on tape le nom de la vidéo, tout sort, on copie-colle */
+  const normQ = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+  async function loadPubs() {
+    if (S.pubs) return S.pubs;
+    try { const r = await fetch(new URL('nova-info/publications.json', document.baseURI).href, { cache: 'no-cache' }); if (!r.ok) throw new Error('HTTP ' + r.status); S.pubs = (await r.json()).videos || []; S.pubsErr = null; }
+    catch (e) { S.pubs = []; S.pubsErr = e.message; }
+    return S.pubs;
+  }
+  function pubMatches(q) {
+    const n = normQ(q), vids = S.pubs || []; if (!n) return vids;
+    const words = n.split(' ');
+    return vids.filter(v => { const hay = normQ(v.title + ' ' + v.slug + ' ' + (v.yt_title || '')); return words.every(w => hay.includes(w)); });
+  }
+  function pubOutHtml(v) {
+    const fld = (k, lab, rows) => `<div class="at-sec"><h3>${lab} <span class="muted sm">${(v[k] || '').length} caractères</span></h3><textarea rows="${rows}" readonly style="width:100%;box-sizing:border-box" data-pv="${k}">${esc(v[k] || '')}</textarea>
+      <div class="at-row"><button class="btn primary" data-pcopy="${k}" type="button">📋 Copier</button></div></div>`;
+    return `<div class="at-pubhead"><img class="at-pubcover" src="${esc(new URL(v.cover, document.baseURI).href)}" alt="Couverture ${esc(v.title)}">
+        <div><h3 style="margin:0 0 6px">${esc(v.title)}</h3><p class="muted sm">${esc(v.duration_s ? Math.round(v.duration_s) + ' s · ' : '')}${v.status ? esc(v.status) : ''}</p>
+        <div class="at-row"><button class="btn sm" id="atPubDlCover" type="button">⬇ Télécharger la couverture</button>
+        <a class="btn sm" href="https://studio.youtube.com" target="_blank" rel="noopener">▶ YouTube Studio</a><a class="btn sm" href="https://www.tiktok.com/tiktokstudio" target="_blank" rel="noopener">♪ TikTok Studio</a></div>
+        <p class="muted sm">Active l'étiquette « contenu généré / modifié par IA » dans les deux studios (voix de synthèse).</p></div></div>
+      <div class="at-pubcols">
+        <div><h3 class="at-pubh">YouTube Short</h3>${fld('yt_title', 'Titre', 2)}${fld('yt_description', 'Description', 11)}</div>
+        <div><h3 class="at-pubh">TikTok</h3>${fld('tt_caption', 'Légende', 5)}${fld('pinned_comment', 'Commentaire à épingler (les deux plateformes)', 2)}
+          <div class="at-sec"><h3>Hashtags</h3><p class="muted sm"><b>YouTube :</b> ${esc((v.hashtags_yt || []).join(' '))}<br><b>TikTok :</b> ${esc((v.hashtags_tt || []).join(' '))}</p></div></div>
+      </div>`;
+  }
+  function renderPubOut() {
+    const out = $('#atPubOut'); if (!out) return; const v = (S.pubs || []).find(x => x.slug === S.pubSel);
+    if (!v) { out.innerHTML = S.pubsErr ? `<p class="muted">Impossible de charger les publications (${esc(S.pubsErr)}).</p>` : '<p class="muted">Choisis une vidéo ci-dessus : titre, description, légende TikTok, commentaire et couverture apparaissent ici, prêts à copier.</p>'; return; }
+    out.innerHTML = pubOutHtml(v);
+    $$('[data-pcopy]', out).forEach(b => b.onclick = async () => {
+      const ok = await copyText($(`[data-pv="${b.dataset.pcopy}"]`, out).value), old = b.textContent;
+      b.textContent = ok ? '✔ Copié !' : 'Sélectionne le texte à la main'; setTimeout(() => (b.textContent = old), 1600);
+    });
+    $('#atPubDlCover').onclick = async () => { try { download(await (await fetch(new URL(v.cover, document.baseURI).href)).blob(), `couverture_${v.slug}.jpg`); } catch (e) { toast('Téléchargement impossible : ' + e.message); } };
+  }
+  function renderPubChips() {
+    const q = $('#atPubQ').value, list = pubMatches(q), box = $('#atPubChips');
+    box.innerHTML = list.length ? list.map(v => `<button type="button" class="at-chip ${v.slug === S.pubSel ? 'on' : ''}" data-pslug="${esc(v.slug)}">${esc(v.title)}</button>`).join('') : '<span class="muted sm">Aucune vidéo ne correspond.</span>';
+    $$('[data-pslug]', box).forEach(b => b.onclick = () => { S.pubSel = b.dataset.pslug; renderPubChips(); renderPubOut(); });
+    if (q && list.length === 1 && S.pubSel !== list[0].slug) { S.pubSel = list[0].slug; renderPubChips(); renderPubOut(); }
+  }
+  async function buildPubPanel() {
+    const box = $('#atPubPanel'); if (!box) return;
+    box.innerHTML = `<div class="at-pub"><h2>📤 Publication rapide</h2>
+      <p class="muted">Pas besoin d'ouvrir un projet : tape le nom de ta vidéo (ex. « soleil »), puis copie-colle le titre, la description et la légende dans YouTube Studio et TikTok Studio. Rien n'est publié automatiquement.</p>
+      <input type="search" id="atPubQ" placeholder="Nom de la vidéo : soleil, internet, gravité…" autocomplete="off" style="width:100%;box-sizing:border-box;font-size:17px;padding:12px 14px">
+      <div class="at-chips" id="atPubChips"></div><div id="atPubOut"></div></div>`;
+    await loadPubs();
+    $('#atPubQ').oninput = renderPubChips;
+    $('#atPubQ').onkeydown = e => { if (e.key === 'Enter') { const l = pubMatches(e.target.value); if (l.length) { S.pubSel = l[0].slug; renderPubChips(); renderPubOut(); } } };
+    if (!S.pubSel && S.pubs.length) S.pubSel = S.pubs[0].slug;
+    renderPubChips(); renderPubOut();
+  }
+  function setMode(m) {
+    S.mode = m; try { localStorage.setItem('novaAtelier.mode', m); } catch (e) { }
+    $('#atAtelier').hidden = m !== 'atelier'; $('#atPubPanel').hidden = m !== 'pub';
+    $$('.at-modes [data-mode]').forEach(b => { b.classList.toggle('primary', b.dataset.mode === m); b.setAttribute('aria-pressed', b.dataset.mode === m); });
+    if (m === 'pub') buildPubPanel(); else if (S.ready) renderNow();
   }
 
   /* ------------------------------------------------------------------ export vidéo */
@@ -790,13 +895,18 @@
     if (S.hostEl === host) return; S.hostEl = host;
     host.innerHTML = `
     <div class="at-root">
+      <div class="at-modes"><button class="btn primary" type="button" data-mode="atelier">🎬 Atelier (montage d'un projet)</button><button class="btn" type="button" data-mode="pub">📤 Publication rapide (titre, description, légende)</button></div>
+      <div id="atAtelier">
       <div class="at-head"><div><h2>Atelier Nova-Info</h2><p class="muted">Ouvre le dossier d'un projet vidéo pour changer les images, les sous-titres et les textes, puis exporte la vidéo. Tout reste sur ton ordinateur.</p></div>
         <div class="at-top"><button class="btn primary" id="atOpen" type="button">📂 Ouvrir un projet…</button><button class="btn" id="atOpenAlt" type="button" title="Si ton navigateur ne propose pas l'accès direct au dossier">Choisir les fichiers…</button><input type="file" id="atDirIn" webkitdirectory multiple hidden>
           <button class="btn" id="atSave" type="button" disabled>💾 Enregistrer</button><button class="btn" id="atUndo" type="button" disabled title="Ctrl+Z">↶</button><button class="btn" id="atRedo" type="button" disabled title="Ctrl+Y">↷</button><span class="muted sm" id="atDirty"></span></div></div>
       <div class="at-busy" id="atBusy" hidden></div>
       <div class="at-empty" id="atEmpty"><div class="at-card"><h3>Aucun projet ouvert</h3><p>Un projet est un dossier créé par la chaîne Nova-Info : <code>project.nova.json</code>, <code>audio.mp3</code>, <code>images/</code>, <code>clips/</code>, <code>fonts/</code>.</p><p class="muted sm">Chrome ou Edge recommandé (accès direct au dossier : tes modifications sont enregistrées dedans).</p></div></div>
       <div class="at-app" id="atApp" hidden></div>
+      </div>
+      <div id="atPubPanel" hidden></div>
     </div>`;
+    $$('.at-modes [data-mode]').forEach(b => b.onclick = () => setMode(b.dataset.mode));
     $('#atOpen').onclick = async () => {
       if (window.showDirectoryPicker) { try { const dir = await window.showDirectoryPicker({ id: 'nova-info-project', mode: 'readwrite' }); await openProject({ dir }); } catch (e) { if (e.name !== 'AbortError') toast('Ouverture annulée : ' + e.message); } }
       else $('#atDirIn').click();
@@ -805,7 +915,7 @@
     $('#atDirIn').onchange = e => { if (e.target.files.length) openProject({ files: [...e.target.files] }); e.target.value = ''; };
     $('#atSave').onclick = saveProject; $('#atUndo').onclick = undo; $('#atRedo').onclick = redo;
     document.addEventListener('keydown', e => {
-      if (!$('#tab-atelier')?.classList.contains('on') || !S.ready) return; const tg = e.target;
+      if (!$('#tab-atelier')?.classList.contains('on') || !S.ready || S.mode === 'pub') return; const tg = e.target;
       if (tg && /^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName) && tg.type !== 'range' && tg.type !== 'checkbox') return;
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
       else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); }
@@ -813,6 +923,8 @@
       else if (e.code === 'Space') { e.preventDefault(); S.playing ? pause() : play(); }
     });
     window.addEventListener('beforeunload', e => { if (S.dirty) { e.preventDefault(); e.returnValue = ''; } });
+    let m0 = 'atelier'; try { m0 = localStorage.getItem('novaAtelier.mode') || 'atelier'; } catch (e) { }
+    setMode(m0 === 'pub' ? 'pub' : 'atelier');
   }
 
   function buildUI() {
@@ -832,7 +944,7 @@
       </div>
       <div class="at-right">
         <div class="at-timeline" id="atTL"></div>
-        <div class="at-tabs"><button data-tab="plans" type="button">🎞 Plans</button><button data-tab="subs" type="button">💬 Sous-titres</button><button data-tab="global" type="button">✨ Habillage</button><button data-tab="voice" type="button">🎙 Voix</button></div>
+        <div class="at-tabs"><button data-tab="plans" type="button">🎞 Plans</button><button data-tab="subs" type="button">💬 Sous-titres</button><button data-tab="global" type="button">✨ Habillage</button><button data-tab="voice" type="button">🎙 Voix</button><button data-tab="publish" type="button">📤 Publier</button></div>
         <div class="at-insp" id="atInsp"></div>
       </div>
     </div>`;
@@ -860,7 +972,7 @@
   const field = (label, html) => `<label class="at-f"><span>${label}</span>${html}</label>`;
   function buildInspector() {
     const insp = $('#atInsp'); if (!insp) return; $$('.at-tabs button').forEach(b => b.setAttribute('aria-pressed', b.dataset.tab === S.tab));
-    if (S.tab === 'plans') inspPlans(insp); else if (S.tab === 'subs') inspSubs(insp); else if (S.tab === 'voice') inspVoice(insp); else inspGlobal(insp);
+    if (S.tab === 'plans') inspPlans(insp); else if (S.tab === 'subs') inspSubs(insp); else if (S.tab === 'voice') inspVoice(insp); else if (S.tab === 'publish') inspPublish(insp); else inspGlobal(insp);
   }
 
   function inspPlans(insp) {
