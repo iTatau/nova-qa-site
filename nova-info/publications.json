@@ -1,6 +1,31 @@
 {
  "videos": [
   {
+   "slug": "tactile",
+   "title": "Et si les téléphones tactiles n'avaient jamais vu le jour ?",
+   "yt_title": "Et si les téléphones tactiles n'avaient jamais existé ? 📱",
+   "yt_description": "Et si les téléphones tactiles n'avaient jamais vu le jour ?\n\nPlus de 4 milliards de personnes ont un smartphone, et tout passe par un doigt qui glisse sur une vitre. Dans un autre monde, le tactile n'existe pas : en 2007, les téléphones ont des touches, claviers physiques, molettes et stylets ; les applications restent pensées pour les touches ; et le défilement infini, au pouce, n'existerait sans doute pas sous cette forme, donc pas de TikTok ni de Shorts tels que nous les connaissons (scénario hypothétique). Mais le tactile n'est pas né en 2007 : le premier écran tactile à doigt date de 1965, et l'IBM Simon est déjà un téléphone à écran tactile au début des années 90. L'iPhone ne l'a pas inventé : il l'a rendu simple, avec les doigts.\n\nSources :\n• NPR — « Timeline: A History Of Touch-Screen Technology » (écran tactile à doigt 1965 ; IBM Simon ; multi-touch ; iPhone 2007)\n• Statista, G2, BankMyCell — 4,3 à 4,9 milliards d'utilisateurs de smartphone en 2024\n• Gartner via MacRumors — BlackBerry : 9,6 % des smartphones en 2007, 19,9 % en 2009 (les claviers physiques restaient populaires)\n\nVoix de synthèse (ElevenLabs). Images : NASA, NOAA et autres œuvres du domaine public ; schémas générés par ordinateur. Scénarios hypothétiques : les faits, études et hypothèses sont signalés à l'écran.\n\n#EtSi #Smartphone #Technologie #Histoire #Shorts",
+   "tt_caption": "Et si les téléphones tactiles n'avaient jamais existé ? 📱 Pas de défilement infini… ni de TikTok ? Vous feriez quoi de vos heures ? #etsi #smartphone #technologie #histoire #apprendresurtiktok",
+   "pinned_comment": "Sans écran tactile, que feriez-vous de vos heures de défilement ? 📵",
+   "hashtags_yt": [
+    "#EtSi",
+    "#Smartphone",
+    "#Technologie",
+    "#Histoire",
+    "#Shorts"
+   ],
+   "hashtags_tt": [
+    "#etsi",
+    "#smartphone",
+    "#technologie",
+    "#histoire",
+    "#apprendresurtiktok"
+   ],
+   "cover": "nova-info/covers/tactile.jpg",
+   "duration_s": 84.73,
+   "status": "à valider"
+  },
+  {
    "slug": "rotation",
    "title": "Et si la Terre s'arrêtait de tourner ?",
    "yt_title": "Et si la Terre s'arrêtait de tourner ? 🌍 La première seconde",
