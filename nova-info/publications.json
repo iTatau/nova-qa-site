@@ -1,6 +1,31 @@
 {
  "videos": [
   {
+   "slug": "ia",
+   "title": "Et si l'IA prenait notre place ?",
+   "yt_title": "Et si l'IA prenait notre place ? 🤖 Ce qui se passe vraiment en 2026",
+   "yt_description": "Et si l'IA prenait notre place, et devenait plus forte que nous dans tous les métiers ?\n\nPlus d'un milliard de personnes utilisent ChatGPT chaque semaine (chiffre OpenAI, septembre 2026), et en 2026 des entreprises américaines ont annoncé plus de 120 000 suppressions d'emplois en citant l'IA (Challenger, Gray & Christmas, janvier-octobre 2026 : attention, certains parlent d'« AI washing », l'IA servant parfois d'excuse). Si l'IA devenait plus forte que nous dans tous les métiers (scénario hypothétique) : les entreprises la préféreraient, des millions de personnes perdraient leur travail, ses centres de données doubleraient leur consommation d'électricité d'ici 2030 selon l'Agence internationale de l'énergie, et des scientifiques comme le prix Nobel Geoffrey Hinton mettent en garde. Mais aujourd'hui rien ne montre que l'IA ait des envies : elle calcule, se trompe encore, et s'arrête sans électricité ni données. L'Europe a déjà voté une loi pour l'encadrer.\n\nSources :\n• OpenAI — « DevDay 2026 recap » (≈ 1,2 milliard d'utilisateurs hebdomadaires de ChatGPT, 29/09/2026)\n• Challenger, Gray & Christmas — rapport d'octobre 2026 (121 401 suppressions d'emplois annoncées aux États-Unis en citant l'IA, janv.-oct. 2026) ; « AI washing »\n• Agence internationale de l'énergie — « Key Questions on Energy and AI » (2026) ; World Energy Outlook 2026\n• Fortune (26/09/2026), BBC Newsnight — mises en garde de Geoffrey Hinton ; Axios (30/05/2026) — les IA se trompent encore\n\nVoix de synthèse (ElevenLabs). Images : NASA, NOAA et autres œuvres du domaine public ; schémas générés par ordinateur. Scénarios hypothétiques : les faits, études et hypothèses sont signalés à l'écran.\n\n#EtSi #IA #IntelligenceArtificielle #ChatGPT #Shorts",
+   "tt_caption": "Et si l'IA prenait notre place ? 🤖 Plus d'1 milliard d'utilisateurs de ChatGPT par semaine… Quel métier garderiez-vous pour les humains ? #etsi #ia #intelligenceartificielle #chatgpt #apprendresurtiktok",
+   "pinned_comment": "Quel métier garderiez-vous pour les humains ? 🤖👨",
+   "hashtags_yt": [
+    "#EtSi",
+    "#IA",
+    "#IntelligenceArtificielle",
+    "#ChatGPT",
+    "#Shorts"
+   ],
+   "hashtags_tt": [
+    "#etsi",
+    "#ia",
+    "#intelligenceartificielle",
+    "#chatgpt",
+    "#apprendresurtiktok"
+   ],
+   "cover": "nova-info/covers/ia.jpg",
+   "duration_s": 80.205,
+   "status": "à valider"
+  },
+  {
    "slug": "zombies",
    "title": "Et si les zombies existaient vraiment ?",
    "yt_title": "Et si les zombies existaient vraiment ? 🧟 Ce que dit la science",
