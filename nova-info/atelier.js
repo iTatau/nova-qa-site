@@ -717,6 +717,68 @@
     if ($('#atPubCover')) $('#atPubCover').onclick = async () => download(await getFile(pb.cover), 'couverture.jpg');
   }
 
+  /* ------------------------------------------------------------------ « Publication rapide » : sans ouvrir de projet — on tape le nom de la vidéo, tout sort, on copie-colle */
+  const normQ = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+  async function loadPubs() {
+    if (S.pubs) return S.pubs;
+    try { const r = await fetch(new URL('nova-info/publications.json', document.baseURI).href, { cache: 'no-cache' }); if (!r.ok) throw new Error('HTTP ' + r.status); S.pubs = (await r.json()).videos || []; S.pubsErr = null; }
+    catch (e) { S.pubs = []; S.pubsErr = e.message; }
+    return S.pubs;
+  }
+  function pubMatches(q) {
+    const n = normQ(q), vids = S.pubs || []; if (!n) return vids;
+    const words = n.split(' ');
+    return vids.filter(v => { const hay = normQ(v.title + ' ' + v.slug + ' ' + (v.yt_title || '')); return words.every(w => hay.includes(w)); });
+  }
+  function pubOutHtml(v) {
+    const fld = (k, lab, rows) => `<div class="at-sec"><h3>${lab} <span class="muted sm">${(v[k] || '').length} caractères</span></h3><textarea rows="${rows}" readonly style="width:100%;box-sizing:border-box" data-pv="${k}">${esc(v[k] || '')}</textarea>
+      <div class="at-row"><button class="btn primary" data-pcopy="${k}" type="button">📋 Copier</button></div></div>`;
+    return `<div class="at-pubhead"><img class="at-pubcover" src="${esc(new URL(v.cover, document.baseURI).href)}" alt="Couverture ${esc(v.title)}">
+        <div><h3 style="margin:0 0 6px">${esc(v.title)}</h3><p class="muted sm">${esc(v.duration_s ? Math.round(v.duration_s) + ' s · ' : '')}${v.status ? esc(v.status) : ''}</p>
+        <div class="at-row"><button class="btn sm" id="atPubDlCover" type="button">⬇ Télécharger la couverture</button>
+        <a class="btn sm" href="https://studio.youtube.com" target="_blank" rel="noopener">▶ YouTube Studio</a><a class="btn sm" href="https://www.tiktok.com/tiktokstudio" target="_blank" rel="noopener">♪ TikTok Studio</a></div>
+        <p class="muted sm">Active l'étiquette « contenu généré / modifié par IA » dans les deux studios (voix de synthèse).</p></div></div>
+      <div class="at-pubcols">
+        <div><h3 class="at-pubh">YouTube Short</h3>${fld('yt_title', 'Titre', 2)}${fld('yt_description', 'Description', 11)}</div>
+        <div><h3 class="at-pubh">TikTok</h3>${fld('tt_caption', 'Légende', 5)}${fld('pinned_comment', 'Commentaire à épingler (les deux plateformes)', 2)}
+          <div class="at-sec"><h3>Hashtags</h3><p class="muted sm"><b>YouTube :</b> ${esc((v.hashtags_yt || []).join(' '))}<br><b>TikTok :</b> ${esc((v.hashtags_tt || []).join(' '))}</p></div></div>
+      </div>`;
+  }
+  function renderPubOut() {
+    const out = $('#atPubOut'); if (!out) return; const v = (S.pubs || []).find(x => x.slug === S.pubSel);
+    if (!v) { out.innerHTML = S.pubsErr ? `<p class="muted">Impossible de charger les publications (${esc(S.pubsErr)}).</p>` : '<p class="muted">Choisis une vidéo ci-dessus : titre, description, légende TikTok, commentaire et couverture apparaissent ici, prêts à copier.</p>'; return; }
+    out.innerHTML = pubOutHtml(v);
+    $$('[data-pcopy]', out).forEach(b => b.onclick = async () => {
+      const ok = await copyText($(`[data-pv="${b.dataset.pcopy}"]`, out).value), old = b.textContent;
+      b.textContent = ok ? '✔ Copié !' : 'Sélectionne le texte à la main'; setTimeout(() => (b.textContent = old), 1600);
+    });
+    $('#atPubDlCover').onclick = async () => { try { download(await (await fetch(new URL(v.cover, document.baseURI).href)).blob(), `couverture_${v.slug}.jpg`); } catch (e) { toast('Téléchargement impossible : ' + e.message); } };
+  }
+  function renderPubChips() {
+    const q = $('#atPubQ').value, list = pubMatches(q), box = $('#atPubChips');
+    box.innerHTML = list.length ? list.map(v => `<button type="button" class="at-chip ${v.slug === S.pubSel ? 'on' : ''}" data-pslug="${esc(v.slug)}">${esc(v.title)}</button>`).join('') : '<span class="muted sm">Aucune vidéo ne correspond.</span>';
+    $$('[data-pslug]', box).forEach(b => b.onclick = () => { S.pubSel = b.dataset.pslug; renderPubChips(); renderPubOut(); });
+    if (q && list.length === 1 && S.pubSel !== list[0].slug) { S.pubSel = list[0].slug; renderPubChips(); renderPubOut(); }
+  }
+  async function buildPubPanel() {
+    const box = $('#atPubPanel'); if (!box) return;
+    box.innerHTML = `<div class="at-pub"><h2>📤 Publication rapide</h2>
+      <p class="muted">Pas besoin d'ouvrir un projet : tape le nom de ta vidéo (ex. « soleil »), puis copie-colle le titre, la description et la légende dans YouTube Studio et TikTok Studio. Rien n'est publié automatiquement.</p>
+      <input type="search" id="atPubQ" placeholder="Nom de la vidéo : soleil, internet, gravité…" autocomplete="off" style="width:100%;box-sizing:border-box;font-size:17px;padding:12px 14px">
+      <div class="at-chips" id="atPubChips"></div><div id="atPubOut"></div></div>`;
+    await loadPubs();
+    $('#atPubQ').oninput = renderPubChips;
+    $('#atPubQ').onkeydown = e => { if (e.key === 'Enter') { const l = pubMatches(e.target.value); if (l.length) { S.pubSel = l[0].slug; renderPubChips(); renderPubOut(); } } };
+    if (!S.pubSel && S.pubs.length) S.pubSel = S.pubs[0].slug;
+    renderPubChips(); renderPubOut();
+  }
+  function setMode(m) {
+    S.mode = m; try { localStorage.setItem('novaAtelier.mode', m); } catch (e) { }
+    $('#atAtelier').hidden = m !== 'atelier'; $('#atPubPanel').hidden = m !== 'pub';
+    $$('.at-modes [data-mode]').forEach(b => { b.classList.toggle('primary', b.dataset.mode === m); b.setAttribute('aria-pressed', b.dataset.mode === m); });
+    if (m === 'pub') buildPubPanel(); else if (S.ready) renderNow();
+  }
+
   /* ------------------------------------------------------------------ export vidéo */
   const nextTick = (ms = 0) => new Promise(r => setTimeout(r, ms));
   async function loadScript(src) {
@@ -833,13 +895,18 @@
     if (S.hostEl === host) return; S.hostEl = host;
     host.innerHTML = `
     <div class="at-root">
+      <div class="at-modes"><button class="btn primary" type="button" data-mode="atelier">🎬 Atelier (montage d'un projet)</button><button class="btn" type="button" data-mode="pub">📤 Publication rapide (titre, description, légende)</button></div>
+      <div id="atAtelier">
       <div class="at-head"><div><h2>Atelier Nova-Info</h2><p class="muted">Ouvre le dossier d'un projet vidéo pour changer les images, les sous-titres et les textes, puis exporte la vidéo. Tout reste sur ton ordinateur.</p></div>
         <div class="at-top"><button class="btn primary" id="atOpen" type="button">📂 Ouvrir un projet…</button><button class="btn" id="atOpenAlt" type="button" title="Si ton navigateur ne propose pas l'accès direct au dossier">Choisir les fichiers…</button><input type="file" id="atDirIn" webkitdirectory multiple hidden>
           <button class="btn" id="atSave" type="button" disabled>💾 Enregistrer</button><button class="btn" id="atUndo" type="button" disabled title="Ctrl+Z">↶</button><button class="btn" id="atRedo" type="button" disabled title="Ctrl+Y">↷</button><span class="muted sm" id="atDirty"></span></div></div>
       <div class="at-busy" id="atBusy" hidden></div>
       <div class="at-empty" id="atEmpty"><div class="at-card"><h3>Aucun projet ouvert</h3><p>Un projet est un dossier créé par la chaîne Nova-Info : <code>project.nova.json</code>, <code>audio.mp3</code>, <code>images/</code>, <code>clips/</code>, <code>fonts/</code>.</p><p class="muted sm">Chrome ou Edge recommandé (accès direct au dossier : tes modifications sont enregistrées dedans).</p></div></div>
       <div class="at-app" id="atApp" hidden></div>
+      </div>
+      <div id="atPubPanel" hidden></div>
     </div>`;
+    $$('.at-modes [data-mode]').forEach(b => b.onclick = () => setMode(b.dataset.mode));
     $('#atOpen').onclick = async () => {
       if (window.showDirectoryPicker) { try { const dir = await window.showDirectoryPicker({ id: 'nova-info-project', mode: 'readwrite' }); await openProject({ dir }); } catch (e) { if (e.name !== 'AbortError') toast('Ouverture annulée : ' + e.message); } }
       else $('#atDirIn').click();
@@ -848,7 +915,7 @@
     $('#atDirIn').onchange = e => { if (e.target.files.length) openProject({ files: [...e.target.files] }); e.target.value = ''; };
     $('#atSave').onclick = saveProject; $('#atUndo').onclick = undo; $('#atRedo').onclick = redo;
     document.addEventListener('keydown', e => {
-      if (!$('#tab-atelier')?.classList.contains('on') || !S.ready) return; const tg = e.target;
+      if (!$('#tab-atelier')?.classList.contains('on') || !S.ready || S.mode === 'pub') return; const tg = e.target;
       if (tg && /^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName) && tg.type !== 'range' && tg.type !== 'checkbox') return;
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
       else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); }
@@ -856,6 +923,8 @@
       else if (e.code === 'Space') { e.preventDefault(); S.playing ? pause() : play(); }
     });
     window.addEventListener('beforeunload', e => { if (S.dirty) { e.preventDefault(); e.returnValue = ''; } });
+    let m0 = 'atelier'; try { m0 = localStorage.getItem('novaAtelier.mode') || 'atelier'; } catch (e) { }
+    setMode(m0 === 'pub' ? 'pub' : 'atelier');
   }
 
   function buildUI() {
