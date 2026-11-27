@@ -1,6 +1,31 @@
 {
  "videos": [
   {
+   "slug": "immortels",
+   "title": "Et si les humains étaient immortels ?",
+   "yt_title": "Et si les humains étaient immortels ? ⏳ Ce qui arriverait vraiment",
+   "yt_description": "Et si plus personne ne mourait ? 130 millions de naissances par an, 0 décès… la Terre tiendrait-elle ?\n\nAujourd'hui, l'espérance de vie mondiale est de 73,3 ans (ONU, 2024) et le record vérifié est celui de Jeanne Calment, 122 ans et 164 jours. Chaque année, il naît environ 130 millions de bébés et environ 60 millions de personnes meurent (ONU / Our World in Data). En 2026, un premier essai chez l'humain (ER-100, Life Biosciences) teste le rajeunissement de cellules de l'œil : un essai de sécurité, pas la vie éternelle. Si les humains devenaient immortels (scénario hypothétique) : 60 millions de personnes en plus dès la première année ; si les naissances ne changeaient pas, plus de 21 milliards d'humains cent ans plus tard (calcul illustratif) ; plus de nourriture, d'eau, de maisons, de place ; plus de départs à la retraite. Mais la nature connaît déjà un animal presque immortel, la méduse Turritopsis dohrnii, qui peut redevenir jeune… et être mangée ou tomber malade.\n\nSources :\n• ONU — World Population Prospects 2024 (espérance de vie mondiale 73,3 ans ; ≈ 8,2 milliards d'habitants)\n• Our World in Data — births and deaths (≈ 132 M de naissances et ≈ 63 M de décès par an, données ONU)\n• Guinness World Records — Jeanne Calment, 122 ans et 164 jours (record vérifié ; vérification contestée par certains chercheurs, rejetée par la majorité des spécialistes)\n• Life Biosciences — essai de phase 1 d'ER-100 (premier patient traité en juin 2026) ; Healio ; ClinicalTrials.gov NCT07290244\n• Natural History Museum et AMNH — Turritopsis dohrnii, la « méduse immortelle »\n\nVoix de synthèse (ElevenLabs). Images : NASA, NOAA et autres œuvres du domaine public ; schémas générés par ordinateur. Scénarios hypothétiques : les faits, études et hypothèses sont signalés à l'écran.\n\n#EtSi #Immortalité #Science #Futur #Shorts",
+   "tt_caption": "Et si les humains étaient immortels ? ⏳ Plus personne ne meurt… mais 21 milliards d'humains en 100 ans ! Tu voudrais vivre pour toujours ? #etsi #immortalite #science #futur #apprendresurtiktok",
+   "pinned_comment": "Tu voudrais vivre pour toujours ? ⏳ Dis-moi pourquoi en commentaire !",
+   "hashtags_yt": [
+    "#EtSi",
+    "#Immortalité",
+    "#Science",
+    "#Futur",
+    "#Shorts"
+   ],
+   "hashtags_tt": [
+    "#etsi",
+    "#immortalite",
+    "#science",
+    "#futur",
+    "#apprendresurtiktok"
+   ],
+   "cover": "nova-info/covers/immortels.jpg",
+   "duration_s": 87.496,
+   "status": "à valider"
+  },
+  {
    "slug": "araignees",
    "title": "Et si les araignées n'existaient pas ?",
    "yt_title": "Et si les araignées n'existaient pas ? 🕷️ Ce qui arriverait vraiment",
