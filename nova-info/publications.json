@@ -1,6 +1,31 @@
 {
  "videos": [
   {
+   "slug": "abeilles",
+   "title": "Et si les abeilles disparaissaient ?",
+   "yt_title": "Et si les abeilles disparaissaient ? 🐝 Ce qui arriverait vraiment",
+   "yt_description": "Et si toutes les abeilles disparaissaient demain ? Elles aident à produire environ 1/3 de notre nourriture.\n\nPlus des trois quarts des principaux types de cultures vivrières profitent, au moins en partie, de la pollinisation animale, comme celle des abeilles ; ces cultures représentent environ 35 % du volume de la production agricole mondiale (IPBES, 2016). En Europe, environ 10 % des abeilles sauvages (172 espèces sur 1 928 évaluées) sont menacées d'extinction (UICN, octobre 2025). Si toutes les abeilles disparaissaient (scénario hypothétique) : fleurs moins visitées, moins de fruits et de graines, pommes, amandes, fraises et café plus rares et plus chers ; une étude de modélisation (The Lancet, 2015) estime que, sans aucun pollinisateur animal, l'offre mondiale de fruits baisserait d'environ 23 %, celle de légumes d'environ 16 % et celle de noix et graines d'environ 22 % ; pollinisation à la main, comme déjà dans certains vergers de Chine (reportages de 2016). Mais le blé, le riz et le maïs sont pollinisés par le vent : ce sont surtout les fruits, les légumes et les noix qui manqueraient, et d'autres insectes pollinisent aussi.\n\nSources :\n• IPBES — Assessment Report on Pollinators, Pollination and Food Production (2016) ; FAO — « Pollinators vital to our food supply under threat »\n• UICN — Liste rouge européenne des abeilles et papillons sauvages (octobre 2025) ; CSIC / EBD (mai 2026)\n• Smith, Singh, Mozaffarian & Myers — « Effects of decreases of animal pollinators on human nutrition and global health: a modelling analysis », The Lancet, 2015 (modèle : perte totale des pollinisateurs animaux)\n• Hanyuan (Sichuan) — reportages de 2016 sur la pollinisation à la main des poiriers\n\nVoix de synthèse (ElevenLabs). Images : NASA, NOAA et autres œuvres du domaine public ; schémas générés par ordinateur. Scénarios hypothétiques : les faits, études et hypothèses sont signalés à l'écran.\n\n#EtSi #Abeilles #Nature #Science #Shorts",
+   "tt_caption": "Et si les abeilles disparaissaient ? 🐝 Environ 1/3 de notre nourriture dépend des pollinisateurs… Que ferais-tu pour les protéger ? #etsi #abeilles #nature #biodiversite #apprendresurtiktok",
+   "pinned_comment": "Que ferais-tu pour protéger les abeilles ? 🐝 Dis-moi en commentaire !",
+   "hashtags_yt": [
+    "#EtSi",
+    "#Abeilles",
+    "#Nature",
+    "#Science",
+    "#Shorts"
+   ],
+   "hashtags_tt": [
+    "#etsi",
+    "#abeilles",
+    "#nature",
+    "#biodiversite",
+    "#apprendresurtiktok"
+   ],
+   "cover": "nova-info/covers/abeilles.jpg",
+   "duration_s": 80.0,
+   "status": "à valider"
+  },
+  {
    "slug": "sommeil",
    "title": "Et si on ne dormait plus jamais ?",
    "yt_title": "Et si on ne dormait plus jamais ? 😴 Ce qui arriverait vraiment",
