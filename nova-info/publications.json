@@ -1,6 +1,31 @@
 {
  "videos": [
   {
+   "slug": "sommeil",
+   "title": "Et si on ne dormait plus jamais ?",
+   "yt_title": "Et si on ne dormait plus jamais ? 😴 Ce qui arriverait vraiment",
+   "yt_description": "Et si plus personne ne pouvait dormir ? Un lycéen a tenu 11 jours sans dormir en 1964… voici ce qui se passe.\n\nLes médecins conseillent au moins 7 heures de sommeil par nuit, et pourtant 30,5 % des adultes américains dormaient moins que ça en 2024 (CDC, publié en avril 2026 : chiffre américain). Pendant le sommeil, le cerveau fait le ménage : chez la souris, ce nettoyage est presque 10 fois plus actif (Nedergaard, Science, 2013). En 1964, Randy Gardner, 17 ans, est resté éveillé 264 heures (11 jours). Si plus personne ne pouvait dormir (scénario hypothétique) : dès la première nuit on réagit moins bien (après 17 heures sans dormir, certaines performances ressemblent à celles d'une personne ayant un peu bu d'alcool, étude de 2000) ; après quelques jours, mémoire, concentration et humeur en pâtissent ; après 11 jours on atteint le record de Randy Gardner, au-delà c'est trop dangereux à tester (Guinness ne suit plus ce record). Chez le rat, la privation totale de sommeil a été mortelle en 2 à 3 semaines environ (1989) ; chez l'humain, on ne sait pas. Les dauphins, eux, dorment avec une moitié du cerveau à la fois.\n\nSources :\n• CDC / NCHS — Data Brief n° 559, « Short Sleep Duration and Sleep Difficulties Among Adults: United States, 2024 » (29/04/2026) ; American Academy of Sleep Medicine (≥ 7 h)\n• Xie L. et coll. (Nedergaard), « Sleep drives metabolite clearance from the adult brain », Science, 2013 (étude chez la souris)\n• NPR, « Lessons from sleeplessness: the 60th anniversary of Randy Gardner's world record » (2024) ; Gulevich, Dement & Johnson, Arch. Gen. Psychiatry, 1966 ; Guinness World Records\n• Williamson & Feyer, Occup. Environ. Med., 2000 (17-19 h sans dormir ≈ 0,05 % d'alcool pour certains tests)\n• Rechtschaffen & Bergmann, Sleep, 1989 (rats privés de sommeil) ; Mukhametov et Lilly (sommeil unihémisphérique des dauphins)\n\nVoix de synthèse (ElevenLabs). Images : NASA, NOAA et autres œuvres du domaine public ; schémas générés par ordinateur. Scénarios hypothétiques : les faits, études et hypothèses sont signalés à l'écran.\n\n#EtSi #Sommeil #Science #Cerveau #Shorts",
+   "tt_caption": "Et si on ne dormait plus jamais ? 😴 11 jours sans dormir : le record de Randy Gardner (1964)… Combien d'heures tu dors par nuit ? #etsi #sommeil #science #cerveau #apprendresurtiktok",
+   "pinned_comment": "Combien d'heures tu dors par nuit ? 😴 Dis-moi en commentaire !",
+   "hashtags_yt": [
+    "#EtSi",
+    "#Sommeil",
+    "#Science",
+    "#Cerveau",
+    "#Shorts"
+   ],
+   "hashtags_tt": [
+    "#etsi",
+    "#sommeil",
+    "#science",
+    "#cerveau",
+    "#apprendresurtiktok"
+   ],
+   "cover": "nova-info/covers/sommeil.jpg",
+   "duration_s": 83.769,
+   "status": "à valider"
+  },
+  {
    "slug": "immortels",
    "title": "Et si les humains étaient immortels ?",
    "yt_title": "Et si les humains étaient immortels ? ⏳ Ce qui arriverait vraiment",
