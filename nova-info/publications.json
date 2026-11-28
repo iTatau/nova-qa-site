@@ -1,6 +1,31 @@
 {
  "videos": [
   {
+   "slug": "intemperies",
+   "title": "Et s'il n'y avait pas d'intempéries ?",
+   "yt_title": "Et s'il n'y avait pas d'intempéries ? ⛈️ Ce qui arriverait vraiment",
+   "yt_description": "Et si plus aucune tempête, aucun orage, aucun cyclone n'existait ? Le paradis… ou le début des problèmes ?\n\nDepuis cinquante ans, les catastrophes liées à la météo, au climat et à l'eau ont fait en moyenne 115 morts et 202 millions de dollars de dégâts par jour dans le monde (OMM, 1970-2019). En 2025, les catastrophes naturelles ont coûté environ 224 milliards de dollars, dont 92 % venaient de la météo (Munich Re, janvier 2026). Si plus aucune intempérie n'existait (scénario hypothétique) : plus de dégâts de tempêtes dès le premier jour, mais l'eau manquerait : par endroits, les cyclones apportent 35 à 50 % de la pluie de l'année (Khouakhi et coll., 2017) ; sans tempêtes de neige, moins d'eau venue des montagnes, dont dépendent environ 1,9 milliard de personnes (Immerzeel et coll., Nature, 2020) ; sécheresses et récoltes en danger. Les intempéries existent et nous apprenons à nous en protéger : grâce aux alertes, le nombre de morts par jour est passé d'environ 90 dans les années 1990 à environ 40 dans les années 2010 (OMM).\n\nSources :\n• OMM (WMO) — Atlas of Mortality and Economic Losses from Weather, Climate and Water Extremes (1970-2019), 2021 : 115 morts et 202 M$ de pertes par jour en moyenne ; ≈ 90 morts/jour dans les années 1990, ≈ 40 dans les années 2010\n• Munich Re — Natural disaster figures 2025 (13/01/2026) : ≈ 224 Md$ de pertes, dont 92 % liées à la météo\n• Khouakhi A., Villarini G., Vecchi G.A. — Contribution of tropical cyclones to rainfall at the global scale, Journal of Climate, 2017 (35 à 50 % de la pluie annuelle à certaines stations)\n• Immerzeel W.W. et coll. — Importance and vulnerability of the world's water towers, Nature, 2020 (≈ 1,9 milliard de personnes dépendent de l'eau des montagnes)\n\nVoix de synthèse (ElevenLabs). Images : NASA, NOAA et autres œuvres du domaine public ; schémas générés par ordinateur. Scénarios hypothétiques : les faits, études et hypothèses sont signalés à l'écran.\n\n#EtSi #Météo #Climat #Science #Shorts",
+   "tt_caption": "Et s'il n'y avait pas d'intempéries ? ⛈️ Plus de tempêtes… mais plus d'eau non plus ! Quelle intempérie supprimerais-tu en premier ? #etsi #meteo #climat #science #apprendresurtiktok",
+   "pinned_comment": "Quelle intempérie supprimerais-tu en premier ? ⛈️❄️ Dis-moi en commentaire !",
+   "hashtags_yt": [
+    "#EtSi",
+    "#Météo",
+    "#Climat",
+    "#Science",
+    "#Shorts"
+   ],
+   "hashtags_tt": [
+    "#etsi",
+    "#meteo",
+    "#climat",
+    "#science",
+    "#apprendresurtiktok"
+   ],
+   "cover": "nova-info/covers/intemperies.jpg",
+   "duration_s": 86.99,
+   "status": "à valider"
+  },
+  {
    "slug": "abeilles",
    "title": "Et si les abeilles disparaissaient ?",
    "yt_title": "Et si les abeilles disparaissaient ? 🐝 Ce qui arriverait vraiment",
